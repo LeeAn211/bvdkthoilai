@@ -42,6 +42,7 @@ export const Users: CollectionConfig = {
       type: 'select',
       required: true,
       defaultValue: 'editor',
+      saveToJWT: true,
       access: { create: adminField, update: adminField },
       options: [
         { label: 'Super Admin', value: 'super-admin' },
@@ -65,6 +66,7 @@ export const Users: CollectionConfig = {
       label: 'Phạm vi Khoa / Phòng',
       type: 'relationship',
       relationTo: 'departments',
+      saveToJWT: true,
       access: { create: adminField, update: adminField },
       admin: {
         description: 'Dùng để giới hạn dữ liệu theo khoa/phòng đối với các vai trò được phân scope.',
@@ -76,6 +78,7 @@ export const Users: CollectionConfig = {
       type: 'select',
       required: true,
       defaultValue: 'active',
+      saveToJWT: true,
       access: { create: adminField, update: adminField },
       options: [
         { label: 'Đang hoạt động', value: 'active' },
@@ -90,6 +93,7 @@ export const Users: CollectionConfig = {
       name: 'permissions',
       label: 'Quyền bổ sung theo module',
       type: 'array',
+      saveToJWT: true,
       access: { create: adminField, update: adminField },
       admin: {
         description: 'Chỉ dùng để cấp thêm quyền ngoài vai trò mặc định. Quyền được kiểm tra server-side qua access helper.',
