@@ -37,6 +37,13 @@ async function getStoragePercent(dir: string) {
   }
 }
 
+const r2Enabled = Boolean(
+  process.env.R2_BUCKET &&
+  process.env.R2_ACCESS_KEY_ID &&
+  process.env.R2_SECRET_ACCESS_KEY &&
+  process.env.R2_ENDPOINT,
+)
+
 export const Media: CollectionConfig = {
   slug: 'media',
   labels: { singular: 'Tệp & Hình ảnh', plural: 'Thư viện Tệp & Hình ảnh' },
@@ -68,11 +75,16 @@ export const Media: CollectionConfig = {
           throw new Error(`Tệp vượt giới hạn ${limitMB} MB cho loại dữ liệu này.`)
         }
 
-        const mediaDir = path.resolve(process.cwd(), 'media')
-        const usedPercent = await getStoragePercent(mediaDir)
-        const blockPercent = Number(settings?.blockPercent) || 95
-        if (usedPercent != null && usedPercent >= blockPercent) {
-          throw new Error(`Dung lượng lưu trữ đã sử dụng ${usedPercent.toFixed(1)}%, vượt ngưỡng chặn ${blockPercent}%.`)
+        // Local disk capacity is only relevant for local storage. When R2 is
+        // active, Railway's ephemeral filesystem must not decide whether an
+        // object can be uploaded to persistent object storage.
+        if (!r2Enabled) {
+          const mediaDir = path.resolve(process.cwd(), 'media')
+          const usedPercent = await getStoragePercent(mediaDir)
+          const blockPercent = Number(settings?.blockPercent) || 95
+          if (usedPercent != null && usedPercent >= blockPercent) {
+            throw new Error(`Dung lượng lưu trữ đã sử dụng ${usedPercent.toFixed(1)}%, vượt ngưỡng chặn ${blockPercent}%.`)
+          }
         }
 
         const bytes = file.data
