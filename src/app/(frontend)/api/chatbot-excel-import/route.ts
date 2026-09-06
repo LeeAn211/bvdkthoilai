@@ -35,7 +35,7 @@ const numberValue = (value: unknown, fallback = 0) => {
 }
 const splitPhrases = (value: unknown) => {
   const raw = text(value, 8000)
-  return [...new Set(raw.split(/[;|\n\r]+/).map(item => item.trim()).filter(Boolean))].slice(0, 100)
+  return [...new Set(raw.split(/[;|\n\r]+/).map((item: string) => item.trim()).filter(Boolean))].slice(0, 100)
 }
 const lexicalText = (value: string) => ({
   root: {

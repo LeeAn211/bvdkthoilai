@@ -74,14 +74,43 @@ export interface Config {
     procurement: Procurement;
     documents: Document;
     departments: Department;
+    specialties: Specialty;
     doctors: Doctor;
     schedules: Schedule;
     services: Service;
+    servicePrices: ServicePrice;
     vaccinations: Vaccination;
+    vaccinationSchedules: VaccinationSchedule;
+    vaccines: Vaccine;
+    vaccinePrices: VaccinePrice;
     recruitment: Recruitment;
     pages: Page;
+    categories: Category;
     feedback: Feedback;
     consultations: Consultation;
+    feedbackCategories: FeedbackCategory;
+    feedbackCases: FeedbackCase;
+    feedbackActions: FeedbackAction;
+    faqs: Faq;
+    forms: Form;
+    formSubmissions: FormSubmission;
+    chatbotIntents: ChatbotIntent;
+    chatbotConversations: ChatbotConversation;
+    chatbotUnanswered: ChatbotUnanswered;
+    'survey-templates': SurveyTemplate;
+    'survey-template-versions': SurveyTemplateVersion;
+    'survey-questions': SurveyQuestion;
+    'survey-campaigns': SurveyCampaign;
+    'survey-codes': SurveyCode;
+    'survey-responses': SurveyResponse;
+    'survey-answers': SurveyAnswer;
+    'survey-statistics': SurveyStatistic;
+    redirects: Redirect;
+    'dynamic-modules': DynamicModule;
+    'content-sections': ContentSection;
+    'custom-posts': CustomPost;
+    importJobs: ImportJob;
+    'audit-logs': AuditLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -96,14 +125,43 @@ export interface Config {
     procurement: ProcurementSelect<false> | ProcurementSelect<true>;
     documents: DocumentsSelect<false> | DocumentsSelect<true>;
     departments: DepartmentsSelect<false> | DepartmentsSelect<true>;
+    specialties: SpecialtiesSelect<false> | SpecialtiesSelect<true>;
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
     schedules: SchedulesSelect<false> | SchedulesSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
+    servicePrices: ServicePricesSelect<false> | ServicePricesSelect<true>;
     vaccinations: VaccinationsSelect<false> | VaccinationsSelect<true>;
+    vaccinationSchedules: VaccinationSchedulesSelect<false> | VaccinationSchedulesSelect<true>;
+    vaccines: VaccinesSelect<false> | VaccinesSelect<true>;
+    vaccinePrices: VaccinePricesSelect<false> | VaccinePricesSelect<true>;
     recruitment: RecruitmentSelect<false> | RecruitmentSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
     feedback: FeedbackSelect<false> | FeedbackSelect<true>;
     consultations: ConsultationsSelect<false> | ConsultationsSelect<true>;
+    feedbackCategories: FeedbackCategoriesSelect<false> | FeedbackCategoriesSelect<true>;
+    feedbackCases: FeedbackCasesSelect<false> | FeedbackCasesSelect<true>;
+    feedbackActions: FeedbackActionsSelect<false> | FeedbackActionsSelect<true>;
+    faqs: FaqsSelect<false> | FaqsSelect<true>;
+    forms: FormsSelect<false> | FormsSelect<true>;
+    formSubmissions: FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
+    chatbotIntents: ChatbotIntentsSelect<false> | ChatbotIntentsSelect<true>;
+    chatbotConversations: ChatbotConversationsSelect<false> | ChatbotConversationsSelect<true>;
+    chatbotUnanswered: ChatbotUnansweredSelect<false> | ChatbotUnansweredSelect<true>;
+    'survey-templates': SurveyTemplatesSelect<false> | SurveyTemplatesSelect<true>;
+    'survey-template-versions': SurveyTemplateVersionsSelect<false> | SurveyTemplateVersionsSelect<true>;
+    'survey-questions': SurveyQuestionsSelect<false> | SurveyQuestionsSelect<true>;
+    'survey-campaigns': SurveyCampaignsSelect<false> | SurveyCampaignsSelect<true>;
+    'survey-codes': SurveyCodesSelect<false> | SurveyCodesSelect<true>;
+    'survey-responses': SurveyResponsesSelect<false> | SurveyResponsesSelect<true>;
+    'survey-answers': SurveyAnswersSelect<false> | SurveyAnswersSelect<true>;
+    'survey-statistics': SurveyStatisticsSelect<false> | SurveyStatisticsSelect<true>;
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
+    'dynamic-modules': DynamicModulesSelect<false> | DynamicModulesSelect<true>;
+    'content-sections': ContentSectionsSelect<false> | ContentSectionsSelect<true>;
+    'custom-posts': CustomPostsSelect<false> | CustomPostsSelect<true>;
+    importJobs: ImportJobsSelect<false> | ImportJobsSelect<true>;
+    'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -116,14 +174,40 @@ export interface Config {
   globals: {
     'site-settings': SiteSetting;
     navigation: Navigation;
+    header: Header;
+    footer: Footer;
+    'contact-settings': ContactSetting;
+    'social-settings': SocialSetting;
+    'medpro-settings': MedproSetting;
+    'theme-settings': ThemeSetting;
     homepage: Homepage;
     'organization-chart': OrganizationChart;
+    'upload-settings': UploadSetting;
+    'default-media-settings': DefaultMediaSetting;
+    'seo-settings': SeoSetting;
+    'chatbot-settings': ChatbotSetting;
+    'system-settings': SystemSetting;
+    'schedule-settings': ScheduleSetting;
+    'quick-links-settings': QuickLinksSetting;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     navigation: NavigationSelect<false> | NavigationSelect<true>;
+    header: HeaderSelect<false> | HeaderSelect<true>;
+    footer: FooterSelect<false> | FooterSelect<true>;
+    'contact-settings': ContactSettingsSelect<false> | ContactSettingsSelect<true>;
+    'social-settings': SocialSettingsSelect<false> | SocialSettingsSelect<true>;
+    'medpro-settings': MedproSettingsSelect<false> | MedproSettingsSelect<true>;
+    'theme-settings': ThemeSettingsSelect<false> | ThemeSettingsSelect<true>;
     homepage: HomepageSelect<false> | HomepageSelect<true>;
     'organization-chart': OrganizationChartSelect<false> | OrganizationChartSelect<true>;
+    'upload-settings': UploadSettingsSelect<false> | UploadSettingsSelect<true>;
+    'default-media-settings': DefaultMediaSettingsSelect<false> | DefaultMediaSettingsSelect<true>;
+    'seo-settings': SeoSettingsSelect<false> | SeoSettingsSelect<true>;
+    'chatbot-settings': ChatbotSettingsSelect<false> | ChatbotSettingsSelect<true>;
+    'system-settings': SystemSettingsSelect<false> | SystemSettingsSelect<true>;
+    'schedule-settings': ScheduleSettingsSelect<false> | ScheduleSettingsSelect<true>;
+    'quick-links-settings': QuickLinksSettingsSelect<false> | QuickLinksSettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -154,13 +238,63 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Tài khoản, vai trò, phạm vi khoa/phòng và quyền bổ sung theo module.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
   name: string;
-  role: 'super-admin' | 'admin' | 'editor' | 'reviewer' | 'procurement' | 'department-manager';
+  role:
+    | 'super-admin'
+    | 'system-admin'
+    | 'board'
+    | 'admin'
+    | 'editor'
+    | 'reviewer'
+    | 'department'
+    | 'department-manager'
+    | 'hr'
+    | 'finance'
+    | 'procurement'
+    | 'clinic-schedule'
+    | 'vaccination'
+    | 'quality-management';
+  /**
+   * Dùng để giới hạn dữ liệu theo khoa/phòng đối với các vai trò được phân scope.
+   */
+  department?: (number | null) | Department;
+  /**
+   * Đã chuẩn hóa trường trạng thái theo baseline. Tài khoản Locked/Inactive bị chặn đăng nhập ngay ở hook xác thực.
+   */
+  status: 'active' | 'locked' | 'inactive';
+  /**
+   * Chỉ dùng để cấp thêm quyền ngoài vai trò mặc định. Quyền được kiểm tra server-side qua access helper.
+   */
+  permissions?:
+    | {
+        /**
+         * Ví dụ: news, notices, procurement, schedules, services, quality.
+         */
+        module: string;
+        actions: (
+          | 'view'
+          | 'create'
+          | 'edit'
+          | 'delete'
+          | 'submit'
+          | 'approve'
+          | 'publish'
+          | 'hide'
+          | 'import'
+          | 'export'
+          | 'restore'
+        )[];
+        id?: string | null;
+      }[]
+    | null;
+  lastLoginAt?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -181,17 +315,169 @@ export interface User {
   collection: 'users';
 }
 /**
- * Kho dùng chung cho toàn website. Ảnh và tệp tải lên một lần có thể chọn lại ở logo, banner, bài viết, lịch khám, tiêm ngừa và các mục khác.
+ * Hồ sơ đơn vị dùng chung cho sơ đồ tổ chức, chuyên khoa, bác sĩ và trang giới thiệu khoa/phòng.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "departments".
+ */
+export interface Department {
+  id: number;
+  name: string;
+  /**
+   * Giữ nguyên field của các phiên bản trước để không làm mất giá trị đang sử dụng.
+   */
+  kind: string;
+  /**
+   * Field chuẩn từ v3.7.0. Dữ liệu cũ vẫn được đọc từ Nhóm đơn vị cũ khi chưa thiết lập.
+   */
+  unitType?: ('clinical' | 'paraclinical' | 'office' | 'other') | null;
+  /**
+   * Tự động tạo từ Tên khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  summary?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  functions?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  activities?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  achievements?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  leader?: string | null;
+  deputyLeaders?:
+    | {
+        name: string;
+        title?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  phone?: string | null;
+  email?: string | null;
+  location?: string | null;
+  /**
+   * Tải ảnh mới hoặc chọn lại từ Thư viện Tệp & Hình ảnh.
+   */
+  cover?: (number | null) | Media;
+  gallery?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  order?: number | null;
+  active?: boolean | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  /**
+   * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
+   */
+  seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Kho media dùng chung có kiểm soát quyền đọc file, giới hạn upload và SHA-256 phát hiện file trùng.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
+  /**
+   * Giữ tên tệp người dùng tải lên để dễ tìm và đối chiếu.
+   */
+  originalFilename?: string | null;
   alt?: string | null;
   caption?: string | null;
+  group?:
+    | (
+        | 'news'
+        | 'notice'
+        | 'procurement'
+        | 'banner'
+        | 'clinic-schedule'
+        | 'vaccination'
+        | 'doctor'
+        | 'department'
+        | 'specialty'
+        | 'quality'
+        | 'other'
+      )
+    | null;
+  /**
+   * File public đọc công khai; internal/restricted được bảo vệ bằng Access Control của collection upload.
+   */
+  accessLevel: 'public' | 'internal' | 'restricted';
+  uploadedBy?: (number | null) | User;
+  hash?: string | null;
+  /**
+   * Tự xác định khi SHA-256 trùng với tệp đã có.
+   */
+  duplicateOf?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
   url?: string | null;
   thumbnailURL?: string | null;
   filename?: string | null;
@@ -210,7 +496,31 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
+    small?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
     card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    medium?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -238,16 +548,16 @@ export interface News {
   id: number;
   title: string;
   /**
-   * Tự động tạo từ Tiêu đề.
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
   excerpt?: string | null;
   /**
-   * Tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
+   * Không bắt buộc. Khi bỏ trống website dùng ảnh mặc định được cấu hình trong Hệ thống → Ảnh mặc định nội dung.
    */
   cover?: (number | null) | Media;
   /**
-   * Hỗ trợ đậm, nghiêng, gạch chân, tiêu đề, cỡ chữ, căn trái/giữa/phải/đều, danh sách, liên kết, bảng, ảnh và tệp.
+   * Hỗ trợ định dạng văn bản, nhiều ảnh, liên kết, bảng và tệp đính kèm.
    */
   content: {
     root: {
@@ -265,9 +575,13 @@ export interface News {
     [k: string]: unknown;
   };
   /**
-   * Có thể nhập chuyên mục mới. Dùng cùng một tên để bài viết hiển thị chung trong một tab.
+   * Chọn chuyên mục quản lý tập trung. Trường chuyên mục cũ vẫn được giữ để tương thích dữ liệu hiện có.
    */
-  category: string;
+  categoryRef?: (number | null) | Category;
+  /**
+   * Giữ để không mất dữ liệu cũ. Bài mới nên chọn “Chuyên mục chuẩn”.
+   */
+  category?: string | null;
   attachments?:
     | {
         /**
@@ -284,15 +598,47 @@ export interface News {
   featured?: boolean | null;
   pinned?: boolean | null;
   publishedAt?: string | null;
+  /**
+   * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
+   */
+  workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
    * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
    */
   seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * Danh mục dùng chung cho Tin tức, Thông báo, Đấu thầu, Tuyển dụng và Văn bản.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  name: string;
+  /**
+   * Tự động tạo từ Tên khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  scope: 'news' | 'notices' | 'procurement' | 'recruitment' | 'documents';
+  description?: string | null;
+  order?: number | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -302,11 +648,11 @@ export interface Notice {
   id: number;
   title: string;
   /**
-   * Tự động tạo từ Tiêu đề.
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
   /**
-   * Ảnh hiển thị trên trang chủ và trang danh sách. Có thể tải mới hoặc chọn lại từ Thư viện Tệp & Hình ảnh.
+   * Không bắt buộc; khi trống dùng ảnh mặc định của Thông báo.
    */
   cover?: (number | null) | Media;
   excerpt?: string | null;
@@ -325,6 +671,10 @@ export interface Notice {
     };
     [k: string]: unknown;
   };
+  /**
+   * Chọn chuyên mục quản lý tập trung. Trường chuyên mục cũ vẫn được giữ để tương thích dữ liệu hiện có.
+   */
+  categoryRef?: (number | null) | Category;
   level?: ('normal' | 'important' | 'urgent') | null;
   attachments?:
     | {
@@ -339,18 +689,30 @@ export interface Notice {
         id?: string | null;
       }[]
     | null;
+  publishedAt?: string | null;
   startAt?: string | null;
   expireAt?: string | null;
   pinned?: boolean | null;
   showOnHome?: boolean | null;
+  /**
+   * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
+   */
+  workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
    * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
    */
   seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
 }
 /**
@@ -361,15 +723,19 @@ export interface Procurement {
   id: number;
   title: string;
   /**
-   * Tự động tạo từ Tiêu đề.
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
   /**
-   * Ảnh hiển thị trên trang chủ và trang danh sách. Có thể tải mới hoặc chọn lại từ Thư viện Tệp & Hình ảnh.
+   * Không bắt buộc; khi trống dùng ảnh mặc định của Đấu thầu – Mua sắm.
    */
   cover?: (number | null) | Media;
   excerpt?: string | null;
   referenceCode?: string | null;
+  /**
+   * Chọn chuyên mục quản lý tập trung. Trường chuyên mục cũ vẫn được giữ để tương thích dữ liệu hiện có.
+   */
+  categoryRef?: (number | null) | Category;
   type:
     | 'Thông báo mời thầu'
     | 'Kế hoạch lựa chọn nhà thầu'
@@ -417,14 +783,25 @@ export interface Procurement {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
+   */
+  workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
    * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
    */
   seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
 }
 /**
@@ -434,33 +811,70 @@ export interface Procurement {
 export interface Document {
   id: number;
   title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
   number?: string | null;
   /**
-   * Có thể tự nhập loại tài liệu mới.
+   * Chọn chuyên mục quản lý tập trung. Trường chuyên mục cũ vẫn được giữ để tương thích dữ liệu hiện có.
+   */
+  categoryRef?: (number | null) | Category;
+  /**
+   * Giữ dữ liệu cũ; tài liệu mới nên chọn Chuyên mục chuẩn.
    */
   category?: string | null;
+  issuer?: string | null;
   issuedAt?: string | null;
+  effectiveAt?: string | null;
   year?: number | null;
+  summary?: string | null;
+  /**
+   * Không bắt buộc. Nếu bỏ trống website dùng ảnh mặc định Văn bản – Tài liệu trong Admin → Ảnh mặc định nội dung.
+   */
+  cover?: (number | null) | Media;
   /**
    * Tải tệp mới hoặc chọn lại tệp đã có trong Thư viện Tệp & Hình ảnh.
    */
   file: number | Media;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  /**
+   * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
+   */
+  seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
+ * Chuyên khoa là lĩnh vực chuyên môn, KHÔNG dùng để sao chép tên Khoa/Phòng. Mỗi chuyên khoa có thể liên kết với một Khoa/Phòng phụ trách.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "departments".
+ * via the `definition` "specialties".
  */
-export interface Department {
+export interface Specialty {
   id: number;
+  /**
+   * Trường tương thích dữ liệu cũ. Không sử dụng cho bản ghi mới.
+   */
+  useDepartmentName?: boolean | null;
+  /**
+   * Chọn đơn vị phụ trách chuyên khoa. Không tạo Chuyên khoa chỉ để lặp lại đúng tên Khoa/Phòng.
+   */
+  department: number | Department;
+  /**
+   * Ví dụ: Tim mạch, Nội tiết, Hô hấp… Tên phải thể hiện chuyên môn, không sao chép tên đơn vị tổ chức.
+   */
   name: string;
   /**
-   * Có thể tự nhập tên nhóm mới. Nhập đúng cùng một tên để các khoa/phòng được gom vào cùng một tab.
-   */
-  kind: string;
-  /**
-   * Tự động tạo từ Tên.
+   * Tự động tạo từ Tên khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
   summary?: string | null;
@@ -479,23 +893,43 @@ export interface Department {
     };
     [k: string]: unknown;
   } | null;
-  leader?: string | null;
-  phone?: string | null;
-  location?: string | null;
-  /**
-   * Tải ảnh mới hoặc chọn lại từ Thư viện Tệp & Hình ảnh.
-   */
   cover?: (number | null) | Media;
+  services?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  order?: number | null;
+  active?: boolean | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
    * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
    */
   seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
+ * Khoa/Phòng là quan hệ tổ chức chính của bác sĩ. Chuyên khoa chỉ chọn khi bác sĩ thực sự thuộc một lĩnh vực chuyên môn riêng.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "doctors".
  */
@@ -503,18 +937,42 @@ export interface Doctor {
   id: number;
   name: string;
   /**
-   * Tự động tạo từ Tên.
+   * Tự động tạo từ Tên khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
   title?: string | null;
   degree?: string | null;
+  professionalTitle?: string | null;
   /**
    * Tải ảnh mới hoặc chọn lại từ Thư viện Tệp & Hình ảnh.
    */
   avatar?: (number | null) | Media;
   department: number | Department;
+  /**
+   * Chỉ chọn khi cần phân loại chuyên môn sâu. Không bắt buộc nếu Khoa/Phòng đã đủ để mô tả đơn vị công tác.
+   */
+  specialtyRef?: (number | null) | Specialty;
+  /**
+   * Trường chỉ đọc để bảo toàn dữ liệu cũ. Không nhập mới vào trường này.
+   */
   specialty?: string | null;
+  licenseNumber?: string | null;
   bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  expertise?: {
     root: {
       type: string;
       children: {
@@ -559,17 +1017,42 @@ export interface Doctor {
     };
     [k: string]: unknown;
   } | null;
+  achievements?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  order?: number | null;
+  featured?: boolean | null;
+  active?: boolean | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
    * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
    */
   seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
- * Tạo lịch theo ngày, lập bảng lịch theo tuần hoặc đăng lịch bằng ảnh / tệp đính kèm.
+ * Ưu tiên đăng ảnh lịch khám tuần chính thức. Vẫn hỗ trợ nhập theo ngày/tuần để tra cứu chi tiết.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "schedules".
@@ -582,7 +1065,7 @@ export interface Schedule {
    */
   summary?: string | null;
   /**
-   * Dùng cho mọi loại lịch. Có thể tải mới hoặc chọn lại ảnh đã có trong thư viện.
+   * Không bắt buộc. Nếu bỏ trống website dùng ảnh mặc định Lịch khám trong Admin → Ảnh mặc định nội dung.
    */
   coverImage?: (number | null) | Media;
   /**
@@ -627,6 +1110,7 @@ export interface Schedule {
         id?: string | null;
       }[]
     | null;
+  scheduleType?: ('official' | 'adjustment') | null;
   /**
    * Tải ảnh JPG/PNG mới hoặc chọn lại ảnh lịch đã có trong thư viện.
    */
@@ -635,6 +1119,13 @@ export interface Schedule {
    * Tải Excel/PDF/Word mới hoặc chọn lại tệp lịch đã có trong thư viện.
    */
   scheduleFile?: (number | null) | Media;
+  attachmentFiles?:
+    | {
+        file: number | Media;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   validFrom?: string | null;
   validTo?: string | null;
   note?: string | null;
@@ -654,7 +1145,14 @@ export interface Service {
   code: string;
   name: string;
   category?: string | null;
+  unit?: string | null;
+  /**
+   * Từ v3.6.0, lịch sử giá chính thức được lưu ở Lịch sử giá dịch vụ.
+   */
   insurancePrice?: number | null;
+  /**
+   * Giữ lại để không mất dữ liệu cũ; giá có hiệu lực lấy từ Lịch sử giá dịch vụ.
+   */
   price?: number | null;
   note?: string | null;
   active?: boolean | null;
@@ -662,7 +1160,27 @@ export interface Service {
   createdAt: string;
 }
 /**
- * Quản lý thông báo lịch tiêm chung, các đợt tiêm và danh mục vắc xin.
+ * Lưu lịch sử giá theo thời gian hiệu lực. Không ghi đè lịch sử khi có quyết định giá mới.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "servicePrices".
+ */
+export interface ServicePrice {
+  id: number;
+  service: number | Service;
+  insurancePrice?: number | null;
+  servicePrice?: number | null;
+  decisionNo?: string | null;
+  effectiveFrom: string;
+  effectiveTo?: string | null;
+  sourceFileName?: string | null;
+  note?: string | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Dữ liệu tương thích phiên bản cũ. Không nhập mới. Hãy dùng Lịch tiêm chủng và Danh mục vắc xin.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "vaccinations".
@@ -687,17 +1205,8 @@ export interface Vaccination {
     };
     [k: string]: unknown;
   } | null;
-  /**
-   * Tải ảnh mới hoặc chọn lại ảnh đã có trong thư viện.
-   */
   announcementImage?: (number | null) | Media;
-  /**
-   * Tải tệp mới hoặc chọn lại tệp đã có trong thư viện.
-   */
   announcementFile?: (number | null) | Media;
-  /**
-   * Tải ảnh mới hoặc chọn lại ảnh đã có trong thư viện.
-   */
   campaignImage?: (number | null) | Media;
   target?: string | null;
   date?: string | null;
@@ -709,13 +1218,7 @@ export interface Vaccination {
   origin?: string | null;
   prevents?: string | null;
   ageGroup?: string | null;
-  /**
-   * Tải ảnh mới hoặc chọn lại ảnh đã có trong thư viện.
-   */
   vaccineImage?: (number | null) | Media;
-  /**
-   * Nội dung chỉ hiện khi người xem bấm Xem chi tiết.
-   */
   detailContent?: {
     root: {
       type: string;
@@ -740,6 +1243,115 @@ export interface Vaccination {
   createdAt: string;
 }
 /**
+ * Ưu tiên đăng ảnh/tệp lịch chính thức; có thể khai báo ngày, đối tượng và địa điểm để tra cứu.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vaccinationSchedules".
+ */
+export interface VaccinationSchedule {
+  id: number;
+  title: string;
+  scheduleKind?: ('official' | 'adjustment' | 'announcement') | null;
+  summary?: string | null;
+  /**
+   * Không bắt buộc. Nếu bỏ trống website dùng ảnh mặc định Lịch tiêm chủng / Tiêm ngừa trong Admin → Ảnh mặc định nội dung.
+   */
+  scheduleImage?: (number | null) | Media;
+  /**
+   * Có thể đính kèm PDF/Word/Excel.
+   */
+  scheduleFile?: (number | null) | Media;
+  detailContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  target?: string | null;
+  date?: string | null;
+  endDate?: string | null;
+  startTime?: string | null;
+  endTime?: string | null;
+  location?: string | null;
+  registrationUrl?: string | null;
+  note?: string | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vaccines".
+ */
+export interface Vaccine {
+  id: number;
+  code?: string | null;
+  name: string;
+  /**
+   * Tự động tạo từ Tên khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  summary?: string | null;
+  manufacturer?: string | null;
+  origin?: string | null;
+  prevents?: string | null;
+  ageGroup?: string | null;
+  /**
+   * Không bắt buộc. Nếu bỏ trống website dùng ảnh mặc định Lịch tiêm chủng / Tiêm ngừa.
+   */
+  image?: (number | null) | Media;
+  detailContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  availability?: ('available' | 'coming' | 'unavailable') | null;
+  registrationUrl?: string | null;
+  note?: string | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vaccinePrices".
+ */
+export interface VaccinePrice {
+  id: number;
+  vaccine: number | Vaccine;
+  price: number;
+  decisionNo?: string | null;
+  effectiveFrom: string;
+  effectiveTo?: string | null;
+  note?: string | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "recruitment".
  */
@@ -747,9 +1359,18 @@ export interface Recruitment {
   id: number;
   title: string;
   /**
-   * Tự động tạo từ Tiêu đề.
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
+  /**
+   * Không bắt buộc; khi trống dùng ảnh mặc định của Tuyển dụng.
+   */
+  cover?: (number | null) | Media;
+  excerpt?: string | null;
+  /**
+   * Chọn chuyên mục quản lý tập trung. Trường chuyên mục cũ vẫn được giữ để tương thích dữ liệu hiện có.
+   */
+  categoryRef?: (number | null) | Category;
   department?: (number | null) | Department;
   quantity?: number | null;
   content: {
@@ -767,19 +1388,44 @@ export interface Recruitment {
     };
     [k: string]: unknown;
   };
+  publishedAt?: string | null;
   deadlineAt?: string | null;
   /**
-   * Tải tệp mới hoặc chọn lại tệp đã có trong Thư viện Tệp & Hình ảnh.
+   * Giữ để các tin tuyển dụng cũ không mất tệp. Bài mới dùng danh sách Tệp đính kèm bên dưới.
    */
   attachment?: (number | null) | Media;
+  attachments?:
+    | {
+        /**
+         * Website tự động sử dụng tên và định dạng của tệp đã tải lên.
+         */
+        label?: string | null;
+        /**
+         * Chọn “Tạo mới” để tải tệp lên hoặc “Chọn từ thư viện” để dùng lại tệp đã có.
+         */
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
+   */
+  workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
    * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
    */
   seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
 }
 /**
@@ -790,7 +1436,7 @@ export interface Page {
   id: number;
   title: string;
   /**
-   * Tự động tạo từ Tiêu đề.
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
   layout?:
@@ -896,14 +1542,25 @@ export interface Page {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
+   */
+  workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
    * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
    */
   seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
 }
 /**
@@ -939,6 +1596,588 @@ export interface Consultation {
    * Không hiển thị cho người dùng.
    */
   internalNote?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedbackCategories".
+ */
+export interface FeedbackCategory {
+  id: number;
+  name: string;
+  department?: (number | null) | Department;
+  defaultPriority?: ('low' | 'normal' | 'high' | 'urgent') | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedbackCases".
+ */
+export interface FeedbackCase {
+  id: number;
+  code: string;
+  name: string;
+  phone: string;
+  email?: string | null;
+  category?: (number | null) | FeedbackCategory;
+  subject: string;
+  message: string;
+  allowContact?: boolean | null;
+  priority?: ('low' | 'normal' | 'high' | 'urgent') | null;
+  status: 'new' | 'assigned' | 'processing' | 'waiting' | 'resolved' | 'closed';
+  department?: (number | null) | Department;
+  assignee?: (number | null) | User;
+  dueAt?: string | null;
+  publicResponse?: string | null;
+  closedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedbackActions".
+ */
+export interface FeedbackAction {
+  id: number;
+  case: number | FeedbackCase;
+  action: 'received' | 'assigned' | 'status' | 'note' | 'response' | 'closed';
+  note?: string | null;
+  fromStatus?: string | null;
+  toStatus?: string | null;
+  performedBy?: (number | null) | User;
+  public?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Thêm từng câu hỏi hoặc dùng khung nhập Excel phía trên danh sách để cập nhật nhanh hàng loạt.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  category?: string | null;
+  /**
+   * Ngăn cách bằng dấu phẩy.
+   */
+  keywords?: string | null;
+  active?: boolean | null;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms".
+ */
+export interface Form {
+  id: number;
+  title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  description?: string | null;
+  active?: boolean | null;
+  successMessage?: string | null;
+  fields?:
+    | {
+        name: string;
+        label: string;
+        type: 'text' | 'textarea' | 'email' | 'phone' | 'number' | 'date' | 'select' | 'checkbox';
+        required?: boolean | null;
+        /**
+         * Mỗi lựa chọn một dòng, chỉ dùng cho kiểu Lựa chọn.
+         */
+        options?: string | null;
+        placeholder?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "formSubmissions".
+ */
+export interface FormSubmission {
+  id: number;
+  publicCode: string;
+  form: number | Form;
+  data:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  status?: ('new' | 'processing' | 'done' | 'closed') | null;
+  internalNote?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Thêm từng kịch bản hoặc dùng khung nhập Excel phía trên danh sách để cập nhật nhanh hàng loạt.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chatbotIntents".
+ */
+export interface ChatbotIntent {
+  id: number;
+  name: string;
+  phrases?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  answer: string;
+  linkLabel?: string | null;
+  linkUrl?: string | null;
+  openNewTab?: boolean | null;
+  priority?: number | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chatbotConversations".
+ */
+export interface ChatbotConversation {
+  id: number;
+  sessionId: string;
+  messages?:
+    | {
+        from?: ('user' | 'bot' | 'staff') | null;
+        text?: string | null;
+        at?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  lastMessageAt?: string | null;
+  handoffRequested?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chatbotUnanswered".
+ */
+export interface ChatbotUnanswered {
+  id: number;
+  question: string;
+  normalizedQuestion: string;
+  count?: number | null;
+  lastAskedAt?: string | null;
+  resolved?: boolean | null;
+  intent?: (number | null) | ChatbotIntent;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-templates".
+ */
+export interface SurveyTemplate {
+  id: number;
+  title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  description?: string | null;
+  active?: boolean | null;
+  currentVersion?: (number | null) | SurveyTemplateVersion;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-template-versions".
+ */
+export interface SurveyTemplateVersion {
+  id: number;
+  template: number | SurveyTemplate;
+  versionName: string;
+  status?: ('draft' | 'locked') | null;
+  lockedAt?: string | null;
+  questions?: (number | SurveyQuestion)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-questions".
+ */
+export interface SurveyQuestion {
+  id: number;
+  code: string;
+  question: string;
+  type: 'rating5' | 'single' | 'multiple' | 'yesno' | 'text';
+  required?: boolean | null;
+  options?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-campaigns".
+ */
+export interface SurveyCampaign {
+  id: number;
+  title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  templateVersion: number | SurveyTemplateVersion;
+  department?: (number | null) | Department;
+  startAt: string;
+  endAt: string;
+  active?: boolean | null;
+  anonymous?: boolean | null;
+  publicNote?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-codes".
+ */
+export interface SurveyCode {
+  id: number;
+  code: string;
+  campaign: number | SurveyCampaign;
+  department?: (number | null) | Department;
+  maxUses?: number | null;
+  usedCount?: number | null;
+  expiresAt?: string | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-responses".
+ */
+export interface SurveyResponse {
+  id: number;
+  responseCode: string;
+  campaign: number | SurveyCampaign;
+  templateVersion: number | SurveyTemplateVersion;
+  surveyCode?: (number | null) | SurveyCode;
+  department?: (number | null) | Department;
+  submittedAt: string;
+  overallScore?: number | null;
+  comment?: string | null;
+  locked?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-answers".
+ */
+export interface SurveyAnswer {
+  id: number;
+  response: number | SurveyResponse;
+  question: number | SurveyQuestion;
+  questionSnapshot: string;
+  valueText?: string | null;
+  score?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-statistics".
+ */
+export interface SurveyStatistic {
+  id: number;
+  label: string;
+  campaign: number | SurveyCampaign;
+  department?: (number | null) | Department;
+  responseCount?: number | null;
+  averageScore?: number | null;
+  satisfactionRate?: number | null;
+  calculatedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Được tạo tự động khi đổi slug của nội dung đã xuất bản. Có thể thêm thủ công khi cần.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects".
+ */
+export interface Redirect {
+  id: number;
+  fromPath: string;
+  toPath: string;
+  sourceCollection?: string | null;
+  sourceId?: string | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Tạo module nội dung tái sử dụng để chèn vào Trang chủ mà không hard-code giao diện.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dynamic-modules".
+ */
+export interface DynamicModule {
+  id: number;
+  title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  eyebrow?: string | null;
+  description?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  image?: (number | null) | Media;
+  buttonLabel?: string | null;
+  buttonUrl?: string | null;
+  active?: boolean | null;
+  /**
+   * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
+   */
+  workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  /**
+   * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
+   */
+  seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Các mục này được tạo tự động khi Menu chọn “Tự tạo MỤC NỘI DUNG mới”. Ví dụ tạo Menu Chuyển đổi số thì Admin sẽ có mục Chuyển đổi số để quản lý bài viết.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "content-sections".
+ */
+export interface ContentSection {
+  id: number;
+  title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  description?: string | null;
+  /**
+   * Dùng khi bài viết trong mục này không chọn ảnh đại diện.
+   */
+  defaultImage?: (number | null) | Media;
+  active?: boolean | null;
+  /**
+   * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
+   */
+  workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  /**
+   * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
+   */
+  seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Đăng bài cho các mục nội dung mở rộng được tạo từ Menu, ví dụ Chuyển đổi số.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-posts".
+ */
+export interface CustomPost {
+  id: number;
+  section: number | ContentSection;
+  title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  /**
+   * Không bắt buộc; khi trống dùng ảnh mặc định của mục nội dung.
+   */
+  cover?: (number | null) | Media;
+  excerpt?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  attachments?:
+    | {
+        /**
+         * Website tự động sử dụng tên và định dạng của tệp đã tải lên.
+         */
+        label?: string | null;
+        /**
+         * Chọn “Tạo mới” để tải tệp lên hoặc “Chọn từ thư viện” để dùng lại tệp đã có.
+         */
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  publishedAt?: string | null;
+  pinned?: boolean | null;
+  /**
+   * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
+   */
+  workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  /**
+   * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
+   */
+  seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "importJobs".
+ */
+export interface ImportJob {
+  id: number;
+  module: 'services' | 'vaccines';
+  fileName: string;
+  status: 'previewed' | 'completed' | 'failed' | 'rolled-back';
+  createdCount?: number | null;
+  updatedCount?: number | null;
+  skippedCount?: number | null;
+  errorCount?: number | null;
+  errors?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  importedBy?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Audit Log bất biến. Không cho sửa hoặc xóa từ Admin/API thông thường.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-logs".
+ */
+export interface AuditLog {
+  id: number;
+  summary: string;
+  action: 'create' | 'update' | 'delete' | 'global-update' | 'login' | 'other';
+  resource: string;
+  documentId?: string | null;
+  actor?: (number | null) | User;
+  actorEmail?: string | null;
+  actorRole?: string | null;
+  ip?: string | null;
+  userAgent?: string | null;
+  changedFields?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  metadata?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -995,6 +2234,10 @@ export interface PayloadLockedDocument {
         value: number | Department;
       } | null)
     | ({
+        relationTo: 'specialties';
+        value: number | Specialty;
+      } | null)
+    | ({
         relationTo: 'doctors';
         value: number | Doctor;
       } | null)
@@ -1007,8 +2250,24 @@ export interface PayloadLockedDocument {
         value: number | Service;
       } | null)
     | ({
+        relationTo: 'servicePrices';
+        value: number | ServicePrice;
+      } | null)
+    | ({
         relationTo: 'vaccinations';
         value: number | Vaccination;
+      } | null)
+    | ({
+        relationTo: 'vaccinationSchedules';
+        value: number | VaccinationSchedule;
+      } | null)
+    | ({
+        relationTo: 'vaccines';
+        value: number | Vaccine;
+      } | null)
+    | ({
+        relationTo: 'vaccinePrices';
+        value: number | VaccinePrice;
       } | null)
     | ({
         relationTo: 'recruitment';
@@ -1019,12 +2278,108 @@ export interface PayloadLockedDocument {
         value: number | Page;
       } | null)
     | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
         relationTo: 'feedback';
         value: number | Feedback;
       } | null)
     | ({
         relationTo: 'consultations';
         value: number | Consultation;
+      } | null)
+    | ({
+        relationTo: 'feedbackCategories';
+        value: number | FeedbackCategory;
+      } | null)
+    | ({
+        relationTo: 'feedbackCases';
+        value: number | FeedbackCase;
+      } | null)
+    | ({
+        relationTo: 'feedbackActions';
+        value: number | FeedbackAction;
+      } | null)
+    | ({
+        relationTo: 'faqs';
+        value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'forms';
+        value: number | Form;
+      } | null)
+    | ({
+        relationTo: 'formSubmissions';
+        value: number | FormSubmission;
+      } | null)
+    | ({
+        relationTo: 'chatbotIntents';
+        value: number | ChatbotIntent;
+      } | null)
+    | ({
+        relationTo: 'chatbotConversations';
+        value: number | ChatbotConversation;
+      } | null)
+    | ({
+        relationTo: 'chatbotUnanswered';
+        value: number | ChatbotUnanswered;
+      } | null)
+    | ({
+        relationTo: 'survey-templates';
+        value: number | SurveyTemplate;
+      } | null)
+    | ({
+        relationTo: 'survey-template-versions';
+        value: number | SurveyTemplateVersion;
+      } | null)
+    | ({
+        relationTo: 'survey-questions';
+        value: number | SurveyQuestion;
+      } | null)
+    | ({
+        relationTo: 'survey-campaigns';
+        value: number | SurveyCampaign;
+      } | null)
+    | ({
+        relationTo: 'survey-codes';
+        value: number | SurveyCode;
+      } | null)
+    | ({
+        relationTo: 'survey-responses';
+        value: number | SurveyResponse;
+      } | null)
+    | ({
+        relationTo: 'survey-answers';
+        value: number | SurveyAnswer;
+      } | null)
+    | ({
+        relationTo: 'survey-statistics';
+        value: number | SurveyStatistic;
+      } | null)
+    | ({
+        relationTo: 'redirects';
+        value: number | Redirect;
+      } | null)
+    | ({
+        relationTo: 'dynamic-modules';
+        value: number | DynamicModule;
+      } | null)
+    | ({
+        relationTo: 'content-sections';
+        value: number | ContentSection;
+      } | null)
+    | ({
+        relationTo: 'custom-posts';
+        value: number | CustomPost;
+      } | null)
+    | ({
+        relationTo: 'importJobs';
+        value: number | ImportJob;
+      } | null)
+    | ({
+        relationTo: 'audit-logs';
+        value: number | AuditLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1075,6 +2430,16 @@ export interface PayloadMigration {
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
   role?: T;
+  department?: T;
+  status?: T;
+  permissions?:
+    | T
+    | {
+        module?: T;
+        actions?: T;
+        id?: T;
+      };
+  lastLoginAt?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1097,10 +2462,17 @@ export interface UsersSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  originalFilename?: T;
   alt?: T;
   caption?: T;
+  group?: T;
+  accessLevel?: T;
+  uploadedBy?: T;
+  hash?: T;
+  duplicateOf?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   url?: T;
   thumbnailURL?: T;
   filename?: T;
@@ -1123,7 +2495,37 @@ export interface MediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        small?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
         card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        medium?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        large?:
           | T
           | {
               url?: T;
@@ -1155,6 +2557,7 @@ export interface NewsSelect<T extends boolean = true> {
   excerpt?: T;
   cover?: T;
   content?: T;
+  categoryRef?: T;
   category?: T;
   attachments?:
     | T
@@ -1166,11 +2569,16 @@ export interface NewsSelect<T extends boolean = true> {
   featured?: T;
   pinned?: T;
   publishedAt?: T;
+  workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -1183,6 +2591,7 @@ export interface NoticesSelect<T extends boolean = true> {
   cover?: T;
   excerpt?: T;
   content?: T;
+  categoryRef?: T;
   level?: T;
   attachments?:
     | T
@@ -1191,15 +2600,21 @@ export interface NoticesSelect<T extends boolean = true> {
         file?: T;
         id?: T;
       };
+  publishedAt?: T;
   startAt?: T;
   expireAt?: T;
   pinned?: T;
   showOnHome?: T;
+  workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -1212,6 +2627,7 @@ export interface ProcurementSelect<T extends boolean = true> {
   cover?: T;
   excerpt?: T;
   referenceCode?: T;
+  categoryRef?: T;
   type?: T;
   content?: T;
   publishedAt?: T;
@@ -1233,11 +2649,16 @@ export interface ProcurementSelect<T extends boolean = true> {
         note?: T;
         id?: T;
       };
+  workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -1246,13 +2667,26 @@ export interface ProcurementSelect<T extends boolean = true> {
  */
 export interface DocumentsSelect<T extends boolean = true> {
   title?: T;
+  slug?: T;
   number?: T;
+  categoryRef?: T;
   category?: T;
+  issuer?: T;
   issuedAt?: T;
+  effectiveAt?: T;
   year?: T;
+  summary?: T;
+  cover?: T;
   file?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1261,18 +2695,68 @@ export interface DocumentsSelect<T extends boolean = true> {
 export interface DepartmentsSelect<T extends boolean = true> {
   name?: T;
   kind?: T;
+  unitType?: T;
   slug?: T;
   summary?: T;
   content?: T;
+  functions?: T;
+  activities?: T;
+  achievements?: T;
   leader?: T;
+  deputyLeaders?:
+    | T
+    | {
+        name?: T;
+        title?: T;
+        id?: T;
+      };
   phone?: T;
+  email?: T;
   location?: T;
   cover?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  order?: T;
+  active?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "specialties_select".
+ */
+export interface SpecialtiesSelect<T extends boolean = true> {
+  useDepartmentName?: T;
+  department?: T;
+  name?: T;
+  slug?: T;
+  summary?: T;
+  content?: T;
+  cover?: T;
+  services?: T;
+  order?: T;
+  active?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1283,17 +2767,29 @@ export interface DoctorsSelect<T extends boolean = true> {
   slug?: T;
   title?: T;
   degree?: T;
+  professionalTitle?: T;
   avatar?: T;
   department?: T;
+  specialtyRef?: T;
   specialty?: T;
+  licenseNumber?: T;
   bio?: T;
+  expertise?: T;
   experience?: T;
   education?: T;
+  achievements?: T;
+  order?: T;
+  featured?: T;
+  active?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1325,8 +2821,16 @@ export interface SchedulesSelect<T extends boolean = true> {
         note?: T;
         id?: T;
       };
+  scheduleType?: T;
   scheduleImage?: T;
   scheduleFile?: T;
+  attachmentFiles?:
+    | T
+    | {
+        file?: T;
+        label?: T;
+        id?: T;
+      };
   validFrom?: T;
   validTo?: T;
   note?: T;
@@ -1343,8 +2847,26 @@ export interface ServicesSelect<T extends boolean = true> {
   code?: T;
   name?: T;
   category?: T;
+  unit?: T;
   insurancePrice?: T;
   price?: T;
+  note?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "servicePrices_select".
+ */
+export interface ServicePricesSelect<T extends boolean = true> {
+  service?: T;
+  insurancePrice?: T;
+  servicePrice?: T;
+  decisionNo?: T;
+  effectiveFrom?: T;
+  effectiveTo?: T;
+  sourceFileName?: T;
   note?: T;
   active?: T;
   updatedAt?: T;
@@ -1384,21 +2906,101 @@ export interface VaccinationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vaccinationSchedules_select".
+ */
+export interface VaccinationSchedulesSelect<T extends boolean = true> {
+  title?: T;
+  scheduleKind?: T;
+  summary?: T;
+  scheduleImage?: T;
+  scheduleFile?: T;
+  detailContent?: T;
+  target?: T;
+  date?: T;
+  endDate?: T;
+  startTime?: T;
+  endTime?: T;
+  location?: T;
+  registrationUrl?: T;
+  note?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vaccines_select".
+ */
+export interface VaccinesSelect<T extends boolean = true> {
+  code?: T;
+  name?: T;
+  slug?: T;
+  summary?: T;
+  manufacturer?: T;
+  origin?: T;
+  prevents?: T;
+  ageGroup?: T;
+  image?: T;
+  detailContent?: T;
+  availability?: T;
+  registrationUrl?: T;
+  note?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vaccinePrices_select".
+ */
+export interface VaccinePricesSelect<T extends boolean = true> {
+  vaccine?: T;
+  price?: T;
+  decisionNo?: T;
+  effectiveFrom?: T;
+  effectiveTo?: T;
+  note?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "recruitment_select".
  */
 export interface RecruitmentSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  cover?: T;
+  excerpt?: T;
+  categoryRef?: T;
   department?: T;
   quantity?: T;
   content?: T;
+  publishedAt?: T;
   deadlineAt?: T;
   attachment?: T;
+  attachments?:
+    | T
+    | {
+        label?: T;
+        file?: T;
+        id?: T;
+      };
+  workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -1473,12 +3075,32 @@ export interface PagesSelect<T extends boolean = true> {
         file?: T;
         id?: T;
       };
+  workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  scope?: T;
+  description?: T;
+  order?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1505,6 +3127,414 @@ export interface ConsultationsSelect<T extends boolean = true> {
   staffReply?: T;
   answeredAt?: T;
   internalNote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedbackCategories_select".
+ */
+export interface FeedbackCategoriesSelect<T extends boolean = true> {
+  name?: T;
+  department?: T;
+  defaultPriority?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedbackCases_select".
+ */
+export interface FeedbackCasesSelect<T extends boolean = true> {
+  code?: T;
+  name?: T;
+  phone?: T;
+  email?: T;
+  category?: T;
+  subject?: T;
+  message?: T;
+  allowContact?: T;
+  priority?: T;
+  status?: T;
+  department?: T;
+  assignee?: T;
+  dueAt?: T;
+  publicResponse?: T;
+  closedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedbackActions_select".
+ */
+export interface FeedbackActionsSelect<T extends boolean = true> {
+  case?: T;
+  action?: T;
+  note?: T;
+  fromStatus?: T;
+  toStatus?: T;
+  performedBy?: T;
+  public?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs_select".
+ */
+export interface FaqsSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  category?: T;
+  keywords?: T;
+  active?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms_select".
+ */
+export interface FormsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  active?: T;
+  successMessage?: T;
+  fields?:
+    | T
+    | {
+        name?: T;
+        label?: T;
+        type?: T;
+        required?: T;
+        options?: T;
+        placeholder?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "formSubmissions_select".
+ */
+export interface FormSubmissionsSelect<T extends boolean = true> {
+  publicCode?: T;
+  form?: T;
+  data?: T;
+  status?: T;
+  internalNote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chatbotIntents_select".
+ */
+export interface ChatbotIntentsSelect<T extends boolean = true> {
+  name?: T;
+  phrases?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  answer?: T;
+  linkLabel?: T;
+  linkUrl?: T;
+  openNewTab?: T;
+  priority?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chatbotConversations_select".
+ */
+export interface ChatbotConversationsSelect<T extends boolean = true> {
+  sessionId?: T;
+  messages?:
+    | T
+    | {
+        from?: T;
+        text?: T;
+        at?: T;
+        id?: T;
+      };
+  lastMessageAt?: T;
+  handoffRequested?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chatbotUnanswered_select".
+ */
+export interface ChatbotUnansweredSelect<T extends boolean = true> {
+  question?: T;
+  normalizedQuestion?: T;
+  count?: T;
+  lastAskedAt?: T;
+  resolved?: T;
+  intent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-templates_select".
+ */
+export interface SurveyTemplatesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  active?: T;
+  currentVersion?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-template-versions_select".
+ */
+export interface SurveyTemplateVersionsSelect<T extends boolean = true> {
+  template?: T;
+  versionName?: T;
+  status?: T;
+  lockedAt?: T;
+  questions?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-questions_select".
+ */
+export interface SurveyQuestionsSelect<T extends boolean = true> {
+  code?: T;
+  question?: T;
+  type?: T;
+  required?: T;
+  options?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-campaigns_select".
+ */
+export interface SurveyCampaignsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  templateVersion?: T;
+  department?: T;
+  startAt?: T;
+  endAt?: T;
+  active?: T;
+  anonymous?: T;
+  publicNote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-codes_select".
+ */
+export interface SurveyCodesSelect<T extends boolean = true> {
+  code?: T;
+  campaign?: T;
+  department?: T;
+  maxUses?: T;
+  usedCount?: T;
+  expiresAt?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-responses_select".
+ */
+export interface SurveyResponsesSelect<T extends boolean = true> {
+  responseCode?: T;
+  campaign?: T;
+  templateVersion?: T;
+  surveyCode?: T;
+  department?: T;
+  submittedAt?: T;
+  overallScore?: T;
+  comment?: T;
+  locked?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-answers_select".
+ */
+export interface SurveyAnswersSelect<T extends boolean = true> {
+  response?: T;
+  question?: T;
+  questionSnapshot?: T;
+  valueText?: T;
+  score?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-statistics_select".
+ */
+export interface SurveyStatisticsSelect<T extends boolean = true> {
+  label?: T;
+  campaign?: T;
+  department?: T;
+  responseCount?: T;
+  averageScore?: T;
+  satisfactionRate?: T;
+  calculatedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "redirects_select".
+ */
+export interface RedirectsSelect<T extends boolean = true> {
+  fromPath?: T;
+  toPath?: T;
+  sourceCollection?: T;
+  sourceId?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dynamic-modules_select".
+ */
+export interface DynamicModulesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  eyebrow?: T;
+  description?: T;
+  content?: T;
+  image?: T;
+  buttonLabel?: T;
+  buttonUrl?: T;
+  active?: T;
+  workflowState?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "content-sections_select".
+ */
+export interface ContentSectionsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  defaultImage?: T;
+  active?: T;
+  workflowState?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "custom-posts_select".
+ */
+export interface CustomPostsSelect<T extends boolean = true> {
+  section?: T;
+  title?: T;
+  slug?: T;
+  cover?: T;
+  excerpt?: T;
+  content?: T;
+  attachments?:
+    | T
+    | {
+        label?: T;
+        file?: T;
+        id?: T;
+      };
+  publishedAt?: T;
+  pinned?: T;
+  workflowState?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "importJobs_select".
+ */
+export interface ImportJobsSelect<T extends boolean = true> {
+  module?: T;
+  fileName?: T;
+  status?: T;
+  createdCount?: T;
+  updatedCount?: T;
+  skippedCount?: T;
+  errorCount?: T;
+  errors?: T;
+  importedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-logs_select".
+ */
+export interface AuditLogsSelect<T extends boolean = true> {
+  summary?: T;
+  action?: T;
+  resource?: T;
+  documentId?: T;
+  actor?: T;
+  actorEmail?: T;
+  actorRole?: T;
+  ip?: T;
+  userAgent?: T;
+  changedFields?: T;
+  metadata?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1556,7 +3586,25 @@ export interface SiteSetting {
   id: number;
   hospitalName: string;
   /**
-   * Thay đổi kích thước nhận diện bệnh viện trên thanh menu đầu trang.
+   * Logo chính dùng đồng bộ tại Header và Footer. Website hiển thị trực tiếp file gốc, không dùng ảnh thumbnail. Nên dùng PNG nền trong suốt từ 800×800 px trở lên để chữ và chi tiết logo rõ nét.
+   */
+  logo?: (number | null) | Media;
+  headerSlogan?: string | null;
+  headerShowSlogan?: boolean | null;
+  headerShowUtilityBar?: boolean | null;
+  headerShowSearch?: boolean | null;
+  headerShowContactCards?: boolean | null;
+  headerStickyMenu?: boolean | null;
+  headerUtilityAppearance?: {
+    timePrefix?: string | null;
+    showCalendarIcon?: boolean | null;
+    background?: string | null;
+    timeColor?: string | null;
+    timeFontSize?: number | null;
+    timeFontWeight?: string | null;
+  };
+  /**
+   * Logo được chọn ở trường Logo bệnh viện phía trên. Tại đây chỉnh hiển thị, kích thước, màu chữ và ảnh/màu nền của vùng nhận diện.
    */
   headerBrandAppearance?: {
     logoSize?: number | null;
@@ -1578,7 +3626,65 @@ export interface SiteSetting {
      * Nhập mã màu, ví dụ: #0878D1
      */
     subtitleColor?: string | null;
+    showLogo?: boolean | null;
+    showHospitalName?: boolean | null;
+    /**
+     * Có thể chọn ảnh đã tải lên. Để trống sẽ dùng màu nền.
+     */
+    backgroundImage?: (number | null) | Media;
+    backgroundSize?: string | null;
+    backgroundPosition?: string | null;
+    backgroundOverlay?: string | null;
+    minHeight?: number | null;
   };
+  /**
+   * Quản lý duy nhất các ô Cấp cứu, Tổng đài hỗ trợ và ô liên hệ nhanh trên Header. Mỗi ô có thể đổi icon mặc định hoặc tải icon riêng.
+   */
+  headerContactCards?:
+    | {
+        visible?: boolean | null;
+        title: string;
+        text: string;
+        href?: string | null;
+        extraText?: string | null;
+        /**
+         * phone, emergency, headset, calendar, heart, info hoặc custom
+         */
+        iconType?: string | null;
+        /**
+         * Nếu chọn ảnh tại đây, ảnh này sẽ thay icon mặc định của ô liên hệ.
+         */
+        customIcon?: (number | null) | Media;
+        background?: string | null;
+        borderColor?: string | null;
+        titleColor?: string | null;
+        textColor?: string | null;
+        iconColor?: string | null;
+        iconBackground?: string | null;
+        extraTextColor?: string | null;
+        titleFontSize?: number | null;
+        textFontSize?: number | null;
+        fontWeight?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Đây là nơi quản lý DUY NHẤT Facebook, Zalo, YouTube, TikTok trên giao diện. Header và Footer dùng chung danh sách này. Có thể tải icon riêng cho từng mạng.
+   */
+  headerSocialLinks?:
+    | {
+        visible?: boolean | null;
+        platform: string;
+        label?: string | null;
+        url: string;
+        /**
+         * Để trống sẽ dùng icon chuẩn tích hợp. Chọn ảnh để thay icon Facebook/Zalo/YouTube/TikTok bằng icon riêng.
+         */
+        customIcon?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  tiktokUrl?: string | null;
   /**
    * Nội dung này chạy ngang ngay dưới menu. Để trống sẽ dùng thông báo đặt khám mặc định của bệnh viện.
    */
@@ -1599,10 +3705,6 @@ export interface SiteSetting {
      */
     duration?: number | null;
   };
-  /**
-   * Tải logo mới hoặc chọn lại logo đã có trong Thư viện Tệp & Hình ảnh.
-   */
-  logo?: (number | null) | Media;
   /**
    * Tải banner mới hoặc chọn lại banner đã có trong thư viện. Nếu chưa chọn, website dùng banner có sẵn trong hệ thống.
    */
@@ -1718,7 +3820,8 @@ export interface Navigation {
         /**
          * Ví dụ: chọn “Gắn cả mục” để menu Thông báo mở toàn bộ mục Thông báo, không phải một bài thông báo.
          */
-        linkType: 'preset' | 'reference' | 'url' | 'custom';
+        linkType:
+          'preset' | 'reference' | 'auto-page' | 'auto-section' | 'content-section' | 'url' | 'custom' | 'parent';
         /**
          * Chỉ dùng khi mục cần gắn chưa có trong danh sách mục website.
          */
@@ -1731,7 +3834,8 @@ export interface Navigation {
               | '/'
               | '/gioi-thieu'
               | '/so-do-to-chuc'
-              | '/don-vi'
+              | '/khoa-phong'
+              | '/chuyen-khoa'
               | '/bac-si'
               | '/tin-tuc'
               | '/thong-bao'
@@ -1766,14 +3870,48 @@ export interface Navigation {
               value: number | Procurement;
             } | null)
           | ({
+              relationTo: 'recruitment';
+              value: number | Recruitment;
+            } | null)
+          | ({
+              relationTo: 'documents';
+              value: number | Document;
+            } | null)
+          | ({
               relationTo: 'departments';
               value: number | Department;
+            } | null)
+          | ({
+              relationTo: 'specialties';
+              value: number | Specialty;
             } | null)
           | ({
               relationTo: 'doctors';
               value: number | Doctor;
             } | null);
+        /**
+         * Chọn mục đã có, ví dụ Chuyển đổi số. Menu sẽ tự lấy đúng liên kết của mục.
+         */
+        contentSection?: (number | null) | ContentSection;
+        /**
+         * Để trống sẽ dùng Tên hiển thị của menu. Ví dụ menu “Chuyển đổi số” sẽ tạo mục nội dung “Chuyển đổi số”.
+         */
+        newSectionTitle?: string | null;
+        /**
+         * Để trống hệ thống tự sinh từ tên. Nếu đã có cùng slug thì dùng lại mục đó, không tạo trùng.
+         */
+        newSectionSlug?: string | null;
+        /**
+         * Để trống sẽ dùng Tên hiển thị của menu. Hệ thống tự sinh slug; nếu slug đã tồn tại thì dùng lại đúng trang đó.
+         */
+        newPageTitle?: string | null;
+        newPageSlug?: string | null;
         customUrl?: string | null;
+        /**
+         * Tên/icon ngắn dùng cho menu mở rộng; để trống nếu không cần.
+         */
+        icon?: string | null;
+        description?: string | null;
         openInNewTab?: boolean | null;
         visible?: boolean | null;
         children?:
@@ -1782,7 +3920,8 @@ export interface Navigation {
               /**
                * Ví dụ: chọn “Gắn cả mục” để menu Thông báo mở toàn bộ mục Thông báo, không phải một bài thông báo.
                */
-              linkType: 'preset' | 'reference' | 'url' | 'custom';
+              linkType:
+                'preset' | 'reference' | 'auto-page' | 'auto-section' | 'content-section' | 'url' | 'custom' | 'parent';
               /**
                * Chỉ dùng khi mục cần gắn chưa có trong danh sách mục website.
                */
@@ -1795,7 +3934,8 @@ export interface Navigation {
                     | '/'
                     | '/gioi-thieu'
                     | '/so-do-to-chuc'
-                    | '/don-vi'
+                    | '/khoa-phong'
+                    | '/chuyen-khoa'
                     | '/bac-si'
                     | '/tin-tuc'
                     | '/thong-bao'
@@ -1830,14 +3970,48 @@ export interface Navigation {
                     value: number | Procurement;
                   } | null)
                 | ({
+                    relationTo: 'recruitment';
+                    value: number | Recruitment;
+                  } | null)
+                | ({
+                    relationTo: 'documents';
+                    value: number | Document;
+                  } | null)
+                | ({
                     relationTo: 'departments';
                     value: number | Department;
+                  } | null)
+                | ({
+                    relationTo: 'specialties';
+                    value: number | Specialty;
                   } | null)
                 | ({
                     relationTo: 'doctors';
                     value: number | Doctor;
                   } | null);
+              /**
+               * Chọn mục đã có, ví dụ Chuyển đổi số. Menu sẽ tự lấy đúng liên kết của mục.
+               */
+              contentSection?: (number | null) | ContentSection;
+              /**
+               * Để trống sẽ dùng Tên hiển thị của menu. Ví dụ menu “Chuyển đổi số” sẽ tạo mục nội dung “Chuyển đổi số”.
+               */
+              newSectionTitle?: string | null;
+              /**
+               * Để trống hệ thống tự sinh từ tên. Nếu đã có cùng slug thì dùng lại mục đó, không tạo trùng.
+               */
+              newSectionSlug?: string | null;
+              /**
+               * Để trống sẽ dùng Tên hiển thị của menu. Hệ thống tự sinh slug; nếu slug đã tồn tại thì dùng lại đúng trang đó.
+               */
+              newPageTitle?: string | null;
+              newPageSlug?: string | null;
               customUrl?: string | null;
+              /**
+               * Tên/icon ngắn dùng cho menu mở rộng; để trống nếu không cần.
+               */
+              icon?: string | null;
+              description?: string | null;
               openInNewTab?: boolean | null;
               visible?: boolean | null;
               id?: string | null;
@@ -1846,6 +4020,187 @@ export interface Navigation {
         id?: string | null;
       }[]
     | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header".
+ */
+export interface Header {
+  id: number;
+  enabled?: boolean | null;
+  logo?: (number | null) | Media;
+  hospitalName?: string | null;
+  slogan?: string | null;
+  showSlogan?: boolean | null;
+  showUtilityBar?: boolean | null;
+  showSearch?: boolean | null;
+  showHotline?: boolean | null;
+  stickyMenu?: boolean | null;
+  utilityAppearance?: {
+    timePrefix?: string | null;
+    showCalendarIcon?: boolean | null;
+    background?: string | null;
+    timeBackground?: string | null;
+    timeColor?: string | null;
+    timeFontSize?: number | null;
+    timeFontWeight?: ('600' | '700' | '800' | '900') | null;
+  };
+  /**
+   * Nếu chưa tạo ô nào, hệ thống vẫn dùng 2 ô Cấp cứu và Tổng đài hiện tại để không làm mất giao diện cũ.
+   */
+  contactCards?:
+    | {
+        visible?: boolean | null;
+        title: string;
+        text: string;
+        href?: string | null;
+        extraText?: string | null;
+        iconType?: ('phone' | 'emergency' | 'headset' | 'calendar' | 'heart' | 'info' | 'custom') | null;
+        customIcon?: (number | null) | Media;
+        background?: string | null;
+        borderColor?: string | null;
+        titleColor?: string | null;
+        textColor?: string | null;
+        extraTextColor?: string | null;
+        iconColor?: string | null;
+        iconBackground?: string | null;
+        titleFontSize?: number | null;
+        textFontSize?: number | null;
+        fontWeight?: ('600' | '700' | '800' | '900') | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Quản lý toàn bộ nội dung Footer. Có thể ẩn/hiện từng thông tin, thêm/bớt cột và từng liên kết mà không cần sửa code.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer".
+ */
+export interface Footer {
+  id: number;
+  enabled?: boolean | null;
+  brandOptions?: {
+    showLogo?: boolean | null;
+    showHospitalName?: boolean | null;
+    showAddress?: boolean | null;
+    showPhone?: boolean | null;
+    showEmergencyHotline?: boolean | null;
+    showEmail?: boolean | null;
+    showWorkingHours?: boolean | null;
+    showDescription?: boolean | null;
+  };
+  /**
+   * Để trống sẽ lấy mô tả Footer/Cấu hình website hiện có.
+   */
+  description?: string | null;
+  /**
+   * Kéo thả để sắp xếp. Có thể xóa toàn bộ cột nếu không cần. Mỗi cột và mỗi liên kết đều có công tắc ẩn/hiện.
+   */
+  columns?:
+    | {
+        visible?: boolean | null;
+        title: string;
+        links?:
+          | {
+              visible?: boolean | null;
+              label: string;
+              linkMode?: ('auto-page' | 'existing-page' | 'internal' | 'external') | null;
+              linkedPage?: (number | null) | Page;
+              newPageTitle?: string | null;
+              newPageSlug?: string | null;
+              url?: string | null;
+              openNewTab?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Chỉ bật/tắt hiển thị. Link và icon Facebook/Zalo/YouTube/TikTok được quản lý tại Header & Nhận diện để đồng bộ với Header.
+   */
+  showSocial?: boolean | null;
+  bottom?: {
+    showCopyright?: boolean | null;
+    copyright?: string | null;
+    showRightText?: boolean | null;
+    rightText?: string | null;
+  };
+  showMobileBar?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-settings".
+ */
+export interface ContactSetting {
+  id: number;
+  address?: string | null;
+  hotline?: string | null;
+  emergencyHotline?: string | null;
+  email?: string | null;
+  /**
+   * Hiển thị trực tiếp trên thanh thông tin đầu website, ví dụ: Thứ 2 – Thứ 6: 07:00 – 17:00.
+   */
+  workingHours?: string | null;
+  googleMapsUrl?: string | null;
+  googleMapsEmbed?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Dữ liệu tương thích cũ. Mạng xã hội hiện được quản lý tập trung tại Header & Nhận diện.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-settings".
+ */
+export interface SocialSetting {
+  id: number;
+  facebookUrl?: string | null;
+  zaloUrl?: string | null;
+  youtubeUrl?: string | null;
+  tiktokUrl?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "medpro-settings".
+ */
+export interface MedproSetting {
+  id: number;
+  enabled?: boolean | null;
+  url?: string | null;
+  label?: string | null;
+  openNewTab?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "theme-settings".
+ */
+export interface ThemeSetting {
+  id: number;
+  primaryColor?: string | null;
+  secondaryColor?: string | null;
+  accentColor?: string | null;
+  fontFamily?: ('system' | 'arial' | 'tahoma') | null;
+  /**
+   * Điều chỉnh đồng bộ cỡ chữ nội dung toàn website. Khuyến nghị 16–18 px; mặc định 16 px.
+   */
+  baseFontSize?: number | null;
+  /**
+   * Phóng riêng hệ thống chữ giao diện, không làm phóng ảnh/banner. 100% = cỡ cũ; khuyến nghị 110–120%.
+   */
+  fontScale?: number | null;
+  contentMaxWidth?: number | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1901,14 +4256,22 @@ export interface Homepage {
    */
   bannerAutoplaySeconds?: number | null;
   /**
-   * Quản lý các ô: Đặt khám chuyên khoa, theo bác sĩ, BHYT, xét nghiệm, tiêm chủng, bảng giá… Có thể kéo thả để đổi thứ tự; xóa một hàng để ẩn.
+   * Quản lý toàn bộ các ô dịch vụ nhanh. Có thể thêm/xóa, bật/tắt, kéo thả đổi thứ tự và chọn icon có sẵn hoặc hình riêng từ Media cho từng mục.
    */
   quickLinks?:
     | {
+        visible?: boolean | null;
         title: string;
         description?: string | null;
         url: string;
+        openNewTab?: boolean | null;
+        visualMode?: ('icon' | 'image') | null;
         icon?: ('calendar' | 'doctor' | 'price' | 'insurance' | 'hospital' | 'map' | 'phone' | 'document') | null;
+        /**
+         * Có thể tải PNG, JPG, WebP hoặc SVG vào Thư viện Media rồi chọn lại tại đây. Khuyên dùng ảnh/icon vuông nền trong suốt.
+         */
+        image?: (number | null) | Media;
+        imageFit?: ('contain' | 'cover') | null;
         id?: string | null;
       }[]
     | null;
@@ -1929,7 +4292,7 @@ export interface Homepage {
       }[]
     | null;
   /**
-   * Kéo thả để sắp xếp thứ tự. Có thể đổi nội dung, màu sắc, cỡ chữ, màu nền hoặc tắt từng mục.
+   * Kéo thả để sắp xếp thứ tự. Mỗi section có công tắc Hiển thị/Ẩn; khi tắt, section không xuất hiện trên website nhưng toàn bộ cấu hình vẫn được giữ lại để bật lại sau.
    */
   sections?:
     | {
@@ -1944,11 +4307,49 @@ export interface Homepage {
           | 'science'
           | 'introduction'
           | 'documents'
-          | 'custom';
+          | 'content-section'
+          | 'custom'
+          | 'dynamic-module';
+        /**
+         * Bỏ dấu chọn để ẩn section khỏi website. Nội dung và cấu hình của section vẫn được giữ nguyên trong Admin.
+         */
+        visible?: boolean | null;
         eyebrow?: string | null;
         title?: string | null;
         description?: string | null;
-        visible?: boolean | null;
+        /**
+         * Điểm tin nổi bật tự động chuyển qua Tin tức, Thông báo, Đấu thầu – Mua sắm và Lịch khám mới.
+         */
+        carouselSeconds?: number | null;
+        /**
+         * Khung ngoài luôn hiển thị 4 card trên desktop. Số này quy định tổng số nội dung được đưa vào vòng chuyển động, ví dụ 8, 12, 16, 20...
+         */
+        featuredItemLimit?: number | null;
+        /**
+         * Tải ảnh mới hoặc chọn ảnh đã có trong thư viện. Ảnh hiển thị ở giữa danh sách chuyên khoa và khối Medpro.
+         */
+        organizationImage?: (number | null) | Media;
+        /**
+         * Toàn bộ nội dung khối Medpro phía phải có thể chỉnh hoặc ẩn tại đây.
+         */
+        organizationMedpro?: {
+          enabled?: boolean | null;
+          eyebrow?: string | null;
+          title?: string | null;
+          bullet1?: string | null;
+          bullet2?: string | null;
+          bullet3?: string | null;
+          brandText?: string | null;
+          buttonLabel?: string | null;
+          /**
+           * Để trống sẽ dùng liên kết Medpro chung trong Cấu hình website.
+           */
+          buttonUrl?: string | null;
+          openNewTab?: boolean | null;
+          guideLabel?: string | null;
+          guideUrl?: string | null;
+          backgroundColor?: string | null;
+        };
         /**
          * Thêm, xóa hoặc kéo thả để sắp xếp tab. Tên tab, chuyên mục và nội dung thủ công đều có thể tự nhập; hàng để trống sẽ được bỏ qua khi hiển thị.
          */
@@ -1965,6 +4366,19 @@ export interface Homepage {
                 | {
                     title?: string | null;
                     description?: string | null;
+                    /**
+                     * Nếu chưa có trang, chọn Tự tạo trang mới. Nếu trang đã có, chọn trực tiếp để lấy đúng liên kết.
+                     */
+                    linkMode?: ('auto-page' | 'existing-page' | 'internal' | 'external') | null;
+                    linkedPage?: (number | null) | Page;
+                    /**
+                     * Để trống sẽ dùng tiêu đề nội dung. Hệ thống tự sinh slug và tự dùng trang cùng slug nếu đã tồn tại.
+                     */
+                    newPageTitle?: string | null;
+                    newPageSlug?: string | null;
+                    /**
+                     * Khi chọn Tự tạo trang hoặc Chọn trang đã có, hệ thống tự sinh trường này lúc lưu.
+                     */
                     url?: string | null;
                     image?: (number | null) | Media;
                     id?: string | null;
@@ -1974,7 +4388,7 @@ export interface Homepage {
             }[]
           | null;
         /**
-         * Tự nhập tên tab và tên nhóm đơn vị. Có thể thêm nội dung thủ công; hàng trống không làm lỗi khi lưu.
+         * Thiết lập cũ đã ngừng dùng. Trang chủ hiện lấy trực tiếp danh sách Chuyên khoa.
          */
         departmentTabs?:
           | {
@@ -1989,6 +4403,19 @@ export interface Homepage {
                 | {
                     title?: string | null;
                     description?: string | null;
+                    /**
+                     * Nếu chưa có trang, chọn Tự tạo trang mới. Nếu trang đã có, chọn trực tiếp để lấy đúng liên kết.
+                     */
+                    linkMode?: ('auto-page' | 'existing-page' | 'internal' | 'external') | null;
+                    linkedPage?: (number | null) | Page;
+                    /**
+                     * Để trống sẽ dùng tiêu đề nội dung. Hệ thống tự sinh slug và tự dùng trang cùng slug nếu đã tồn tại.
+                     */
+                    newPageTitle?: string | null;
+                    newPageSlug?: string | null;
+                    /**
+                     * Khi chọn Tự tạo trang hoặc Chọn trang đã có, hệ thống tự sinh trường này lúc lưu.
+                     */
                     url?: string | null;
                     id?: string | null;
                   }[]
@@ -2008,6 +4435,19 @@ export interface Homepage {
                 | {
                     title?: string | null;
                     description?: string | null;
+                    /**
+                     * Nếu chưa có trang, chọn Tự tạo trang mới. Nếu trang đã có, chọn trực tiếp để lấy đúng liên kết.
+                     */
+                    linkMode?: ('auto-page' | 'existing-page' | 'internal' | 'external') | null;
+                    linkedPage?: (number | null) | Page;
+                    /**
+                     * Để trống sẽ dùng tiêu đề nội dung. Hệ thống tự sinh slug và tự dùng trang cùng slug nếu đã tồn tại.
+                     */
+                    newPageTitle?: string | null;
+                    newPageSlug?: string | null;
+                    /**
+                     * Khi chọn Tự tạo trang hoặc Chọn trang đã có, hệ thống tự sinh trường này lúc lưu.
+                     */
                     url?: string | null;
                     image?: (number | null) | Media;
                     id?: string | null;
@@ -2028,6 +4468,19 @@ export interface Homepage {
                 | {
                     title?: string | null;
                     description?: string | null;
+                    /**
+                     * Nếu chưa có trang, chọn Tự tạo trang mới. Nếu trang đã có, chọn trực tiếp để lấy đúng liên kết.
+                     */
+                    linkMode?: ('auto-page' | 'existing-page' | 'internal' | 'external') | null;
+                    linkedPage?: (number | null) | Page;
+                    /**
+                     * Để trống sẽ dùng tiêu đề nội dung. Hệ thống tự sinh slug và tự dùng trang cùng slug nếu đã tồn tại.
+                     */
+                    newPageTitle?: string | null;
+                    newPageSlug?: string | null;
+                    /**
+                     * Khi chọn Tự tạo trang hoặc Chọn trang đã có, hệ thống tự sinh trường này lúc lưu.
+                     */
                     url?: string | null;
                     image?: (number | null) | Media;
                     id?: string | null;
@@ -2036,6 +4489,18 @@ export interface Homepage {
               id?: string | null;
             }[]
           | null;
+        /**
+         * Chọn mục đã được tạo từ Menu, ví dụ Chuyển đổi số. Các bài thuộc mục này sẽ tự động hiển thị trên section và nút Xem tất cả sẽ trỏ đúng /chuyen-doi-so.
+         */
+        linkedContentSection?: (number | null) | ContentSection;
+        /**
+         * Khuyến nghị 5 bài: 1 bài lớn + 4 bài nhỏ, đồng bộ Thông báo và Đấu thầu.
+         */
+        linkedContentLimit?: number | null;
+        /**
+         * Chọn module được quản lý trong Nội dung → Module động. Có thể tái sử dụng cùng một module ở nhiều vị trí.
+         */
+        dynamicModule?: (number | null) | DynamicModule;
         /**
          * Soạn nội dung hiển thị trực tiếp trên trang chủ.
          */
@@ -2060,6 +4525,16 @@ export interface Homepage {
         customImage?: (number | null) | Media;
         imagePosition?: ('left' | 'right' | 'top') | null;
         buttonLabel?: string | null;
+        buttonLinkMode?: ('auto-page' | 'existing-page' | 'internal' | 'external') | null;
+        buttonPage?: (number | null) | Page;
+        /**
+         * Để trống sẽ lấy tiêu đề section.
+         */
+        buttonNewPageTitle?: string | null;
+        buttonNewPageSlug?: string | null;
+        /**
+         * Chế độ tự tạo/chọn trang sẽ tự điền liên kết khi lưu.
+         */
         buttonUrl?: string | null;
         eyebrowColor?: string | null;
         titleColor?: string | null;
@@ -2142,11 +4617,214 @@ export interface OrganizationChart {
   createdAt?: string | null;
 }
 /**
+ * Cấu hình giới hạn upload theo Baseline V1.1. Giai đoạn Foundation tạo nguồn cấu hình tập trung; middleware enforcement sẽ hoàn thiện ở System hardening.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "upload-settings".
+ */
+export interface UploadSetting {
+  id: number;
+  imageMaxMB: number;
+  scheduleImageMaxMB: number;
+  pdfMaxMB: number;
+  wordMaxMB: number;
+  excelMaxMB: number;
+  powerPointMaxMB: number;
+  batchMaxMB: number;
+  batchMaxFiles: number;
+  warningPercent: number;
+  blockPercent: number;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Ảnh đại diện mặc định dùng ở trang chủ và danh sách khi nội dung không chọn ảnh riêng. Ảnh đại diện không hiển thị ở đầu trang chi tiết; ảnh chèn trong nội dung vẫn hiển thị bình thường.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "default-media-settings".
+ */
+export interface DefaultMediaSetting {
+  id: number;
+  news?: (number | null) | Media;
+  notices?: (number | null) | Media;
+  procurement?: (number | null) | Media;
+  recruitment?: (number | null) | Media;
+  documents?: (number | null) | Media;
+  schedules?: (number | null) | Media;
+  vaccinations?: (number | null) | Media;
+  /**
+   * Có thể tạo thêm ảnh mặc định cho các mục phát sinh sau này. Khóa dùng để nhận diện trong code/module, ví dụ: huong-dan, dich-vu-moi.
+   */
+  customDefaults?:
+    | {
+        key: string;
+        label: string;
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Cấu hình SEO mặc định, robots, sitemap và thông tin chia sẻ mạng xã hội cho toàn website.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-settings".
+ */
+export interface SeoSetting {
+  id: number;
+  siteName: string;
+  defaultTitle?: string | null;
+  /**
+   * Giữ %s để hệ thống thay bằng tiêu đề từng trang.
+   */
+  titleTemplate?: string | null;
+  defaultDescription?: string | null;
+  defaultImage?: (number | null) | Media;
+  allowIndexing?: boolean | null;
+  enableSitemap?: boolean | null;
+  robotsDisallow?:
+    | {
+        path: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Không bắt buộc. Có thể để trống và dùng biến môi trường GOOGLE_SITE_VERIFICATION.
+   */
+  googleSiteVerification?: string | null;
+  organizationName?: string | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chatbot-settings".
+ */
+export interface ChatbotSetting {
+  id: number;
+  enabled?: boolean | null;
+  assistantName?: string | null;
+  statusText?: string | null;
+  greeting?: string | null;
+  inputPlaceholder?: string | null;
+  fallbackResponse?: string | null;
+  handoffEnabled?: boolean | null;
+  logConversations?: boolean | null;
+  quickTopics?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Thiết lập vận hành, bảo mật, audit, sao lưu và chế độ bảo trì.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "system-settings".
+ */
+export interface SystemSetting {
+  id: number;
+  maintenanceMode?: boolean | null;
+  maintenanceMessage?: string | null;
+  auditRetentionDays?: number | null;
+  backupRetentionDays?: number | null;
+  healthStorageProbe?: boolean | null;
+  productionChecklistNote?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Cấu hình hiển thị chung cho lịch khám và lịch tiêm chủng.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schedule-settings".
+ */
+export interface ScheduleSetting {
+  id: number;
+  preferWeeklyImage?: boolean | null;
+  showDailyTab?: boolean | null;
+  showWeeklyTab?: boolean | null;
+  showAttachmentTab?: boolean | null;
+  cacheMinutes?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Quản lý thanh dịch vụ nhanh dưới banner: thêm, bớt, ẩn/hiện, kéo thả thứ tự và chọn icon hoặc hình riêng cho từng mục.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quick-links-settings".
+ */
+export interface QuickLinksSetting {
+  id: number;
+  enabled?: boolean | null;
+  /**
+   * Kéo thả để sắp xếp. Có thể thêm/xóa mục. Muốn tạm ẩn một mục thì bỏ chọn “Hiển thị mục này”.
+   */
+  items?:
+    | {
+        visible?: boolean | null;
+        title: string;
+        description?: string | null;
+        /**
+         * Khuyên dùng “Tự tạo trang mới” hoặc “Chọn trang đã có” để không phải nhập URL thủ công.
+         */
+        linkMode?: ('auto-page' | 'existing-page' | 'internal' | 'external') | null;
+        linkedPage?: (number | null) | Page;
+        /**
+         * Để trống sẽ dùng Tên dịch vụ. Nếu slug đã tồn tại, hệ thống tự dùng lại trang đó.
+         */
+        newPageTitle?: string | null;
+        newPageSlug?: string | null;
+        /**
+         * Với chế độ tự tạo/chọn trang, trường này được hệ thống tự điền khi lưu.
+         */
+        url?: string | null;
+        openNewTab?: boolean | null;
+        visualMode?: ('icon' | 'image') | null;
+        icon?: ('calendar' | 'doctor' | 'price' | 'insurance' | 'hospital' | 'map' | 'phone' | 'document') | null;
+        /**
+         * Chọn ảnh đã có trong Media hoặc tải ảnh mới. Khuyên dùng PNG/WebP/SVG vuông, nền trong suốt.
+         */
+        image?: (number | null) | Media;
+        imageFit?: ('contain' | 'cover') | null;
+        id?: string | null;
+      }[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   hospitalName?: T;
+  logo?: T;
+  headerSlogan?: T;
+  headerShowSlogan?: T;
+  headerShowUtilityBar?: T;
+  headerShowSearch?: T;
+  headerShowContactCards?: T;
+  headerStickyMenu?: T;
+  headerUtilityAppearance?:
+    | T
+    | {
+        timePrefix?: T;
+        showCalendarIcon?: T;
+        background?: T;
+        timeColor?: T;
+        timeFontSize?: T;
+        timeFontWeight?: T;
+      };
   headerBrandAppearance?:
     | T
     | {
@@ -2157,7 +4835,47 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         logoBackgroundColor?: T;
         titleColor?: T;
         subtitleColor?: T;
+        showLogo?: T;
+        showHospitalName?: T;
+        backgroundImage?: T;
+        backgroundSize?: T;
+        backgroundPosition?: T;
+        backgroundOverlay?: T;
+        minHeight?: T;
       };
+  headerContactCards?:
+    | T
+    | {
+        visible?: T;
+        title?: T;
+        text?: T;
+        href?: T;
+        extraText?: T;
+        iconType?: T;
+        customIcon?: T;
+        background?: T;
+        borderColor?: T;
+        titleColor?: T;
+        textColor?: T;
+        iconColor?: T;
+        iconBackground?: T;
+        extraTextColor?: T;
+        titleFontSize?: T;
+        textFontSize?: T;
+        fontWeight?: T;
+        id?: T;
+      };
+  headerSocialLinks?:
+    | T
+    | {
+        visible?: T;
+        platform?: T;
+        label?: T;
+        url?: T;
+        customIcon?: T;
+        id?: T;
+      };
+  tiktokUrl?: T;
   slogan?: T;
   tickerAppearance?:
     | T
@@ -2168,7 +4886,6 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         fontSize?: T;
         duration?: T;
       };
-  logo?: T;
   headerBanner?: T;
   headerBannerWidth?: T;
   headerBannerHeight?: T;
@@ -2251,7 +4968,14 @@ export interface NavigationSelect<T extends boolean = true> {
         url?: T;
         preset?: T;
         reference?: T;
+        contentSection?: T;
+        newSectionTitle?: T;
+        newSectionSlug?: T;
+        newPageTitle?: T;
+        newPageSlug?: T;
         customUrl?: T;
+        icon?: T;
+        description?: T;
         openInNewTab?: T;
         visible?: T;
         children?:
@@ -2262,13 +4986,182 @@ export interface NavigationSelect<T extends boolean = true> {
               url?: T;
               preset?: T;
               reference?: T;
+              contentSection?: T;
+              newSectionTitle?: T;
+              newSectionSlug?: T;
+              newPageTitle?: T;
+              newPageSlug?: T;
               customUrl?: T;
+              icon?: T;
+              description?: T;
               openInNewTab?: T;
               visible?: T;
               id?: T;
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "header_select".
+ */
+export interface HeaderSelect<T extends boolean = true> {
+  enabled?: T;
+  logo?: T;
+  hospitalName?: T;
+  slogan?: T;
+  showSlogan?: T;
+  showUtilityBar?: T;
+  showSearch?: T;
+  showHotline?: T;
+  stickyMenu?: T;
+  utilityAppearance?:
+    | T
+    | {
+        timePrefix?: T;
+        showCalendarIcon?: T;
+        background?: T;
+        timeBackground?: T;
+        timeColor?: T;
+        timeFontSize?: T;
+        timeFontWeight?: T;
+      };
+  contactCards?:
+    | T
+    | {
+        visible?: T;
+        title?: T;
+        text?: T;
+        href?: T;
+        extraText?: T;
+        iconType?: T;
+        customIcon?: T;
+        background?: T;
+        borderColor?: T;
+        titleColor?: T;
+        textColor?: T;
+        extraTextColor?: T;
+        iconColor?: T;
+        iconBackground?: T;
+        titleFontSize?: T;
+        textFontSize?: T;
+        fontWeight?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "footer_select".
+ */
+export interface FooterSelect<T extends boolean = true> {
+  enabled?: T;
+  brandOptions?:
+    | T
+    | {
+        showLogo?: T;
+        showHospitalName?: T;
+        showAddress?: T;
+        showPhone?: T;
+        showEmergencyHotline?: T;
+        showEmail?: T;
+        showWorkingHours?: T;
+        showDescription?: T;
+      };
+  description?: T;
+  columns?:
+    | T
+    | {
+        visible?: T;
+        title?: T;
+        links?:
+          | T
+          | {
+              visible?: T;
+              label?: T;
+              linkMode?: T;
+              linkedPage?: T;
+              newPageTitle?: T;
+              newPageSlug?: T;
+              url?: T;
+              openNewTab?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  showSocial?: T;
+  bottom?:
+    | T
+    | {
+        showCopyright?: T;
+        copyright?: T;
+        showRightText?: T;
+        rightText?: T;
+      };
+  showMobileBar?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-settings_select".
+ */
+export interface ContactSettingsSelect<T extends boolean = true> {
+  address?: T;
+  hotline?: T;
+  emergencyHotline?: T;
+  email?: T;
+  workingHours?: T;
+  googleMapsUrl?: T;
+  googleMapsEmbed?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-settings_select".
+ */
+export interface SocialSettingsSelect<T extends boolean = true> {
+  facebookUrl?: T;
+  zaloUrl?: T;
+  youtubeUrl?: T;
+  tiktokUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "medpro-settings_select".
+ */
+export interface MedproSettingsSelect<T extends boolean = true> {
+  enabled?: T;
+  url?: T;
+  label?: T;
+  openNewTab?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "theme-settings_select".
+ */
+export interface ThemeSettingsSelect<T extends boolean = true> {
+  primaryColor?: T;
+  secondaryColor?: T;
+  accentColor?: T;
+  fontFamily?: T;
+  baseFontSize?: T;
+  fontScale?: T;
+  contentMaxWidth?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -2305,10 +5198,15 @@ export interface HomepageSelect<T extends boolean = true> {
   quickLinks?:
     | T
     | {
+        visible?: T;
         title?: T;
         description?: T;
         url?: T;
+        openNewTab?: T;
+        visualMode?: T;
         icon?: T;
+        image?: T;
+        imageFit?: T;
         id?: T;
       };
   intro?:
@@ -2330,10 +5228,30 @@ export interface HomepageSelect<T extends boolean = true> {
     | T
     | {
         type?: T;
+        visible?: T;
         eyebrow?: T;
         title?: T;
         description?: T;
-        visible?: T;
+        carouselSeconds?: T;
+        featuredItemLimit?: T;
+        organizationImage?: T;
+        organizationMedpro?:
+          | T
+          | {
+              enabled?: T;
+              eyebrow?: T;
+              title?: T;
+              bullet1?: T;
+              bullet2?: T;
+              bullet3?: T;
+              brandText?: T;
+              buttonLabel?: T;
+              buttonUrl?: T;
+              openNewTab?: T;
+              guideLabel?: T;
+              guideUrl?: T;
+              backgroundColor?: T;
+            };
         contentTabs?:
           | T
           | {
@@ -2349,6 +5267,10 @@ export interface HomepageSelect<T extends boolean = true> {
                 | {
                     title?: T;
                     description?: T;
+                    linkMode?: T;
+                    linkedPage?: T;
+                    newPageTitle?: T;
+                    newPageSlug?: T;
                     url?: T;
                     image?: T;
                     id?: T;
@@ -2370,6 +5292,10 @@ export interface HomepageSelect<T extends boolean = true> {
                 | {
                     title?: T;
                     description?: T;
+                    linkMode?: T;
+                    linkedPage?: T;
+                    newPageTitle?: T;
+                    newPageSlug?: T;
                     url?: T;
                     id?: T;
                   };
@@ -2386,6 +5312,10 @@ export interface HomepageSelect<T extends boolean = true> {
                 | {
                     title?: T;
                     description?: T;
+                    linkMode?: T;
+                    linkedPage?: T;
+                    newPageTitle?: T;
+                    newPageSlug?: T;
                     url?: T;
                     image?: T;
                     id?: T;
@@ -2403,16 +5333,27 @@ export interface HomepageSelect<T extends boolean = true> {
                 | {
                     title?: T;
                     description?: T;
+                    linkMode?: T;
+                    linkedPage?: T;
+                    newPageTitle?: T;
+                    newPageSlug?: T;
                     url?: T;
                     image?: T;
                     id?: T;
                   };
               id?: T;
             };
+        linkedContentSection?: T;
+        linkedContentLimit?: T;
+        dynamicModule?: T;
         customContent?: T;
         customImage?: T;
         imagePosition?: T;
         buttonLabel?: T;
+        buttonLinkMode?: T;
+        buttonPage?: T;
+        buttonNewPageTitle?: T;
+        buttonNewPageSlug?: T;
         buttonUrl?: T;
         eyebrowColor?: T;
         titleColor?: T;
@@ -2477,6 +5418,156 @@ export interface OrganizationChartSelect<T extends boolean = true> {
         officeColor?: T;
         departmentColor?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "upload-settings_select".
+ */
+export interface UploadSettingsSelect<T extends boolean = true> {
+  imageMaxMB?: T;
+  scheduleImageMaxMB?: T;
+  pdfMaxMB?: T;
+  wordMaxMB?: T;
+  excelMaxMB?: T;
+  powerPointMaxMB?: T;
+  batchMaxMB?: T;
+  batchMaxFiles?: T;
+  warningPercent?: T;
+  blockPercent?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "default-media-settings_select".
+ */
+export interface DefaultMediaSettingsSelect<T extends boolean = true> {
+  news?: T;
+  notices?: T;
+  procurement?: T;
+  recruitment?: T;
+  documents?: T;
+  schedules?: T;
+  vaccinations?: T;
+  customDefaults?:
+    | T
+    | {
+        key?: T;
+        label?: T;
+        image?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "seo-settings_select".
+ */
+export interface SeoSettingsSelect<T extends boolean = true> {
+  siteName?: T;
+  defaultTitle?: T;
+  titleTemplate?: T;
+  defaultDescription?: T;
+  defaultImage?: T;
+  allowIndexing?: T;
+  enableSitemap?: T;
+  robotsDisallow?:
+    | T
+    | {
+        path?: T;
+        id?: T;
+      };
+  googleSiteVerification?: T;
+  organizationName?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chatbot-settings_select".
+ */
+export interface ChatbotSettingsSelect<T extends boolean = true> {
+  enabled?: T;
+  assistantName?: T;
+  statusText?: T;
+  greeting?: T;
+  inputPlaceholder?: T;
+  fallbackResponse?: T;
+  handoffEnabled?: T;
+  logConversations?: T;
+  quickTopics?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "system-settings_select".
+ */
+export interface SystemSettingsSelect<T extends boolean = true> {
+  maintenanceMode?: T;
+  maintenanceMessage?: T;
+  auditRetentionDays?: T;
+  backupRetentionDays?: T;
+  healthStorageProbe?: T;
+  productionChecklistNote?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schedule-settings_select".
+ */
+export interface ScheduleSettingsSelect<T extends boolean = true> {
+  preferWeeklyImage?: T;
+  showDailyTab?: T;
+  showWeeklyTab?: T;
+  showAttachmentTab?: T;
+  cacheMinutes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quick-links-settings_select".
+ */
+export interface QuickLinksSettingsSelect<T extends boolean = true> {
+  enabled?: T;
+  items?:
+    | T
+    | {
+        visible?: T;
+        title?: T;
+        description?: T;
+        linkMode?: T;
+        linkedPage?: T;
+        newPageTitle?: T;
+        newPageSlug?: T;
+        url?: T;
+        openNewTab?: T;
+        visualMode?: T;
+        icon?: T;
+        image?: T;
+        imageFit?: T;
+        id?: T;
+      };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

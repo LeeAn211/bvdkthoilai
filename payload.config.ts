@@ -54,6 +54,7 @@ import { Navigation } from './src/globals/Navigation'
 import { Homepage } from './src/globals/Homepage'
 import { OrganizationChart } from './src/globals/OrganizationChart'
 import { UploadSettings } from './src/globals/UploadSettings'
+import { Header } from './src/globals/Header'
 import { Footer } from './src/globals/Footer'
 import { ContactSettings } from './src/globals/ContactSettings'
 import { SocialSettings } from './src/globals/SocialSettings'
@@ -135,5 +136,5 @@ export default buildConfig({
     ].map((collection) => withAudit(collection)),
     AuditLogs,
   ],
-  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
+  globals: [SiteSettings, Navigation, Header, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
 })
