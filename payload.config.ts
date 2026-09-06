@@ -1,6 +1,7 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { vi } from '@payloadcms/translations/languages/vi'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
@@ -77,15 +78,18 @@ const siteURL = process.env.NEXT_PUBLIC_SITE_URL
 const localOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000']
 const allowedOrigins = Array.from(new Set([...(siteURL ? [siteURL] : []), ...(!isProduction ? localOrigins : [])]))
 
+const r2Bucket = process.env.R2_BUCKET || ''
+const r2AccessKeyId = process.env.R2_ACCESS_KEY_ID || ''
+const r2SecretAccessKey = process.env.R2_SECRET_ACCESS_KEY || ''
+const r2Endpoint = process.env.R2_ENDPOINT || ''
+const r2Enabled = Boolean(r2Bucket && r2AccessKeyId && r2SecretAccessKey && r2Endpoint)
+
 if (isProduction && (!payloadSecret || payloadSecret === 'CHANGE_ME' || payloadSecret.length < 32)) {
   throw new Error('PAYLOAD_SECRET bắt buộc phải có ít nhất 32 ký tự trên Production.')
 }
 if (!databaseURL) throw new Error('Thiếu biến môi trường DATABASE_URL.')
 
 export default buildConfig({
-  // Development Admin uses same-origin relative API URLs.
-  // Only publish an absolute serverURL in production to avoid localhost/127.0.0.1
-  // cross-origin login failures in Payload Admin.
   ...(isProduction && siteURL ? { serverURL: siteURL } : {}),
   maxDepth: 4,
   upload: { limits: { fileSize: 50 * 1024 * 1024 } },
@@ -99,8 +103,6 @@ export default buildConfig({
   editor: hospitalEditor,
   secret: payloadSecret || 'development-only-secret-change-before-production',
   db: postgresAdapter({
-    // Mặc định KHÔNG push schema. Chỉ bật PAYLOAD_DB_PUSH=true khi khởi tạo CSDL TRỐNG trên máy mới.
-    // Sau khi Payload tạo schema xong phải trả PAYLOAD_DB_PUSH=false.
     push: process.env.PAYLOAD_DB_PUSH === 'true',
     pool: {
       connectionString: databaseURL,
@@ -108,6 +110,28 @@ export default buildConfig({
     }
   }),
   sharp,
+  // Always register the adapter so `payload generate:importmap` sees the S3
+  // client component during Docker build even when Railway R2 variables are
+  // only injected at runtime. `enabled` decides whether files actually use R2.
+  plugins: [
+    s3Storage({
+      enabled: r2Enabled,
+      collections: {
+        // Keep Payload proxy/access control for public/internal/restricted media.
+        media: true,
+      },
+      bucket: r2Bucket || 'r2-disabled-at-build',
+      config: {
+        credentials: {
+          accessKeyId: r2AccessKeyId || 'r2-disabled-at-build',
+          secretAccessKey: r2SecretAccessKey || 'r2-disabled-at-build',
+        },
+        region: 'auto',
+        endpoint: r2Endpoint || 'https://example.invalid',
+        forcePathStyle: true,
+      },
+    }),
+  ],
   typescript: { outputFile: path.resolve(dirname, 'src/payload-types.ts') },
   admin: {
     user: Users.slug,
