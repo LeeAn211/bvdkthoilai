@@ -36,6 +36,31 @@ export const isActiveUser = (user: any): boolean => Boolean(user) && (user.statu
 const isElevatedRole = (role?: Role) =>
   role === 'super-admin' || role === 'system-admin' || role === 'admin'
 
+/**
+ * Payload có thể hydrate req.user từ JWT với tập field tối thiểu. Khi access
+ * control cần role/status/permissions mà token cũ hoặc môi trường production
+ * chưa mang đủ field, đọc lại chính user đang đăng nhập từ DB. Không cấp quyền
+ * theo email/id và không bypass xác thực.
+ */
+const resolveAuthenticatedUser = async (req: any): Promise<any | null> => {
+  const current = req?.user
+  if (!current?.id) return null
+
+  if (current.role && current.status != null) return current
+
+  try {
+    return await req.payload.findByID({
+      collection: 'users',
+      id: current.id,
+      depth: 0,
+      overrideAccess: true,
+      req,
+    })
+  } catch {
+    return current
+  }
+}
+
 export const anyone: Access = () => true
 export const loggedIn: Access = ({ req }) => isActiveUser(req.user)
 
@@ -53,45 +78,16 @@ export const publicActive: Access = ({ req }) => {
 
 export const publicPublished: Access = ({ req }) => {
   if (isActiveUser(req.user)) return true
-
-  const where: Where = {
-    _status: {
-      equals: 'published',
-    },
-  }
-
-  return where
+  return { _status: { equals: 'published' } } as Where
 }
 
 export const admins: Access = ({ req }) => isActiveUser(req.user) && isElevatedRole(roleOf(req.user))
-
 export const superAdmins: Access = ({ req }) => isActiveUser(req.user) && roleOf(req.user) === 'super-admin'
-
-export const publishers: Access = ({ req }) =>
-  isActiveUser(req.user) && ['super-admin', 'system-admin', 'admin', 'reviewer'].includes(roleOf(req.user) || '')
-
-export const editors: Access = ({ req }) =>
-  isActiveUser(req.user) && [
-    'super-admin',
-    'system-admin',
-    'admin',
-    'editor',
-    'reviewer',
-    'department',
-    'department-manager',
-  ].includes(roleOf(req.user) || '')
-
-export const procurementTeam: Access = ({ req }) =>
-  isActiveUser(req.user) && ['super-admin', 'system-admin', 'admin', 'procurement'].includes(roleOf(req.user) || '')
-
+export const publishers: Access = ({ req }) => isActiveUser(req.user) && ['super-admin', 'system-admin', 'admin', 'reviewer'].includes(roleOf(req.user) || '')
+export const editors: Access = ({ req }) => isActiveUser(req.user) && ['super-admin', 'system-admin', 'admin', 'editor', 'reviewer', 'department', 'department-manager'].includes(roleOf(req.user) || '')
+export const procurementTeam: Access = ({ req }) => isActiveUser(req.user) && ['super-admin', 'system-admin', 'admin', 'procurement'].includes(roleOf(req.user) || '')
 export const adminField: FieldAccess = ({ req }) => isActiveUser(req.user) && isElevatedRole(roleOf(req.user))
 
-/**
- * Kiểm tra quyền bổ sung được cấu hình trực tiếp trên tài khoản.
- * Super Admin/System Admin/Admin luôn có toàn quyền. Các module sẽ được
- * chuyển dần sang helper này trong các giai đoạn tiếp theo để tránh phá
- * quyền hiện tại khi nâng cấp từ 3.2.x.
- */
 const moduleRoleDefaults: Record<string, Partial<Record<PermissionAction, Role[]>>> = {
   news: { view: ['editor', 'reviewer', 'department', 'department-manager'], create: ['editor', 'reviewer', 'department', 'department-manager'], edit: ['editor', 'reviewer', 'department', 'department-manager'], delete: ['reviewer'], submit: ['editor', 'department', 'department-manager'], approve: ['reviewer'], publish: ['reviewer'], hide: ['reviewer'], restore: ['reviewer'] },
   notices: { view: ['editor', 'reviewer', 'department', 'department-manager'], create: ['editor', 'reviewer', 'department', 'department-manager'], edit: ['editor', 'reviewer', 'department', 'department-manager'], delete: ['reviewer'], submit: ['editor', 'department', 'department-manager'], approve: ['reviewer'], publish: ['reviewer'], hide: ['reviewer'], restore: ['reviewer'] },
@@ -123,66 +119,36 @@ export const roleHasModulePermission = (user: any, module: string, action: Permi
   return Boolean(role && allowed.includes(role))
 }
 
-export const hasModulePermission = (
-  user: any,
-  module: string,
-  action: PermissionAction,
-): boolean => {
+export const hasModulePermission = (user: any, module: string, action: PermissionAction): boolean => {
   if (!isActiveUser(user)) return false
   const role = roleOf(user)
   if (isElevatedRole(role)) return true
   if (roleHasModulePermission(user, module, action)) return true
-
   const rows = Array.isArray(user?.permissions) ? user.permissions : []
-  return rows.some((row: any) => {
-    if (!row || row.module !== module) return false
-    const actions = Array.isArray(row.actions) ? row.actions : []
-    return actions.includes(action)
-  })
+  return rows.some((row: any) => row?.module === module && Array.isArray(row.actions) && row.actions.includes(action))
 }
 
-/** Tạo Access theo module/action để dùng cho collection nghiệp vụ mới. */
-
-
-/** Quyền đọc Media: khách chỉ xem file public; tài khoản có quyền media/view được xem internal/restricted. */
 export const mediaReadAccess: Access = ({ req }) => {
   if (isActiveUser(req.user) && hasModulePermission(req.user, 'media', 'view')) return true
   return { accessLevel: { equals: 'public' } } as Where
 }
 
-export const moduleAccess = (module: string, action: PermissionAction): Access => ({ req }) => {
-  if (!isActiveUser(req.user)) return false
-  return hasModulePermission(req.user, module, action)
+export const moduleAccess = (module: string, action: PermissionAction): Access => async ({ req }) => {
+  const user = await resolveAuthenticatedUser(req)
+  if (!isActiveUser(user)) return false
+  return hasModulePermission(user, module, action)
 }
 
-/**
- * Scope theo khoa/phòng. Helper chỉ dùng khi collection có field department
- * dạng relationship. Không ép vào collection cũ có schema khác để tránh lỗi dữ liệu.
- */
-export const departmentScopedAccess = (
-  module: string,
-  action: PermissionAction,
-  departmentField = 'department',
-): Access => ({ req }) => {
+export const departmentScopedAccess = (module: string, action: PermissionAction, departmentField = 'department'): Access => ({ req }) => {
   if (!isActiveUser(req.user)) return false
   if (isElevatedRole(roleOf(req.user))) return true
   if (!hasModulePermission(req.user, module, action)) return false
-
   const department = (req.user as any)?.department
   const departmentID = typeof department === 'object' && department ? department.id : department
   if (!departmentID) return false
-
-  return {
-    [departmentField]: {
-      equals: departmentID,
-    },
-  } as Where
+  return { [departmentField]: { equals: departmentID } } as Where
 }
 
-/**
- * Scope collection departments theo chính khoa/phòng gán trên tài khoản.
- * HR có quyền module sẽ xem/sửa toàn bộ; user khoa/phòng chỉ được tác động đơn vị của mình.
- */
 export const ownDepartmentRecordAccess = (action: PermissionAction): Access => ({ req }) => {
   if (!isActiveUser(req.user)) return false
   if (isElevatedRole(roleOf(req.user))) return true
@@ -195,14 +161,7 @@ export const ownDepartmentRecordAccess = (action: PermissionAction): Access => (
   return { id: { equals: departmentID } } as Where
 }
 
-/**
- * Khoa/phòng được tạo/sửa dữ liệu organization có field department của chính mình.
- * HR được quyền toàn bộ.
- */
-export const organizationDepartmentScopedAccess = (
-  module: 'specialties' | 'doctors',
-  action: PermissionAction,
-): Access => ({ req }) => {
+export const organizationDepartmentScopedAccess = (module: 'specialties' | 'doctors', action: PermissionAction): Access => ({ req }) => {
   if (!isActiveUser(req.user)) return false
   if (isElevatedRole(roleOf(req.user))) return true
   if (!hasModulePermission(req.user, module, action)) return false
@@ -216,61 +175,31 @@ export const organizationDepartmentScopedAccess = (
 
 export const publishedOrOwnedDraft: Access = ({ req }) => {
   const user = req.user
-  if (!isActiveUser(user) || !user) {
-    const where: Where = {
-      _status: {
-        equals: 'published',
-      },
-    }
-    return where
-  }
-
-  if (['super-admin', 'system-admin', 'admin', 'reviewer'].includes(roleOf(user) || '')) {
-    return true
-  }
-
-  const where: Where = {
-    or: [
-      {
-        _status: {
-          equals: 'published',
-        },
-      },
-      {
-        createdBy: {
-          equals: user.id,
-        },
-      },
-    ],
-  }
-
-  return where
+  if (!isActiveUser(user) || !user) return { _status: { equals: 'published' } } as Where
+  if (['super-admin', 'system-admin', 'admin', 'reviewer'].includes(roleOf(user) || '')) return true
+  return { or: [{ _status: { equals: 'published' } }, { createdBy: { equals: user.id } }] } as Where
 }
 
+export const workflowUpdateAccess = (module: string): Access => async ({ req, data }) => {
+  const user = await resolveAuthenticatedUser(req)
+  if (!isActiveUser(user)) return false
 
-/**
- * Update access cho nội dung có workflow. Khi request đổi trạng thái sang
- * submitted / approved / published / hidden thì kiểm tra đúng quyền tương ứng.
- */
-export const workflowUpdateAccess = (module: string): Access => ({ req, data }) => {
-  if (!isActiveUser(req.user)) return false
+  // Nhóm quản trị cấp cao luôn có toàn quyền workflow. Kiểm tra trước dữ liệu
+  // trạng thái để tránh production từ chối publish khi request chỉ gửi _status.
+  if (isElevatedRole(roleOf(user))) return true
+
   const next = data as any
-  if (next?._status === 'published' || next?.workflowState === 'published') {
-    return hasModulePermission(req.user, module, 'publish')
-  }
-  if (next?.workflowState === 'approved') return hasModulePermission(req.user, module, 'approve')
-  if (next?.workflowState === 'submitted') return hasModulePermission(req.user, module, 'submit')
-  if (next?.workflowState === 'hidden') return hasModulePermission(req.user, module, 'hide')
-  return hasModulePermission(req.user, module, 'edit')
+  if (next?._status === 'published' || next?.workflowState === 'published') return hasModulePermission(user, module, 'publish')
+  if (next?.workflowState === 'approved') return hasModulePermission(user, module, 'approve')
+  if (next?.workflowState === 'submitted') return hasModulePermission(user, module, 'submit')
+  if (next?.workflowState === 'hidden') return hasModulePermission(user, module, 'hide')
+  return hasModulePermission(user, module, 'edit')
 }
 
-/**
- * Với collection bật Trash: người có quyền delete được chuyển vào Thùng rác,
- * nhưng xóa vĩnh viễn chỉ dành cho nhóm quản trị hệ thống.
- */
-export const contentDeleteAccess = (module: string): Access => ({ req, data }) => {
-  if (!isActiveUser(req.user)) return false
-  if (!data) return isElevatedRole(roleOf(req.user))
-  if ((data as any)?.deletedAt) return hasModulePermission(req.user, module, 'delete')
-  return hasModulePermission(req.user, module, 'delete')
+export const contentDeleteAccess = (module: string): Access => async ({ req, data }) => {
+  const user = await resolveAuthenticatedUser(req)
+  if (!isActiveUser(user)) return false
+  if (isElevatedRole(roleOf(user))) return true
+  if (!data) return false
+  return hasModulePermission(user, module, 'delete')
 }
