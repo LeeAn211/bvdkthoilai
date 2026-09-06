@@ -15,12 +15,18 @@ const permissionActions = [
   { label: 'Khôi phục', value: 'restore' },
 ]
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 export const Users: CollectionConfig = {
   slug: 'users',
   labels: { singular: 'Người dùng', plural: 'Người dùng & Phân quyền' },
   auth: {
     maxLoginAttempts: 5,
     lockTime: 15 * 60 * 1000,
+    cookies: {
+      secure: isProduction,
+      sameSite: 'Lax',
+    },
   },
   admin: {
     useAsTitle: 'name',
@@ -68,9 +74,7 @@ export const Users: CollectionConfig = {
       relationTo: 'departments',
       saveToJWT: true,
       access: { create: adminField, update: adminField },
-      admin: {
-        description: 'Dùng để giới hạn dữ liệu theo khoa/phòng đối với các vai trò được phân scope.',
-      },
+      admin: { description: 'Dùng để giới hạn dữ liệu theo khoa/phòng đối với các vai trò được phân scope.' },
     },
     {
       name: 'status',
@@ -85,9 +89,7 @@ export const Users: CollectionConfig = {
         { label: 'Đã khóa', value: 'locked' },
         { label: 'Ngừng hoạt động', value: 'inactive' },
       ],
-      admin: {
-        description: 'Đã chuẩn hóa trường trạng thái theo baseline. Tài khoản Locked/Inactive bị chặn đăng nhập ngay ở hook xác thực.',
-      },
+      admin: { description: 'Đã chuẩn hóa trường trạng thái theo baseline. Tài khoản Locked/Inactive bị chặn đăng nhập ngay ở hook xác thực.' },
     },
     {
       name: 'permissions',
@@ -95,25 +97,10 @@ export const Users: CollectionConfig = {
       type: 'array',
       saveToJWT: true,
       access: { create: adminField, update: adminField },
-      admin: {
-        description: 'Chỉ dùng để cấp thêm quyền ngoài vai trò mặc định. Quyền được kiểm tra server-side qua access helper.',
-      },
+      admin: { description: 'Chỉ dùng để cấp thêm quyền ngoài vai trò mặc định. Quyền được kiểm tra server-side qua access helper.' },
       fields: [
-        {
-          name: 'module',
-          label: 'Module',
-          type: 'text',
-          required: true,
-          admin: { description: 'Ví dụ: news, notices, procurement, schedules, services, quality.' },
-        },
-        {
-          name: 'actions',
-          label: 'Thao tác được phép',
-          type: 'select',
-          hasMany: true,
-          required: true,
-          options: permissionActions,
-        },
+        { name: 'module', label: 'Module', type: 'text', required: true, admin: { description: 'Ví dụ: news, notices, procurement, schedules, services, quality.' } },
+        { name: 'actions', label: 'Thao tác được phép', type: 'select', hasMany: true, required: true, options: permissionActions },
       ],
     },
     {
