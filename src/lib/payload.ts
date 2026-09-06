@@ -5,7 +5,7 @@ import { draftMode } from 'next/headers'
 
 export const getCMS = async () => getPayload({ config })
 
-export const getGlobal = cache(async (slug: 'site-settings' | 'navigation' | 'homepage' | 'organization-chart' | 'upload-settings' | 'header' | 'footer' | 'contact-settings' | 'social-settings' | 'medpro-settings' | 'theme-settings' | 'default-media-settings' | 'seo-settings' | 'chatbot-settings' | 'system-settings' | 'schedule-settings' | 'quick-links-settings') => {
+export const getGlobal = cache(async (slug: 'site-settings' | 'navigation' | 'homepage' | 'organization-chart' | 'upload-settings' | 'footer' | 'contact-settings' | 'social-settings' | 'medpro-settings' | 'theme-settings' | 'default-media-settings' | 'seo-settings' | 'chatbot-settings' | 'system-settings' | 'schedule-settings' | 'quick-links-settings') => {
   const payload = await getCMS()
   // Lấy đầy đủ thông tin Media (url, filename, kích thước) cho logo và banner.
   return payload.findGlobal({ slug, depth: 2 })
@@ -22,7 +22,6 @@ export async function findPublished(collection: any, options: Record<string, any
     page: options.page || 1
   })
 }
-
 
 export async function getHomepage() {
   const payload = await getCMS()
