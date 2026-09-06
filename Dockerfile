@@ -27,6 +27,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=builder --chown=node:node /app ./
+# Payload local upload fallback: the app runs as the non-root `node` user,
+# so create the media directory during the image build and give that user
+# ownership. This fixes EACCES on mkdir('/app/media') on Railway.
+RUN mkdir -p /app/media && chown -R node:node /app/media
 USER node
 EXPOSE 3000
 CMD ["npm","start"]
