@@ -1,0 +1,4 @@
+
+/* v3.9.0 — CSKH / Chatbot / Forms */
+.honeypot{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.feedback-consent{display:flex!important;gap:.6rem;align-items:flex-start}.feedback-consent input{width:auto!important;margin-top:.2rem}.feedback-lookup-link{text-align:center;margin-top:1rem}.feedback-result{margin-top:1.25rem;padding:1.25rem;border:1px solid #dfe8ef;border-radius:14px;background:#fff}.feedback-result ol{padding-left:1.25rem}.feedback-result li{margin:.6rem 0}.narrow{max-width:860px}

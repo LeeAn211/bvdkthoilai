@@ -1,0 +1,4 @@
+import type { CollectionConfig } from 'payload'
+import { moduleAccess } from '@/access'
+import { slugField } from '@/fields/common'
+export const SurveyTemplates: CollectionConfig = { slug:'survey-templates', labels:{singular:'Mẫu khảo sát',plural:'Mẫu khảo sát'}, admin:{useAsTitle:'title',group:'Quản lý chất lượng'}, access:{read:moduleAccess('surveys','view'),create:moduleAccess('surveys','create'),update:moduleAccess('surveys','edit'),delete:moduleAccess('surveys','delete')}, fields:[{name:'title',type:'text',label:'Tên mẫu',required:true},slugField('title', 'survey-templates'),{name:'description',type:'textarea',label:'Mô tả'},{name:'active',type:'checkbox',label:'Đang sử dụng',defaultValue:true},{name:'currentVersion',type:'relationship',relationTo:'survey-template-versions',label:'Phiên bản hiện hành'}] }

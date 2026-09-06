@@ -1,0 +1,23 @@
+.glyph {
+  display: block;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+
+.quickGlyph {
+  display: block;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  color: #0878d1;
+  transition: transform .24s ease;
+}
+
+:global(a:hover) > .quickGlyph {
+  transform: translateY(-2px) rotate(-5deg) scale(1.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quickGlyph { transition: none; }
+}
