@@ -54,7 +54,6 @@ import { Navigation } from './src/globals/Navigation'
 import { Homepage } from './src/globals/Homepage'
 import { OrganizationChart } from './src/globals/OrganizationChart'
 import { UploadSettings } from './src/globals/UploadSettings'
-import { Header } from './src/globals/Header'
 import { Footer } from './src/globals/Footer'
 import { ContactSettings } from './src/globals/ContactSettings'
 import { SocialSettings } from './src/globals/SocialSettings'
@@ -100,9 +99,9 @@ export default buildConfig({
   editor: hospitalEditor,
   secret: payloadSecret || 'development-only-secret-change-before-production',
   db: postgresAdapter({
-    // Baseline ổn định: không tự động introspect/push schema khi khởi động.
-    // Mọi thay đổi cấu trúc DB phải qua migration/repair chạy thủ công sau khi backup.
-    push: false,
+    // Mặc định KHÔNG push schema. Chỉ bật PAYLOAD_DB_PUSH=true khi khởi tạo CSDL TRỐNG trên máy mới.
+    // Sau khi Payload tạo schema xong phải trả PAYLOAD_DB_PUSH=false.
+    push: process.env.PAYLOAD_DB_PUSH === 'true',
     pool: {
       connectionString: databaseURL,
       connectionTimeoutMillis: 8000,
@@ -136,5 +135,5 @@ export default buildConfig({
     ].map((collection) => withAudit(collection)),
     AuditLogs,
   ],
-  globals: [SiteSettings, Navigation, Header, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
+  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
 })

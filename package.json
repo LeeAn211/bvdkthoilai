@@ -1,6 +1,6 @@
 {
   "name": "thoi-lai-hospital-v2",
-  "version": "4.4.29-logo-sharpness-fix",
+  "version": "4.4.31-fresh-database-bootstrap",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -46,7 +46,9 @@
     "audit:visibility": "node scripts/repair-payload-version-visibility.mjs",
     "repair:visibility": "node scripts/repair-payload-version-visibility.mjs",
     "audit:header-settings": "node scripts/upgrade-header-settings.mjs",
-    "upgrade:header-settings": "node scripts/upgrade-header-settings.mjs"
+    "upgrade:header-settings": "node scripts/upgrade-header-settings.mjs",
+    "audit:users-schema": "node scripts/repair-users-schema.mjs",
+    "repair:users-schema": "node scripts/repair-users-schema.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
