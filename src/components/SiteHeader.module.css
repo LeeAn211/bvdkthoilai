@@ -172,3 +172,34 @@
 .root :global(.mastheadBrandText small) { color: var(--masthead-subtitle-color,#0a9b50) !important; font-size: var(--masthead-subtitle-size, 13px) !important; }
 .root :global(.headerSocial img) { width: 27px; height: 27px; object-fit: contain; border-radius: 50%; display:block; }
 .root :global(.socialCustomText) { display:inline-flex; width:27px; height:27px; border-radius:50%; align-items:center; justify-content:center; background:#fff; color:#0756b4; font-size:8px; font-weight:700; }
+
+/* Responsive: Tên đơn vị và logo trên màn hình nhỏ */
+@media (max-width: 640px) {
+  .root :global(.hospitalMastheadInner) { min-height: 78px !important; gap: 8px !important; padding: 8px 0 !important; }
+  .root :global(.mastheadLogo) {
+    width: min(var(--masthead-logo-size, 52px), 50px) !important;
+    height: min(var(--masthead-logo-size, 52px), 50px) !important;
+    flex-basis: min(var(--masthead-logo-size, 52px), 50px) !important;
+  }
+  .root :global(.mastheadBrand) { gap: 8px !important; }
+  .root :global(.mastheadBrandText strong) {
+    font-size: clamp(11px, 3.8vw, 15px) !important;
+    line-height: 1.2 !important;
+  }
+  .root :global(.mastheadBrandText small) {
+    font-size: clamp(9px, 2.5vw, 12px) !important;
+    margin-top: 3px !important;
+  }
+  /* Ẩn thẻ liên hệ trên mobile nhỏ */
+  .root :global(.mastheadContacts) { display: none !important; }
+}
+
+@media (max-width: 380px) {
+  .root :global(.mastheadBrandText strong) {
+    font-size: 11px !important;
+    line-height: 1.15 !important;
+  }
+  .root :global(.mastheadBrandText small) {
+    font-size: 9px !important;
+  }
+}
