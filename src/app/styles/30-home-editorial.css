@@ -198,5 +198,6 @@
     min-width: 112px;
     min-height: 112px;
   }
-  .homePortalPage .homeEditorialCopy p { display: none; }
+  .homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy p { display: none; }
+  .homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy p { -webkit-line-clamp: 2; margin-top: 4px; }
 }
