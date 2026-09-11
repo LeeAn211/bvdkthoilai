@@ -1,0 +1,202 @@
+/* Canonical homepage editorial cards.
+   Used by Thông báo, Đấu thầu, Văn bản and dynamic homepage content.
+   Artwork in these cards often contains embedded text, so the default fit is
+   stretch-to-frame: it fills the frame without cropping any words. Real photo
+   cards can opt into cover later with a separate semantic class. */
+.homePortalPage .homeEditorialGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) repeat(2, minmax(0, .82fr));
+  grid-template-rows: repeat(2, minmax(156px, auto));
+  align-items: stretch;
+  gap: 16px;
+}
+.homePortalPage .homeEditorialGrid > a {
+  min-width: 0;
+  min-height: 156px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: stretch;
+  border: 1px solid var(--site-border);
+  border-radius: var(--site-radius-md);
+  background: #fff;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.homePortalPage .homeEditorialGrid > a:hover {
+  transform: translateY(-2px);
+  border-color: #c8deed;
+  box-shadow: var(--site-shadow-card);
+}
+.homePortalPage .homeEditorialGrid > a.featured {
+  grid-row: 1 / span 2;
+  min-height: 328px;
+  display: flex;
+  flex-direction: column;
+}
+.homePortalPage .homeEditorialImage {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background-color: #eef4f8;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100% !important;
+}
+.homePortalPage .homeEditorialImage.fitCover {
+  background-size: cover !important;
+}
+.homePortalPage .homeEditorialImage.fitContain {
+  background-size: contain !important;
+}
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage {
+  flex: 0 0 auto;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+}
+.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage {
+  width: 150px;
+  min-width: 150px;
+  height: 100%;
+  min-height: 156px;
+  align-self: stretch;
+  aspect-ratio: auto;
+}
+.homePortalPage .homeEditorialImage::after {
+  content: "";
+  position: absolute;
+  inset: 48% 0 0;
+  pointer-events: none;
+  background: linear-gradient(transparent, rgba(5, 45, 75, .58));
+}
+.homePortalPage .homeEditorialImage span {
+  position: absolute;
+  z-index: 1;
+  left: 10px;
+  bottom: 9px;
+  max-width: calc(100% - 20px);
+  overflow: hidden;
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: #075fb9;
+  background: #fff;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--site-fs-8, 9.2px);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.homePortalPage .homeEditorialCopy {
+  min-width: 0;
+  padding: 12px 13px;
+}
+.homePortalPage .homeEditorialCopy small {
+  color: #7d92a2;
+  font-size: var(--site-fs-8, 9.2px);
+}
+.homePortalPage .homeEditorialCopy h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 5px 0 6px;
+  color: #183d58;
+  font-size: var(--site-fs-12, 13.8px);
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.homePortalPage .homeEditorialCopy p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  color: #6f8798;
+  font-size: var(--site-fs-9-5, 10.925px);
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy {
+  padding: 15px 16px 17px;
+}
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy h3 {
+  font-size: calc(var(--site-fs-12, 13.8px) * 1.25);
+  -webkit-line-clamp: 3;
+}
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy p {
+  -webkit-line-clamp: 3;
+}
+
+/* Canonical homepage tab cards.
+   Used by Cổng thông tin bệnh viện and Hoạt động nổi bật. These default
+   artworks also contain text, so side-card previews must not use cover crop. */
+.homePortalPage .tabFeatureCard .portalNewsImage,
+.homePortalPage .tabFeatureCard .scienceImage,
+.homePortalPage .featuredCarouselImage,
+.homePortalPage .homeNewsImage {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100% !important;
+}
+.homePortalPage .tabEditorialList .portalNewsCard.tabSideCard > .portalNewsImage,
+.homePortalPage .tabEditorialList .scienceCard.tabSideCard > .scienceImage {
+  width: 138px;
+  min-width: 138px;
+  height: 100%;
+  min-height: 102px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100% !important;
+}
+.homePortalPage .tabSideCard .portalNewsImage.fitCover,
+.homePortalPage .tabSideCard .scienceImage.fitCover,
+.homePortalPage .tabFeatureCard .portalNewsImage.fitCover,
+.homePortalPage .tabFeatureCard .scienceImage.fitCover {
+  background-size: cover !important;
+}
+.homePortalPage .tabSideCard .portalNewsImage.fitContain,
+.homePortalPage .tabSideCard .scienceImage.fitContain,
+.homePortalPage .tabFeatureCard .portalNewsImage.fitContain,
+.homePortalPage .tabFeatureCard .scienceImage.fitContain {
+  background-size: contain !important;
+}
+
+@media (max-width: 1180px) {
+  .homePortalPage .homeEditorialGrid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  }
+  .homePortalPage .homeEditorialGrid > a.featured { grid-row: 1 / span 4; }
+  .homePortalPage .homeEditorialGrid > a:not(.featured) {
+    grid-template-columns: 140px minmax(0, 1fr);
+  }
+  .homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage {
+    width: 140px;
+    min-width: 140px;
+  }
+}
+@media (max-width: 900px) {
+  .homePortalPage .homeEditorialGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .homePortalPage .homeEditorialGrid > a.featured { grid-row: auto; }
+  .homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage { min-height: 0; }
+  .homePortalPage .homeEditorialGrid > a:not(.featured) {
+    grid-template-columns: 140px minmax(0, 1fr);
+  }
+}
+@media (max-width: 680px) {
+  .homePortalPage .homeEditorialGrid > a:not(.featured) {
+    grid-template-columns: 112px minmax(0, 1fr);
+  }
+  .homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage {
+    width: 112px;
+    min-width: 112px;
+    min-height: 112px;
+  }
+  .homePortalPage .tabEditorialList .portalNewsCard.tabSideCard > .portalNewsImage,
+  .homePortalPage .tabEditorialList .scienceCard.tabSideCard > .scienceImage {
+    width: 112px;
+    min-width: 112px;
+    min-height: 112px;
+  }
+  .homePortalPage .homeEditorialCopy p { display: none; }
+}

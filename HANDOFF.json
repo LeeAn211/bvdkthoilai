@@ -1,0 +1,38 @@
+{
+  "project": "Bệnh viện Đa khoa Khu vực Thới Lai",
+  "version": "2.0.0",
+  "status": "source-complete / requires environment integration test before production",
+  "admin": "/admin",
+  "main_routes": [
+    "/",
+    "/gioi-thieu",
+    "/tin-tuc",
+    "/thong-bao",
+    "/dau-thau-mua-sam",
+    "/lich-kham",
+    "/bang-gia",
+    "/van-ban",
+    "/tuyen-dung",
+    "/lien-he"
+  ],
+  "cms_collections": [
+    "users",
+    "media",
+    "news",
+    "notices",
+    "procurement",
+    "documents",
+    "departments",
+    "doctors",
+    "schedules",
+    "services",
+    "recruitment",
+    "pages",
+    "feedback"
+  ],
+  "cms_globals": [
+    "site-settings",
+    "navigation",
+    "homepage"
+  ]
+}

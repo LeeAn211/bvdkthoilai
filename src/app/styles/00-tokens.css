@@ -1,0 +1,29 @@
+/* Public CSS baseline tokens.
+   Keep design variables here so future component CSS does not redefine colors in many places. */
+:root {
+  --site-primary: #0878d1;
+  --site-secondary: #0754a8;
+  --site-accent: #16a36a;
+  --site-text: #18344e;
+  --site-muted: #667f93;
+  --site-border: #dce8f1;
+  --site-soft: #f5f9fc;
+  --site-white: #ffffff;
+  --site-danger: #d9363e;
+  --site-radius-sm: 10px;
+  --site-radius-md: 14px;
+  --site-radius-lg: 18px;
+  --site-shadow-sm: 0 8px 30px rgba(15, 63, 99, .07);
+  --site-shadow-card: 0 12px 28px rgba(18, 65, 98, .09);
+  --site-max-width: 1300px;
+
+  /* Backward-compatible aliases still used by older components. */
+  --brand: var(--site-primary);
+  --brand-dark: #055c9c;
+  --brand-deep: #073d68;
+  --brand-soft: #eaf6ff;
+  --ink: var(--site-text);
+  --muted: var(--site-muted);
+  --line: var(--site-border);
+  --soft: var(--site-soft);
+}

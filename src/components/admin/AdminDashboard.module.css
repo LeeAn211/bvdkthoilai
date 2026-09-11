@@ -1,0 +1,963 @@
+/* Modern Hospital Medical Teal & Emerald Design System */
+.container {
+  --bg-page: transparent;
+  --bg-card: #ffffff;
+  --bg-muted: #f0fdfa;
+  --bg-subtle: #f8fafc;
+  --border-card: #e2e8f0;
+  --border-muted: #e6f4f1;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --accent-teal: #0d9488;
+  --accent-teal-dark: #0f766e;
+  --accent-teal-light: #ccfbf1;
+  --accent-emerald: #059669;
+  --accent-blue: #0284c7;
+  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-hover: 0 6px 20px -2px rgba(13, 148, 136, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.06);
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 6px 0 40px;
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+/* 1. Linear & Medical Header */
+.topHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 24px 26px;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
+  border: 1px solid #ccfbf1;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.topHeader::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0d9488, #10b981, #0284c7);
+}
+
+.headerLead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.orgTag {
+  color: var(--text-secondary);
+}
+
+.slash {
+  color: #d4d4d8;
+}
+
+.currentSection {
+  color: var(--accent-blue);
+  font-weight: 700;
+}
+
+.versionBadge {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: #f4f4f5;
+  border: 1px solid #e4e4e7;
+  color: #71717a;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.systemStatusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.pageSubtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.headerActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.buttonGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.buttonSolid,
+.buttonOutline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 12.5px;
+  font-weight: 650;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.buttonSolid {
+  background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+  color: #ffffff;
+  border: 1px solid #0f766e;
+  box-shadow: 0 2px 4px rgba(13, 148, 136, 0.25);
+}
+
+.buttonSolid svg {
+  width: 14px;
+  height: 14px;
+}
+
+.buttonSolid:hover {
+  background: linear-gradient(135deg, #115e59 0%, #0f766e 100%);
+  border-color: #115e59;
+  box-shadow: 0 4px 8px rgba(13, 148, 136, 0.35);
+  transform: translateY(-1px);
+}
+
+.buttonOutline {
+  background: #ffffff;
+  color: #0f766e;
+  border: 1px solid #ccfbf1;
+}
+
+.buttonOutline svg {
+  width: 14px;
+  height: 14px;
+  color: #0d9488;
+}
+
+.buttonOutline:hover {
+  background: #f0fdfa;
+  border-color: #99f6e4;
+  color: #0f766e;
+}
+
+/* 2. System Command / Metrics Bar */
+.commandBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 11px 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  font-size: 12px;
+  color: var(--text-secondary);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.commandBarItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.commandBarItem svg {
+  width: 15px;
+  height: 15px;
+  color: var(--text-muted);
+}
+
+.commandDivider {
+  width: 1px;
+  height: 16px;
+  background: #e4e4e7;
+}
+
+.commandMetrics {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.subMetric {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.subMetricLabel {
+  color: var(--text-muted);
+  font-size: 11.5px;
+}
+
+.subMetricValue {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-feature-settings: 'tnum';
+}
+
+/* 3. Stats Grid (Minimalist Cards) */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 20px;
+  background: #ffffff;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+  transition: all 0.18s ease;
+  position: relative;
+}
+
+.statCard:hover {
+  border-color: #5eead4;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.statHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.statTitleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.statIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background: #f0fdfa;
+  color: #0f766e;
+  border: 1px solid #ccfbf1;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.statCard:hover .statIcon {
+  background: #0d9488;
+  color: #ffffff;
+  border-color: #0d9488;
+}
+
+.statIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.statTitle {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #334155;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.badge_neutral { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+.badge_info { background: #f0fdfa; color: #0f766e; border: 1px solid #ccfbf1; }
+.badge_success { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.badge_warning { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.badge_danger { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+
+.statBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statNumber {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  line-height: 1;
+  color: var(--text-primary);
+  font-feature-settings: 'tnum';
+}
+
+.statSubtext {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.statFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #f4f4f5;
+  color: #a1a1aa;
+  font-size: 11px;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+.statFooter svg {
+  width: 12px;
+  height: 12px;
+}
+
+.statCard:hover .statFooter {
+  color: var(--text-primary);
+}
+
+/* 4. Main Bento Grid Section */
+.bentoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.bentoCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 22px 24px;
+  background: #ffffff;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.cardHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.cardCategory {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #0f766e;
+  margin-bottom: 2px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 750;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.countPill {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  color: #0f766e;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cardLink {
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.cardLink:hover {
+  color: #0d9488;
+  text-decoration: underline;
+}
+
+/* Breakdown List (Linear style) */
+.breakdownList {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.breakdownRow {
+  display: grid;
+  grid-template-columns: minmax(130px, 1fr) 1.2fr 35px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: background 0.12s ease;
+}
+
+.breakdownRow:hover {
+  background: #f4f4f5;
+}
+
+.rowInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.rowDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rowName {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.barContainer {
+  height: 6px;
+  background: #f4f4f5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.rowNum {
+  font-size: 13px;
+  font-weight: 750;
+  color: var(--text-primary);
+  text-align: right;
+  font-feature-settings: 'tnum';
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #f4f4f5;
+  font-size: 11.5px;
+}
+
+.footerNote {
+  color: var(--text-muted);
+}
+
+/* CS Overview (Donut Ring & Feedbacks) */
+.csOverview {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 6px 0 14px;
+}
+
+.donutRing {
+  --done: 0%;
+  --processing: 0%;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #22c55e 0% var(--done),
+    #f59e0b var(--done) calc(var(--done) + var(--processing)),
+    #ef4444 calc(var(--done) + var(--processing)) 100%
+  );
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.donutCenter {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-card);
+}
+
+.donutTotal {
+  font-size: 22px;
+  font-weight: 850;
+  color: var(--text-primary);
+  line-height: 1;
+  font-feature-settings: 'tnum';
+}
+
+.donutSub {
+  font-size: 9px;
+  font-weight: 650;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.csLegend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.legendBullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bgDanger { background: #ef4444; }
+.bgWarning { background: #f59e0b; }
+.bgSuccess { background: #22c55e; }
+
+.legendLabel {
+  color: var(--text-secondary);
+  font-size: 12px;
+  flex: 1;
+}
+
+.legendVal {
+  font-weight: 800;
+  color: var(--text-primary);
+  font-feature-settings: 'tnum';
+}
+
+.feedbackBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+.bannerWarning {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #92400e;
+}
+
+.bannerSuccess {
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  color: #166534;
+}
+
+.bannerIcon svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.bannerContent strong {
+  display: block;
+  font-size: 12.5px;
+  margin-bottom: 2px;
+}
+
+.bannerContent p {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 11.5px;
+}
+
+/* 5. Linear Activity Feed */
+.activityFeed {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.feedRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 8px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: background 0.12s ease;
+  border-bottom: 1px solid #f4f4f5;
+}
+
+.feedRow:last-child {
+  border-bottom: none;
+}
+
+.feedRow:hover {
+  background: #f4f4f5;
+}
+
+.feedAvatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: #f4f4f5;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.feedAvatar svg {
+  width: 16px;
+  height: 16px;
+}
+
+.avatarUser {
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.feedBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.feedTitle {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feedSub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.statusBadge {
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.statusPublished { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.statusDraft { background: #f4f4f5; color: #71717a; border: 1px solid #e4e4e7; }
+.statusNew { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.statusProcessing { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+.emptyFeed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 0;
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
+.emptyIcon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f0fdf4;
+  color: #16a34a;
+  font-weight: 800;
+}
+
+/* 6. Master Data Grid */
+.masterGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.masterItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  background: #f8fafc;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.masterItem:hover {
+  background: #ffffff;
+  border-color: #5eead4;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.08);
+  transform: translateY(-2px);
+}
+
+.masterItemIcon svg {
+  width: 20px;
+  height: 20px;
+  color: #0f766e;
+  flex-shrink: 0;
+}
+
+.masterItemInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.masterItemNum {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+  font-feature-settings: 'tnum';
+}
+
+.masterItemLabel {
+  font-size: 10.5px;
+  font-weight: 650;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* 7. Quick Launch Commands (Shadcn Keyboard Style) */
+.quickCommandsSection {
+  padding: 22px 24px;
+  background: #ffffff;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.quickCommandsHead {
+  margin-bottom: 14px;
+}
+
+.commandsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.commandActionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 650;
+  transition: all 0.15s ease;
+}
+
+.commandActionBtn svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.commandActionBtn span {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.commandActionBtn:hover {
+  background: #ffffff;
+  border-color: #5eead4;
+  color: #0f766e;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.08);
+}
+
+.commandActionBtn:hover svg {
+  color: #0d9488;
+}
+
+.shortcutKey {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: #ffffff;
+  border: 1px solid #d4d4d8;
+  color: #71717a;
+  font-size: 10px;
+  font-family: monospace;
+  font-weight: 700;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .masterGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .commandsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .topHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .headerActions {
+    align-items: flex-start;
+    width: 100%;
+  }
+  .bentoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+  .masterGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .commandsGrid {
+    grid-template-columns: 1fr;
+  }
+  .commandBar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .commandDivider {
+    display: none;
+  }
+  .csOverview {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,3 @@
+import type { CollectionConfig } from 'payload'
+import { moduleAccess } from '@/access'
+export const SurveyAnswers: CollectionConfig={slug:'survey-answers',labels:{singular:'Câu trả lời',plural:'Câu trả lời khảo sát'},admin:{group:'Quản lý chất lượng'},access:{read:moduleAccess('surveys','view'),create:()=>true,update:()=>false,delete:moduleAccess('surveys','delete')},fields:[{name:'response',type:'relationship',relationTo:'survey-responses',required:true},{name:'question',type:'relationship',relationTo:'survey-questions',required:true},{name:'questionSnapshot',type:'textarea',required:true,label:'Nội dung câu hỏi tại thời điểm trả lời'},{name:'valueText',type:'textarea',label:'Giá trị'},{name:'score',type:'number',label:'Điểm'}]}

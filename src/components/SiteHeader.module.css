@@ -1,0 +1,174 @@
+.root { font-family: Arial, Helvetica, sans-serif; }
+.root :global(.mastheadBrandText strong),
+.root :global(.mastheadBrandText small),
+.root :global(.utilityBar),
+.root :global(.mainHeader),
+.root :global(.scrollingNotice) { font-family: Arial, Helvetica, sans-serif !important; }
+.root :global(.mastheadBrandText strong) { font-weight: 700 !important; letter-spacing: 0 !important; }
+
+.root :global(.mainHeader) { position: relative !important; top: auto !important; z-index: 60; height: 56px; background: #075db8 !important; box-shadow: none !important; }
+.root :global(.headerInner) { display: block !important; min-height: 56px !important; height: 56px; }
+.root :global(.mainMenu) { display: flex !important; align-items: stretch; justify-content: space-between !important; width: 100% !important; min-width: 0; height: 56px !important; gap: 0 !important; overflow: visible !important; }
+.root :global(.mainMenu > .navSimpleLink),
+.root :global(.mainMenu > .navItem) { display: flex !important; flex: 0 0 auto !important; width: auto !important; min-width: max-content !important; height: 56px !important; margin: 0 !important; padding: 0 !important; border: 0 !important; }
+.root :global(.mainMenu .navSimpleLink),
+.root :global(.mainMenu .navMainLink) { display: inline-flex !important; flex: 0 0 auto !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: center !important; width: auto !important; min-width: max-content !important; height: 56px !important; min-height: 56px !important; margin: 0 !important; padding: 0 !important; color: #fff !important; background: transparent !important; font-family: Arial, Helvetica, sans-serif !important; font-size: 12px !important; font-weight: 700 !important; line-height: 56px !important; letter-spacing: 0 !important; text-align: center; text-transform: uppercase; white-space: nowrap !important; word-break: keep-all !important; overflow-wrap: normal !important; }
+.root :global(.mainMenu .navMainLink) { gap: 5px !important; list-style: none; }
+.root :global(.navChevron) { display: block !important; flex: 0 0 9px !important; width: 9px !important; height: 6px !important; margin: 0 !important; stroke: currentColor; fill: none; }
+.root :global(.mainMenu .navSimpleLink:hover),
+.root :global(.mainMenu .navMainLink:hover),
+.root :global(.mainMenu .navItem:hover > .navMainLink) { color: #ffe37b !important; }
+.root :global(.mainMenu .navSimpleLink::after),
+.root :global(.mainMenu .navMainLink::after) { left: 0 !important; right: 0 !important; bottom: 0 !important; height: 3px !important; }
+.root :global(.navItem) { position: relative !important; }
+.root :global(.navDropdown) { top: 100% !important; left: 50% !important; width: 240px !important; }
+.root :global(.navItem:hover .navDropdown),
+.root :global(.navItem:focus-within .navDropdown) { visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; transform: translate(-50%, 0) !important; }
+
+@media (max-width: 1180px) and (min-width: 901px) {
+  .root :global(.mainMenu .navSimpleLink), .root :global(.mainMenu .navMainLink) { font-size: 11px !important; }
+}
+@media (max-width: 900px) {
+  .root :global(.mainHeader) { overflow-x: auto; }
+  .root :global(.mainMenu) { min-width: max-content; gap: 22px !important; padding-inline: 16px !important; }
+  .root :global(.mainMenu .navSimpleLink), .root :global(.mainMenu .navMainLink) { font-size: 12px !important; }
+}
+
+/* Header configurable utility bar / contact cards. */
+.root :global(.utilityBar) {
+  background: var(--utility-background, linear-gradient(90deg,#064a83,#0878d1)) !important;
+}
+.root :global(.utilityInner) { min-height: 38px !important; }
+
+/* Utility clock typography */
+.root :global(.utilityCurrentTime) {
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--time-color,#fff) !important;
+  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-size: var(--time-font-size,13px) !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0 !important;
+  line-height: 1.25 !important;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.root :global(.utilityTimeIcon) {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Social icons */
+.root :global(.headerSocial) {
+  width: 27px;
+  height: 27px;
+  overflow: hidden;
+  padding: 0;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.root :global(.headerSocial svg),
+.root :global(.headerSocial .socialBrandSvg) {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.root :global(.headerSocial.facebook) { color: #fff !important; }
+.root :global(.headerSocial.facebook .brandFacebook) { padding: 4px 3px 0; fill: #fff; }
+.root :global(.headerSocial.youtube .brandYoutube rect) { fill: #ff0033; }
+.root :global(.headerSocial.youtube .brandYoutube .play) { fill: #fff; }
+.root :global(.headerSocial.zalo .brandZalo rect) { fill: #0b7df0; }
+.root :global(.headerSocial.zalo .brandZalo .bubble) { fill: #fff; }
+.root :global(.headerSocial.zalo .brandZalo text) { fill: #0b7df0; font-size: 6px; font-weight: 900; font-family: Arial, sans-serif; }
+
+/* Masthead Contacts */
+.root :global(.mastheadContact) {
+  min-width: 214px;
+  border-color: var(--contact-border,#e1e7ec) !important;
+  background: var(--contact-background,#fff) !important;
+}
+.root :global(.mastheadContactIcon) {
+  color: var(--contact-icon,#075ec2) !important;
+  background: var(--contact-icon-bg,#eaf5ff) !important;
+}
+.root :global(.mastheadContactIcon svg) {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.root :global(.mastheadContactIcon.custom img) { width: 23px; height: 23px; object-fit: contain; }
+.root :global(.mastheadContact small) {
+  color: var(--contact-title,#273b4c) !important;
+  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-size: var(--contact-title-size,10px) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.15;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.root :global(.mastheadContact strong) {
+  color: var(--contact-text,#0756b4) !important;
+  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-size: var(--contact-text-size,17px) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.12 !important;
+  font-variant-numeric: tabular-nums lining-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.root :global(.mastheadContact em) {
+  margin-top: 3px;
+  color: var(--contact-extra,#557082);
+  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.15;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+@media (max-width: 700px) {
+  .root :global(.utilityCurrentTime) { padding-inline: 4px; font-size: 11px !important; }
+}
+
+/* v4.4.26 - Header settings are stored in existing SiteSettings to avoid broken /admin/globals/header. */
+.root :global(.hospitalMasthead) {
+  position: relative;
+  min-height: var(--masthead-min-height,110px);
+  background: var(--masthead-background,#fff);
+  background-image: var(--masthead-background-image,none);
+  background-size: var(--masthead-background-size,cover);
+  background-position: var(--masthead-background-position,center center);
+  overflow: hidden;
+}
+.root :global(.hospitalMasthead::before) {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--masthead-background-overlay,rgba(255,255,255,.88));
+  pointer-events: none;
+}
+.root :global(.hospitalMastheadInner) { position: relative; z-index: 1; min-height: var(--masthead-min-height,110px); }
+.root :global(.mastheadLogo) { width: var(--masthead-logo-size,66px) !important; height: var(--masthead-logo-size,66px) !important; flex-basis: var(--masthead-logo-size,66px) !important; }
+.root :global(.mastheadBrandText strong) { color: var(--masthead-title-color,#0756b4) !important; font-size: var(--masthead-title-size, 17px) !important; }
+.root :global(.mastheadBrandText small) { color: var(--masthead-subtitle-color,#0a9b50) !important; font-size: var(--masthead-subtitle-size, 13px) !important; }
+.root :global(.headerSocial img) { width: 27px; height: 27px; object-fit: contain; border-radius: 50%; display:block; }
+.root :global(.socialCustomText) { display:inline-flex; width:27px; height:27px; border-radius:50%; align-items:center; justify-content:center; background:#fff; color:#0756b4; font-size:8px; font-weight:700; }
