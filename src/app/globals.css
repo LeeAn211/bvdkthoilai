@@ -1179,10 +1179,13 @@ body { background: #fff; color: var(--ink); overflow-x: hidden; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    gap: 3px;
     color: #627b8e;
     font-size: 18px;
     height: 100%;
+    padding: 6px 0;
+    text-decoration: none;
+    transition: color .15s ease, background-color .15s ease;
   }
   .mobileActionBar a svg {
     width: 22px;
@@ -1191,19 +1194,19 @@ body { background: #fff; color: var(--ink); overflow-x: hidden; }
     stroke: currentColor;
     fill: none;
   }
-  .mobileActionBar span { font-size: 9px; font-weight: 700; }
-  /* Nút Đặt khám: FAB nhô lên với thiết kế rõ ràng */
+  .mobileActionBar span { font-size: 10px; font-weight: 700; line-height: 1.1; }
+  /* Nút Đặt khám: đồng bộ chiều cao và hàng với các nút khác */
   .mobileActionBar .mobileBooking {
-    position: relative;
-    bottom: 10px;
-    margin: 0 6px;
+    position: static;
+    bottom: auto;
+    margin: 4px 6px;
     padding: 0 4px;
-    border-radius: 14px;
+    border-radius: 12px;
     background: var(--brand);
     color: white;
-    box-shadow: 0 6px 18px rgba(8,120,209,.35);
+    box-shadow: 0 4px 14px rgba(8,120,209,.28);
     height: auto;
-    min-height: 52px;
+    min-height: 0;
   }
   .mobileActionBar .mobileBooking svg { stroke: white; }
   .mobileActionBar .mobileBooking span { color: white; }

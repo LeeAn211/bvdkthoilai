@@ -175,20 +175,43 @@
 
 /* Responsive: Tên đơn vị và logo trên màn hình nhỏ */
 @media (max-width: 640px) {
-  .root :global(.hospitalMastheadInner) { min-height: 78px !important; gap: 8px !important; padding: 8px 0 !important; }
+  .root :global(.hospitalMastheadInner) {
+    min-height: 78px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    padding: 10px 0 !important;
+  }
   .root :global(.mastheadLogo) {
     width: min(var(--masthead-logo-size, 52px), 50px) !important;
     height: min(var(--masthead-logo-size, 52px), 50px) !important;
     flex-basis: min(var(--masthead-logo-size, 52px), 50px) !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
   }
-  .root :global(.mastheadBrand) { gap: 8px !important; }
+  .root :global(.mastheadBrand) {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: auto 0 !important;
+  }
+  .root :global(.mastheadBrandText) {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+  }
   .root :global(.mastheadBrandText strong) {
     font-size: clamp(11px, 3.8vw, 15px) !important;
-    line-height: 1.2 !important;
+    line-height: 1.25 !important;
   }
   .root :global(.mastheadBrandText small) {
     font-size: clamp(9px, 2.5vw, 12px) !important;
     margin-top: 3px !important;
+    line-height: 1.2 !important;
   }
   /* Ẩn thẻ liên hệ trên mobile nhỏ */
   .root :global(.mastheadContacts) { display: none !important; }
