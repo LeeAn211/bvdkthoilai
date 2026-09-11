@@ -12,8 +12,8 @@
   --shadow: 0 14px 40px rgba(24, 73, 112, .09);
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin:0; font-family: Arial, Helvetica, sans-serif; color:var(--text); background:#fff; line-height:1.55; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body { margin:0; font-family: Arial, Helvetica, sans-serif; color:var(--text); background:#fff; line-height:1.55; overflow-x: hidden; }
 a { color:inherit; text-decoration:none; }
 .container { width:min(1180px, calc(100% - 36px)); margin:auto; }
 .topbar { background:var(--blue-deep); color:#fff; font-size:13px; }
@@ -518,7 +518,7 @@ h3 { line-height:1.35; }
 .scrollingNoticeItem { font-size:11px; }
 
 .homePortalPage { background:#f7fafc; }
-.homePortalPage .heroBannerCarousel { left:auto; width:min(100%,1920px); min-width:0; max-width:1920px; height:clamp(180px,31.25vw,600px); margin:0 auto; transform:none; }
+.homePortalPage .heroBannerCarousel { left:auto; width:min(100%,1920px); min-width:0; max-width:1920px; height:clamp(160px,31.25vw,600px); margin:0 auto; transform:none; overflow:hidden; }
 .homePortalPage .heroBannerSlide img { object-fit:cover; }
 .homeQuickWrap { position:relative; z-index:8; margin-top:-34px; }
 .homeQuickGrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); overflow:hidden; border:1px solid #dce8f0; border-radius:23px; background:#fff; box-shadow:0 18px 48px rgba(19,67,101,.14); }
@@ -1139,7 +1139,7 @@ body { background: #fff; color: var(--ink); overflow-x: hidden; }
   .bookingButton { font-size:0; width:43px; padding:0; }
   .bookingButton span { font-size:18px; }
   .hospitalHero { height:31.25vw; min-height:100px; }
-  .hospitalHero.heroBannerCarousel { height:var(--hero-banner-height,406px); min-height:var(--hero-banner-height,406px); }
+  .hospitalHero.heroBannerCarousel { height:clamp(160px,50vw,400px); min-height:160px; }
   .hospitalHeroGrid { grid-template-columns:1fr; padding-top:44px; padding-bottom:66px; }
   .heroContent h1 { font-size:40px; }
   .quickServicesWrap { margin-top:0; }
@@ -1184,6 +1184,13 @@ body { background: #fff; color: var(--ink); overflow-x: hidden; }
     font-size: 18px;
     height: 100%;
   }
+  .mobileActionBar a svg {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    stroke: currentColor;
+    fill: none;
+  }
   .mobileActionBar span { font-size: 9px; font-weight: 700; }
   /* Nút Đặt khám: FAB nhô lên với thiết kế rõ ràng */
   .mobileActionBar .mobileBooking {
@@ -1198,8 +1205,10 @@ body { background: #fff; color: var(--ink); overflow-x: hidden; }
     height: auto;
     min-height: 52px;
   }
+  .mobileActionBar .mobileBooking svg { stroke: white; }
   .mobileActionBar .mobileBooking span { color: white; }
   .mobileActionBar .mobileEmergency { color: var(--danger); }
+  .mobileActionBar .mobileEmergency svg { stroke: var(--danger); }
 }
 @media (max-width: 520px) {
   .container { width:min(100% - 28px,1180px); }
