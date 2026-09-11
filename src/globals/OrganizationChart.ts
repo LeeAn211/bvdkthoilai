@@ -1,11 +1,30 @@
-import type { GlobalConfig } from 'payload'
+import type { GlobalConfig, Field } from 'payload'
 import { admins, loggedIn } from '@/access'
 
-const leaderFields = (): any[] => [
-  { name: 'name', label: 'Họ và tên', type: 'text', required: true },
-  { name: 'title', label: 'Chức danh hiển thị', type: 'text', required: true },
-  { name: 'photo', label: 'Ảnh chân dung', type: 'upload', relationTo: 'media', admin: { description: 'Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong thư viện.' } },
-  { name: 'responsibility', label: 'Lĩnh vực phụ trách', type: 'text' },
+const leaderFields = (): Field[] => [
+  {
+    name: 'doctorRef',
+    label: 'Liên kết từ Bác sĩ (Quản trị → Tổ chức → Bác sĩ)',
+    type: 'relationship',
+    relationTo: 'doctors',
+    admin: {
+      description: 'Nếu chọn bác sĩ, hệ thống sẽ tự động lấy tên, ảnh đại diện và chức danh của bác sĩ.',
+    },
+  },
+  { name: 'name', label: 'Họ và tên', type: 'text' },
+  { name: 'title', label: 'Chức danh hiển thị', type: 'text' },
+  { 
+    name: 'photo', 
+    label: 'Ảnh chân dung', 
+    type: 'upload', 
+    relationTo: 'media', 
+    admin: { 
+      description: 'Kích thước hiển thị đẹp nhất: Tỷ lệ 3:4 hoặc 4:5 (khuyến nghị 600×800px hoặc 450×600px, dung lượng < 2MB). Có thể tải ảnh mới hoặc chọn từ Thư viện. Nếu để trống, hệ thống sẽ tự dùng ảnh đại diện từ Bác sĩ liên kết.' 
+    } 
+  },
+  { name: 'responsibility', label: 'Lĩnh vực phụ trách / Nhiệm vụ', type: 'text' },
+  { name: 'phone', label: 'Điện thoại liên hệ', type: 'text' },
+  { name: 'email', label: 'Email', type: 'text' },
 ]
 
 export const OrganizationChart: GlobalConfig = {
@@ -13,45 +32,41 @@ export const OrganizationChart: GlobalConfig = {
   label: 'Sơ đồ tổ chức',
   admin: {
     group: 'Tổ chức',
-    description: 'Quản lý sơ đồ 3 tầng: Giám đốc, 3 Phó Giám đốc và 4 Phòng – 9 Khoa.',
+    description: 'Quản lý sơ đồ bộ máy: Giám đốc, các Phó Giám đốc, Khối Phòng chức năng và Khối Khoa chuyên môn.',
   },
-  access: { read: loggedIn, update: admins },
+  access: { read: () => true, update: admins },
   versions: { max: 20 },
   fields: [
     { name: 'pageTitle', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Sơ đồ tổ chức Bệnh viện Đa khoa Khu vực Thới Lai', required: true },
-    { name: 'description', label: 'Mô tả ngắn', type: 'textarea', defaultValue: 'Cơ cấu tổ chức và hệ thống các khoa, phòng trực thuộc bệnh viện.' },
+    { name: 'description', label: 'Mô tả ngắn', type: 'textarea', defaultValue: 'Cơ cấu tổ chức bộ máy và hệ thống các khoa, phòng trực thuộc Bệnh viện Đa khoa Khu vực Thới Lai.' },
     {
       name: 'director',
-      label: 'Bậc 1 – Giám đốc',
+      label: 'Bậc 1 – Giám đốc Bệnh viện',
       type: 'group',
       fields: leaderFields(),
     },
     {
       name: 'deputyDirectors',
-      label: 'Bậc 2 – Các Phó Giám đốc',
+      label: 'Bậc 2 – Các Phó Giám đốc Bệnh viện',
       type: 'array',
-      maxRows: 3,
-      admin: { description: 'Có thể nhập từ 1 đến 3 Phó Giám đốc. Trang chỉ hiển thị những người đã nhập họ tên; kéo thả để đổi vị trí.' },
+      maxRows: 8,
+      admin: { description: 'Có thể thêm các Phó Giám đốc (tối đa 8); tự động canh đều cân đối trên sơ đồ; kéo thả để đổi vị trí.' },
       fields: leaderFields(),
     },
     {
       name: 'offices',
-      label: 'Bậc 3 – Bốn Phòng chức năng',
+      label: 'Bậc 3 – Khối Phòng chức năng',
       type: 'array',
-      minRows: 4,
-      maxRows: 4,
-      admin: { description: 'Chọn đúng 4 Phòng; kéo thả để đổi thứ tự.' },
+      admin: { description: 'Chọn các Phòng chức năng; kéo thả để đổi thứ tự.' },
       fields: [
         { name: 'unit', label: 'Phòng chức năng', type: 'relationship', relationTo: 'departments', required: true, filterOptions: { kind: { equals: 'office' } } },
       ],
     },
     {
       name: 'departments',
-      label: 'Bậc 3 – Chín Khoa',
+      label: 'Bậc 3 – Khối Khoa chuyên môn',
       type: 'array',
-      minRows: 9,
-      maxRows: 9,
-      admin: { description: 'Chọn đúng 9 Khoa; kéo thả để đổi thứ tự.' },
+      admin: { description: 'Chọn các Khoa chuyên môn; kéo thả để đổi thứ tự.' },
       fields: [
         { name: 'unit', label: 'Khoa', type: 'relationship', relationTo: 'departments', required: true, filterOptions: { kind: { not_equals: 'office' } } },
       ],

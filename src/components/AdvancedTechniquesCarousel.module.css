@@ -1,0 +1,189 @@
+.techCarouselWrapper {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.techCarouselTrack {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.techCardLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 18px;
+  outline: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.techCardLink.noCursor {
+  cursor: default;
+}
+
+.techCardLink:hover:not(.noCursor) {
+  transform: translateY(-5px);
+}
+
+.techCardLink:hover:not(.noCursor) .techCard {
+  box-shadow: 0 16px 32px rgba(8, 120, 209, 0.16);
+  border-color: #0878d1;
+}
+
+.techCard {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 18px;
+  background-color: #ffffff;
+  border: 1px solid #dce8f1;
+  box-shadow: 0 8px 24px rgba(15, 63, 99, 0.08);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.techCardImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.18 / 1;
+  background-color: #f8fbfe;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.techCardImg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.techCardImg.fitContain {
+  object-fit: contain !important;
+  padding: 8px;
+}
+
+.techCardImg.fitCover {
+  object-fit: cover !important;
+}
+
+.techCardLink:hover:not(.noCursor) .techCardImg {
+  transform: scale(1.03);
+}
+
+.techCardBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  background-color: rgba(255, 255, 255, 0.96);
+  border: 1px solid #bce0f8;
+  color: #0878d1;
+  font-size: 10.5px;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(8, 120, 209, 0.1);
+}
+
+.techCardPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f0f7fd 0%, #e6f3fa 100%);
+}
+
+.techCardPlaceholder svg {
+  stroke: #0878d1;
+}
+
+.techCardFooter {
+  padding: 15px 18px 16px;
+  background-color: #f0f7fd;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-top: 1px solid #dce8f1;
+  color: #0754a8;
+  transition: background-color 0.2s ease;
+}
+
+.techCardLink:hover:not(.noCursor) .techCardFooter {
+  background-color: #e4f2fb;
+}
+
+.techCardTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.44;
+  color: #0754a8;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.techCarouselControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.techNavBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #0878d1;
+  background-color: #ffffff;
+  color: #0878d1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(8, 120, 209, 0.15);
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.techNavBtn svg {
+  stroke: #0878d1;
+}
+
+.techNavBtn:hover {
+  background-color: #0878d1;
+  border-color: #0754a8;
+  color: #ffffff;
+  transform: scale(1.06);
+}
+
+.techNavBtn:hover svg {
+  stroke: #ffffff;
+}
+
+.techNavBtn:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 980px) {
+  .techCarouselTrack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .techCarouselTrack {
+    grid-template-columns: 1fr;
+  }
+  .techCardTitle {
+    font-size: 13.5px;
+  }
+}

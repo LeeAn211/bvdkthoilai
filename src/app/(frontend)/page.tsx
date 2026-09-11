@@ -7,6 +7,8 @@ import { ScheduleExplorer } from '@/components/ScheduleExplorer'
 import { VaccinationTabs } from '@/components/VaccinationTabs'
 import { HeroBannerCarousel } from '@/components/HeroBannerCarousel'
 import { FeaturedContentCarousel } from '@/components/FeaturedContentCarousel'
+import { AdvancedTechniquesCarousel } from '@/components/AdvancedTechniquesCarousel'
+import { OurExpertsCarousel } from '@/components/OurExpertsCarousel'
 import { getCMS, getGlobal, getHomepage } from '@/lib/payload'
 import { mediaFormat, mediaLabel, mediaUrl } from '@/lib/media'
 import { getDefaultContentMedia } from '@/lib/defaultMedia'
@@ -44,6 +46,8 @@ export default async function HomePage() {
   let vaccinePrices: any[] = []
   let contentSections: any[] = []
   let customPosts: any[] = []
+  let advancedTechniques: any[] = []
+  let ourExpertsList: any[] = []
   let siteSettings: any = {}
   let quickLinksSettings: any = {}
   let defaultMedia: any = { news: '/default-content/news.svg', notices: '/default-content/notices.svg', procurement: '/default-content/procurement.svg' }
@@ -56,12 +60,12 @@ export default async function HomePage() {
     defaultMedia = contentDefaults
     quickLinksSettings = quickSettings || {}
 
-    const [newsResult, noticeResult, procurementResult, documentResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult] = await Promise.all([
+    const [newsResult, noticeResult, procurementResult, documentResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult] = await Promise.all([
       payload.find({ collection: 'news', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 100, depth: 1 }),
       payload.find({ collection: 'notices', where: { and: [{ _status: { equals: 'published' } }, { showOnHome: { equals: true } }] }, sort: '-startAt', limit: 6, depth: 1 }),
       payload.find({ collection: 'procurement', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 6, depth: 1 }),
       payload.find({ collection: 'documents', sort: '-issuedAt', limit: 6, depth: 1 }),
-      payload.find({ collection: 'doctors', limit: 6, sort: 'name', depth: 1 }),
+      payload.find({ collection: 'doctors', where: { active: { equals: true } }, limit: 50, sort: ['order', 'name'], depth: 2 }),
       payload.find({ collection: 'departments', limit: 100, sort: 'name', depth: 0 }),
       payload.find({ collection: 'specialties', where: { active: { equals: true } }, limit: 100, sort: 'order', depth: 1 }),
       payload.find({ collection: 'services', where: { active: { equals: true } }, limit: 8, sort: 'name', depth: 0 }),
@@ -71,6 +75,8 @@ export default async function HomePage() {
       payload.find({ collection: 'vaccinePrices', where: { active: { equals: true } }, limit: 1000, sort: '-effectiveFrom', depth: 1 }),
       payload.find({ collection: 'content-sections', where: { and: [{ active: { equals: true } }, { _status: { equals: 'published' } }] }, limit: 100, sort: 'title', depth: 1 }),
       payload.find({ collection: 'custom-posts', where: { _status: { equals: 'published' } }, limit: 300, sort: '-publishedAt', depth: 2 }),
+      payload.find({ collection: 'advanced-techniques', where: { active: { equals: true } }, limit: 50, sort: ['order', 'title'], depth: 1 }),
+      payload.find({ collection: 'our-experts', where: { active: { equals: true } }, limit: 50, sort: ['order', 'name'], depth: 2 }).catch(() => ({ docs: [] })),
     ])
     news = newsResult.docs as any[]
     notices = noticeResult.docs as any[]
@@ -86,6 +92,8 @@ export default async function HomePage() {
     vaccinePrices = vaccinePriceResult.docs as any[]
     contentSections = contentSectionResult.docs as any[]
     customPosts = customPostResult.docs as any[]
+    advancedTechniques = advancedTechniquesResult.docs as any[]
+    ourExpertsList = (ourExpertsResult?.docs || []) as any[]
     totals = { news: newsResult.totalDocs, notices: noticeResult.totalDocs, doctors: doctorResult.totalDocs, departments: departmentResult.totalDocs, services: serviceResult.totalDocs }
   } catch {}
 
@@ -121,18 +129,102 @@ export default async function HomePage() {
     { value: `${totals.news + totals.notices || 100}+`, label: 'Tin bài công khai' },
   ]
 
-  const configuredSections = Array.isArray(home?.sections) ? home.sections : []
+  const rawSections = Array.isArray(home?.sections) && home.sections.length > 0 ? [...home.sections] : []
+  // Nếu database đã lưu sections từ trước nhưng chưa có advanced-techniques, tự động chèn vào để hiển thị ngay
+  if (!rawSections.some((s: any) => s?.type === 'advanced-techniques')) {
+    const defaultTechSection = {
+      type: 'advanced-techniques',
+      eyebrow: 'CHUYÊN KHOA & CÔNG NGHỆ Y TẾ',
+      title: 'Kỹ thuật chuyên sâu',
+      description: 'Tiên phong ứng dụng các kỹ thuật cao, trang thiết bị hiện đại phục vụ chăm sóc và điều trị.',
+      visible: true,
+      techniqueItemsPerView: 3,
+      techniqueAutoplaySeconds: 5,
+      cardBarBgColor: '#f0f7fd',
+      cardBarTextColor: '#0754a8',
+      techniqueItems: [
+        {
+          title: 'Ứng dụng các kỹ thuật hiện đại trong điều trị bệnh da',
+          badge: 'Phòng khám Da - Thẩm mỹ Da',
+          image: '',
+          url: '/chuyen-khoa',
+          visible: true,
+        },
+        {
+          title: 'Ứng dụng kỹ thuật quang - điện (TruScreen) trong tầm soát ung thư cổ tử cung',
+          badge: 'Tầm soát chuyên sâu',
+          image: '',
+          url: '/chuyen-khoa',
+          visible: true,
+        },
+        {
+          title: 'Kỹ thuật truyền dịch vào buồng ối',
+          badge: 'Sản phụ khoa',
+          image: '',
+          url: '/chuyen-khoa',
+          visible: true,
+        },
+      ],
+    }
+    const featuredIdx = rawSections.findIndex((s: any) => s?.type === 'featured-news' || s?.type === 'news')
+    if (featuredIdx >= 0) {
+      rawSections.splice(featuredIdx + 1, 0, defaultTechSection)
+    } else {
+      rawSections.unshift(defaultTechSection)
+    }
+  }
+
+  // Nếu database đã lưu sections từ trước nhưng chưa có our-experts, tự động chèn vào để hiển thị ngay
+  if (!rawSections.some((s: any) => s?.type === 'our-experts')) {
+    const defaultExpertsSection = {
+      type: 'our-experts',
+      eyebrow: 'ĐỘI NGŨ Y BÁC SĨ',
+      title: 'Chuyên gia của chúng tôi',
+      description: 'Đội ngũ bác sĩ giàu kinh nghiệm, chuyên môn sâu, luôn tận tâm vì sức khỏe người bệnh.',
+      visible: true,
+      expertItemsPerView: 4,
+      expertAutoplaySeconds: 5,
+      expertCardBgColor: '#f0f7fd',
+      expertCardTextColor: '#0754a8',
+      expertItems: [],
+    }
+    const techIdx = rawSections.findIndex((s: any) => s?.type === 'advanced-techniques')
+    if (techIdx >= 0) {
+      rawSections.splice(techIdx + 1, 0, defaultExpertsSection)
+    } else {
+      rawSections.push(defaultExpertsSection)
+    }
+  }
+
+  // Tự động sắp xếp vị trí hiển thị đẹp mắt: nếu advanced-techniques và our-experts đang nằm ở cuối cùng (do được thêm mới sau),
+  // di chuyển chúng lên ngay sau mục Tin tức nổi bật (featured-news) để người dùng dễ nhìn thấy ngay khi vào trang chủ
+  const techSectionIdx = rawSections.findIndex((s: any) => s?.type === 'advanced-techniques')
+  if (techSectionIdx > 2) {
+    const [techSec] = rawSections.splice(techSectionIdx, 1)
+    const fIdx = rawSections.findIndex((s: any) => s?.type === 'featured-news' || s?.type === 'news')
+    rawSections.splice(fIdx >= 0 ? fIdx + 1 : 1, 0, techSec)
+  }
+  const expertSectionIdx = rawSections.findIndex((s: any) => s?.type === 'our-experts')
+  if (expertSectionIdx > 3) {
+    const [expSec] = rawSections.splice(expertSectionIdx, 1)
+    const tIdx = rawSections.findIndex((s: any) => s?.type === 'advanced-techniques')
+    rawSections.splice(tIdx >= 0 ? tIdx + 1 : 2, 0, expSec)
+  }
+
+  const configuredSections = rawSections
   const sectionDefaults: Record<string, { eyebrow: string; title: string; description?: string; order: number }> = {
     'featured-news': { eyebrow: 'TIN TỨC', title: 'Tin tức & hoạt động', description: 'Cập nhật hoạt động nổi bật và thông tin chuyên môn mới nhất.', order: 0 },
-    'news-portal': { eyebrow: 'CỔNG THÔNG TIN BỆNH VIỆN', title: 'Các chuyên mục tin tức', order: 1 },
-    organization: { eyebrow: 'CHUYÊN KHOA', title: 'Hệ thống chuyên khoa', description: 'Đội ngũ tận tâm, quy trình chuyên nghiệp và trang thiết bị phù hợp.', order: 2 },
-    notices: { eyebrow: 'THÔNG BÁO', title: 'Thông báo mới', description: 'Thông tin dành cho người bệnh và cộng đồng.', order: 3 },
-    procurement: { eyebrow: 'CÔNG KHAI', title: 'Đấu thầu – Mua sắm', description: 'Thông tin mời thầu và kết quả mua sắm.', order: 4 },
-    schedules: { eyebrow: 'LỊCH KHÁM BỆNH', title: 'Chủ động trước khi đến khám', description: 'Tra cứu bác sĩ, chuyên khoa, thời gian và phòng khám.', order: 5 },
-    vaccinations: { eyebrow: 'LỊCH TIÊM CHỦNG', title: 'Thông tin tiêm ngừa', description: 'Lịch tiêm, đợt tiêm và danh mục vắc xin tại bệnh viện.', order: 6 },
-    science: { eyebrow: 'HOẠT ĐỘNG NỔI BẬT', title: 'Chuyên môn – Đào tạo', order: 7 },
-    introduction: { eyebrow: home?.intro?.eyebrow || 'BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI', title: home?.intro?.title || 'Tận tâm chăm sóc sức khỏe cộng đồng', description: home?.intro?.description, order: 8 },
-    documents: { eyebrow: 'TÀI LIỆU CÔNG KHAI', title: 'Văn bản mới', description: 'Quyết định, biểu mẫu và tài liệu được cập nhật từ hệ thống quản trị.', order: 9 },
+    'advanced-techniques': { eyebrow: '', title: 'Kỹ thuật chuyên sâu', description: '', order: 1 },
+    'our-experts': { eyebrow: 'ĐỘI NGŨ Y BÁC SĨ', title: 'Chuyên gia của chúng tôi', description: '', order: 2 },
+    'news-portal': { eyebrow: 'CỔNG THÔNG TIN BỆNH VIỆN', title: 'Các chuyên mục tin tức', order: 3 },
+    organization: { eyebrow: 'CHUYÊN KHOA', title: 'Hệ thống chuyên khoa', description: 'Đội ngũ tận tâm, quy trình chuyên nghiệp và trang thiết bị phù hợp.', order: 3 },
+    notices: { eyebrow: 'THÔNG BÁO', title: 'Thông báo mới', description: 'Thông tin dành cho người bệnh và cộng đồng.', order: 4 },
+    procurement: { eyebrow: 'CÔNG KHAI', title: 'Đấu thầu – Mua sắm', description: 'Thông tin mời thầu và kết quả mua sắm.', order: 5 },
+    schedules: { eyebrow: 'LỊCH KHÁM BỆNH', title: 'Chủ động trước khi đến khám', description: 'Tra cứu bác sĩ, chuyên khoa, thời gian và phòng khám.', order: 6 },
+    vaccinations: { eyebrow: 'LỊCH TIÊM CHỦNG', title: 'Thông tin tiêm ngừa', description: 'Lịch tiêm, đợt tiêm và danh mục vắc xin tại bệnh viện.', order: 7 },
+    science: { eyebrow: 'HOẠT ĐỘNG NỔI BẬT', title: 'Chuyên môn – Đào tạo', order: 8 },
+    introduction: { eyebrow: home?.intro?.eyebrow || 'BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI', title: home?.intro?.title || 'Tận tâm chăm sóc sức khỏe cộng đồng', description: home?.intro?.description, order: 9 },
+    documents: { eyebrow: 'TÀI LIỆU CÔNG KHAI', title: 'Văn bản mới', description: 'Quyết định, biểu mẫu và tài liệu được cập nhật từ hệ thống quản trị.', order: 10 },
   }
   const sectionConfig = (key: string) => {
     const aliases: Record<string, string[]> = { 'featured-news': ['news'] }
@@ -275,6 +367,310 @@ export default async function HomePage() {
           if (type === 'featured-news') return <section className="sectionPro configurableHomeSection homeFeaturedSection" style={style} key={key}>
             <div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/tim-kiem">Xem tất cả →</a></div><FeaturedContentCarousel items={featuredItems} interval={featuredInterval} /></div>
           </section>
+
+          if (type === 'advanced-techniques') {
+            const fallbackTechniques = [
+              {
+                title: 'Ứng dụng các kỹ thuật hiện đại trong điều trị bệnh da',
+                badge: 'Phòng khám Da - Thẩm mỹ Da',
+                image: '',
+                url: '/chuyen-khoa',
+                visible: true,
+              },
+              {
+                title: 'Ứng dụng kỹ thuật quang - điện (TruScreen) trong tầm soát ung thư cổ tử cung',
+                badge: 'Tầm soát chuyên sâu',
+                image: '',
+                url: '/chuyen-khoa',
+                visible: true,
+              },
+              {
+                title: 'Kỹ thuật truyền dịch vào buồng ối',
+                badge: 'Sản phụ khoa',
+                image: '',
+                url: '/chuyen-khoa',
+                visible: true,
+              },
+            ]
+            const collectionSlides = advancedTechniques.map((tech: any) => ({
+              id: tech.id,
+              title: tech.title,
+              badge: tech.badge || undefined,
+              image: mediaUrl(tech.cover) || '',
+              imageFit: tech.imageFit || 'contain',
+              url: `/ky-thuat-chuyen-sau/${tech.slug}`,
+              openNewTab: false,
+              visible: tech.active !== false,
+            }))
+
+            const hasCustomList = Array.isArray(item.techniqueItems) && item.techniqueItems.length > 0
+            const configuredSlides = (item.techniqueItems || []).map((tech: any, techIdx: number) => {
+              const linkedDoc = tech.techniqueRef && typeof tech.techniqueRef === 'object' ? tech.techniqueRef : undefined
+              const autoUrl = linkedDoc?.slug ? `/ky-thuat-chuyen-sau/${linkedDoc.slug}` : (tech.url || undefined)
+              const autoTitle = tech.title || linkedDoc?.title || 'Kỹ thuật chuyên sâu'
+              const autoBadge = tech.badge || linkedDoc?.badge || undefined
+              const autoImage = mediaUrl(tech.image) || (linkedDoc?.cover ? mediaUrl(linkedDoc.cover) : '')
+              const autoFit = tech.imageFit || linkedDoc?.imageFit || 'contain'
+              return {
+                id: tech.id || `tech-${techIdx}`,
+                title: autoTitle,
+                badge: autoBadge,
+                image: autoImage,
+                imageFit: autoFit,
+                url: autoUrl,
+                openNewTab: tech.openNewTab === true,
+                visible: tech.visible !== false,
+              }
+            })
+
+            // Ưu tiên hiển thị từ mục quản trị Kỹ thuật chuyên sâu nếu có bài viết, hoặc các thẻ được cấu hình có liên kết
+            const techniqueSlides = collectionSlides.length > 0
+              ? collectionSlides
+              : (hasCustomList ? configuredSlides : fallbackTechniques)
+
+            const isPinkish = (val?: string) => !val || val === '#fce4f0' || val === '#fce8f3' || val === '#d42d7d' || val === '#c92372' || val.toLowerCase().includes('fc')
+            const finalCardBg = isPinkish(item.cardBarBgColor) ? '#f0f7fd' : item.cardBarBgColor
+            const finalCardText = isPinkish(item.cardBarTextColor) ? '#0754a8' : item.cardBarTextColor
+
+            return (
+              <section className="sectionPro configurableHomeSection homeAdvancedTechniquesSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead">
+                    <div>
+                      <span className="sectionKicker">{cfg.eyebrow || 'CHUYÊN KHOA & CÔNG NGHỆ Y TẾ'}</span>
+                      <h2>{cfg.title || 'Kỹ thuật chuyên sâu'}</h2>
+                      {cfg.description && <p>{cfg.description}</p>}
+                    </div>
+                    <a href="/ky-thuat-chuyen-sau">Xem tất cả →</a>
+                  </div>
+                  <AdvancedTechniquesCarousel
+                    items={techniqueSlides}
+                    autoplaySeconds={Number(item.techniqueAutoplaySeconds ?? 5)}
+                    itemsPerView={Number(item.techniqueItemsPerView ?? 3)}
+                    cardBarBgColor={finalCardBg}
+                    cardBarTextColor={finalCardText}
+                  />
+                </div>
+              </section>
+            )
+          }
+
+          if (type === 'our-experts') {
+            const fallbackExperts = [
+              {
+                name: 'BS.CKII. Nguyễn Thụy Thúy Ái',
+                position: 'Giám đốc Bệnh viện',
+                badge: 'Ban Giám đốc',
+                image: '',
+                url: '/chuyen-khoa',
+                visible: true,
+              },
+              {
+                name: 'BS.CKII. Ngô Văn Dũng',
+                position: 'Phó Giám đốc Bệnh viện',
+                badge: 'Ban Giám đốc',
+                image: '',
+                url: '/chuyen-khoa',
+                visible: true,
+              },
+              {
+                name: 'BS.CKII. Huỳnh Thanh Liêm',
+                position: 'Phó Giám đốc Bệnh viện',
+                badge: 'Ban Giám đốc',
+                image: '',
+                url: '/chuyen-khoa',
+                visible: true,
+              },
+            ]
+            // Helper loại bỏ tiền tố chức danh quản lý/chức vụ trước tên (ví dụ "Phó Giám Đốc", "Giám đốc", "Trưởng Phòng")
+            const cleanTitleFromName = (rawName: string, title?: string): string => {
+              if (!rawName) return ''
+              let result = rawName.trim()
+              if (title && title.trim()) {
+                const escapedTitle = title.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                result = result.replace(new RegExp(`^${escapedTitle}\\s*`, 'i'), '').trim()
+              }
+              // Lọc các chức danh quản lý thông dụng nếu người dùng nhập sẵn trong tên
+              const commonTitles = [
+                'Giám Đốc Bệnh Viện',
+                'Giám đốc Bệnh viện',
+                'Phó Giám Đốc Bệnh Viện',
+                'Phó Giám đốc Bệnh viện',
+                'Phó Giám Đốc',
+                'Phó Giám đốc',
+                'Giám Đốc',
+                'Giám đốc',
+                'Trưởng Khoa',
+                'Trưởng khoa',
+                'Phó Trưởng Khoa',
+                'Phó Trưởng khoa',
+                'Phó Khoa',
+                'Phó khoa',
+                'Trưởng Phòng',
+                'Trưởng phòng',
+                'Phó Trưởng Phòng',
+                'Phó Trưởng phòng',
+                'Phó Phòng',
+                'Phó phòng',
+              ]
+              for (const t of commonTitles) {
+                if (result.toLowerCase().startsWith(t.toLowerCase())) {
+                  result = result.slice(t.length).trim()
+                  break
+                }
+              }
+              return result
+            }
+
+            // 1. Dữ liệu từ Quản trị -> Nội dung -> Chuyên gia của chúng tôi (our-experts collection)
+            const ourExpertsCollectionSlides = ourExpertsList.map((exp: any) => {
+              const linkedDoc = exp.doctorRef && typeof exp.doctorRef === 'object' ? exp.doctorRef : undefined
+              const linkedDept = linkedDoc && typeof linkedDoc.department === 'object' ? linkedDoc.department?.name : ''
+              const autoUrl = exp.url || (linkedDoc?.slug ? `/bac-si/${linkedDoc.slug}` : (linkedDoc ? `/bac-si/${linkedDoc.id}` : undefined))
+              
+              // Bỏ phần chức vụ trước tên: chỉ hiển thị học vị + họ tên (ví dụ: BSCKII. Lê Thị Đức Hạnh)
+              const doctorBaseName = linkedDoc?.name ? linkedDoc.name.trim() : ''
+              const rawName = doctorBaseName || exp.name || 'Bác sĩ / Chuyên gia'
+              const autoName = cleanTitleFromName(rawName, linkedDoc?.title)
+
+              // Chức vụ từ bác sĩ
+              const doctorPos = linkedDoc ? ([linkedDoc.title, linkedDoc.degree, linkedDoc.professionalTitle, linkedDept].filter(Boolean).join(' · ') || linkedDept) : ''
+              const customExpPos = (exp.position || '').trim()
+
+              // Nếu có cả chức vụ bác sĩ và có nhập Chức vụ/chức danh riêng bên Chuyên gia:
+              // Dòng 2: chức vụ bác sĩ
+              // Dòng 3: chức vụ/chức danh bên Chuyên gia của chúng tôi
+              let autoPos = doctorPos || customExpPos || undefined
+              let autoSubPos: string | undefined = undefined
+              if (doctorPos && customExpPos && customExpPos !== doctorPos) {
+                autoPos = doctorPos
+                autoSubPos = customExpPos
+              }
+
+              // Ưu tiên Ảnh đại diện của Bác sĩ; chỉ khi bên Bác sĩ không có hình ảnh thì mới áp dụng hình ảnh bên Chuyên gia
+              const doctorAvatarUrl = linkedDoc?.avatar ? mediaUrl(linkedDoc.avatar) : ''
+              const autoImage = doctorAvatarUrl || mediaUrl(exp.image) || ''
+              const autoFit = exp.imageFit || 'contain'
+              return {
+                id: exp.id,
+                name: autoName,
+                position: autoPos,
+                subPosition: autoSubPos,
+                image: autoImage,
+                imageFit: autoFit,
+                url: autoUrl,
+                openNewTab: exp.openNewTab === true,
+                visible: exp.active !== false,
+              }
+            })
+
+            // 2. Dữ liệu trực tiếp từ Quản trị -> Tổ chức -> Bác sĩ (doctors collection)
+            const collectionDoctorSlides = doctors.map((doc: any) => {
+              const deptName = typeof doc.department === 'object' ? doc.department?.name : ''
+              const position = [doc.title, doc.degree, doc.professionalTitle, deptName].filter(Boolean).join(' · ') || deptName || 'Bác sĩ chuyên khoa'
+              return {
+                id: doc.id,
+                name: (doc.name || '').trim(),
+                position,
+                image: mediaUrl(doc.avatar) || '',
+                imageFit: 'contain',
+                url: `/bac-si/${doc.slug}`,
+                openNewTab: false,
+                visible: doc.active !== false,
+              }
+            })
+
+            const hasCustomExpertList = Array.isArray(item.expertItems) && item.expertItems.length > 0
+            const configuredExpertSlides = (item.expertItems || []).map((exp: any, expIdx: number) => {
+              const linkedDoc = exp.doctorRef && typeof exp.doctorRef === 'object' ? exp.doctorRef : undefined
+              const linkedDept = linkedDoc && typeof linkedDoc.department === 'object' ? linkedDoc.department?.name : ''
+              const autoUrl = linkedDoc?.slug ? `/bac-si/${linkedDoc.slug}` : (exp.url || (linkedDoc ? `/bac-si/${linkedDoc.id}` : undefined))
+              
+              // Bỏ phần chức vụ trước tên: chỉ hiển thị học vị + họ tên
+              const doctorBaseName = linkedDoc?.name ? linkedDoc.name.trim() : ''
+              const rawName = doctorBaseName || exp.name || 'Bác sĩ / Chuyên gia'
+              const autoName = cleanTitleFromName(rawName, linkedDoc?.title)
+
+              // Chức vụ từ bác sĩ
+              const doctorPos = linkedDoc ? ([linkedDoc.title, linkedDoc.degree, linkedDoc.professionalTitle, linkedDept].filter(Boolean).join(' · ') || linkedDept) : ''
+              const customExpPos = (exp.position || '').trim()
+
+              let autoPos = doctorPos || customExpPos || undefined
+              let autoSubPos: string | undefined = undefined
+              if (doctorPos && customExpPos && customExpPos !== doctorPos) {
+                autoPos = doctorPos
+                autoSubPos = customExpPos
+              }
+
+              // Ưu tiên Ảnh đại diện của Bác sĩ; chỉ khi bên Bác sĩ không có hình ảnh thì mới áp dụng hình ảnh bên Chuyên gia
+              const doctorAvatarUrl = linkedDoc?.avatar ? mediaUrl(linkedDoc.avatar) : ''
+              const autoImage = doctorAvatarUrl || mediaUrl(exp.image) || ''
+              const autoFit = exp.imageFit || 'contain'
+              return {
+                id: exp.id || `expert-${expIdx}`,
+                name: autoName,
+                position: autoPos,
+                subPosition: autoSubPos,
+                image: autoImage,
+                imageFit: autoFit,
+                url: autoUrl,
+                openNewTab: exp.openNewTab === true,
+                visible: exp.visible !== false,
+              }
+            })
+
+            // Thứ tự ưu tiên:
+            // 1) Nếu có bài/dữ liệu trong Quản trị -> Nội dung -> Chuyên gia của chúng tôi -> ưu tiên hiển thị ngay
+            // 2) Nếu có danh sách cấu hình riêng trong Trang chủ -> dùng danh sách cấu hình
+            // 3) Nếu có danh sách Bác sĩ từ Quản trị -> Tổ chức -> Bác sĩ -> tự động lấy hiển thị
+            // 4) Fallback ban đầu
+            const expertSlides = ourExpertsCollectionSlides.length > 0
+              ? ourExpertsCollectionSlides
+              : (hasCustomExpertList
+                  ? configuredExpertSlides
+                  : (collectionDoctorSlides.length > 0 ? collectionDoctorSlides : fallbackExperts))
+
+            const isPinkish = (val?: string) => !val || val === '#fce4f0' || val === '#fce8f3' || val === '#d42d7d' || val === '#c92372' || val.toLowerCase().includes('fc')
+            const finalCardBg = isPinkish(item.expertCardBgColor) ? '#f0f7fd' : item.expertCardBgColor
+            const finalCardText = isPinkish(item.expertCardTextColor) ? '#0754a8' : item.expertCardTextColor
+
+            // Sắp xếp các slide chuyên gia theo quy tắc lãnh đạo bệnh viện (Giám đốc -> Phó Giám đốc -> ...)
+            const rawSortedExperts = [...expertSlides].sort((a: any, b: any) => {
+              const getRank = (exp: any) => {
+                const text = `${exp.name || ''} ${exp.position || ''} ${exp.subPosition || ''}`.toLowerCase()
+                if (text.includes('giám đốc') || text.includes('giam doc')) {
+                  if (text.includes('phó') || text.includes('pho')) return 2
+                  return 1
+                }
+                if (text.includes('trưởng') || text.includes('truong')) return 3
+                if (text.includes('phó') || text.includes('pho')) return 4
+                return 10
+              }
+              return getRank(a) - getRank(b)
+            })
+
+            return (
+              <section className="sectionPro configurableHomeSection homeOurExpertsSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead">
+                    <div>
+                      <span className="sectionKicker">{cfg.eyebrow || 'ĐỘI NGŨ Y BÁC SĨ'}</span>
+                      <h2>{cfg.title || 'Chuyên gia của chúng tôi'}</h2>
+                      {cfg.description && <p>{cfg.description}</p>}
+                    </div>
+                    <a href="/bac-si">Xem tất cả →</a>
+                  </div>
+                  <OurExpertsCarousel
+                    items={rawSortedExperts}
+                    autoplaySeconds={Number(item.expertAutoplaySeconds ?? 5)}
+                    itemsPerView={4}
+                    cardBarBgColor={finalCardBg}
+                    cardBarTextColor={finalCardText}
+                  />
+                </div>
+              </section>
+            )
+          }
 
           if (type === 'news-portal') return <section className="sectionPro configurableHomeSection homePortalNewsSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem toàn bộ bài viết →</a></div><HomeNewsTabs items={news.map((article) => ({ id: article.id, title: article.title, slug: article.slug, excerpt: article.excerpt, category: article.category, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news }))} tabs={contentTabsFor('news-portal')} /></div></section>
 

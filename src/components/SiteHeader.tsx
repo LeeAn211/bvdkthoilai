@@ -2,21 +2,50 @@ import { getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
 import { isExternalUrl, resolveMenuUrl } from '@/lib/navigation'
 import type { CSSProperties, ReactNode } from 'react'
-import styles from './SiteHeader.module.css'
 import { SocialBrandIcon } from './SocialBrandIcon'
 import { CurrentWeekdayTime } from './CurrentWeekdayTime'
 
 function ContactIcon({ type = 'phone', customUrl }: { type?: string; customUrl?: string }) {
   if (type === 'custom' && customUrl) return <span className="mastheadContactIcon custom" aria-hidden="true"><img src={customUrl} alt="" /></span>
+  
+  if (type === 'emergency' || type === 'cross') {
+    return (
+      <span className="mastheadContactIcon emergencyCross" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3z" fill="currentColor" />
+        </svg>
+      </span>
+    )
+  }
+
+  if (type === 'calendar' || type === 'calendar-clock') {
+    return (
+      <span className="mastheadContactIcon calendarClock" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          {/* Calendar top and body */}
+          <rect x="3" y="4" width="18" height="18" rx="3" />
+          <path d="M16 2v4" />
+          <path d="M8 2v4" />
+          <path d="M3 10h18" />
+          {/* Calendar grid dots/lines */}
+          <path d="M7 14h2" />
+          <path d="M7 17h2" />
+          <path d="M11 14h2" />
+          {/* Clock circle in bottom-right corner */}
+          <circle cx="16.5" cy="16.5" r="4.5" fill="#f0f9ff" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M16.5 14.5v2l1.3 1.3" />
+        </svg>
+      </span>
+    )
+  }
+
   const paths: Record<string, ReactNode> = {
-    emergency: <><path d="M12 3v18M3 12h18"/><path d="M6.5 6.5a7.8 7.8 0 1 0 11 0"/></>,
     headset: <><path d="M4 13v-1a8 8 0 0 1 16 0v1"/><path d="M4 13h3v6H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 1-2ZM20 13h-3v6h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-1-2ZM17 19c0 2-2 2-5 2"/></>,
-    calendar: <><path d="M7 2v3M17 2v3M4 8h16M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z"/><path d="M8 12h3v3H8z"/></>,
     heart: <path d="M12 21S3 16 3 9.5A4.5 4.5 0 0 1 11 6.7L12 8l1-1.3A4.5 4.5 0 0 1 21 9.5C21 16 12 21 12 21Z"/>,
     info: <><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></>,
     phone: <path d="M7.4 3.6 10 7.3 8.3 9.1c1.1 2.3 3.1 4.3 5.4 5.4l1.8-1.7 3.7 2.6-.6 3.4c-.2 1-1.1 1.7-2.1 1.6C9.3 19.5 4.5 14.7 3.6 7.5c-.1-1 .6-1.9 1.6-2.1l2.2-.4Z"/>,
   }
-  return <span className="mastheadContactIcon" aria-hidden="true"><svg viewBox="0 0 24 24">{paths[type] || paths.phone}</svg></span>
+  return <span className="mastheadContactIcon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">{paths[type] || paths.phone}</svg></span>
 }
 
 export async function SiteHeader() {
@@ -34,8 +63,8 @@ export async function SiteHeader() {
     try { theme = await getGlobal('theme-settings') } catch {}
   } catch {}
 
-  const hotline = contact?.hotline || settings?.hotline || process.env.NEXT_PUBLIC_HOTLINE || '0292 368 9115'
-  const emergency = contact?.emergencyHotline || settings?.emergencyHotline || hotline
+  const hotline = contact?.hotline || settings?.hotline || process.env.NEXT_PUBLIC_HOTLINE || '02923686115'
+  const emergency = contact?.emergencyHotline || settings?.emergencyHotline || '02923686115'
   const zalo = social?.zaloUrl || settings?.zaloUrl || process.env.NEXT_PUBLIC_ZALO_URL || '#'
   const facebook = social?.facebookUrl || settings?.facebookUrl || ''
   const youtube = social?.youtubeUrl || settings?.youtubeUrl || ''
@@ -61,25 +90,49 @@ export async function SiteHeader() {
 
   const items = nav?.items?.filter((x: any) => x.visible !== false) || [
     { label: 'Trang chủ', url: '/' },
-    { label: 'Giới thiệu', url: '/gioi-thieu' },
-    { label: 'Chuyên khoa', url: '/don-vi' },
+    {
+      label: 'Giới thiệu',
+      url: '/gioi-thieu',
+      children: [
+        { label: 'Giới thiệu chung', url: '/gioi-thieu' },
+        { label: 'Lịch sử phát triển', url: '/gioi-thieu/lich-su-phat-trien' },
+      ],
+    },
+    {
+      label: 'Tổ chức',
+      url: '/so-do-to-chuc',
+      children: [
+        { label: 'Sơ đồ tổ chức', url: '/so-do-to-chuc' },
+        { label: 'Khoa – Phòng', url: '/khoa-phong' },
+        { label: 'Chuyên khoa', url: '/chuyen-khoa' },
+        { label: 'Đội ngũ Bác sĩ', url: '/bac-si' },
+      ],
+    },
     { label: 'Lịch khám', url: '/lich-kham' },
     { label: 'Tiêm chủng', url: '/tiem-chung' },
     { label: 'Bảng giá', url: '/bang-gia' },
     { label: 'Tin tức', url: '/tin-tuc' },
+    { label: 'Thông báo', url: '/thong-bao' },
     { label: 'Đấu thầu – Mua sắm', url: '/dau-thau-mua-sam' },
     { label: 'Liên hệ', url: '/lien-he' },
   ]
 
-  const shellStyle = { '--site-primary': theme?.primaryColor || '#0878D1', '--site-secondary': theme?.secondaryColor || '#0754A8', '--site-accent': theme?.accentColor || '#16A36A', '--site-max-width': `${theme?.contentMaxWidth || 1300}px` } as CSSProperties
+  const brandAppearance = { ...(settings?.brandAppearance || {}), ...(settings?.headerBrandAppearance || {}) }
+  const utilityAppearance = { ...(settings?.utilityAppearance || {}), ...(settings?.headerUtilityAppearance || {}) }
+  const shellStyle = {
+    '--site-primary': theme?.primaryColor || '#0878D1',
+    '--site-secondary': theme?.secondaryColor || '#0754A8',
+    '--site-accent': theme?.accentColor || '#16A36A',
+    '--site-max-width': `${theme?.contentMaxWidth || 1300}px`,
+    '--header-font-family': settings?.headerFontFamily || '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  } as CSSProperties
 
-  const brandAppearance = settings?.headerBrandAppearance || {}
-  const utilityAppearance = settings?.headerUtilityAppearance || {}
   const utilityStyle = {
-    '--utility-background': utilityAppearance.background || 'linear-gradient(90deg,#064a83,#0878d1)',
+    '--utility-background': utilityAppearance.backgroundColor || 'linear-gradient(90deg, #064a83, #0878d1)',
+    '--utility-text-color': utilityAppearance.textColor || '#ffffff',
+    '--utility-font-size': `${utilityAppearance.fontSize || 12}px`,
     '--time-color': utilityAppearance.timeColor || '#ffffff',
     '--time-font-size': `${utilityAppearance.timeFontSize || 13}px`,
-    '--time-font-weight': utilityAppearance.timeFontWeight || '700',
   } as CSSProperties
 
   const backgroundImage = mediaUrl(brandAppearance?.backgroundImage)
@@ -92,19 +145,49 @@ export async function SiteHeader() {
     '--masthead-min-height': `${brandAppearance?.minHeight || 110}px`,
     '--masthead-title-color': brandAppearance?.titleColor || '#0756b4',
     '--masthead-title-size': `${brandAppearance?.titleFontSize || 17}px`,
-    '--masthead-subtitle-color': brandAppearance?.subtitleColor || '#0a9b50',
-    '--masthead-subtitle-size': `${brandAppearance?.subtitleFontSize || 13}px`,
+    '--masthead-subtitle-color': brandAppearance?.sloganColor || brandAppearance?.subtitleColor || '#0a9b50',
+    '--masthead-subtitle-size': `${brandAppearance?.sloganFontSize || brandAppearance?.subtitleFontSize || 13}px`,
+    '--masthead-slogan-align': brandAppearance?.sloganAlign || 'center',
     '--masthead-logo-size': `${brandAppearance?.logoSize || 66}px`,
   } as CSSProperties
 
   const configuredCards = Array.isArray(settings?.headerContactCards) ? settings.headerContactCards.filter((card: any) => card?.visible !== false) : []
   const contactCards = configuredCards.length > 0 ? configuredCards : [
-    { title: 'CẤP CỨU 24/7', text: emergency, href: `tel:${emergency}`, iconType: 'emergency', background: '#ffffff', borderColor: '#e1e7ec', titleColor: '#273b4c', textColor: '#ed2632', iconColor: '#118d48', iconBackground: '#eaf8ef', titleFontSize: 10, textFontSize: 17, fontWeight: '800' },
-    { title: 'TỔNG ĐÀI HỖ TRỢ', text: hotline, href: `tel:${hotline}`, iconType: 'headset', background: '#ffffff', borderColor: '#e1e7ec', titleColor: '#273b4c', textColor: '#0756b4', iconColor: '#075ec2', iconBackground: '#eaf5ff', titleFontSize: 10, textFontSize: 17, fontWeight: '800' },
+    {
+      title: 'CẤP CỨU 24/7',
+      text: emergency,
+      href: `tel:${emergency}`,
+      iconType: 'emergency',
+      background: '#ffffff',
+      borderColor: '#e1e7ec',
+      titleColor: '#273b4c',
+      textColor: '#ed2632',
+      iconColor: '#118d48',
+      iconBackground: '#eaf8ef',
+      titleFontSize: 10,
+      textFontSize: 17,
+      fontWeight: '800'
+    },
+    {
+      title: 'ĐẶT LỊCH KHÁM',
+      text: 'ĐẶT LỊCH NGAY',
+      href: '/lich-kham',
+      iconType: 'calendar',
+      hasArrow: true,
+      background: '#ffffff',
+      borderColor: '#e1e7ec',
+      titleColor: '#273b4c',
+      textColor: '#0878d1',
+      iconColor: '#0284c7',
+      iconBackground: '#e0f2fe',
+      titleFontSize: 10,
+      textFontSize: 16,
+      fontWeight: '800'
+    },
   ]
 
   return (
-    <div className={styles.root} style={shellStyle}>
+    <div className="siteHeaderRoot" style={shellStyle}>
       {settings?.headerShowUtilityBar !== false && <div className="utilityBar" style={utilityStyle}>
         <div className="container utilityInner">
           <div className="utilityGroup utilityContact">
@@ -148,12 +231,21 @@ export async function SiteHeader() {
                 '--contact-text-size': `${card?.textFontSize || 17}px`,
                 '--contact-weight': card?.fontWeight || '800',
               } as CSSProperties
-              const href = card?.href || (card?.text ? `tel:${String(card.text).replace(/[^+\d]/g, '')}` : '#')
-              return <a className="mastheadContact" href={href} style={cardStyle} key={`${card?.title || 'contact'}-${index}`}>
+              const href = card?.href || (card?.text ? (String(card.text).match(/\d{5,}/) ? `tel:${String(card.text).replace(/[^+\d]/g, '')}` : '/lich-kham') : '#')
+              const isAction = card?.hasArrow || String(card?.text || '').includes('NGAY') || String(card?.title || '').includes('ĐẶT LỊCH')
+              return <a className={`mastheadContact ${card?.iconType === 'emergency' ? 'contactEmergency' : ''} ${isAction ? 'contactAction' : ''}`} href={href} style={cardStyle} key={`${card?.title || 'contact'}-${index}`}>
                 <ContactIcon type={card?.iconType || 'phone'} customUrl={customIconUrl} />
-                <span>
+                <span className="mastheadContactInfo">
                   <small>{card?.title}</small>
-                  <strong>{card?.text}</strong>
+                  <strong>
+                    {card?.text}
+                    {isAction && (
+                      <svg className="contactActionArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    )}
+                  </strong>
                   {card?.extraText && <em>{card.extraText}</em>}
                 </span>
               </a>

@@ -32,6 +32,8 @@ import { Redirects } from './src/collections/Redirects'
 import { DynamicModules } from './src/collections/DynamicModules'
 import { ContentSections } from './src/collections/ContentSections'
 import { CustomPosts } from './src/collections/CustomPosts'
+import { AdvancedTechniques } from './src/collections/AdvancedTechniques'
+import { OurExperts } from './src/collections/OurExperts'
 import { FAQs } from './src/collections/FAQs'
 import { Forms } from './src/collections/Forms'
 import { FormSubmissions } from './src/collections/FormSubmissions'
@@ -66,6 +68,8 @@ import { ChatbotSettings } from './src/globals/ChatbotSettings'
 import { SystemSettings } from './src/globals/SystemSettings'
 import { ScheduleSettings } from './src/globals/ScheduleSettings'
 import { QuickLinksSettings } from './src/globals/QuickLinksSettings'
+import { HospitalHistory } from './src/globals/HospitalHistory'
+import { AboutPage } from './src/globals/AboutPage'
 import { withAudit, withGlobalAudit } from './src/lib/audit'
 import { hospitalEditor } from './src/editor/hospitalEditor'
 
@@ -162,9 +166,9 @@ export default buildConfig({
   collections: [
     Users,
     ...[Media, News, Notices, Procurement, Documents,
-      Departments, Specialties, Doctors, Schedules, Services, ServicePrices, Vaccinations, VaccinationSchedules, Vaccines, VaccinePrices, Recruitment, Pages, Categories, Feedback, Consultations, FeedbackCategories, FeedbackCases, FeedbackActions, FAQs, Forms, FormSubmissions, ChatbotIntents, ChatbotConversations, ChatbotUnanswered, SurveyTemplates, SurveyTemplateVersions, SurveyQuestions, SurveyCampaigns, SurveyCodes, SurveyResponses, SurveyAnswers, SurveyStatistics, Redirects, DynamicModules, ContentSections, CustomPosts, ImportJobs
+      Departments, Specialties, Doctors, Schedules, Services, ServicePrices, Vaccinations, VaccinationSchedules, Vaccines, VaccinePrices, Recruitment, Pages, Categories, Feedback, Consultations, FeedbackCategories, FeedbackCases, FeedbackActions, FAQs, Forms, FormSubmissions, ChatbotIntents, ChatbotConversations, ChatbotUnanswered, SurveyTemplates, SurveyTemplateVersions, SurveyQuestions, SurveyCampaigns, SurveyCodes, SurveyResponses, SurveyAnswers, SurveyStatistics, Redirects, DynamicModules, ContentSections, CustomPosts, AdvancedTechniques, OurExperts, ImportJobs
     ].map((collection) => withAudit(collection)),
     AuditLogs,
   ],
-  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
+  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
 })

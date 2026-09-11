@@ -109,6 +109,8 @@ export interface Config {
     'dynamic-modules': DynamicModule;
     'content-sections': ContentSection;
     'custom-posts': CustomPost;
+    'advanced-techniques': AdvancedTechnique;
+    'our-experts': OurExpert;
     importJobs: ImportJob;
     'audit-logs': AuditLog;
     'payload-kv': PayloadKv;
@@ -160,6 +162,8 @@ export interface Config {
     'dynamic-modules': DynamicModulesSelect<false> | DynamicModulesSelect<true>;
     'content-sections': ContentSectionsSelect<false> | ContentSectionsSelect<true>;
     'custom-posts': CustomPostsSelect<false> | CustomPostsSelect<true>;
+    'advanced-techniques': AdvancedTechniquesSelect<false> | AdvancedTechniquesSelect<true>;
+    'our-experts': OurExpertsSelect<false> | OurExpertsSelect<true>;
     importJobs: ImportJobsSelect<false> | ImportJobsSelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -181,6 +185,8 @@ export interface Config {
     'theme-settings': ThemeSetting;
     homepage: Homepage;
     'organization-chart': OrganizationChart;
+    'hospital-history': HospitalHistory;
+    'about-page': AboutPage;
     'upload-settings': UploadSetting;
     'default-media-settings': DefaultMediaSetting;
     'seo-settings': SeoSetting;
@@ -199,6 +205,8 @@ export interface Config {
     'theme-settings': ThemeSettingsSelect<false> | ThemeSettingsSelect<true>;
     homepage: HomepageSelect<false> | HomepageSelect<true>;
     'organization-chart': OrganizationChartSelect<false> | OrganizationChartSelect<true>;
+    'hospital-history': HospitalHistorySelect<false> | HospitalHistorySelect<true>;
+    'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'upload-settings': UploadSettingsSelect<false> | UploadSettingsSelect<true>;
     'default-media-settings': DefaultMediaSettingsSelect<false> | DefaultMediaSettingsSelect<true>;
     'seo-settings': SeoSettingsSelect<false> | SeoSettingsSelect<true>;
@@ -432,7 +440,6 @@ export interface Department {
   excludeFromSitemap?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * Kho media dùng chung. Online Production lưu R2; local/offline mặc định lưu thư mục media. Ảnh và tệp đính kèm chỉ lưu một file gốc.
@@ -895,7 +902,7 @@ export interface Doctor {
   degree?: string | null;
   professionalTitle?: string | null;
   /**
-   * Tải ảnh mới hoặc chọn lại từ Thư viện Tệp & Hình ảnh.
+   * 💡 Gợi ý kích thước chuẩn: Tỷ lệ đứng 3:4 (chuẩn nhất: 600×800px hoặc 450×600px). Chụp bán thân/chân dung nền sáng hoặc áo blouse trắng. Hệ thống tự động căn chỉnh vừa vặn khung hình 3:4 và giữ nguyên tỷ lệ, không bị méo/biến dạng ảnh.
    */
   avatar?: (number | null) | Media;
   department: number | Department;
@@ -2069,6 +2076,159 @@ export interface CustomPost {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Quản lý thông tin giới thiệu chi tiết các kỹ thuật cao, công nghệ y tế hiện đại của bệnh viện.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "advanced-techniques".
+ */
+export interface AdvancedTechnique {
+  id: number;
+  title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  badge?: string | null;
+  /**
+   * Chọn đơn vị phụ trách triển khai kỹ thuật này.
+   */
+  department?: (number | null) | Department;
+  /**
+   * Hình ảnh đại diện hiển thị trên carousel và trang chi tiết.
+   */
+  cover?: (number | null) | Media;
+  /**
+   * Chế độ Vừa vặn (contain) đảm bảo ảnh hoặc poster không bị méo hay biến dạng.
+   */
+  imageFit?: ('contain' | 'cover') | null;
+  /**
+   * Giới thiệu khái quát về kỹ thuật và ưu điểm nổi bật.
+   */
+  summary?: string | null;
+  /**
+   * Trình bày đầy đủ quy trình thực hiện, chỉ định, lợi ích điều trị, thiết bị y tế hiện đại...
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  advantages?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Các trường hợp bệnh nhân nên áp dụng kỹ thuật này.
+   */
+  indications?: string | null;
+  attachments?:
+    | {
+        /**
+         * Website tự động sử dụng tên và định dạng của tệp đã tải lên.
+         */
+        label?: string | null;
+        /**
+         * Chọn “Tạo mới” để tải tệp lên hoặc “Chọn từ thư viện” để dùng lại tệp đã có.
+         */
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Số nhỏ hơn sẽ được ưu tiên xếp trước.
+   */
+  order?: number | null;
+  featured?: boolean | null;
+  active?: boolean | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  /**
+   * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
+   */
+  seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Quản lý danh sách chuyên gia, bác sĩ xuất hiện trong mục Chuyên gia của chúng tôi trên Trang chủ.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "our-experts".
+ */
+export interface OurExpert {
+  id: number;
+  /**
+   * Khi chọn bác sĩ từ danh sách Tổ chức → Bác sĩ, hệ thống sẽ tự động dùng hình ảnh, họ tên, chức vụ, học vị và liên kết xem chi tiết của bác sĩ đó. Nếu bác sĩ chưa có ảnh/thông tin mới áp dụng thông tin bên dưới.
+   */
+  doctorRef?: (number | null) | Doctor;
+  /**
+   * Để trống hệ thống sẽ tự lấy từ Bác sĩ đã chọn. Chỉ nhập khi muốn ghi đè hoặc thêm chuyên gia tự do.
+   */
+  name?: string | null;
+  /**
+   * Tự động tạo từ Tên chuyên gia hoặc Bác sĩ được liên kết khi để trống.
+   */
+  slug?: string | null;
+  /**
+   * Nếu nhập thông tin tại đây, hệ thống sẽ hiển thị thành dòng thứ 3 bổ sung bên dưới chức vụ/chức danh trong phần Bác sĩ.
+   */
+  position?: string | null;
+  /**
+   * Nếu để trống sẽ tự lấy tên Chuyên khoa hoặc Khoa/Phòng của bác sĩ.
+   */
+  badge?: string | null;
+  /**
+   * Tải ảnh chân dung riêng hoặc để trống để tự dùng ảnh đại diện (avatar) của Bác sĩ.
+   */
+  image?: (number | null) | Media;
+  /**
+   * Chế độ Vừa vặn (contain) đảm bảo ảnh chân dung rõ nét 100%, không bị méo hay biến dạng.
+   */
+  imageFit?: ('contain' | 'cover') | null;
+  /**
+   * Để trống sẽ tự động dẫn đến trang chi tiết của bác sĩ (/bac-si/[slug]).
+   */
+  url?: string | null;
+  openNewTab?: boolean | null;
+  /**
+   * Số nhỏ hơn sẽ xếp trước trên slider.
+   */
+  order?: number | null;
+  active?: boolean | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  /**
+   * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
+   */
+  seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "importJobs".
  */
@@ -2323,6 +2483,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'custom-posts';
         value: number | CustomPost;
+      } | null)
+    | ({
+        relationTo: 'advanced-techniques';
+        value: number | AdvancedTechnique;
+      } | null)
+    | ({
+        relationTo: 'our-experts';
+        value: number | OurExpert;
       } | null)
     | ({
         relationTo: 'importJobs';
@@ -2618,7 +2786,6 @@ export interface DepartmentsSelect<T extends boolean = true> {
   excludeFromSitemap?: T;
   updatedAt?: T;
   createdAt?: T;
-  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3391,6 +3558,70 @@ export interface CustomPostsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "advanced-techniques_select".
+ */
+export interface AdvancedTechniquesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  badge?: T;
+  department?: T;
+  cover?: T;
+  imageFit?: T;
+  summary?: T;
+  content?: T;
+  advantages?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  indications?: T;
+  attachments?:
+    | T
+    | {
+        label?: T;
+        file?: T;
+        id?: T;
+      };
+  order?: T;
+  featured?: T;
+  active?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "our-experts_select".
+ */
+export interface OurExpertsSelect<T extends boolean = true> {
+  doctorRef?: T;
+  name?: T;
+  slug?: T;
+  position?: T;
+  badge?: T;
+  image?: T;
+  imageFit?: T;
+  url?: T;
+  openNewTab?: T;
+  order?: T;
+  active?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "importJobs_select".
  */
 export interface ImportJobsSelect<T extends boolean = true> {
@@ -3491,7 +3722,7 @@ export interface SiteSetting {
     timeFontWeight?: string | null;
   };
   /**
-   * Logo được chọn ở trường Logo bệnh viện phía trên. Tại đây chỉnh hiển thị, kích thước, màu chữ và ảnh/màu nền của vùng nhận diện.
+   * Logo được chọn ở trường Logo bệnh viện phía trên. Tại đây chỉnh hiển thị, kích thước, màu chữ, căn lề và ảnh/màu nền của vùng nhận diện.
    */
   headerBrandAppearance?: {
     logoSize?: number | null;
@@ -3513,6 +3744,15 @@ export interface SiteSetting {
      * Nhập mã màu, ví dụ: #0878D1
      */
     subtitleColor?: string | null;
+    /**
+     * Vị trí căn của câu slogan so với tên đơn vị.
+     */
+    sloganAlign?: ('center' | 'left' | 'right') | null;
+    /**
+     * Mặc định màu xanh lá #0a9b50 hoặc xanh dương #0878D1
+     */
+    sloganColor?: string | null;
+    sloganFontSize?: number | null;
     showLogo?: boolean | null;
     showHospitalName?: boolean | null;
     /**
@@ -3720,6 +3960,7 @@ export interface Navigation {
           | (
               | '/'
               | '/gioi-thieu'
+              | '/gioi-thieu/lich-su-phat-trien'
               | '/so-do-to-chuc'
               | '/khoa-phong'
               | '/chuyen-khoa'
@@ -3820,6 +4061,7 @@ export interface Navigation {
                 | (
                     | '/'
                     | '/gioi-thieu'
+                    | '/gioi-thieu/lich-su-phat-trien'
                     | '/so-do-to-chuc'
                     | '/khoa-phong'
                     | '/chuyen-khoa'
@@ -4133,6 +4375,8 @@ export interface Homepage {
     | {
         type:
           | 'featured-news'
+          | 'advanced-techniques'
+          | 'our-experts'
           | 'news-portal'
           | 'organization'
           | 'notices'
@@ -4152,6 +4396,106 @@ export interface Homepage {
         eyebrow?: string | null;
         title?: string | null;
         description?: string | null;
+        /**
+         * Để 0 nếu muốn tắt tự động chuyển động.
+         */
+        techniqueAutoplaySeconds?: number | null;
+        /**
+         * Khuyên dùng 3 thẻ như thiết kế mẫu.
+         */
+        techniqueItemsPerView?: number | null;
+        cardBarBgColor?: string | null;
+        cardBarTextColor?: string | null;
+        /**
+         * Thêm, sửa, xóa và kéo thả thay đổi thứ tự các thẻ kỹ thuật chuyên sâu.
+         */
+        techniqueItems?:
+          | {
+              /**
+               * Khi chọn kỹ thuật đã tạo trong mục Nội dung → Kỹ thuật chuyên sâu, hệ thống sẽ tự động lấy thông tin và đường dẫn chi tiết.
+               */
+              techniqueRef?: (number | null) | AdvancedTechnique;
+              title: string;
+              badge?: string | null;
+              /**
+               * Tải poster từ máy hoặc chọn trong Thư viện hình ảnh.
+               */
+              image?: (number | null) | Media;
+              /**
+               * Chế độ Vừa vặn (contain) đảm bảo ảnh nguyên vẹn 100%, không bị méo hay biến dạng.
+               */
+              imageFit?: ('contain' | 'cover') | null;
+              /**
+               * Nếu chưa có trang, chọn Tự tạo trang mới. Nếu trang đã có, chọn trực tiếp để lấy đúng liên kết.
+               */
+              linkMode?: ('auto-page' | 'existing-page' | 'internal' | 'external') | null;
+              linkedPage?: (number | null) | Page;
+              /**
+               * Để trống sẽ dùng tiêu đề nội dung. Hệ thống tự sinh slug và tự dùng trang cùng slug nếu đã tồn tại.
+               */
+              newPageTitle?: string | null;
+              newPageSlug?: string | null;
+              /**
+               * Khi chọn Tự tạo trang hoặc Chọn trang đã có, hệ thống tự sinh trường này lúc lưu.
+               */
+              url?: string | null;
+              openNewTab?: boolean | null;
+              visible?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Để 0 nếu muốn tắt tự động chuyển động.
+         */
+        expertAutoplaySeconds?: number | null;
+        /**
+         * Khuyên dùng 4 thẻ để bố cục cân đối và đẹp mắt.
+         */
+        expertItemsPerView?: number | null;
+        expertCardBgColor?: string | null;
+        expertCardTextColor?: string | null;
+        /**
+         * Thêm, sửa, xóa và kéo thả thay đổi thứ tự các chuyên gia hiển thị.
+         */
+        expertItems?:
+          | {
+              /**
+               * Khi chọn bác sĩ từ hệ thống Quản trị → Bác sĩ, website sẽ tự động lấy Họ tên, Chức vụ, Ảnh đại diện và đường dẫn chi tiết chuẩn xác.
+               */
+              doctorRef?: (number | null) | Doctor;
+              /**
+               * Để trống hệ thống sẽ tự lấy từ Bác sĩ đã chọn.
+               */
+              name?: string | null;
+              position?: string | null;
+              badge?: string | null;
+              /**
+               * Tải ảnh chân dung bác sĩ hoặc chọn trong Thư viện hình ảnh.
+               */
+              image?: (number | null) | Media;
+              /**
+               * Chế độ Vừa vặn (contain) đảm bảo ảnh chân dung rõ nét, không bị méo hay kéo dãn.
+               */
+              imageFit?: ('contain' | 'cover') | null;
+              /**
+               * Nếu chưa có trang, chọn Tự tạo trang mới. Nếu trang đã có, chọn trực tiếp để lấy đúng liên kết.
+               */
+              linkMode?: ('auto-page' | 'existing-page' | 'internal' | 'external') | null;
+              linkedPage?: (number | null) | Page;
+              /**
+               * Để trống sẽ dùng tiêu đề nội dung. Hệ thống tự sinh slug và tự dùng trang cùng slug nếu đã tồn tại.
+               */
+              newPageTitle?: string | null;
+              newPageSlug?: string | null;
+              /**
+               * Khi chọn Tự tạo trang hoặc Chọn trang đã có, hệ thống tự sinh trường này lúc lưu.
+               */
+              url?: string | null;
+              openNewTab?: boolean | null;
+              visible?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
         /**
          * Điểm tin nổi bật tự động chuyển qua Tin tức, Thông báo, Đấu thầu – Mua sắm và Lịch khám mới.
          */
@@ -4403,7 +4747,7 @@ export interface Homepage {
   createdAt?: string | null;
 }
 /**
- * Quản lý sơ đồ 3 tầng: Giám đốc, 3 Phó Giám đốc và 4 Phòng – 9 Khoa.
+ * Quản lý sơ đồ bộ máy: Giám đốc, các Phó Giám đốc, Khối Phòng chức năng và Khối Khoa chuyên môn.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "organization-chart".
@@ -4412,32 +4756,44 @@ export interface OrganizationChart {
   id: number;
   pageTitle: string;
   description?: string | null;
-  director: {
-    name: string;
-    title: string;
+  director?: {
     /**
-     * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong thư viện.
+     * Nếu chọn bác sĩ, hệ thống sẽ tự động lấy tên, ảnh đại diện và chức danh của bác sĩ.
+     */
+    doctorRef?: (number | null) | Doctor;
+    name?: string | null;
+    title?: string | null;
+    /**
+     * Kích thước hiển thị đẹp nhất: Tỷ lệ 3:4 hoặc 4:5 (khuyến nghị 600×800px hoặc 450×600px, dung lượng < 2MB). Có thể tải ảnh mới hoặc chọn từ Thư viện. Nếu để trống, hệ thống sẽ tự dùng ảnh đại diện từ Bác sĩ liên kết.
      */
     photo?: (number | null) | Media;
     responsibility?: string | null;
+    phone?: string | null;
+    email?: string | null;
   };
   /**
-   * Có thể nhập từ 1 đến 3 Phó Giám đốc. Trang chỉ hiển thị những người đã nhập họ tên; kéo thả để đổi vị trí.
+   * Có thể thêm các Phó Giám đốc (tối đa 8); tự động canh đều cân đối trên sơ đồ; kéo thả để đổi vị trí.
    */
   deputyDirectors?:
     | {
-        name: string;
-        title: string;
         /**
-         * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong thư viện.
+         * Nếu chọn bác sĩ, hệ thống sẽ tự động lấy tên, ảnh đại diện và chức danh của bác sĩ.
+         */
+        doctorRef?: (number | null) | Doctor;
+        name?: string | null;
+        title?: string | null;
+        /**
+         * Kích thước hiển thị đẹp nhất: Tỷ lệ 3:4 hoặc 4:5 (khuyến nghị 600×800px hoặc 450×600px, dung lượng < 2MB). Có thể tải ảnh mới hoặc chọn từ Thư viện. Nếu để trống, hệ thống sẽ tự dùng ảnh đại diện từ Bác sĩ liên kết.
          */
         photo?: (number | null) | Media;
         responsibility?: string | null;
+        phone?: string | null;
+        email?: string | null;
         id?: string | null;
       }[]
     | null;
   /**
-   * Chọn đúng 4 Phòng; kéo thả để đổi thứ tự.
+   * Chọn các Phòng chức năng; kéo thả để đổi thứ tự.
    */
   offices?:
     | {
@@ -4446,7 +4802,7 @@ export interface OrganizationChart {
       }[]
     | null;
   /**
-   * Chọn đúng 9 Khoa; kéo thả để đổi thứ tự.
+   * Chọn các Khoa chuyên môn; kéo thả để đổi thứ tự.
    */
   departments?:
     | {
@@ -4460,6 +4816,153 @@ export interface OrganizationChart {
     deputyColor?: string | null;
     officeColor?: string | null;
     departmentColor?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Quản lý nội dung trang Lịch sử hình thành và phát triển Bệnh viện Đa khoa Khu vực Thới Lai.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hospital-history".
+ */
+export interface HospitalHistory {
+  id: number;
+  /**
+   * Tải ảnh toàn cảnh bệnh viện hoặc chọn từ thư viện. Khuyến nghị ảnh ngang 16:9 hoặc 21:9.
+   */
+  bannerImage?: (number | null) | Media;
+  eyebrow?: string | null;
+  pageTitle: string;
+  subtitle?: string | null;
+  leadSummary?: string | null;
+  milestones?:
+    | {
+        year: string;
+        title: string;
+        tag?: string | null;
+        description: string;
+        image?: (number | null) | Media;
+        highlight?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  coreValues?: {
+    missionTitle?: string | null;
+    visionTitle?: string | null;
+    valuesList?:
+      | {
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  achievements?:
+    | {
+        title: string;
+        description: string;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Soạn thảo văn bản chi tiết về quá trình xây dựng, các thời kỳ lãnh đạo hoặc bài phát biểu lịch sử.
+   */
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  appearance?: {
+    primaryColor?: string | null;
+    accentColor?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Quản lý toàn bộ nội dung trang Giới thiệu chung (/gioi-thieu): thông tin tổng quan, giá trị cốt lõi, cơ sở vật chất, định hướng chất lượng.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page".
+ */
+export interface AboutPage {
+  id: number;
+  hero?: {
+    /**
+     * Tải ảnh chính thức của Bệnh viện Đa khoa Khu vực Thới Lai. Khuyến nghị ảnh ngang 1920x600 hoặc 16:9. Bỏ trống sẽ dùng ảnh banner chuẩn của bệnh viện.
+     */
+    bannerImage?: (number | null) | Media;
+    eyebrow?: string | null;
+    tagline?: string | null;
+    intro?: string | null;
+  };
+  stats?:
+    | {
+        number: string;
+        label: string;
+        icon?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  corePrinciples?: {
+    title?: string | null;
+    subtitle?: string | null;
+    items?:
+      | {
+          icon: string;
+          title: string;
+          desc: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  facilities?: {
+    title?: string | null;
+    description?: string | null;
+    items?:
+      | {
+          title: string;
+          desc: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  commitment?: {
+    title?: string | null;
+    quote?: string | null;
+    author?: string | null;
+  };
+  relatedLinks?: {
+    title?: string | null;
+    subtitle?: string | null;
+    links?:
+      | {
+          title: string;
+          url: string;
+          desc?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  appearance?: {
+    primaryColor?: string | null;
+    accentColor?: string | null;
+  };
+  seo?: {
+    title?: string | null;
+    description?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -4705,6 +5208,9 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         logoBackgroundColor?: T;
         titleColor?: T;
         subtitleColor?: T;
+        sloganAlign?: T;
+        sloganColor?: T;
+        sloganFontSize?: T;
         showLogo?: T;
         showHospitalName?: T;
         backgroundImage?: T;
@@ -5051,6 +5557,49 @@ export interface HomepageSelect<T extends boolean = true> {
         eyebrow?: T;
         title?: T;
         description?: T;
+        techniqueAutoplaySeconds?: T;
+        techniqueItemsPerView?: T;
+        cardBarBgColor?: T;
+        cardBarTextColor?: T;
+        techniqueItems?:
+          | T
+          | {
+              techniqueRef?: T;
+              title?: T;
+              badge?: T;
+              image?: T;
+              imageFit?: T;
+              linkMode?: T;
+              linkedPage?: T;
+              newPageTitle?: T;
+              newPageSlug?: T;
+              url?: T;
+              openNewTab?: T;
+              visible?: T;
+              id?: T;
+            };
+        expertAutoplaySeconds?: T;
+        expertItemsPerView?: T;
+        expertCardBgColor?: T;
+        expertCardTextColor?: T;
+        expertItems?:
+          | T
+          | {
+              doctorRef?: T;
+              name?: T;
+              position?: T;
+              badge?: T;
+              image?: T;
+              imageFit?: T;
+              linkMode?: T;
+              linkedPage?: T;
+              newPageTitle?: T;
+              newPageSlug?: T;
+              url?: T;
+              openNewTab?: T;
+              visible?: T;
+              id?: T;
+            };
         carouselSeconds?: T;
         featuredItemLimit?: T;
         organizationImage?: T;
@@ -5203,18 +5752,24 @@ export interface OrganizationChartSelect<T extends boolean = true> {
   director?:
     | T
     | {
+        doctorRef?: T;
         name?: T;
         title?: T;
         photo?: T;
         responsibility?: T;
+        phone?: T;
+        email?: T;
       };
   deputyDirectors?:
     | T
     | {
+        doctorRef?: T;
         name?: T;
         title?: T;
         photo?: T;
         responsibility?: T;
+        phone?: T;
+        email?: T;
         id?: T;
       };
   offices?:
@@ -5237,6 +5792,144 @@ export interface OrganizationChartSelect<T extends boolean = true> {
         deputyColor?: T;
         officeColor?: T;
         departmentColor?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hospital-history_select".
+ */
+export interface HospitalHistorySelect<T extends boolean = true> {
+  bannerImage?: T;
+  eyebrow?: T;
+  pageTitle?: T;
+  subtitle?: T;
+  leadSummary?: T;
+  milestones?:
+    | T
+    | {
+        year?: T;
+        title?: T;
+        tag?: T;
+        description?: T;
+        image?: T;
+        highlight?: T;
+        id?: T;
+      };
+  coreValues?:
+    | T
+    | {
+        missionTitle?: T;
+        visionTitle?: T;
+        valuesList?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  achievements?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        id?: T;
+      };
+  content?: T;
+  appearance?:
+    | T
+    | {
+        primaryColor?: T;
+        accentColor?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-page_select".
+ */
+export interface AboutPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        bannerImage?: T;
+        eyebrow?: T;
+        tagline?: T;
+        intro?: T;
+      };
+  stats?:
+    | T
+    | {
+        number?: T;
+        label?: T;
+        icon?: T;
+        id?: T;
+      };
+  corePrinciples?:
+    | T
+    | {
+        title?: T;
+        subtitle?: T;
+        items?:
+          | T
+          | {
+              icon?: T;
+              title?: T;
+              desc?: T;
+              id?: T;
+            };
+      };
+  facilities?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        items?:
+          | T
+          | {
+              title?: T;
+              desc?: T;
+              id?: T;
+            };
+      };
+  commitment?:
+    | T
+    | {
+        title?: T;
+        quote?: T;
+        author?: T;
+      };
+  relatedLinks?:
+    | T
+    | {
+        title?: T;
+        subtitle?: T;
+        links?:
+          | T
+          | {
+              title?: T;
+              url?: T;
+              desc?: T;
+              id?: T;
+            };
+      };
+  appearance?:
+    | T
+    | {
+        primaryColor?: T;
+        accentColor?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
       };
   updatedAt?: T;
   createdAt?: T;

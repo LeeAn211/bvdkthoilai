@@ -169,6 +169,46 @@ export async function resolveHomepageLinks(req: any, data: any) {
       for (const item of tab.manualItems || []) await resolveSmartLink(req, item, item.title || tab.label || section.title)
     }
 
+    if (section.type === 'advanced-techniques') {
+      for (const item of section.techniqueItems || []) {
+        if (item.techniqueRef) {
+          const techId = typeof item.techniqueRef === 'object' ? item.techniqueRef.id : item.techniqueRef
+          try {
+            const techDoc = await req.payload.findByID({
+              collection: 'advanced-techniques',
+              id: techId,
+              depth: 0,
+              overrideAccess: true,
+            })
+            if (techDoc?.slug) {
+              item.url = `/ky-thuat-chuyen-sau/${techDoc.slug}`
+            }
+          } catch {}
+        }
+        await resolveSmartLink(req, item, item.title || 'Kỹ thuật chuyên sâu')
+      }
+    }
+
+    if (section.type === 'our-experts') {
+      for (const item of section.expertItems || []) {
+        if (item.doctorRef) {
+          const docId = typeof item.doctorRef === 'object' ? item.doctorRef.id : item.doctorRef
+          try {
+            const doc = await req.payload.findByID({
+              collection: 'doctors',
+              id: docId,
+              depth: 0,
+              overrideAccess: true,
+            })
+            if (doc?.slug) {
+              item.url = `/bac-si/${doc.slug}`
+            }
+          } catch {}
+        }
+        await resolveSmartLink(req, item, item.name || 'Chuyên gia')
+      }
+    }
+
     if (section.type === 'custom') {
       const mode = section.buttonLinkMode
       if (mode === 'existing-page') {

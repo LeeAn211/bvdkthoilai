@@ -1,10 +1,16 @@
-.root { font-family: Arial, Helvetica, sans-serif; }
-.root :global(.mastheadBrandText strong),
-.root :global(.mastheadBrandText small),
+.root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+.root :global(.mastheadBrandText strong) {
+  font-family: inherit !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+}
+.root :global(.mastheadBrandText small) {
+  font-family: inherit !important;
+  letter-spacing: 0 !important;
+}
 .root :global(.utilityBar),
 .root :global(.mainHeader),
-.root :global(.scrollingNotice) { font-family: Arial, Helvetica, sans-serif !important; }
-.root :global(.mastheadBrandText strong) { font-weight: 700 !important; letter-spacing: 0 !important; }
+.root :global(.scrollingNotice) { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important; }
 
 .root :global(.mainHeader) { position: relative !important; top: auto !important; z-index: 60; height: 56px; background: #075db8 !important; box-shadow: none !important; }
 .root :global(.headerInner) { display: block !important; min-height: 56px !important; height: 56px; }
@@ -94,51 +100,118 @@
 .root :global(.headerSocial.zalo .brandZalo text) { fill: #0b7df0; font-size: 6px; font-weight: 900; font-family: Arial, sans-serif; }
 
 /* Masthead Contacts */
-.root :global(.mastheadContact) {
-  min-width: 214px;
-  border-color: var(--contact-border,#e1e7ec) !important;
-  background: var(--contact-background,#fff) !important;
+.root :global(.mastheadContacts) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
 }
+.root :global(.mastheadContact) {
+  min-width: 220px;
+  min-height: 64px;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 10px 18px !important;
+  border: 1.5px solid var(--contact-border, #e5e7eb) !important;
+  border-radius: 16px !important;
+  background: var(--contact-background, #ffffff) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+  text-decoration: none !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.root :global(.mastheadContact:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(7, 86, 180, 0.1) !important;
+  border-color: #cbd5e1 !important;
+}
+
 .root :global(.mastheadContactIcon) {
-  color: var(--contact-icon,#075ec2) !important;
-  background: var(--contact-icon-bg,#eaf5ff) !important;
+  width: 46px !important;
+  height: 46px !important;
+  flex: 0 0 46px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 50% !important;
+  color: var(--contact-icon, #0284c7) !important;
+  background: var(--contact-icon-bg, #e0f2fe) !important;
 }
 .root :global(.mastheadContactIcon svg) {
-  width: 22px;
-  height: 22px;
+  width: 24px !important;
+  height: 24px !important;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.root :global(.mastheadContactIcon.custom img) { width: 23px; height: 23px; object-fit: contain; }
+.root :global(.mastheadContactIcon.emergencyCross) {
+  color: #ef4444 !important;
+  background: #fee2e2 !important;
+}
+.root :global(.mastheadContactIcon.emergencyCross svg) {
+  width: 22px !important;
+  height: 22px !important;
+  fill: #ef4444 !important;
+  stroke: none !important;
+}
+.root :global(.mastheadContactIcon.calendarClock) {
+  color: #0284c7 !important;
+  background: #e0f2fe !important;
+}
+.root :global(.mastheadContactIcon.custom img) {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.root :global(.mastheadContactInfo) {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
 .root :global(.mastheadContact small) {
-  color: var(--contact-title,#273b4c) !important;
+  color: var(--contact-title, #374151) !important;
   font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
-  font-size: var(--contact-title-size,10px) !important;
+  font-size: var(--contact-title-size, 11px) !important;
   font-weight: 700 !important;
-  letter-spacing: 0 !important;
-  line-height: 1.15;
+  letter-spacing: 0.3px !important;
+  line-height: 1.2;
+  text-transform: uppercase;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 .root :global(.mastheadContact strong) {
-  color: var(--contact-text,#0756b4) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: var(--contact-text, #0756b4) !important;
   font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
-  font-size: var(--contact-text-size,17px) !important;
-  font-weight: 800 !important;
-  letter-spacing: 0 !important;
-  line-height: 1.12 !important;
+  font-size: var(--contact-text-size, 18px) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.2px !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
   font-variant-numeric: tabular-nums lining-nums;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+.root :global(.contactActionArrow) {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+  stroke: currentColor !important;
+  transition: transform 0.2s ease;
+}
+.root :global(.mastheadContact:hover .contactActionArrow) {
+  transform: translateX(3px);
+}
 .root :global(.mastheadContact em) {
-  margin-top: 3px;
-  color: var(--contact-extra,#557082);
+  margin-top: 2px;
+  color: var(--contact-extra, #64748b);
   font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
-  font-size: 9px;
+  font-size: 10px;
   font-style: normal;
   font-weight: 600;
   line-height: 1.15;
@@ -149,27 +222,78 @@
   .root :global(.utilityCurrentTime) { padding-inline: 4px; font-size: 11px !important; }
 }
 
-/* v4.4.26 - Header settings are stored in existing SiteSettings to avoid broken /admin/globals/header. */
+/* Masthead Header Layout (Bản gốc, không có 2 dải viền xanh trên/dưới) */
 .root :global(.hospitalMasthead) {
   position: relative;
-  min-height: var(--masthead-min-height,110px);
-  background: var(--masthead-background,#fff);
-  background-image: var(--masthead-background-image,none);
-  background-size: var(--masthead-background-size,cover);
-  background-position: var(--masthead-background-position,center center);
+  min-height: var(--masthead-min-height, 110px);
+  background: var(--masthead-background, #ffffff);
+  background-image: var(--masthead-background-image, none);
+  background-size: var(--masthead-background-size, cover);
+  background-position: var(--masthead-background-position, center center);
+  border: none !important;
+  box-sizing: border-box !important;
   overflow: hidden;
 }
 .root :global(.hospitalMasthead::before) {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--masthead-background-overlay,rgba(255,255,255,.88));
+  background: var(--masthead-background-overlay, rgba(255,255,255,.88));
   pointer-events: none;
 }
-.root :global(.hospitalMastheadInner) { position: relative; z-index: 1; min-height: var(--masthead-min-height,110px); }
-.root :global(.mastheadLogo) { width: var(--masthead-logo-size,66px) !important; height: var(--masthead-logo-size,66px) !important; flex-basis: var(--masthead-logo-size,66px) !important; }
-.root :global(.mastheadBrandText strong) { color: var(--masthead-title-color,#0756b4) !important; font-size: var(--masthead-title-size, 17px) !important; }
-.root :global(.mastheadBrandText small) { color: var(--masthead-subtitle-color,#0a9b50) !important; font-size: var(--masthead-subtitle-size, 13px) !important; }
+.root :global(.hospitalMastheadInner) {
+  position: relative;
+  z-index: 1;
+  min-height: var(--masthead-min-height, 110px);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 24px !important;
+}
+.root :global(.mastheadBrand) {
+  display: flex !important;
+  align-items: center !important;
+  gap: 15px !important;
+  text-decoration: none !important;
+}
+.root :global(.mastheadLogo) {
+  width: var(--masthead-logo-size, 66px) !important;
+  height: var(--masthead-logo-size, 66px) !important;
+  flex: 0 0 var(--masthead-logo-size, 66px) !important;
+  display: grid !important;
+  place-items: center !important;
+}
+.root :global(.mastheadLogoImage) {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+.root :global(.mastheadBrandText) {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  text-align: var(--masthead-slogan-align, center) !important;
+}
+.root :global(.mastheadBrandText strong) {
+  display: block !important;
+  color: var(--masthead-title-color, #0754aa) !important;
+  font-size: var(--masthead-title-size, 18px) !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-align: inherit !important;
+}
+.root :global(.mastheadBrandText small) {
+  display: block !important;
+  color: var(--masthead-subtitle-color, #0a9b50) !important;
+  font-size: var(--masthead-subtitle-size, 13px) !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-align: var(--masthead-slogan-align, center) !important;
+}
 .root :global(.headerSocial img) { width: 27px; height: 27px; object-fit: contain; border-radius: 50%; display:block; }
 .root :global(.socialCustomText) { display:inline-flex; width:27px; height:27px; border-radius:50%; align-items:center; justify-content:center; background:#fff; color:#0756b4; font-size:8px; font-weight:700; }
 

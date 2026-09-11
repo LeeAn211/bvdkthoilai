@@ -478,20 +478,24 @@ h3 { line-height:1.35; }
 
 .hospitalMasthead { background:#fff; }
 .hospitalMastheadInner { min-height:112px; display:flex; align-items:center; justify-content:space-between; gap:34px; }
-.mastheadBrand { min-width:0; display:flex; align-items:center; gap:15px; }
+.mastheadBrand { min-width:0; display:flex; align-items:center; gap:15px; text-decoration:none; }
 .mastheadLogo { width:78px; height:78px; flex:0 0 auto; border-radius:50%; background-color:#fff; display:grid; place-items:center; overflow:visible; }
 .mastheadLogoImage { width:100%; height:100%; display:block; object-fit:contain; object-position:center; padding:0; border-radius:0; background:transparent; image-rendering:auto; -webkit-font-smoothing:antialiased; transform:translateZ(0); }
 .mastheadBrandText { min-width:0; display:flex; flex-direction:column; }
 .mastheadBrandText strong { max-width:540px; color:#0754aa; font-size:22px; font-weight:950; line-height:1.2; letter-spacing:.1px; }
 .mastheadBrandText small { margin-top:5px; color:#168a55; font-size:12px; font-weight:850; }
-.mastheadContacts { display:flex; align-items:stretch; gap:14px; }
-.mastheadContact { min-width:214px; min-height:64px; display:flex; align-items:center; gap:12px; border:1px solid #e1e7ec; border-radius:10px; padding:9px 14px; background:#fff; box-shadow:0 5px 16px rgba(15,65,104,.06); }
-.mastheadContactIcon { width:37px; height:37px; display:grid; place-items:center; flex:0 0 auto; border-radius:50%; color:#075ec2; background:#eaf5ff; font-size:22px; }
-.mastheadContact.emergency .mastheadContactIcon { color:#118d48; background:#eaf8ef; }
-.mastheadContact > span:last-child { display:flex; flex-direction:column; }
-.mastheadContact small { color:#273b4c; font-size:9px; font-weight:850; }
-.mastheadContact strong { margin-top:2px; color:#0756b4; font-size:16px; line-height:1; }
-.mastheadContact.emergency strong { color:#ed2632; }
+.mastheadContacts { display:flex; align-items:center; gap:16px; }
+.mastheadContact { min-width:220px; min-height:64px; display:flex; align-items:center; gap:14px; border:1.5px solid #e5e7eb; border-radius:16px; padding:10px 18px; background:#fff; box-shadow:0 4px 14px rgba(0,0,0,.04); text-decoration:none; transition:all .2s ease; }
+.mastheadContact:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(7,86,180,.1); border-color:#cbd5e1; }
+.mastheadContactIcon { width:46px; height:46px; display:grid; place-items:center; flex:0 0 auto; border-radius:50%; color:#0284c7; background:#e0f2fe; font-size:22px; }
+.mastheadContact.contactEmergency .mastheadContactIcon, .mastheadContact.emergency .mastheadContactIcon { color:#ef4444; background:#fee2e2; }
+.mastheadContactInfo, .mastheadContact > span:last-child { display:flex; flex-direction:column; gap:2px; }
+.mastheadContact small { color:#374151; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; line-height:1.2; }
+.mastheadContact strong { margin-top:0; color:#0756b4; font-size:18px; line-height:1.15; font-weight:900; display:inline-flex; align-items:center; gap:8px; white-space:nowrap; }
+.mastheadContact.contactEmergency strong, .mastheadContact.emergency strong { color:#dc2626; font-size:19px; }
+.mastheadContact.contactAction strong { color:#0878d1; font-size:16px; }
+.contactActionArrow { width:18px; height:18px; flex:0 0 18px; stroke:currentColor; transition:transform .2s ease; }
+.mastheadContact:hover .contactActionArrow { transform:translateX(3px); }
 
 .mainHeader { position:sticky; top:0; z-index:60; border:0; background:linear-gradient(90deg,#0754a8,#006bc7); box-shadow:0 3px 12px rgba(6,59,111,.2); }
 .headerInner { min-height:54px; gap:0; }
@@ -2507,6 +2511,161 @@ body {
 @media (max-width:980px) { .featuredCarouselGrid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media (max-width:640px) { .featuredCarouselGrid { grid-template-columns:1fr; } .featuredCarouselGrid .featuredCarouselCard:not(:first-child) { display:none; } .featuredCarouselCopy h3 { min-height:auto; } }
 
+/* Section Kỹ thuật chuyên sâu & Chuyên gia của chúng tôi */
+.homeAdvancedTechniquesSection,
+.homeOurExpertsSection {
+  background: var(--section-background, transparent);
+  padding-top: var(--section-padding-top, 40px);
+  padding-bottom: var(--section-padding-bottom, 48px);
+}
+.techCarouselWrapper {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+.techCarouselTrack {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  animation: techFadeIn 0.35s ease;
+}
+@keyframes techFadeIn {
+  from { opacity: 0.7; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.techCardLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--site-radius-lg, 18px);
+  outline: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.techCardLink.no-cursor {
+  cursor: default;
+}
+.techCardLink:hover:not(.no-cursor) {
+  transform: translateY(-5px);
+}
+.techCardLink:hover:not(.no-cursor) .techCard {
+  box-shadow: 0 16px 32px rgba(8, 120, 209, 0.14);
+  border-color: #9cd0f5;
+}
+.techCard {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--site-radius-lg, 18px);
+  background: #ffffff;
+  border: 1px solid var(--site-border, #dce8f1);
+  box-shadow: var(--site-shadow-sm, 0 8px 30px rgba(15, 63, 99, 0.07));
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.techCardImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.18 / 1;
+  background-color: var(--site-soft, #f5f9fc);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.techCardBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #bce0f8;
+  color: var(--site-primary, #0878d1);
+  font-size: 10.5px;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+.techCardPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f0f7fd 0%, #e6f3fa 100%);
+}
+.techCardFooter {
+  padding: 15px 18px 16px;
+  background-color: #f0f7fd;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-top: 1px solid rgba(8, 120, 209, 0.12);
+  transition: background-color 0.2s ease;
+}
+.techCardLink:hover:not(.no-cursor) .techCardFooter {
+  background-color: #e4f2fb;
+}
+.techCardTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.44;
+  color: var(--site-secondary, #0754a8);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.techCarouselControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+.techNavBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #bce0f8;
+  background: #ffffff;
+  color: var(--site-primary, #0878d1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 3px 8px rgba(8, 120, 209, 0.12);
+}
+.techNavBtn:hover {
+  background: #eaf5fc;
+  border-color: var(--site-primary, #0878d1);
+  color: #055c9c;
+  transform: scale(1.06);
+  box-shadow: 0 6px 14px rgba(8, 120, 209, 0.2);
+}
+.techNavBtn:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 980px) {
+  .techCarouselTrack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .techCarouselTrack {
+    grid-template-columns: 1fr;
+  }
+  .techCardTitle {
+    font-size: 13.5px;
+  }
+}
+
 /* v4.4.21 - shared social brand icons in footer. */
 .footerSocials a {
   padding: 0 !important;
@@ -2539,4 +2698,408 @@ body {
 .feedback-result ol { padding-left: 1.25rem; }
 .feedback-result li { margin: .6rem 0; }
 .narrow { max-width: 860px; }
+
+/* Site Header Styles */
+.siteHeaderRoot {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.siteHeaderRoot .mastheadBrandText strong {
+  font-family: inherit !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+}
+.siteHeaderRoot .mastheadBrandText small {
+  font-family: inherit !important;
+  letter-spacing: 0 !important;
+}
+.siteHeaderRoot .utilityBar,
+.siteHeaderRoot .mainHeader,
+.siteHeaderRoot .scrollingNotice {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+.siteHeaderRoot .mainHeader {
+  position: relative !important;
+  top: auto !important;
+  z-index: 60;
+  height: 56px;
+  background: #075db8 !important;
+  box-shadow: none !important;
+}
+.siteHeaderRoot .headerInner {
+  display: block !important;
+  min-height: 56px !important;
+  height: 56px;
+}
+.siteHeaderRoot .mainMenu {
+  display: flex !important;
+  align-items: stretch;
+  justify-content: space-between !important;
+  width: 100% !important;
+  min-width: 0;
+  height: 56px !important;
+  gap: 0 !important;
+  overflow: visible !important;
+}
+.siteHeaderRoot .mainMenu > .navSimpleLink,
+.siteHeaderRoot .mainMenu > .navItem {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: max-content !important;
+  height: 56px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+.siteHeaderRoot .mainMenu .navSimpleLink,
+.siteHeaderRoot .mainMenu .navMainLink {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: max-content !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #fff !important;
+  background: transparent !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 56px !important;
+  letter-spacing: 0 !important;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+}
+.siteHeaderRoot .mainMenu .navMainLink { gap: 5px !important; list-style: none; }
+.siteHeaderRoot .navChevron { display: block !important; flex: 0 0 9px !important; width: 9px !important; height: 6px !important; margin: 0 !important; stroke: currentColor; fill: none; }
+.siteHeaderRoot .mainMenu .navSimpleLink:hover,
+.siteHeaderRoot .mainMenu .navMainLink:hover,
+.siteHeaderRoot .mainMenu .navItem:hover > .navMainLink { color: #ffe37b !important; }
+.siteHeaderRoot .mainMenu .navSimpleLink::after,
+.siteHeaderRoot .mainMenu .navMainLink::after { left: 0 !important; right: 0 !important; bottom: 0 !important; height: 3px !important; }
+.siteHeaderRoot .navItem { position: relative !important; }
+.siteHeaderRoot .navDropdown { top: 100% !important; left: 50% !important; width: 240px !important; }
+.siteHeaderRoot .navItem:hover .navDropdown,
+.siteHeaderRoot .navItem:focus-within .navDropdown { visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; transform: translate(-50%, 0) !important; }
+
+@media (max-width: 1180px) and (min-width: 901px) {
+  .siteHeaderRoot .mainMenu .navSimpleLink, .siteHeaderRoot .mainMenu .navMainLink { font-size: 11px !important; }
+}
+@media (max-width: 900px) {
+  .siteHeaderRoot .mainHeader { overflow-x: auto; }
+  .siteHeaderRoot .mainMenu { min-width: max-content; gap: 22px !important; padding-inline: 16px !important; }
+  .siteHeaderRoot .mainMenu .navSimpleLink, .siteHeaderRoot .mainMenu .navMainLink { font-size: 12px !important; }
+}
+
+.siteHeaderRoot .utilityBar {
+  background: var(--utility-background, linear-gradient(90deg,#064a83,#0878d1)) !important;
+}
+.siteHeaderRoot .utilityInner { min-height: 38px !important; }
+
+.siteHeaderRoot .utilityCurrentTime {
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--time-color,#fff) !important;
+  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-size: var(--time-font-size,13px) !important;
+  font-weight: 700 !important;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0 !important;
+  line-height: 1.25 !important;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.siteHeaderRoot .utilityTimeIcon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.siteHeaderRoot .headerSocial {
+  width: 27px;
+  height: 27px;
+  overflow: hidden;
+  padding: 0;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.siteHeaderRoot .headerSocial svg,
+.siteHeaderRoot .headerSocial .socialBrandSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.siteHeaderRoot .headerSocial.facebook { color: #fff !important; }
+.siteHeaderRoot .headerSocial.facebook .brandFacebook { padding: 4px 3px 0; fill: #fff; }
+.siteHeaderRoot .headerSocial.youtube .brandYoutube rect { fill: #ff0033; }
+.siteHeaderRoot .headerSocial.youtube .brandYoutube .play { fill: #fff; }
+.siteHeaderRoot .headerSocial.zalo .brandZalo rect { fill: #0b7df0; }
+.siteHeaderRoot .headerSocial.zalo .brandZalo .bubble { fill: #fff; }
+.siteHeaderRoot .headerSocial.zalo .brandZalo text { fill: #0b7df0; font-size: 6px; font-weight: 900; font-family: Arial, sans-serif; }
+
+.siteHeaderRoot .mastheadContacts {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+}
+.siteHeaderRoot .mastheadContact {
+  min-width: 220px;
+  min-height: 64px;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  padding: 10px 18px !important;
+  border: 1.5px solid var(--contact-border, #e5e7eb) !important;
+  border-radius: 16px !important;
+  background: var(--contact-background, #ffffff) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+  text-decoration: none !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.siteHeaderRoot .mastheadContact:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(7, 86, 180, 0.1) !important;
+  border-color: #cbd5e1 !important;
+}
+
+.siteHeaderRoot .mastheadContactIcon {
+  width: 46px !important;
+  height: 46px !important;
+  flex: 0 0 46px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 50% !important;
+  color: var(--contact-icon, #0284c7) !important;
+  background: var(--contact-icon-bg, #e0f2fe) !important;
+}
+.siteHeaderRoot .mastheadContactIcon svg {
+  width: 24px !important;
+  height: 24px !important;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.siteHeaderRoot .mastheadContactIcon.emergencyCross {
+  color: #ef4444 !important;
+  background: #fee2e2 !important;
+}
+.siteHeaderRoot .mastheadContactIcon.emergencyCross svg {
+  width: 22px !important;
+  height: 22px !important;
+  fill: #ef4444 !important;
+  stroke: none !important;
+}
+.siteHeaderRoot .mastheadContactIcon.calendarClock {
+  color: #0284c7 !important;
+  background: #e0f2fe !important;
+}
+.siteHeaderRoot .mastheadContactIcon.custom img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.siteHeaderRoot .mastheadContactInfo {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+.siteHeaderRoot .mastheadContact small {
+  color: var(--contact-title, #374151) !important;
+  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-size: var(--contact-title-size, 11px) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px !important;
+  line-height: 1.2;
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.siteHeaderRoot .mastheadContact strong {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: var(--contact-text, #0756b4) !important;
+  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-size: var(--contact-text-size, 18px) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.2px !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+  font-variant-numeric: tabular-nums lining-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.siteHeaderRoot .contactActionArrow {
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+  stroke: currentColor !important;
+  transition: transform 0.2s ease;
+}
+.siteHeaderRoot .mastheadContact:hover .contactActionArrow {
+  transform: translateX(3px);
+}
+.siteHeaderRoot .mastheadContact em {
+  margin-top: 2px;
+  color: var(--contact-extra, #64748b);
+  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.15;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+@media (max-width: 700px) {
+  .siteHeaderRoot .utilityCurrentTime { padding-inline: 4px; font-size: 11px !important; }
+}
+
+.siteHeaderRoot .hospitalMasthead {
+  position: relative;
+  min-height: var(--masthead-min-height, 110px);
+  background: var(--masthead-background, #ffffff);
+  background-image: var(--masthead-background-image, none);
+  background-size: var(--masthead-background-size, cover);
+  background-position: var(--masthead-background-position, center center);
+  border: none !important;
+  box-sizing: border-box !important;
+  overflow: hidden;
+}
+.siteHeaderRoot .hospitalMasthead::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--masthead-background-overlay, rgba(255,255,255,.88));
+  pointer-events: none;
+}
+.siteHeaderRoot .hospitalMastheadInner {
+  position: relative;
+  z-index: 1;
+  min-height: var(--masthead-min-height, 110px);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 24px !important;
+}
+.siteHeaderRoot .mastheadBrand {
+  display: flex !important;
+  align-items: center !important;
+  gap: 15px !important;
+  text-decoration: none !important;
+}
+.siteHeaderRoot .mastheadLogo {
+  width: var(--masthead-logo-size, 66px) !important;
+  height: var(--masthead-logo-size, 66px) !important;
+  flex: 0 0 var(--masthead-logo-size, 66px) !important;
+  display: grid !important;
+  place-items: center !important;
+}
+.siteHeaderRoot .mastheadLogoImage {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+.siteHeaderRoot .mastheadBrandText {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  text-align: var(--masthead-slogan-align, center) !important;
+}
+.siteHeaderRoot .mastheadBrandText strong {
+  display: block !important;
+  color: var(--masthead-title-color, #0754aa) !important;
+  font-size: var(--masthead-title-size, 18px) !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-align: inherit !important;
+}
+.siteHeaderRoot .mastheadBrandText small {
+  display: block !important;
+  color: var(--masthead-subtitle-color, #0a9b50) !important;
+  font-size: var(--masthead-subtitle-size, 13px) !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-align: var(--masthead-slogan-align, center) !important;
+}
+.siteHeaderRoot .headerSocial img { width: 27px; height: 27px; object-fit: contain; border-radius: 50%; display:block; }
+.siteHeaderRoot .socialCustomText { display:inline-flex; width:27px; height:27px; border-radius:50%; align-items:center; justify-content:center; background:#fff; color:#0756b4; font-size:8px; font-weight:700; }
+
+@media (max-width: 640px) {
+  .siteHeaderRoot .hospitalMastheadInner {
+    min-height: 78px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    padding: 10px 0 !important;
+  }
+  .siteHeaderRoot .mastheadLogo {
+    width: min(var(--masthead-logo-size, 52px), 50px) !important;
+    height: min(var(--masthead-logo-size, 52px), 50px) !important;
+    flex-basis: min(var(--masthead-logo-size, 52px), 50px) !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+  }
+  .siteHeaderRoot .mastheadBrand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: auto 0 !important;
+  }
+  .siteHeaderRoot .mastheadBrandText {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+  }
+  .siteHeaderRoot .mastheadBrandText strong {
+    font-size: clamp(11px, 3.8vw, 15px) !important;
+    line-height: 1.25 !important;
+  }
+  .siteHeaderRoot .mastheadBrandText small {
+    font-size: clamp(9px, 2.5vw, 12px) !important;
+    margin-top: 3px !important;
+    line-height: 1.2 !important;
+  }
+  .siteHeaderRoot .mastheadContacts { display: none !important; }
+}
+
+@media (max-width: 380px) {
+  .siteHeaderRoot .mastheadBrandText strong {
+    font-size: 11px !important;
+    line-height: 1.15 !important;
+  }
+  .siteHeaderRoot .mastheadBrandText small {
+    font-size: 9px !important;
+  }
+}
 

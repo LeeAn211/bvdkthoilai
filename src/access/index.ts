@@ -130,7 +130,12 @@ export const hasModulePermission = (user: any, module: string, action: Permissio
 
 export const mediaReadAccess: Access = ({ req }) => {
   if (isActiveUser(req.user) && hasModulePermission(req.user, 'media', 'view')) return true
-  return { accessLevel: { equals: 'public' } } as Where
+  return {
+    or: [
+      { accessLevel: { equals: 'public' } },
+      { accessLevel: { exists: false } },
+    ],
+  } as Where
 }
 
 export const moduleAccess = (module: string, action: PermissionAction): Access => async ({ req }) => {

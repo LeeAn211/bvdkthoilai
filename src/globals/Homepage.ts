@@ -65,6 +65,8 @@ const smartLinkFields = (): Field[] => [
 
 const defaultHomepageSections = [
   { type: 'featured-news', eyebrow: 'HOẠT ĐỘNG NỔI BẬT TẠI BỆNH VIỆN', title: 'Điểm tin Bệnh viện Đa khoa khu vực Thới Lai', description: 'Các hoạt động chuyên môn, chăm sóc người bệnh và sự kiện tiêu biểu mới nhất.', visible: true },
+  { type: 'advanced-techniques', eyebrow: 'CHUYÊN KHOA & CÔNG NGHỆ Y TẾ', title: 'Kỹ thuật chuyên sâu', description: 'Tiên phong ứng dụng các kỹ thuật cao, trang thiết bị hiện đại phục vụ chăm sóc và điều trị.', visible: true, techniqueItemsPerView: 3, techniqueAutoplaySeconds: 5, cardBarBgColor: '#f0f7fd', cardBarTextColor: '#0754a8' },
+  { type: 'our-experts', eyebrow: 'ĐỘI NGŨ Y BÁC SĨ', title: 'Chuyên gia của chúng tôi', description: 'Đội ngũ bác sĩ giàu kinh nghiệm, chuyên môn sâu, luôn tận tâm vì sức khỏe người bệnh.', visible: true, expertItemsPerView: 4, expertAutoplaySeconds: 5, expertCardBgColor: '#f0f7fd', expertCardTextColor: '#0754a8' },
   { type: 'news-portal', eyebrow: 'CỔNG THÔNG TIN BỆNH VIỆN', title: 'Trang tin tức Bệnh viện', visible: true },
   { type: 'organization', eyebrow: 'TỔ CHỨC BỆNH VIỆN', title: 'Đơn vị trực thuộc', visible: true },
   { type: 'notices', eyebrow: 'THÔNG BÁO', title: 'Thông báo mới từ bệnh viện', description: 'Cập nhật thông tin quan trọng dành cho người bệnh và cộng đồng.', visible: true },
@@ -273,6 +275,8 @@ export const Homepage: GlobalConfig = {
           required: true,
           options: [
             { label: 'Hoạt động nổi bật tại bệnh viện', value: 'featured-news' },
+            { label: 'Kỹ thuật chuyên sâu (Carousel/Slider)', value: 'advanced-techniques' },
+            { label: 'Chuyên gia của chúng tôi (Carousel/Slider)', value: 'our-experts' },
             { label: 'Cổng thông tin bệnh viện', value: 'news-portal' },
             { label: 'Tổ chức bệnh viện', value: 'organization' },
             { label: 'Thông báo', value: 'notices' },
@@ -297,6 +301,195 @@ export const Homepage: GlobalConfig = {
         { name: 'eyebrow', label: 'Nhãn nhỏ phía trên', type: 'text', admin: { condition: (_data, siblingData) => siblingData?.visible !== false } },
         { name: 'title', label: 'Tiêu đề lớn', type: 'text', admin: { condition: (_data, siblingData) => siblingData?.visible !== false } },
         { name: 'description', label: 'Dòng mô tả', type: 'textarea', admin: { condition: (_data, siblingData) => siblingData?.visible !== false } },
+        {
+          name: 'techniqueAutoplaySeconds',
+          label: 'Thời gian tự chuyển slide kỹ thuật (giây)',
+          type: 'number',
+          min: 2,
+          max: 20,
+          defaultValue: 5,
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'advanced-techniques',
+            description: 'Để 0 nếu muốn tắt tự động chuyển động.',
+          },
+        },
+        {
+          name: 'techniqueItemsPerView',
+          label: 'Số thẻ hiển thị trên màn hình lớn',
+          type: 'number',
+          min: 1,
+          max: 4,
+          defaultValue: 3,
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'advanced-techniques',
+            description: 'Khuyên dùng 3 thẻ như thiết kế mẫu.',
+          },
+        },
+        {
+          type: 'row',
+          fields: [
+            colorField('cardBarBgColor', 'Màu nền dải chữ thẻ', { admin: { condition: (_data, siblingData) => siblingData?.type === 'advanced-techniques', width: '50%', placeholder: '#f0f7fd' } }),
+            colorField('cardBarTextColor', 'Màu chữ chân thẻ', { admin: { condition: (_data, siblingData) => siblingData?.type === 'advanced-techniques', width: '50%', placeholder: '#0754a8' } }),
+          ],
+        },
+        {
+          name: 'techniqueItems',
+          dbName: 'tech_items',
+          label: 'Danh sách Kỹ thuật chuyên sâu',
+          type: 'array',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'advanced-techniques',
+            description: 'Thêm, sửa, xóa và kéo thả thay đổi thứ tự các thẻ kỹ thuật chuyên sâu.',
+            initCollapsed: false,
+          },
+          defaultValue: [
+            {
+              title: 'Ứng dụng các kỹ thuật hiện đại trong điều trị bệnh da',
+              badge: 'Phòng khám Da - Thẩm mỹ Da',
+              visible: true,
+            },
+            {
+              title: 'Ứng dụng kỹ thuật quang - điện (TruScreen) trong tầm soát ung thư cổ tử cung',
+              badge: 'Tầm soát chuyên sâu',
+              visible: true,
+            },
+            {
+              title: 'Kỹ thuật truyền dịch vào buồng ối',
+              badge: 'Sản phụ khoa',
+              visible: true,
+            },
+          ],
+          fields: [
+            {
+              name: 'techniqueRef',
+              label: 'Chọn từ mục Kỹ thuật chuyên sâu (không bắt buộc)',
+              type: 'relationship',
+              relationTo: 'advanced-techniques',
+              admin: {
+                description: 'Khi chọn kỹ thuật đã tạo trong mục Nội dung → Kỹ thuật chuyên sâu, hệ thống sẽ tự động lấy thông tin và đường dẫn chi tiết.',
+              },
+            },
+            { name: 'title', label: 'Tên kỹ thuật / Tiêu đề dải chữ', type: 'text', required: true },
+            { name: 'badge', label: 'Nhãn nhỏ góc (không bắt buộc)', type: 'text', admin: { placeholder: 'Ví dụ: Kỹ thuật mới' } },
+            { name: 'image', label: 'Hình ảnh / Poster poster', type: 'upload', relationTo: 'media', required: false, admin: { description: 'Tải poster từ máy hoặc chọn trong Thư viện hình ảnh.' } },
+            {
+              name: 'imageFit',
+              label: 'Cách hiển thị ảnh',
+              type: 'select',
+              defaultValue: 'contain',
+              options: [
+                { label: 'Vừa vặn khung, không bị cắt và giữ nguyên tỉ lệ (khuyên dùng)', value: 'contain' },
+                { label: 'Lấp đầy khung (crop đều các cạnh)', value: 'cover' },
+              ],
+              admin: {
+                description: 'Chế độ Vừa vặn (contain) đảm bảo ảnh nguyên vẹn 100%, không bị méo hay biến dạng.',
+              },
+            },
+            ...smartLinkFields(),
+            { name: 'openNewTab', label: 'Mở liên kết ở tab mới', type: 'checkbox', defaultValue: false },
+            { name: 'visible', label: 'Hiển thị thẻ này', type: 'checkbox', defaultValue: true },
+          ],
+        },
+
+        /* Chuyên gia của chúng tôi (Carousel/Slider) */
+        {
+          name: 'expertAutoplaySeconds',
+          label: 'Thời gian tự chuyển slide chuyên gia (giây)',
+          type: 'number',
+          min: 2,
+          max: 20,
+          defaultValue: 5,
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'our-experts',
+            description: 'Để 0 nếu muốn tắt tự động chuyển động.',
+          },
+        },
+        {
+          name: 'expertItemsPerView',
+          label: 'Số thẻ chuyên gia trên màn hình lớn',
+          type: 'number',
+          min: 1,
+          max: 4,
+          defaultValue: 4,
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'our-experts',
+            description: 'Khuyên dùng 4 thẻ để bố cục cân đối và đẹp mắt.',
+          },
+        },
+        {
+          type: 'row',
+          fields: [
+            colorField('expertCardBgColor', 'Màu nền dải chân thẻ chuyên gia', { admin: { condition: (_data, siblingData) => siblingData?.type === 'our-experts', width: '50%', placeholder: '#f0f7fd' } }),
+            colorField('expertCardTextColor', 'Màu tên & chức vụ chuyên gia', { admin: { condition: (_data, siblingData) => siblingData?.type === 'our-experts', width: '50%', placeholder: '#0754a8' } }),
+          ],
+        },
+        {
+          name: 'expertItems',
+          dbName: 'expert_items',
+          label: 'Danh sách Chuyên gia / Bác sĩ',
+          type: 'array',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'our-experts',
+            description: 'Thêm, sửa, xóa và kéo thả thay đổi thứ tự các chuyên gia hiển thị.',
+            initCollapsed: false,
+          },
+          defaultValue: [
+            {
+              name: 'BS.CKII. Nguyễn Thụy Thúy Ái',
+              position: 'Giám đốc Bệnh viện',
+              visible: true,
+            },
+            {
+              name: 'BS.CKII. Ngô Văn Dũng',
+              position: 'Phó Giám đốc Bệnh viện',
+              visible: true,
+            },
+            {
+              name: 'BS.CKII. Huỳnh Thanh Liêm',
+              position: 'Phó Giám đốc Bệnh viện',
+              visible: true,
+            },
+          ],
+          fields: [
+            {
+              name: 'doctorRef',
+              label: 'Chọn từ mục Bác sĩ (khuyên dùng)',
+              type: 'relationship',
+              relationTo: 'doctors',
+              admin: {
+                description: 'Khi chọn bác sĩ từ hệ thống Quản trị → Bác sĩ, website sẽ tự động lấy Họ tên, Chức vụ, Ảnh đại diện và đường dẫn chi tiết chuẩn xác.',
+              },
+            },
+            {
+              name: 'name',
+              label: 'Họ và tên bác sĩ / chuyên gia',
+              type: 'text',
+              required: false,
+              admin: {
+                description: 'Để trống hệ thống sẽ tự lấy từ Bác sĩ đã chọn.',
+              },
+            },
+            { name: 'position', label: 'Chức danh / Chức vụ', type: 'text', admin: { placeholder: 'Ví dụ: Giám đốc Bệnh viện' } },
+            { name: 'badge', label: 'Nhãn nhỏ góc (không bắt buộc)', type: 'text', admin: { placeholder: 'Ví dụ: Ban Giám đốc' } },
+            { name: 'image', label: 'Hình chân dung bác sĩ (nếu khác ảnh hồ sơ)', type: 'upload', relationTo: 'media', required: false, admin: { description: 'Tải ảnh chân dung bác sĩ hoặc chọn trong Thư viện hình ảnh.' } },
+            {
+              name: 'imageFit',
+              label: 'Cách hiển thị ảnh chân dung',
+              type: 'select',
+              defaultValue: 'contain',
+              options: [
+                { label: 'Vừa vặn khung, không bị cắt và giữ nguyên tỉ lệ (khuyên dùng)', value: 'contain' },
+                { label: 'Lấp đầy khung (crop đều các cạnh)', value: 'cover' },
+              ],
+              admin: {
+                description: 'Chế độ Vừa vặn (contain) đảm bảo ảnh chân dung rõ nét, không bị méo hay kéo dãn.',
+              },
+            },
+            ...smartLinkFields(),
+            { name: 'openNewTab', label: 'Mở liên kết ở tab mới', type: 'checkbox', defaultValue: false },
+            { name: 'visible', label: 'Hiển thị thẻ này', type: 'checkbox', defaultValue: true },
+          ],
+        },
         { name: 'carouselSeconds', label: 'Thời gian chuyển nội dung nổi bật (giây)', type: 'number', min: 2.5, max: 20, defaultValue: 4.5, admin: { condition: (_data, siblingData) => siblingData?.type === 'featured-news', description: 'Điểm tin nổi bật tự động chuyển qua Tin tức, Thông báo, Đấu thầu – Mua sắm và Lịch khám mới.' } },
         { name: 'featuredItemLimit', label: 'Tổng số nội dung tham gia chuyển động', type: 'number', min: 4, max: 40, defaultValue: 16, admin: { condition: (_data, siblingData) => siblingData?.type === 'featured-news', description: 'Khung ngoài luôn hiển thị 4 card trên desktop. Số này quy định tổng số nội dung được đưa vào vòng chuyển động, ví dụ 8, 12, 16, 20...' } },
         { name: 'organizationImage', label: 'Hình ảnh giữa khối Chuyên khoa', type: 'upload', relationTo: 'media', admin: { condition: (_data, siblingData) => siblingData?.type === 'organization', description: 'Tải ảnh mới hoặc chọn ảnh đã có trong thư viện. Ảnh hiển thị ở giữa danh sách chuyên khoa và khối Medpro.' } },

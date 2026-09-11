@@ -1,0 +1,583 @@
+.bmOrgPage {
+  --bm-primary: #0756b4;
+  --bm-primary-dark: #003e7e;
+  --bm-primary-light: #e8f2fa;
+  --bm-accent: #0088cc;
+  --bm-gold: #c89d3a;
+  --bm-text-main: #1f2937;
+  --bm-text-sub: #4b5563;
+  --bm-bg-subtle: #f8fafc;
+  --bm-border: #e2e8f0;
+  
+  background-color: #f8fbfe;
+  color: var(--bm-text-main);
+  font-family: inherit;
+  padding: 30px 0 80px;
+}
+
+/* Tinh gọn khoảng cách Hero phần đầu trang & mở rộng bề ngang tiêu đề */
+.page-hero {
+  padding: 32px 0 24px !important;
+}
+
+.page-hero .container {
+  max-width: 1200px;
+}
+
+.page-hero h1 {
+  font-size: 32px !important;
+  margin: 6px 0 8px !important;
+  letter-spacing: -0.5px;
+  white-space: normal;
+  max-width: none !important;
+}
+
+.page-hero p {
+  font-size: 15px !important;
+  max-width: 900px !important;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   1. SECTION HEADINGS (Gọn gàng, chuẩn chỉnh, không rớt dòng)
+   ========================================================= */
+.bmSectionHeader {
+  text-align: center;
+  margin: 6px auto 28px;
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.bmSectionHeader.treeHead {
+  margin-top: 48px;
+}
+
+.bmSectionTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0c2b4c;
+  margin: 0 auto;
+  position: relative;
+  display: block;
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.bmSectionTitle::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: var(--bm-primary);
+  margin: 7px auto 0;
+  border-radius: 2px;
+}
+
+/* =========================================================
+   2. SECTION BAN LÃNH ĐẠO (Ảnh chuẩn khung, không vỡ méo)
+   ========================================================= */
+.bmLeadershipSection {
+  margin-bottom: 50px;
+}
+
+/* Giám đốc (Director - Card trang trọng ở trên) */
+.bmDirectorWrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.bmDirectorCard {
+  width: 100%;
+  max-width: 290px;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(7, 86, 180, 0.08);
+  border: 1px solid #dbeafe;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.bmDirectorCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(7, 86, 180, 0.14);
+  border-color: #93c5fd;
+}
+
+.bmLeaderPhotoBox {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  background: #f8fafc;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.bmLeaderPhotoBox img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain !important;
+  object-position: center center;
+  display: block;
+  margin: auto;
+  transition: transform 0.35s ease;
+}
+
+.bmDirectorCard:hover .bmLeaderPhotoBox img,
+.bmDeputyCard:hover .bmLeaderPhotoBox img {
+  transform: scale(1.02);
+}
+
+.bmLeaderPlaceholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: var(--bm-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.bmLeaderMeta {
+  padding: 16px 18px 20px;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.bmLeaderRole {
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: var(--bm-primary);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.bmLeaderName {
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 5px;
+  line-height: 1.35;
+}
+
+.bmLeaderDesc {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Các Phó Giám đốc: Tự động canh cân đối theo số lượng (2→6+) */
+.bmDeputiesGrid {
+  display: grid;
+  /* Mặc định: tự động fit theo khoảng 220px, không quá 4 cột */
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 18px;
+  max-width: 1100px;
+  margin: 0 auto;
+  justify-items: stretch;
+}
+
+/* 1 Phó Giám đốc: căn giữa 1 cột */
+.bmDeputiesGrid[data-count="1"] {
+  grid-template-columns: minmax(0, 280px);
+  justify-content: center;
+}
+
+/* 2 Phó Giám đốc: 2 cột bằng nhau */
+.bmDeputiesGrid[data-count="2"] {
+  grid-template-columns: repeat(2, minmax(0, 280px));
+  justify-content: center;
+}
+
+/* 3 Phó Giám đốc: 3 cột */
+.bmDeputiesGrid[data-count="3"] {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 880px;
+}
+
+/* 4 Phó Giám đốc: 4 cột */
+.bmDeputiesGrid[data-count="4"] {
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 1060px;
+}
+
+/* 5 Phó Giám đốc: 3 cột hàng đầu, 2 cột hàng sau (qua auto-fit) */
+.bmDeputiesGrid[data-count="5"] {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 920px;
+}
+
+/* 6 Phó Giám đốc: 3 cột × 2 hàng */
+.bmDeputiesGrid[data-count="6"] {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 960px;
+}
+
+/* 7-8 Phó Giám đốc: 4 cột × 2 hàng */
+.bmDeputiesGrid[data-count="7"],
+.bmDeputiesGrid[data-count="8"] {
+  grid-template-columns: repeat(4, 1fr);
+  max-width: 1100px;
+}
+
+.bmDeputyCard {
+  background: #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.bmDeputyCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(7, 86, 180, 0.1);
+  border-color: #bfdbfe;
+}
+
+.bmDeputyCard .bmLeaderPhotoBox {
+  height: 200px;
+  padding: 12px;
+}
+
+/* Thu nhỏ ảnh khi có nhiều Phó Giám đốc */
+.bmDeputiesGrid[data-count="4"] .bmLeaderPhotoBox,
+.bmDeputiesGrid[data-count="5"] .bmLeaderPhotoBox,
+.bmDeputiesGrid[data-count="6"] .bmLeaderPhotoBox,
+.bmDeputiesGrid[data-count="7"] .bmLeaderPhotoBox,
+.bmDeputiesGrid[data-count="8"] .bmLeaderPhotoBox {
+  height: 160px;
+  padding: 10px;
+}
+
+.bmDeputyCard .bmLeaderMeta {
+  padding: 14px 16px 18px;
+}
+
+.bmDeputyCard .bmLeaderRole {
+  font-size: 11px;
+  color: #0284c7;
+}
+
+.bmDeputyCard .bmLeaderName {
+  font-size: 15.5px;
+}
+
+/* =========================================================
+   3. SECTION SƠ ĐỒ TỔ CHỨC BỘ MÁY (Trực quan, phân nhánh chuẩn)
+   ========================================================= */
+.bmTreeWrap {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 38px 28px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 26px rgba(15, 23, 42, 0.04);
+}
+
+/* Hộp Ban Giám Đốc Trên Cùng */
+.bmTreeBoardWrap {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.bmTreeBoardBox {
+  background: linear-gradient(135deg, #074e99 0%, #0866c2 100%);
+  color: #ffffff;
+  padding: 16px 38px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(7, 78, 153, 0.22);
+  position: relative;
+  z-index: 2;
+  min-width: 270px;
+}
+
+.bmTreeBoardBoxTitle {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin: 0;
+  color: #ffffff;
+}
+
+.bmTreeBoardBoxSub {
+  font-size: 12px;
+  color: #dbeafe;
+  margin-top: 4px;
+}
+
+/* Trục nối sơ đồ */
+.bmTreeVerticalLine {
+  width: 2px;
+  height: 32px;
+  background: #94a3b8;
+  margin: 0 auto;
+}
+
+.bmTreeBranchContainer {
+  position: relative;
+  max-width: 980px;
+  margin: 0 auto;
+  height: 24px;
+}
+
+.bmTreeBranchLine {
+  position: absolute;
+  top: 0;
+  left: 16.66%;
+  right: 16.66%;
+  height: 24px;
+  border-top: 2px solid #94a3b8;
+  border-left: 2px solid #94a3b8;
+  border-right: 2px solid #94a3b8;
+}
+
+.bmTreeBranchCenterLine {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 24px;
+  background: #94a3b8;
+  transform: translateX(-50%);
+}
+
+/* Các Khối Cột (3 Cột Chuẩn: Phòng CN - Lâm Sàng - Cận Lâm Sàng) */
+.bmColumnsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-top: 8px;
+}
+
+.bmColumnCard {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.035);
+  display: flex;
+  flex-direction: column;
+}
+
+.bmColumnCard.offices {
+  border-top: 4px solid #0d9488;
+}
+
+.bmColumnCard.clinical {
+  border-top: 4px solid #005aa9;
+}
+
+.bmColumnCard.paraclinical {
+  border-top: 4px solid #7c3aed;
+}
+
+.bmColumnHeader {
+  padding: 14px 18px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bmColumnHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.bmColumnIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.bmColumnCard.offices .bmColumnIcon {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+
+.bmColumnCard.clinical .bmColumnIcon {
+  background: #dbeafe;
+  color: #005aa9;
+}
+
+.bmColumnCard.paraclinical .bmColumnIcon {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.bmColumnHeaderTitle {
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.bmColumnCount {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.bmUnitList {
+  padding: 6px 0;
+  list-style: none;
+  margin: 0;
+  flex: 1;
+}
+
+.bmUnitItem {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.bmUnitItem:last-child {
+  border-bottom: none;
+}
+
+.bmUnitLink {
+  padding: 11px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  color: #334155;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  line-height: 1.4;
+}
+
+.bmUnitLink:hover {
+  background: #f0f7ff;
+  color: var(--bm-primary);
+  padding-left: 20px;
+}
+
+.bmUnitLink i {
+  color: #94a3b8;
+  font-size: 14px;
+  font-style: normal;
+  transition: transform 0.2s;
+}
+
+.bmUnitLink:hover i {
+  color: var(--bm-primary);
+  transform: translateX(4px);
+}
+
+/* =========================================================
+   4. NGUYÊN TẮC / CHỨC NĂNG VẬN HÀNH
+   ========================================================= */
+.bmOrgInfoBox {
+  margin-top: 36px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid var(--bm-primary);
+  border-radius: 12px;
+  padding: 22px 26px;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.bmOrgInfoIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--bm-primary-light);
+  color: var(--bm-primary);
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bmOrgInfoContent h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 5px;
+}
+
+.bmOrgInfoContent p {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* =========================================================
+   5. RESPONSIVE DESIGN
+   ========================================================= */
+@media (max-width: 992px) {
+  .bmColumnsGrid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .bmTreeBranchContainer {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .bmOrgPage {
+    padding: 24px 0 60px;
+  }
+
+  .bmTreeWrap {
+    padding: 20px 14px;
+  }
+
+  .bmTreeBoardBox {
+    min-width: 0;
+    width: 100%;
+    padding: 14px 18px;
+  }
+
+  .bmOrgInfoBox {
+    flex-direction: column;
+    padding: 18px;
+  }
+}

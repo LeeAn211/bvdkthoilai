@@ -34,7 +34,15 @@ export const Doctors: CollectionConfig = {
     { name: 'title', label: 'Chức danh', type: 'text' },
     { name: 'degree', label: 'Học vị / Học hàm', type: 'text' },
     { name: 'professionalTitle', label: 'Chức danh nghề nghiệp', type: 'text' },
-    { name: 'avatar', label: 'Ảnh bác sĩ', type: 'upload', relationTo: 'media', admin: { description: 'Tải ảnh mới hoặc chọn lại từ Thư viện Tệp & Hình ảnh.' } },
+    { 
+      name: 'avatar', 
+      label: 'Ảnh chân dung bác sĩ', 
+      type: 'upload', 
+      relationTo: 'media', 
+      admin: { 
+        description: '💡 Gợi ý kích thước chuẩn: Tỷ lệ đứng 3:4 (chuẩn nhất: 600×800px hoặc 450×600px). Chụp bán thân/chân dung nền sáng hoặc áo blouse trắng. Hệ thống tự động căn chỉnh vừa vặn khung hình 3:4 và giữ nguyên tỷ lệ, không bị méo/biến dạng ảnh.' 
+      } 
+    },
     { name: 'department', label: 'Khoa / Phòng', type: 'relationship', relationTo: 'departments', required: true },
     {
       name: 'specialtyRef', label: 'Chuyên khoa chuyên môn (không bắt buộc)', type: 'relationship', relationTo: 'specialties',

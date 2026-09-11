@@ -1,0 +1,254 @@
+.expertCarouselWrapper {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.expertCarouselTrack {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.expertCarouselTrack[data-count="1"] {
+  grid-template-columns: 1fr;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.expertCarouselTrack[data-count="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.expertCarouselTrack[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.expertCarouselTrack[data-count="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.expertCardLink {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 18px;
+  outline: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.expertCardLink.noCursor {
+  cursor: default;
+}
+
+.expertCardLink:hover:not(.noCursor) {
+  transform: translateY(-5px);
+}
+
+.expertCardLink:hover:not(.noCursor) .expertCard {
+  box-shadow: 0 16px 32px rgba(8, 120, 209, 0.16);
+  border-color: #0878d1;
+}
+
+.expertCard {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 18px;
+  background-color: #ffffff;
+  border: 1px solid #dce8f1;
+  box-shadow: 0 8px 24px rgba(15, 63, 99, 0.08);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.expertCardImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.15;
+  max-height: 310px;
+  background-color: #f8fbfe;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expertCardImg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover !important;
+  object-position: top center;
+  transition: transform 0.3s ease;
+}
+
+.expertCardImg.fitContain {
+  object-fit: cover !important;
+  object-position: top center;
+}
+
+.expertCardImg.fitCover {
+  object-fit: cover !important;
+  object-position: top center;
+}
+
+.expertCardLink:hover:not(.noCursor) .expertCardImg {
+  transform: scale(1.03);
+}
+
+.expertCardBadge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  background-color: rgba(255, 255, 255, 0.96);
+  border: 1px solid #bce0f8;
+  color: #0878d1;
+  font-size: 10.5px;
+  font-weight: 700;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(8, 120, 209, 0.1);
+}
+
+.expertCardPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f0f7fd 0%, #e6f3fa 100%);
+}
+
+.expertCardPlaceholder svg {
+  stroke: #0878d1;
+}
+
+.expertCardFooter {
+  padding: 16px 18px 18px;
+  background-color: #f0f7fd;
+  min-height: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-top: 1px solid #dce8f1;
+  color: #0754a8;
+  transition: background-color 0.2s ease;
+}
+
+.expertCardLink:hover:not(.noCursor) .expertCardFooter {
+  background-color: #e4f2fb;
+}
+
+.expertCardName {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #0754a8;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.expertCardPosition {
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #436e92;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.expertCardSubPosition {
+  margin: 3px 0 0;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #0878d1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.expertCarouselControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.expertNavBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #0878d1;
+  background-color: #ffffff;
+  color: #0878d1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(8, 120, 209, 0.15);
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.expertNavBtn svg {
+  stroke: #0878d1;
+}
+
+.expertNavBtn:hover {
+  background-color: #0878d1;
+  border-color: #0754a8;
+  color: #ffffff;
+  transform: scale(1.06);
+}
+
+.expertNavBtn:hover svg {
+  stroke: #ffffff;
+}
+
+.expertNavBtn:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 1100px) {
+  .expertCarouselTrack,
+  .expertCarouselTrack[data-count="4"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 800px) {
+  .expertCarouselTrack,
+  .expertCarouselTrack[data-count="3"],
+  .expertCarouselTrack[data-count="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 540px) {
+  .expertCarouselTrack,
+  .expertCarouselTrack[data-count="2"],
+  .expertCarouselTrack[data-count="3"],
+  .expertCarouselTrack[data-count="4"] {
+    grid-template-columns: 1fr;
+  }
+  .expertCardName {
+    font-size: 14px;
+  }
+  .expertCardPosition {
+    font-size: 11px;
+  }
+}

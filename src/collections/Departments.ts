@@ -19,7 +19,8 @@ export const Departments: CollectionConfig = {
     delete: moduleAccess('departments', 'delete'),
   },
   hooks: { beforeDelete: [detachNavigationReference('departments')] },
-  versions: { drafts: true, maxPerDoc: 20 },
+  // Không cần quy trình draft/publish - khoa phòng là dữ liệu hành chính, hiển thị ngay
+  versions: false,
   fields: [
     { name: 'name', label: 'Tên khoa / phòng', type: 'text', required: true },
     {

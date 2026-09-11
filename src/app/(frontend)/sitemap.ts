@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try { seo = await getGlobal('seo-settings') } catch {}
   if (seo?.enableSitemap === false || seo?.allowIndexing === false) return []
 
-  const staticPaths = ['', '/gioi-thieu', '/so-do-to-chuc', '/tin-tuc', '/thong-bao', '/dau-thau-mua-sam', '/lich-kham', '/tiem-chung', '/bang-gia', '/van-ban', '/tuyen-dung', '/khoa-phong', '/chuyen-khoa', '/bac-si', '/lien-he']
+  const staticPaths = ['', '/gioi-thieu', '/gioi-thieu/lich-su-phat-trien', '/so-do-to-chuc', '/tin-tuc', '/thong-bao', '/dau-thau-mua-sam', '/lich-kham', '/tiem-chung', '/bang-gia', '/van-ban', '/tuyen-dung', '/khoa-phong', '/chuyen-khoa', '/bac-si', '/lien-he']
   const entries: MetadataRoute.Sitemap = staticPaths.map(path => ({ url: base + path, changeFrequency: path ? 'weekly' : 'daily' }))
   try {
     const payload = await getCMS()

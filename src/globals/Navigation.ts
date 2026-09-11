@@ -47,7 +47,8 @@ const menuLinkFields = (): Field[] => [
     options: [
       { label: 'Trang chủ', value: '/' },
       { label: 'Giới thiệu bệnh viện', value: '/gioi-thieu' },
-      { label: 'Sơ đồ tổ chức 3 bậc', value: '/so-do-to-chuc' },
+      { label: 'Lịch sử phát triển', value: '/gioi-thieu/lich-su-phat-trien' },
+      { label: 'Sơ đồ tổ chức', value: '/so-do-to-chuc' },
       { label: 'Danh sách Khoa / Phòng', value: '/khoa-phong' },
       { label: 'Danh sách Chuyên khoa', value: '/chuyen-khoa' },
       { label: 'Đội ngũ bác sĩ', value: '/bac-si' },
@@ -190,8 +191,28 @@ export const Navigation: GlobalConfig = {
       type: 'array',
       defaultValue: [
         { label: 'TRANG CHỦ', linkType: 'preset', preset: '/', visible: true },
-        { label: 'GIỚI THIỆU', linkType: 'preset', preset: '/gioi-thieu', visible: true },
-        { label: 'SƠ ĐỒ TỔ CHỨC', linkType: 'preset', preset: '/so-do-to-chuc', visible: true },
+        {
+          label: 'GIỚI THIỆU',
+          linkType: 'preset',
+          preset: '/gioi-thieu',
+          visible: true,
+          children: [
+            { label: 'Giới thiệu chung', linkType: 'preset', preset: '/gioi-thieu', visible: true },
+            { label: 'Lịch sử phát triển', linkType: 'preset', preset: '/gioi-thieu/lich-su-phat-trien', visible: true },
+          ],
+        },
+        {
+          label: 'TỔ CHỨC',
+          linkType: 'preset',
+          preset: '/so-do-to-chuc',
+          visible: true,
+          children: [
+            { label: 'Sơ đồ tổ chức', linkType: 'preset', preset: '/so-do-to-chuc', visible: true },
+            { label: 'Khoa – Phòng', linkType: 'preset', preset: '/khoa-phong', visible: true },
+            { label: 'Chuyên khoa', linkType: 'preset', preset: '/chuyen-khoa', visible: true },
+            { label: 'Đội ngũ Bác sĩ', linkType: 'preset', preset: '/bac-si', visible: true },
+          ],
+        },
         { label: 'TIN TỨC', linkType: 'preset', preset: '/tin-tuc', visible: true },
         { label: 'THÔNG BÁO', linkType: 'preset', preset: '/thong-bao', visible: true },
         { label: 'LỊCH KHÁM', linkType: 'preset', preset: '/lich-kham', visible: true },
