@@ -31,18 +31,25 @@ const commonHeaders = [
 
 const nextConfig = {
   output: 'standalone',
+  compress: true,
   poweredByHeader: false,
   async headers() {
     return [
       { source: '/(.*)', headers: commonHeaders },
       { source: '/admin/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }] },
       { source: '/api/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }] },
+      { source: '/_next/static/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
+      { source: '/branding/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }] },
     ]
   },
-  images: { remotePatterns: [
-    { protocol: 'https', hostname: 'medpro.vn' },
-    { protocol: 'https', hostname: 'www.google.com' },
-  ] },
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 604800,
+    remotePatterns: [
+      { protocol: 'https', hostname: 'medpro.vn' },
+      { protocol: 'https', hostname: 'www.google.com' },
+    ],
+  },
 }
 
 export default withPayload(nextConfig)
