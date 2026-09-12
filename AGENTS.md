@@ -21,3 +21,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   - `object-fit: cover` hoặc `object-fit: contain`
   - `object-position: top center` hoặc `center center`
 - Khung ảnh phải có `overflow: hidden`, bảo toàn nguyên vẹn tỷ lệ ảnh gốc của thầy thuốc/bác sĩ.
+
+## 3. Ghi chép nhật ký thay đổi và cấu trúc Database (BẮT BUỘC):
+- **Mỗi lần thực hiện bất kỳ thay đổi nào theo yêu cầu (code, giao diện, cấu hình, logic)**: Bắt buộc phải cập nhật ngay vào tệp `CHANGELOG.md` ở thư mục gốc dự án.
+- **Nội dung ghi chép bao gồm**:
+  - Thời gian, tóm tắt yêu cầu.
+  - Các tệp tin code/giao diện đã chỉnh sửa (`Files Modified`).
+  - **Thay đổi Database/Collections/Schema (nếu có)**: Các trường mới thêm, thay đổi kiểu dữ liệu, quan hệ bảng, hoặc migration để khi chuyển sang máy khác/server khác có thể đồng bộ trọn vẹn.
+

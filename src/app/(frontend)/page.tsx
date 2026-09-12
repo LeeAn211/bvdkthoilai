@@ -347,18 +347,93 @@ export default async function HomePage() {
         <div className="homeEditorialGrid">
           {items.map((entry: any, idx: number) => {
             const isMain = idx === 0
+            if (isMain) {
+              // Ô lớn: ảnh trên (kèm badge), nội dung dưới (kèm excerpt)
+              return (
+                <a
+                  href={entry.href}
+                  className="featured"
+                  key={entry.id}
+                >
+                  <div
+                    className="homeEditorialImage"
+                    style={{
+                      background: entry.coverFit === 'contain' ? '#eaf4fc' : undefined,
+                    }}
+                  >
+                    <img
+                      src={entry.cover}
+                      alt={entry.title}
+                      className="editorialImg"
+                      loading="lazy"
+                      style={{
+                        objectFit: entry.coverFit === 'contain' ? 'contain' : 'cover',
+                        objectPosition: entry.coverPosition === 'center'
+                          ? 'center center'
+                          : (entry.coverPosition === 'bottom' ? 'center bottom' : 'top center'),
+                      }}
+                    />
+                    {showCategory && (
+                      <span>{badgeOverride || entry.category || 'NỘI DUNG'}</span>
+                    )}
+                  </div>
+                  <div className="homeEditorialCopy">
+                    {showDate && <small>{entry.date || 'Mới cập nhật'}</small>}
+                    <h3>{entry.title}</h3>
+                    {showExcerpt && <p>{entry.excerpt || ''}</p>}
+                  </div>
+                </a>
+              )
+            }
+            // 4 ô nhỏ: giữ nguyên layout dọc (ảnh trên, text dưới)
             return (
               <a
                 href={entry.href}
-                className={isMain ? 'featured' : ''}
+                className=""
                 key={entry.id}
                 style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}
               >
-                <div className="homeEditorialImage" style={{ width: '100%', aspectRatio: isMain ? '16 / 9.5' : '16 / 8.5', maxHeight: isMain ? '220px' : '92px', flexShrink: 0, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img src={entry.cover} alt={entry.title} className="editorialImg" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', display: 'block' }} />
-                  {isMain && <span>{badgeOverride || (showCategory ? (entry.category || 'NỘI DUNG') : '')}</span>}
+                <div
+                  className="homeEditorialImage"
+                  style={{
+                    width: '100%',
+                    aspectRatio: '16 / 10.5',
+                    maxHeight: '175px',
+                    flexShrink: 0,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: entry.coverFit === 'contain' ? '#f4f8fb' : undefined,
+                  }}
+                >
+                  <img
+                    src={entry.cover}
+                    alt={entry.title}
+                    className="editorialImg"
+                    loading="lazy"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: entry.coverFit === 'contain' ? 'contain' : 'cover',
+                      objectPosition: entry.coverPosition === 'center'
+                        ? 'center center'
+                        : (entry.coverPosition === 'bottom' ? 'center bottom' : 'top center'),
+                      display: 'block',
+                    }}
+                  />
                 </div>
-                <div className="homeEditorialCopy" style={{ padding: isMain ? '16px 18px 18px' : '10px 12px 12px', flex: '1 1 auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+                <div
+                  className="homeEditorialCopy"
+                  style={{
+                    padding: '16px 18px 18px',
+                    flex: '1 1 auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-start',
+                  }}
+                >
                   {showDate && <small>{entry.date || 'Mới cập nhật'}</small>}
                   <h3>{entry.title}</h3>
                   {showExcerpt && <p>{entry.excerpt || ''}</p>}
@@ -839,7 +914,7 @@ export default async function HomePage() {
             )
           }
 
-          if (type === 'news-portal') return <section className="sectionPro configurableHomeSection homePortalNewsSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem toàn bộ bài viết →</a></div><HomeNewsTabs items={news.map((article) => ({ id: article.id, title: article.title, slug: article.slug, excerpt: article.excerpt, category: article.category, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news }))} tabs={contentTabsFor('news-portal')} /></div></section>
+          if (type === 'news-portal') return <section className="sectionPro configurableHomeSection homePortalNewsSection homePortalPage" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem toàn bộ bài viết →</a></div><HomeNewsTabs items={news.map((article) => ({ id: article.id, title: article.title, slug: article.slug, excerpt: article.excerpt, category: article.category, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news }))} tabs={contentTabsFor('news-portal')} /></div></section>
 
           if (type === 'notices') {
             const noticeLayout = item.sectionLayout || 'editorial-grid'
@@ -852,6 +927,8 @@ export default async function HomePage() {
               excerpt: notice.excerpt || 'Thông tin mới được cập nhật từ Bệnh viện Đa khoa Khu vực Thới Lai.',
               date: notice.publishedAt ? new Date(notice.publishedAt).toLocaleDateString('vi-VN') : (notice.startAt ? new Date(notice.startAt).toLocaleDateString('vi-VN') : 'Mới cập nhật'),
               category: notice.category || '',
+              coverFit: notice.coverFit || 'cover',
+              coverPosition: notice.coverPosition || 'top',
             }))
             return (
               <section className="sectionPro configurableHomeSection homeNoticeSection" style={style} key={key}>
@@ -874,6 +951,8 @@ export default async function HomePage() {
               excerpt: entry.excerpt || entry.summary || 'Thông tin công khai về đấu thầu và mua sắm của bệnh viện.',
               date: entry.publishedAt ? new Date(entry.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
               category: entry.category || '',
+              coverFit: entry.coverFit || 'cover',
+              coverPosition: entry.coverPosition || 'top',
             }))
             return (
               <section className="sectionPro configurableHomeSection homeProcurementSection" style={style} key={key}>
@@ -902,6 +981,8 @@ export default async function HomePage() {
               excerpt: document.summary || [document.number, document.issuer].filter(Boolean).join(' · ') || 'Văn bản, biểu mẫu và tài liệu được bệnh viện công khai.',
               date: document.issuedAt ? new Date(document.issuedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
               category: document.type || document.category || '',
+              coverFit: document.coverFit || 'cover',
+              coverPosition: document.coverPosition || 'top',
             }))
             return (
               <section className="sectionPro configurableHomeSection homeDocumentsSection" style={style} key={key}>
@@ -931,6 +1012,8 @@ export default async function HomePage() {
               excerpt: post.excerpt || `Thông tin mới thuộc mục ${linkedSection.title}.`,
               date: post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
               category: post.category || '',
+              coverFit: post.coverFit || 'cover',
+              coverPosition: post.coverPosition || 'top',
             }))
             return (
               <section className="sectionPro configurableHomeSection homeDynamicContentSection" style={style} key={key}>

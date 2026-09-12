@@ -1,4 +1,5 @@
 import type { CollectionConfig, GlobalConfig, PayloadRequest } from 'payload'
+import { normalizeNFC } from '@/hooks/normalizeVietnamese'
 
 const SENSITIVE_KEYS = new Set([
   'password', 'salt', 'hash', 'token', 'secret', 'apiKey', 'api_key',
@@ -87,6 +88,10 @@ export const withAudit = (config: CollectionConfig): CollectionConfig => {
     ...config,
     hooks: {
       ...original,
+      beforeChange: [
+        ({ data }: any) => (data ? normalizeNFC(data) : data),
+        ...(original.beforeChange || []),
+      ],
       afterChange: [
         ...(original.afterChange || []),
         async ({ doc, previousDoc, operation, req }) => {
@@ -122,6 +127,10 @@ export const withGlobalAudit = (config: GlobalConfig): GlobalConfig => {
     ...config,
     hooks: {
       ...original,
+      beforeChange: [
+        ({ data }: any) => (data ? normalizeNFC(data) : data),
+        ...(original.beforeChange || []),
+      ],
       afterChange: [
         ...(original.afterChange || []),
         async ({ doc, previousDoc, req }) => {

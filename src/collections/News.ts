@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { contentDeleteAccess, moduleAccess, publicPublished, workflowUpdateAccess } from '@/access'
-import { attachmentsField, categoryRelationshipField, seoFields, slugField, workflowFields, layoutTemplateField, postSourceField } from '@/fields/common'
+import { attachmentsField, categoryRelationshipField, seoFields, slugField, workflowFields, layoutTemplateField, postSourceField, imageDisplayFields } from '@/fields/common'
 import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
 
@@ -60,6 +60,7 @@ export const News: CollectionConfig = {
     { name: 'publishedAt', label: 'Ngày đăng', type: 'date', admin: { position: 'sidebar' } },
     postSourceField,
     layoutTemplateField,
+    ...imageDisplayFields,
     ...workflowFields,
     ...seoFields,
   ],

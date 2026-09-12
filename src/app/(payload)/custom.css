@@ -65,14 +65,62 @@
 .popup, .drawer__content, .modal__content { border-color:#d9e5ec; border-radius:14px; box-shadow:0 20px 55px rgba(8,48,73,.18); }
 
 
-/* Admin tiếng Việt - vùng soạn thảo dễ nhìn */
+/* Admin tiếng Việt - vùng soạn thảo chuẩn font chữ tiếng Việt, tương thích mọi bộ gõ (Unikey, EVKey, macOS) và Unicode NFC/NFD */
+.rich-text-lexical,
+.rich-text-lexical *,
+.editor-container,
+.editor-scroller,
+.ContentEditable__root,
+.ContentEditable__root *,
+[contenteditable="true"],
+[contenteditable="true"] *,
+.LexicalEditorTheme__paragraph,
+.LexicalEditorTheme__heading,
+.LexicalEditorTheme__listItem {
+  font-family: Arial, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Tahoma, sans-serif !important;
+  font-feature-settings: "liga" 1, "calt" 1, "kern" 1 !important;
+  font-variant-ligatures: common-ligatures contextual !important;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
 .rich-text-lexical .editor-container {
   min-height: 420px;
 }
+
 .rich-text-lexical .ContentEditable__root {
   min-height: 360px;
   font-size: 16px;
   line-height: 1.75;
+  color: #1e293b;
+}
+
+/* Ảnh trong trình soạn thảo admin: tự động vừa khung, căn giữa, bảo toàn 100% tỷ lệ gốc, không cắt xén/biến dạng */
+.rich-text-lexical img,
+.rich-text-lexical [class*="upload"] img,
+.rich-text-lexical [class*="Upload"] img,
+.ContentEditable__root img,
+.LexicalEditorTheme__upload img {
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  max-height: 650px !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  aspect-ratio: auto !important;
+}
+
+.rich-text-lexical [class*="upload"],
+.rich-text-lexical [class*="Upload"],
+.LexicalEditorTheme__upload {
+  max-width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
 }
 
 /* Trang tổng quan Payload: giữ nguyên các nhóm mặc định và làm mới giao diện. */

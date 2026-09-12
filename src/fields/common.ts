@@ -204,3 +204,35 @@ export const postSourceField: Field = {
     placeholder: 'VD: Bác sĩ CKII Nguyễn Văn A, Theo Bộ Y tế...',
   },
 }
+
+export const imageDisplayFields: Field[] = [
+  {
+    name: 'coverFit',
+    label: 'Cách hiển thị ảnh đại diện trên thẻ / trang chủ',
+    type: 'select',
+    defaultValue: 'cover',
+    options: [
+      { label: 'Lấp đầy khung (Khuyên dùng)', value: 'cover' },
+      { label: 'Vừa vặn toàn bộ ảnh (Không crop, hiển thị trọn vẹn 100%)', value: 'contain' },
+    ],
+    admin: {
+      position: 'sidebar',
+      description: 'Nếu ảnh bị cắt mất chi tiết hoặc chữ, chọn “Vừa vặn toàn bộ ảnh” để hiển thị đầy đủ không bị xén.',
+    },
+  },
+  {
+    name: 'coverPosition',
+    label: 'Điểm lấy nét ảnh (Trọng tâm)',
+    type: 'select',
+    defaultValue: 'top',
+    options: [
+      { label: 'Ưu tiên phần trên (Lấy rõ đầu/mặt/tiêu đề ảnh - Mặc định)', value: 'top' },
+      { label: 'Chính giữa ảnh (Center)', value: 'center' },
+      { label: 'Ưu tiên phần dưới (Bottom)', value: 'bottom' },
+    ],
+    admin: {
+      position: 'sidebar',
+      description: 'Chỉnh góc lấy nét khi ảnh bị xén mất phần đầu hoặc tiêu đề.',
+    },
+  },
+]

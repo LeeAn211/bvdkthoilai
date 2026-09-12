@@ -190,7 +190,11 @@
 
 .postDetailBody img {
   max-width: 100%;
+  width: auto;
   height: auto;
+  max-height: 800px;
+  object-fit: contain;
+  object-position: center;
   border-radius: 12px;
   margin: 20px auto;
   display: block;

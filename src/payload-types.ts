@@ -565,6 +565,14 @@ export interface News {
    */
   layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
   /**
+   * Nếu ảnh bị cắt mất chi tiết hoặc chữ, chọn “Vừa vặn toàn bộ ảnh” để hiển thị đầy đủ không bị xén.
+   */
+  coverFit?: ('cover' | 'contain') | null;
+  /**
+   * Chỉnh góc lấy nét khi ảnh bị xén mất phần đầu hoặc tiêu đề.
+   */
+  coverPosition?: ('top' | 'center' | 'bottom') | null;
+  /**
    * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
    */
   workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
@@ -669,6 +677,14 @@ export interface Notice {
    */
   layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
   /**
+   * Nếu ảnh bị cắt mất chi tiết hoặc chữ, chọn “Vừa vặn toàn bộ ảnh” để hiển thị đầy đủ không bị xén.
+   */
+  coverFit?: ('cover' | 'contain') | null;
+  /**
+   * Chỉnh góc lấy nét khi ảnh bị xén mất phần đầu hoặc tiêu đề.
+   */
+  coverPosition?: ('top' | 'center' | 'bottom') | null;
+  /**
    * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
    */
   workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
@@ -765,6 +781,14 @@ export interface Procurement {
    * Chọn mẫu giao diện trang chi tiết cho bài viết này.
    */
   layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
+  /**
+   * Nếu ảnh bị cắt mất chi tiết hoặc chữ, chọn “Vừa vặn toàn bộ ảnh” để hiển thị đầy đủ không bị xén.
+   */
+  coverFit?: ('cover' | 'contain') | null;
+  /**
+   * Chỉnh góc lấy nét khi ảnh bị xén mất phần đầu hoặc tiêu đề.
+   */
+  coverPosition?: ('top' | 'center' | 'bottom') | null;
   /**
    * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
    */
@@ -2694,6 +2718,8 @@ export interface NewsSelect<T extends boolean = true> {
   publishedAt?: T;
   source?: T;
   layoutTemplate?: T;
+  coverFit?: T;
+  coverPosition?: T;
   workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
@@ -2732,6 +2758,8 @@ export interface NoticesSelect<T extends boolean = true> {
   showOnHome?: T;
   source?: T;
   layoutTemplate?: T;
+  coverFit?: T;
+  coverPosition?: T;
   workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
@@ -2778,6 +2806,8 @@ export interface ProcurementSelect<T extends boolean = true> {
       };
   source?: T;
   layoutTemplate?: T;
+  coverFit?: T;
+  coverPosition?: T;
   workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
