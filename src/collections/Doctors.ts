@@ -56,6 +56,36 @@ export const Doctors: CollectionConfig = {
     { name: 'experience', label: 'Kinh nghiệm công tác', type: 'richText' },
     { name: 'education', label: 'Quá trình đào tạo', type: 'richText' },
     { name: 'achievements', label: 'Thành tích / nghiên cứu', type: 'richText' },
+    {
+      name: 'showOnHome',
+      label: 'Hiển thị ở mục Chuyên gia trên Trang chủ',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Bật để cho phép bác sĩ xuất hiện trong khối Chuyên gia của chúng tôi trên Trang chủ. Tắt nếu chỉ muốn hiển thị tại trang danh sách Bác sĩ (/bac-si).',
+      },
+    },
+    {
+      name: 'showDepartment',
+      label: 'Hiển thị Khoa / Phòng sau chức vụ trên Trang chủ',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Bật để hiển thị đầy đủ Chức vụ kèm Khoa/Phòng (VD: Phó Giám đốc · Ban Giám đốc). Tắt nếu chỉ muốn hiện chức vụ (VD: Giám đốc).',
+      },
+    },
+    {
+      name: 'customSubtitle',
+      label: 'Dòng thông tin phụ tùy chỉnh (Ghi đè trên Trang chủ)',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        placeholder: 'Ví dụ: Giám đốc hoặc Phó Giám đốc - Ban Giám đốc',
+        description: 'Nếu nhập tại đây, hệ thống sẽ ưu tiên hiển thị chính xác nội dung này phía dưới tên trên Trang chủ.',
+      },
+    },
     { name: 'order', label: 'Thứ tự hiển thị', type: 'number', defaultValue: 0, admin: { position: 'sidebar' } },
     { name: 'featured', label: 'Bác sĩ nổi bật', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
     { name: 'active', label: 'Hiển thị trên website', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar' } },

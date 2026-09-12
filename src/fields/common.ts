@@ -177,3 +177,30 @@ export const createdByField: Field = {
   relationTo: 'users',
   admin: { position: 'sidebar', readOnly: true },
 }
+
+export const layoutTemplateField: Field = {
+  name: 'layoutTemplate',
+  label: 'Mẫu giao diện chi tiết',
+  type: 'select',
+  defaultValue: 'default',
+  options: [
+    { label: 'Mặc định (Theo cài đặt hệ thống)', value: 'default' },
+    { label: 'Giao diện Chuẩn (3 cột: Chia sẻ + Nội dung + Sidebar)', value: 'bachmai' },
+    { label: 'Cổ điển đơn giản (Đầy đủ chiều rộng)', value: 'classic' },
+  ],
+  admin: {
+    position: 'sidebar',
+    description: 'Chọn mẫu giao diện trang chi tiết cho bài viết này.',
+  },
+}
+
+export const postSourceField: Field = {
+  name: 'source',
+  label: 'Nguồn bài viết',
+  type: 'text',
+  admin: {
+    position: 'sidebar',
+    description: 'Nguồn bài viết. Nếu để trống, hệ thống sẽ tự động hiển thị Nguồn mặc định cài trong Mẫu giao diện.',
+    placeholder: 'VD: Bác sĩ CKII Nguyễn Văn A, Theo Bộ Y tế...',
+  },
+}

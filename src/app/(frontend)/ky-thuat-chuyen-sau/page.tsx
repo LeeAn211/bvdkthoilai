@@ -50,11 +50,11 @@ export default async function AdvancedTechniquesListPage() {
                     style={{ display: 'flex', flexDirection: 'column', padding: '0', overflow: 'hidden', borderRadius: '14px', border: '1px solid #dbe8f2', background: '#fff' }}
                   >
                     {cover ? (
-                      <div style={{ width: '100%', height: '180px', backgroundColor: '#f8fbfe', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                      <div style={{ width: '100%', aspectRatio: '1 / 1.15', maxHeight: '260px', backgroundColor: '#f8fbfe', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
                         <img
                           src={cover}
                           alt={item.title}
-                          style={{ width: '100%', height: '100%', objectFit: (item.imageFit === 'cover' ? 'cover' : 'contain'), padding: (item.imageFit === 'cover' ? '0' : '8px'), display: 'block' }}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
                           loading="lazy"
                         />
                         {item.badge && (

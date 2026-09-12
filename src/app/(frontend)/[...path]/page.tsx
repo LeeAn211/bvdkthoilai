@@ -1,6 +1,6 @@
 import { notFound, permanentRedirect } from 'next/navigation'
 import type { Metadata } from 'next'
-import { getCMS } from '@/lib/payload'
+import { getCMS, getGlobal } from '@/lib/payload'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { PageHero } from '@/components/PageHero'
@@ -9,6 +9,7 @@ import { RichText } from '@/components/RichText'
 import { AttachmentList } from '@/components/AttachmentList'
 import { BackToList } from '@/components/BackToList'
 import { mediaUrl } from '@/lib/media'
+import { ArticleDetailTemplate } from '@/components/ArticleDetailTemplate'
 
 type Props = { params: Promise<{ path: string[] }> }
 
@@ -96,9 +97,104 @@ export default async function RedirectResolver({ params }: Props) {
   if (path.length === 2) {
     const section = await findSection(path[0]).catch(() => null)
     if (section) {
-      const item = await findPost(section.id, path[1]).catch(() => null)
+      const [item, theme, relatedRes] = await Promise.all([
+        findPost(section.id, path[1]).catch(() => null),
+        getGlobal('theme-settings').catch(() => null) as Promise<any>,
+        getCMS().then((p) =>
+          p.find({
+            collection: 'custom-posts',
+            where: {
+              and: [
+                { section: { equals: section.id } },
+                { slug: { not_equals: path[1] } },
+                { _status: { equals: 'published' } },
+              ],
+            },
+            sort: '-publishedAt',
+            limit: 6,
+            depth: 1,
+          })
+        ).catch(() => ({ docs: [] })),
+      ])
+
       if (item) {
-        return <><SiteHeader/><main className="article-shell container"><div className="article-meta">{String(section.title || 'NỘI DUNG').toUpperCase()}{item.publishedAt ? ` · ${new Date(item.publishedAt).toLocaleDateString('vi-VN')}` : ''}</div><h1>{item.title}</h1>{item.excerpt&&<p className="articleLead">{item.excerpt}</p>}<RichText data={item.content}/><AttachmentList items={item.attachments}/><BackToList href={`/${section.slug}`} label={`Trở lại ${section.title}`}/></main><SiteFooter/></>
+        let isBạchMaiLayout = true
+        const customSlugsText = String(theme?.detailLayout?.customSlugsText || '')
+        const slugList = customSlugsText
+          .split(',')
+          .map((s: string) => s.trim().toLowerCase())
+          .filter(Boolean)
+
+        if (item.layoutTemplate === 'bachmai' || section.layoutTemplate === 'bachmai') {
+          isBạchMaiLayout = true
+        } else if (item.layoutTemplate === 'classic' || section.layoutTemplate === 'classic') {
+          isBạchMaiLayout = false
+        } else if (slugList.includes(section.slug?.trim().toLowerCase())) {
+          isBạchMaiLayout = true
+        } else {
+          isBạchMaiLayout =
+            theme?.detailLayout?.applyAllNewSections !== false &&
+            theme?.detailLayout?.applyCustomPosts !== false
+        }
+
+        const publishedDate = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : ''
+
+        if (isBạchMaiLayout) {
+          const breadcrumbs = [
+            { label: 'Trang chủ', href: '/' },
+            { label: section.title, href: `/${section.slug}` },
+            { label: item.title },
+          ]
+
+          const mappedRelated = ((relatedRes as any)?.docs || []).map((rel: any) => ({
+            id: rel.id,
+            title: rel.title,
+            slug: rel.slug,
+            publishedAt: rel.publishedAt,
+            categoryName: section.title,
+            excerpt: rel.excerpt,
+          }))
+
+          return (
+            <ArticleDetailTemplate
+              breadcrumbs={breadcrumbs}
+              title={item.title}
+              publishedDate={publishedDate}
+              views={item.views || 68}
+              categoryName={section.title}
+              categoryHref={`/${section.slug}`}
+              excerpt={item.excerpt}
+              content={item.content}
+              attachments={item.attachments}
+              attachmentTitle="Tài liệu đính kèm"
+              sourceName={item.source || undefined}
+              adminConfig={theme?.detailLayout}
+              sidebarTitle="Bài viết mới"
+              latestItems={mappedRelated}
+              relatedTitle={`Bài viết cùng mục ${section.title}`}
+              relatedItems={mappedRelated}
+              baseHref={`/${section.slug}`}
+            />
+          )
+        }
+
+        return (
+          <>
+            <SiteHeader />
+            <main className="article-shell container">
+              <div className="article-meta">
+                {String(section.title || 'NỘI DUNG').toUpperCase()}
+                {publishedDate ? ` · ${publishedDate}` : ''}
+              </div>
+              <h1>{item.title}</h1>
+              {item.excerpt && <p className="articleLead">{item.excerpt}</p>}
+              <RichText data={item.content} />
+              <AttachmentList items={item.attachments} />
+              <BackToList href={`/${section.slug}`} label={`Trở lại ${section.title}`} />
+            </main>
+            <SiteFooter />
+          </>
+        )
       }
     }
   }

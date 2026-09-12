@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { contentDeleteAccess, moduleAccess, publicPublished, workflowUpdateAccess } from '@/access'
-import { attachmentsField, categoryRelationshipField, seoFields, slugField, workflowFields } from '@/fields/common'
+import { attachmentsField, categoryRelationshipField, seoFields, slugField, workflowFields, layoutTemplateField, postSourceField } from '@/fields/common'
 import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
 
@@ -37,6 +37,8 @@ export const Notices: CollectionConfig = {
     { name: 'expireAt', label: 'Ngày hết hiệu lực', type: 'date' },
     { name: 'pinned', label: 'Ghim thông báo', type: 'checkbox', defaultValue: false },
     { name: 'showOnHome', label: 'Hiển thị trên trang chủ', type: 'checkbox', defaultValue: true },
+    postSourceField,
+    layoutTemplateField,
     ...workflowFields,
     ...seoFields,
   ],

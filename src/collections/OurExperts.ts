@@ -117,7 +117,25 @@ export const OurExperts: CollectionConfig = {
       type: 'text',
       admin: {
         placeholder: 'Ví dụ: Giám đốc Bệnh viện, Trưởng khoa Khám bệnh, Cố vấn...',
-        description: 'Nếu nhập thông tin tại đây, hệ thống sẽ hiển thị thành dòng thứ 3 bổ sung bên dưới chức vụ/chức danh trong phần Bác sĩ.',
+        description: 'Nếu để trống hệ thống sẽ tự lấy từ Bác sĩ liên kết.',
+      },
+    },
+    {
+      name: 'showDepartment',
+      label: 'Hiển thị Khoa / Phòng sau chức vụ',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        description: 'Bật để hiển thị dạng "Chức vụ · Khoa/Phòng" (Ví dụ: Phó Giám đốc · Ban Giám đốc). Tắt nếu chỉ muốn hiển thị riêng chức vụ (Ví dụ: Giám đốc).',
+      },
+    },
+    {
+      name: 'customSubtitle',
+      label: 'Dòng thông tin phụ tùy chỉnh (Ghi đè dòng chức vụ / phòng ban)',
+      type: 'text',
+      admin: {
+        placeholder: 'Ví dụ: Giám đốc hoặc Phó Giám đốc - Ban Giám đốc',
+        description: 'Nếu nhập tại đây, hệ thống sẽ ưu tiên hiển thị chính xác nội dung này thay cho chức vụ và phòng ban tự động.',
       },
     },
     {

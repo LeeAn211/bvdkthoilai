@@ -79,7 +79,7 @@ export default async function AdvancedTechniqueDetailPage({ params }: Props) {
 
         {item.summary && <p className="article-lead" style={{ fontSize: '16px', lineHeight: 1.6, color: '#32506d' }}>{item.summary}</p>}
 
-        {coverUrl && (
+        {coverUrl && item.showCoverInDetail === true && (
           <div style={{ margin: '24px 0', borderRadius: '16px', overflow: 'hidden', border: '1px solid #dce8f1', maxHeight: '520px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f5f9fc' }}>
             <img
               src={coverUrl}

@@ -557,6 +557,14 @@ export interface News {
   pinned?: boolean | null;
   publishedAt?: string | null;
   /**
+   * Nguồn bài viết. Nếu để trống, hệ thống sẽ tự động hiển thị Nguồn mặc định cài trong Mẫu giao diện.
+   */
+  source?: string | null;
+  /**
+   * Chọn mẫu giao diện trang chi tiết cho bài viết này.
+   */
+  layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
+  /**
    * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
    */
   workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
@@ -653,6 +661,14 @@ export interface Notice {
   pinned?: boolean | null;
   showOnHome?: boolean | null;
   /**
+   * Nguồn bài viết. Nếu để trống, hệ thống sẽ tự động hiển thị Nguồn mặc định cài trong Mẫu giao diện.
+   */
+  source?: string | null;
+  /**
+   * Chọn mẫu giao diện trang chi tiết cho bài viết này.
+   */
+  layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
+  /**
    * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
    */
   workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
@@ -741,6 +757,14 @@ export interface Procurement {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Nguồn bài viết. Nếu để trống, hệ thống sẽ tự động hiển thị Nguồn mặc định cài trong Mẫu giao diện.
+   */
+  source?: string | null;
+  /**
+   * Chọn mẫu giao diện trang chi tiết cho bài viết này.
+   */
+  layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
   /**
    * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
    */
@@ -990,6 +1014,18 @@ export interface Doctor {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Bật để cho phép bác sĩ xuất hiện trong khối Chuyên gia của chúng tôi trên Trang chủ. Tắt nếu chỉ muốn hiển thị tại trang danh sách Bác sĩ (/bac-si).
+   */
+  showOnHome?: boolean | null;
+  /**
+   * Bật để hiển thị đầy đủ Chức vụ kèm Khoa/Phòng (VD: Phó Giám đốc · Ban Giám đốc). Tắt nếu chỉ muốn hiện chức vụ (VD: Giám đốc).
+   */
+  showDepartment?: boolean | null;
+  /**
+   * Nếu nhập tại đây, hệ thống sẽ ưu tiên hiển thị chính xác nội dung này phía dưới tên trên Trang chủ.
+   */
+  customSubtitle?: string | null;
   order?: number | null;
   featured?: boolean | null;
   active?: boolean | null;
@@ -1365,6 +1401,14 @@ export interface Recruitment {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Nguồn bài viết. Nếu để trống, hệ thống sẽ tự động hiển thị Nguồn mặc định cài trong Mẫu giao diện.
+   */
+  source?: string | null;
+  /**
+   * Chọn mẫu giao diện trang chi tiết cho bài viết này.
+   */
+  layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
   /**
    * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
    */
@@ -1985,6 +2029,10 @@ export interface ContentSection {
   defaultImage?: (number | null) | Media;
   active?: boolean | null;
   /**
+   * Chọn mẫu giao diện trang chi tiết cho bài viết này.
+   */
+  layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
+  /**
    * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
    */
   workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
@@ -2055,6 +2103,14 @@ export interface CustomPost {
   publishedAt?: string | null;
   pinned?: boolean | null;
   /**
+   * Nguồn bài viết. Nếu để trống, hệ thống sẽ tự động hiển thị Nguồn mặc định cài trong Mẫu giao diện.
+   */
+  source?: string | null;
+  /**
+   * Chọn mẫu giao diện trang chi tiết cho bài viết này.
+   */
+  layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
+  /**
    * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
    */
   workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
@@ -2094,13 +2150,17 @@ export interface AdvancedTechnique {
    */
   department?: (number | null) | Department;
   /**
-   * Hình ảnh đại diện hiển thị trên carousel và trang chi tiết.
+   * Hình ảnh đại diện hiển thị trên carousel và danh sách kỹ thuật chuyên sâu.
    */
   cover?: (number | null) | Media;
   /**
-   * Chế độ Vừa vặn (contain) đảm bảo ảnh hoặc poster không bị méo hay biến dạng.
+   * Chế độ Vừa vặn (contain) đảm bảo ảnh hoặc poster hiển thị trọn vẹn, không bị méo hay biến dạng.
    */
   imageFit?: ('contain' | 'cover') | null;
+  /**
+   * Mặc định là TẮT để đầu bài viết chi tiết gọn gàng, không bị lặp lại ảnh đại diện lớn.
+   */
+  showCoverInDetail?: boolean | null;
   /**
    * Giới thiệu khái quát về kỹ thuật và ưu điểm nổi bật.
    */
@@ -2188,9 +2248,17 @@ export interface OurExpert {
    */
   slug?: string | null;
   /**
-   * Nếu nhập thông tin tại đây, hệ thống sẽ hiển thị thành dòng thứ 3 bổ sung bên dưới chức vụ/chức danh trong phần Bác sĩ.
+   * Nếu để trống hệ thống sẽ tự lấy từ Bác sĩ liên kết.
    */
   position?: string | null;
+  /**
+   * Bật để hiển thị dạng "Chức vụ · Khoa/Phòng" (Ví dụ: Phó Giám đốc · Ban Giám đốc). Tắt nếu chỉ muốn hiển thị riêng chức vụ (Ví dụ: Giám đốc).
+   */
+  showDepartment?: boolean | null;
+  /**
+   * Nếu nhập tại đây, hệ thống sẽ ưu tiên hiển thị chính xác nội dung này thay cho chức vụ và phòng ban tự động.
+   */
+  customSubtitle?: string | null;
   /**
    * Nếu để trống sẽ tự lấy tên Chuyên khoa hoặc Khoa/Phòng của bác sĩ.
    */
@@ -2624,6 +2692,8 @@ export interface NewsSelect<T extends boolean = true> {
   featured?: T;
   pinned?: T;
   publishedAt?: T;
+  source?: T;
+  layoutTemplate?: T;
   workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
@@ -2660,6 +2730,8 @@ export interface NoticesSelect<T extends boolean = true> {
   expireAt?: T;
   pinned?: T;
   showOnHome?: T;
+  source?: T;
+  layoutTemplate?: T;
   workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
@@ -2704,6 +2776,8 @@ export interface ProcurementSelect<T extends boolean = true> {
         note?: T;
         id?: T;
       };
+  source?: T;
+  layoutTemplate?: T;
   workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
@@ -2832,6 +2906,9 @@ export interface DoctorsSelect<T extends boolean = true> {
   experience?: T;
   education?: T;
   achievements?: T;
+  showOnHome?: T;
+  showDepartment?: T;
+  customSubtitle?: T;
   order?: T;
   featured?: T;
   active?: T;
@@ -3045,6 +3122,8 @@ export interface RecruitmentSelect<T extends boolean = true> {
         file?: T;
         id?: T;
       };
+  source?: T;
+  layoutTemplate?: T;
   workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
@@ -3512,6 +3591,7 @@ export interface ContentSectionsSelect<T extends boolean = true> {
   description?: T;
   defaultImage?: T;
   active?: T;
+  layoutTemplate?: T;
   workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
@@ -3544,6 +3624,8 @@ export interface CustomPostsSelect<T extends boolean = true> {
       };
   publishedAt?: T;
   pinned?: T;
+  source?: T;
+  layoutTemplate?: T;
   workflowState?: T;
   seoTitle?: T;
   seoDescription?: T;
@@ -3567,6 +3649,7 @@ export interface AdvancedTechniquesSelect<T extends boolean = true> {
   department?: T;
   cover?: T;
   imageFit?: T;
+  showCoverInDetail?: T;
   summary?: T;
   content?: T;
   advantages?:
@@ -3604,6 +3687,8 @@ export interface OurExpertsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   position?: T;
+  showDepartment?: T;
+  customSubtitle?: T;
   badge?: T;
   image?: T;
   imageFit?: T;
@@ -4278,6 +4363,96 @@ export interface ThemeSetting {
    */
   fontScale?: number | null;
   contentMaxWidth?: number | null;
+  /**
+   * Tùy biến toàn diện mẫu giao diện chi tiết: phạm vi áp dụng, thanh chia sẻ mạng xã hội, banner đặt lịch/hành động, hiển thị tin liên quan và nguồn bài viết.
+   */
+  detailLayout?: {
+    applyNews?: boolean | null;
+    applyProcurement?: boolean | null;
+    applyRecruitment?: boolean | null;
+    applyCustomPosts?: boolean | null;
+    /**
+     * Khi bật, bất kỳ mục menu/nội dung mới nào được tạo trong tương lai đều sẽ tự động dùng mẫu chuẩn này mà không cần thiết kế lại.
+     */
+    applyAllNewSections?: boolean | null;
+    /**
+     * Nhập các slug mục mới muốn áp dụng mẫu chuẩn, ngăn cách bằng dấu phẩy. Ví dụ: chuyen-doi-so, dao-tao, nghien-cuu-khoa-hoc, hoat-dong-doan-the
+     */
+    customSlugsText?: string | null;
+    shareSettings?: {
+      enabled?: boolean | null;
+      position?: ('left' | 'right' | 'top' | 'bottom') | null;
+      /**
+       * Sắp xếp thứ tự các nút bằng cách hoán đổi vị trí các từ: facebook, zalo, copy, print, custom (ngăn cách bằng dấu phẩy).
+       */
+      platformsOrder?: string | null;
+      showFacebook?: boolean | null;
+      /**
+       * Để trống sẽ dùng icon Facebook chuẩn tích hợp.
+       */
+      facebookCustomIcon?: (number | null) | Media;
+      showZalo?: boolean | null;
+      /**
+       * Để trống sẽ dùng icon Zalo chuẩn tích hợp.
+       */
+      zaloCustomIcon?: (number | null) | Media;
+      showCopyLink?: boolean | null;
+      /**
+       * Để trống sẽ dùng icon sao chép chuẩn tích hợp.
+       */
+      copyLinkCustomIcon?: (number | null) | Media;
+      showPrint?: boolean | null;
+      /**
+       * Để trống sẽ dùng icon máy in chuẩn tích hợp.
+       */
+      printCustomIcon?: (number | null) | Media;
+      /**
+       * Thêm thoải mái nhiều nền tảng mới (Telegram, X/Twitter, WhatsApp, LinkedIn, Email, v.v.). Hỗ trợ {url} và {title}.
+       */
+      customSharesJson?: string | null;
+    };
+    sidebarBanner?: {
+      enabled?: boolean | null;
+      position?: ('aboveLatest' | 'belowLatest') | null;
+      title?: string | null;
+      description?: string | null;
+      buttonText?: string | null;
+      buttonLink?: string | null;
+      openNewTab?: boolean | null;
+      /**
+       * Tải ảnh banner đặt khám hoặc poster chương trình.
+       */
+      customBannerImage?: (number | null) | Media;
+      banner2Enabled?: boolean | null;
+      banner2Title?: string | null;
+      banner2Description?: string | null;
+      banner2ButtonText?: string | null;
+      banner2ButtonLink?: string | null;
+      banner2OpenNewTab?: boolean | null;
+      banner2Image?: (number | null) | Media;
+      banner3Enabled?: boolean | null;
+      banner3Title?: string | null;
+      banner3Description?: string | null;
+      banner3ButtonText?: string | null;
+      banner3ButtonLink?: string | null;
+      banner3OpenNewTab?: boolean | null;
+      banner3Image?: (number | null) | Media;
+      /**
+       * Cấu hình thêm banner dạng ảnh hoặc box nút bấm. Ví dụ: [{"imageUrl": "/branding/banner.png", "link": "/khuyen-mai", "title": "Khuyến mãi"}, {"title": "Tư vấn", "desc": "Hỗ trợ 24/7", "btnText": "Gọi ngay", "btnLink": "tel:02923686115"}]
+       */
+      extraBannersJson?: string | null;
+    };
+    displayOptions?: {
+      showViews?: boolean | null;
+      showDate?: boolean | null;
+      showCategory?: boolean | null;
+      showSidebarLatest?: boolean | null;
+      sidebarLatestTitle?: string | null;
+      showRelatedSection?: boolean | null;
+      relatedSectionTitle?: string | null;
+      defaultSourceName?: string | null;
+    };
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4468,6 +4643,14 @@ export interface Homepage {
                */
               name?: string | null;
               position?: string | null;
+              /**
+               * Bật để hiển thị dạng "Chức vụ · Khoa/Phòng" (Ví dụ: Phó Giám đốc · Ban Giám đốc). Tắt nếu chỉ muốn hiển thị riêng chức vụ (Ví dụ: Giám đốc).
+               */
+              showDepartment?: boolean | null;
+              /**
+               * Nếu nhập tại đây, hệ thống sẽ ưu tiên hiển thị chính xác nội dung này thay cho chức vụ và phòng ban tự động.
+               */
+              customSubtitle?: string | null;
               badge?: string | null;
               /**
                * Tải ảnh chân dung bác sĩ hoặc chọn trong Thư viện hình ảnh.
@@ -4715,6 +4898,21 @@ export interface Homepage {
          * Chế độ tự tạo/chọn trang sẽ tự điền liên kết khi lưu.
          */
         buttonUrl?: string | null;
+        /**
+         * Chọn cách trình bày danh sách bài viết trong section này. Thay đổi ngay lập tức sau khi lưu, không cần code lại.
+         */
+        sectionLayout?: ('editorial-grid' | 'card-grid-4' | 'list-rows' | 'compact-list') | null;
+        /**
+         * Áp dụng cho tất cả mẫu bố cục.
+         */
+        layoutItemLimit?: number | null;
+        layoutShowDate?: boolean | null;
+        layoutShowCategory?: boolean | null;
+        layoutShowExcerpt?: boolean | null;
+        /**
+         * Nhãn hiển thị trên thẻ bài nổi bật (chỉ với mẫu Editorial Grid và Card Grid).
+         */
+        layoutCardBadge?: string | null;
         eyebrowColor?: string | null;
         titleColor?: string | null;
         descriptionColor?: string | null;
@@ -5487,6 +5685,71 @@ export interface ThemeSettingsSelect<T extends boolean = true> {
   baseFontSize?: T;
   fontScale?: T;
   contentMaxWidth?: T;
+  detailLayout?:
+    | T
+    | {
+        applyNews?: T;
+        applyProcurement?: T;
+        applyRecruitment?: T;
+        applyCustomPosts?: T;
+        applyAllNewSections?: T;
+        customSlugsText?: T;
+        shareSettings?:
+          | T
+          | {
+              enabled?: T;
+              position?: T;
+              platformsOrder?: T;
+              showFacebook?: T;
+              facebookCustomIcon?: T;
+              showZalo?: T;
+              zaloCustomIcon?: T;
+              showCopyLink?: T;
+              copyLinkCustomIcon?: T;
+              showPrint?: T;
+              printCustomIcon?: T;
+              customSharesJson?: T;
+            };
+        sidebarBanner?:
+          | T
+          | {
+              enabled?: T;
+              position?: T;
+              title?: T;
+              description?: T;
+              buttonText?: T;
+              buttonLink?: T;
+              openNewTab?: T;
+              customBannerImage?: T;
+              banner2Enabled?: T;
+              banner2Title?: T;
+              banner2Description?: T;
+              banner2ButtonText?: T;
+              banner2ButtonLink?: T;
+              banner2OpenNewTab?: T;
+              banner2Image?: T;
+              banner3Enabled?: T;
+              banner3Title?: T;
+              banner3Description?: T;
+              banner3ButtonText?: T;
+              banner3ButtonLink?: T;
+              banner3OpenNewTab?: T;
+              banner3Image?: T;
+              extraBannersJson?: T;
+            };
+        displayOptions?:
+          | T
+          | {
+              showViews?: T;
+              showDate?: T;
+              showCategory?: T;
+              showSidebarLatest?: T;
+              sidebarLatestTitle?: T;
+              showRelatedSection?: T;
+              relatedSectionTitle?: T;
+              defaultSourceName?: T;
+            };
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -5588,6 +5851,8 @@ export interface HomepageSelect<T extends boolean = true> {
               doctorRef?: T;
               name?: T;
               position?: T;
+              showDepartment?: T;
+              customSubtitle?: T;
               badge?: T;
               image?: T;
               imageFit?: T;
@@ -5723,6 +5988,12 @@ export interface HomepageSelect<T extends boolean = true> {
         buttonNewPageTitle?: T;
         buttonNewPageSlug?: T;
         buttonUrl?: T;
+        sectionLayout?: T;
+        layoutItemLimit?: T;
+        layoutShowDate?: T;
+        layoutShowCategory?: T;
+        layoutShowExcerpt?: T;
+        layoutCardBadge?: T;
         eyebrowColor?: T;
         titleColor?: T;
         descriptionColor?: T;

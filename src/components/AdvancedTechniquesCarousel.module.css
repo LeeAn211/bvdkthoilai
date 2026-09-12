@@ -46,7 +46,8 @@
 .techCardImage {
   position: relative;
   width: 100%;
-  aspect-ratio: 1.18 / 1;
+  aspect-ratio: 1 / 1.15;
+  max-height: 310px;
   background-color: #f8fbfe;
   overflow: hidden;
   display: flex;
@@ -58,16 +59,19 @@
   width: 100%;
   height: 100%;
   display: block;
+  object-fit: cover !important;
+  object-position: top center;
   transition: transform 0.3s ease;
 }
 
 .techCardImg.fitContain {
-  object-fit: contain !important;
-  padding: 8px;
+  object-fit: cover !important;
+  object-position: top center;
 }
 
 .techCardImg.fitCover {
   object-fit: cover !important;
+  object-position: top center;
 }
 
 .techCardLink:hover:not(.noCursor) .techCardImg {

@@ -470,6 +470,24 @@ export const Homepage: GlobalConfig = {
               },
             },
             { name: 'position', label: 'Chức danh / Chức vụ', type: 'text', admin: { placeholder: 'Ví dụ: Giám đốc Bệnh viện' } },
+            {
+              name: 'showDepartment',
+              label: 'Hiển thị Khoa / Phòng sau chức vụ',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Bật để hiển thị dạng "Chức vụ · Khoa/Phòng" (Ví dụ: Phó Giám đốc · Ban Giám đốc). Tắt nếu chỉ muốn hiển thị riêng chức vụ (Ví dụ: Giám đốc).',
+              },
+            },
+            {
+              name: 'customSubtitle',
+              label: 'Dòng thông tin phụ tùy chỉnh (Ghi đè dòng chức vụ / phòng ban)',
+              type: 'text',
+              admin: {
+                placeholder: 'Ví dụ: Giám đốc hoặc Phó Giám đốc - Ban Giám đốc',
+                description: 'Nếu nhập tại đây, hệ thống sẽ ưu tiên hiển thị chính xác nội dung này thay cho chức vụ và phòng ban tự động.',
+              },
+            },
             { name: 'badge', label: 'Nhãn nhỏ góc (không bắt buộc)', type: 'text', admin: { placeholder: 'Ví dụ: Ban Giám đốc' } },
             { name: 'image', label: 'Hình chân dung bác sĩ (nếu khác ảnh hồ sơ)', type: 'upload', relationTo: 'media', required: false, admin: { description: 'Tải ảnh chân dung bác sĩ hoặc chọn trong Thư viện hình ảnh.' } },
             {
@@ -731,6 +749,100 @@ export const Homepage: GlobalConfig = {
             { name: 'buttonUrl', label: 'Liên kết nút', type: 'text', admin: { condition: (_data, siblingData) => siblingData?.type === 'custom' && (!siblingData?.buttonLinkMode || siblingData?.buttonLinkMode === 'internal' || siblingData?.buttonLinkMode === 'external'), width: '50%', placeholder: '/trang/duong-dan', description: 'Chế độ tự tạo/chọn trang sẽ tự điền liên kết khi lưu.' } },
           ],
         },
+        /* ── MẪU BỐ CỤC HIỂN THỊ ── */
+        {
+          name: 'sectionLayout',
+          label: 'Mẫu bố cục hiển thị bài viết',
+          type: 'select',
+          defaultValue: 'editorial-grid',
+          admin: {
+            condition: (_data: unknown, siblingData: any) => [
+              'notices', 'procurement', 'documents', 'content-section', 'science',
+            ].includes(siblingData?.type),
+            description: 'Chọn cách trình bày danh sách bài viết trong section này. Thay đổi ngay lập tức sau khi lưu, không cần code lại.',
+          },
+          options: [
+            { label: '📰 Mẫu chuẩn – Bài nổi bật lớn + danh sách nhỏ (Editorial Grid)', value: 'editorial-grid' },
+            { label: '🃏 Lưới thẻ đều – 4 thẻ cân bằng, ảnh đồng đều (Card Grid)', value: 'card-grid-4' },
+            { label: '📋 Danh sách hàng – Ảnh nhỏ trái + tiêu đề phải (List Rows)', value: 'list-rows' },
+            { label: '📝 Danh sách gọn – Chỉ tiêu đề + ngày, không ảnh (Compact List)', value: 'compact-list' },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'layoutItemLimit',
+              label: 'Số bài hiển thị tối đa',
+              type: 'number',
+              min: 1,
+              max: 20,
+              defaultValue: 5,
+              admin: {
+                width: '33%',
+                condition: (_data: unknown, siblingData: any) => [
+                  'notices', 'procurement', 'documents', 'content-section',
+                ].includes(siblingData?.type),
+                description: 'Áp dụng cho tất cả mẫu bố cục.',
+              },
+            },
+            {
+              name: 'layoutShowDate',
+              label: 'Hiển thị ngày đăng',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                width: '33%',
+                condition: (_data: unknown, siblingData: any) => [
+                  'notices', 'procurement', 'documents', 'content-section',
+                ].includes(siblingData?.type),
+              },
+            },
+            {
+              name: 'layoutShowCategory',
+              label: 'Hiển thị chuyên mục',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                width: '33%',
+                condition: (_data: unknown, siblingData: any) => [
+                  'notices', 'procurement', 'documents', 'content-section',
+                ].includes(siblingData?.type),
+              },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'layoutShowExcerpt',
+              label: 'Hiển thị mô tả ngắn',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                width: '33%',
+                condition: (_data: unknown, siblingData: any) => [
+                  'notices', 'procurement', 'documents', 'content-section',
+                ].includes(siblingData?.type),
+              },
+            },
+            {
+              name: 'layoutCardBadge',
+              label: 'Nhãn hiển thị góc thẻ (badge)',
+              type: 'text',
+              admin: {
+                width: '66%',
+                placeholder: 'Ví dụ: THÔNG BÁO – để trống sẽ dùng tên chuyên mục',
+                condition: (_data: unknown, siblingData: any) => [
+                  'notices', 'procurement', 'documents', 'content-section',
+                ].includes(siblingData?.type),
+                description: 'Nhãn hiển thị trên thẻ bài nổi bật (chỉ với mẫu Editorial Grid và Card Grid).',
+              },
+            },
+          ],
+        },
+        /* ── HẾT MẪU BỐ CỤC ── */
         {
           type: 'row',
           fields: [

@@ -317,9 +317,137 @@ export default async function HomePage() {
     ...schedules.slice(0, 12).map((item: any) => ({ id: `schedule-${item.id}`, title: item.title, excerpt: item.summary || item.note || 'Lịch khám mới được cập nhật từ bệnh viện.', image: mediaUrl(item.coverImage || item.scheduleImage) || defaultMedia.schedules, href: `/lich-kham/${item.id}`, kind: 'LỊCH KHÁM', dateValue: item.date || item.validFrom || item.weekStart || item.updatedAt, date: (item.date || item.validFrom || item.weekStart) ? new Date(item.date || item.validFrom || item.weekStart).toLocaleDateString('vi-VN') : 'Mới cập nhật' })),
   ].sort((a: any, b: any) => new Date(b.dateValue || 0).getTime() - new Date(a.dateValue || 0).getTime()).slice(0, featuredItemLimit)
 
+  // ── HÀM RENDER SECTION THEO MẪU BỐ CỤC (đọc từ Admin config) ──
+  // Mỗi section notices/procurement/documents/content-section đều gọi hàm này
+  // để render theo layout đã chọn trong Admin → Homepage → section → "Mẫu bố cục"
+  function renderEditorialSection(params: {
+    items: any[]
+    layout?: string
+    showDate?: boolean
+    showCategory?: boolean
+    showExcerpt?: boolean
+    badgeOverride?: string
+    emptyText?: string
+  }) {
+    const {
+      items,
+      layout = 'editorial-grid',
+      showDate = true,
+      showCategory = true,
+      showExcerpt = true,
+      badgeOverride,
+      emptyText = 'Chưa có nội dung.',
+    } = params
+
+    if (!items || items.length === 0) return <div className="professionalEmpty">{emptyText}</div>
+
+    // ── MẪU 1: Editorial Grid (chuẩn thông báo — 1 lớn + nhiều nhỏ) ──
+    if (layout === 'editorial-grid') {
+      return (
+        <div className="homeEditorialGrid">
+          {items.map((entry: any, idx: number) => {
+            const isMain = idx === 0
+            return (
+              <a
+                href={entry.href}
+                className={isMain ? 'featured' : ''}
+                key={entry.id}
+                style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}
+              >
+                <div className="homeEditorialImage" style={{ width: '100%', aspectRatio: isMain ? '16 / 9.5' : '16 / 8.5', maxHeight: isMain ? '220px' : '92px', flexShrink: 0, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src={entry.cover} alt={entry.title} className="editorialImg" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 25%', display: 'block' }} />
+                  {isMain && <span>{badgeOverride || (showCategory ? (entry.category || 'NỘI DUNG') : '')}</span>}
+                </div>
+                <div className="homeEditorialCopy" style={{ padding: isMain ? '16px 18px 18px' : '10px 12px 12px', flex: '1 1 auto', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+                  {showDate && <small>{entry.date || 'Mới cập nhật'}</small>}
+                  <h3>{entry.title}</h3>
+                  {showExcerpt && <p>{entry.excerpt || ''}</p>}
+                </div>
+              </a>
+            )
+          })}
+        </div>
+      )
+    }
+
+    // ── MẪU 2: Card Grid – 4 thẻ đều nhau ──
+    if (layout === 'card-grid-4') {
+      return (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px,1fr))', gap: '18px' }}>
+          {items.map((entry: any) => (
+            <a key={entry.id} href={entry.href} style={{ display: 'flex', flexDirection: 'column', borderRadius: '12px', overflow: 'hidden', background: '#fff', border: '1px solid #e2e8f0', boxShadow: '0 4px 14px rgba(10,45,75,0.05)', textDecoration: 'none', color: 'inherit', transition: 'transform .22s,box-shadow .22s', height: '100%' }}
+              onMouseOver={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 24px rgba(8,120,209,.12)' }}
+              onMouseOut={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px rgba(10,45,75,0.05)' }}
+            >
+              <div style={{ width: '100%', aspectRatio: '16/9', background: '#f1f5f9', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                <img src={entry.cover} alt={entry.title} loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }} />
+                {showCategory && entry.category && <span style={{ position: 'absolute', bottom: 8, left: 10, background: 'rgba(255,255,255,.95)', backdropFilter: 'blur(4px)', color: '#008046', fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 7px', borderRadius: '5px' }}>{badgeOverride || entry.category}</span>}
+              </div>
+              <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', padding: '13px 14px 14px' }}>
+                {showDate && <span style={{ fontSize: '11px', color: '#64748b', marginBottom: 6 }}>{entry.date || 'Mới cập nhật'}</span>}
+                <strong style={{ fontSize: '14px', fontWeight: 700, lineHeight: 1.42, color: '#0f172a', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', marginBottom: 6 }}>{entry.title}</strong>
+                {showExcerpt && entry.excerpt && <p style={{ fontSize: '12px', color: '#475569', lineHeight: 1.5, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', margin: '0 0 8px' }}>{entry.excerpt}</p>}
+                <span style={{ marginTop: 'auto', fontSize: '12px', fontWeight: 700, color: '#0878d1' }}>Xem chi tiết →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    // ── MẪU 3: List Rows – hàng ngang, ảnh nhỏ trái + nội dung phải ──
+    if (layout === 'list-rows') {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {items.map((entry: any) => (
+            <a key={entry.id} href={entry.href} style={{ display: 'flex', gap: '14px', alignItems: 'center', background: '#fff', border: '1px solid #e8edf4', borderRadius: '10px', overflow: 'hidden', textDecoration: 'none', color: 'inherit', padding: '0 14px 0 0', transition: 'box-shadow .2s,border-color .2s' }}
+              onMouseOver={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 18px rgba(8,120,209,.1)'; (e.currentTarget as HTMLElement).style.borderColor = '#7fb9e5' }}
+              onMouseOut={e => { (e.currentTarget as HTMLElement).style.boxShadow = ''; (e.currentTarget as HTMLElement).style.borderColor = '#e8edf4' }}
+            >
+              <div style={{ width: '110px', minWidth: '110px', height: '74px', background: '#f1f5f9', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                <img src={entry.cover} alt={entry.title} loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }} />
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3, padding: '10px 0' }}>
+                {(showDate || showCategory) && (
+                  <div style={{ display: 'flex', gap: 8, fontSize: '11px', color: '#64748b', alignItems: 'center' }}>
+                    {showDate && <span>{entry.date || 'Mới cập nhật'}</span>}
+                    {showDate && showCategory && entry.category && <span>·</span>}
+                    {showCategory && entry.category && <span style={{ color: '#0878d1', fontWeight: 600 }}>{entry.category}</span>}
+                  </div>
+                )}
+                <strong style={{ fontSize: '14px', fontWeight: 700, lineHeight: 1.4, color: '#0f172a', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{entry.title}</strong>
+                {showExcerpt && entry.excerpt && <p style={{ fontSize: '12px', color: '#64748b', margin: 0, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 1, overflow: 'hidden' }}>{entry.excerpt}</p>}
+              </div>
+              <span style={{ fontSize: '18px', color: '#bfcfdb', flexShrink: 0 }}>›</span>
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    // ── MẪU 4: Compact List – chỉ text, ngày + tiêu đề + chuyên mục ──
+    // compact-list hoặc fallback
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {items.map((entry: any, idx: number) => (
+          <a key={entry.id} href={entry.href} style={{ display: 'flex', alignItems: 'baseline', gap: '12px', padding: '10px 0', borderBottom: idx < items.length - 1 ? '1px solid #f0f4f8' : 'none', textDecoration: 'none', color: 'inherit', transition: 'color .18s' }}
+            onMouseOver={e => { (e.currentTarget as HTMLElement).style.color = '#0878d1' }}
+            onMouseOut={e => { (e.currentTarget as HTMLElement).style.color = '' }}
+          >
+            {showDate && <span style={{ fontSize: '11.5px', color: '#94a3b8', whiteSpace: 'nowrap', flexShrink: 0, minWidth: '72px' }}>{entry.date || '—'}</span>}
+            <span style={{ flex: 1, fontSize: '14px', fontWeight: 600, lineHeight: 1.4, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{entry.title}</span>
+            {showCategory && entry.category && <span style={{ fontSize: '11px', fontWeight: 700, color: '#0878d1', whiteSpace: 'nowrap', flexShrink: 0 }}>{entry.category}</span>}
+          </a>
+        ))}
+      </div>
+    )
+  }
+  // ── HẾT HÀM RENDER ──
+
   return (
     <main className="homePortalPage">
       <SiteHeader />
+
 
       {showHeroBanners && <HeroBannerCarousel slides={heroSlides} intervalSeconds={home?.bannerAutoplaySeconds || 6} bannerWidth={siteSettings?.headerBannerWidth || 1920} />}
 
@@ -533,18 +661,33 @@ export default async function HomePage() {
               const rawName = doctorBaseName || exp.name || 'Bác sĩ / Chuyên gia'
               const autoName = cleanTitleFromName(rawName, linkedDoc?.title)
 
-              // Chức vụ từ bác sĩ
-              const doctorPos = linkedDoc ? ([linkedDoc.title, linkedDoc.degree, linkedDoc.professionalTitle, linkedDept].filter(Boolean).join(' · ') || linkedDept) : ''
-              const customExpPos = (exp.position || '').trim()
+              // Kiểm tra xem có hiển thị kèm Khoa/Phòng không (mặc định true trừ khi bị tắt ở exp hoặc linkedDoc)
+              const shouldShowDept = exp.showDepartment !== false && linkedDoc?.showDepartment !== false
 
-              // Nếu có cả chức vụ bác sĩ và có nhập Chức vụ/chức danh riêng bên Chuyên gia:
-              // Dòng 2: chức vụ bác sĩ
-              // Dòng 3: chức vụ/chức danh bên Chuyên gia của chúng tôi
-              let autoPos = doctorPos || customExpPos || undefined
+              // Xác định dòng mô tả / chức vụ:
+              // Ưu tiên cao nhất: customSubtitle (nếu có nhập tại Chuyên gia hoặc Bác sĩ liên kết)
+              const customSubtitle = (exp.customSubtitle || linkedDoc?.customSubtitle || '').trim()
+
+              let autoPos: string | undefined = undefined
               let autoSubPos: string | undefined = undefined
-              if (doctorPos && customExpPos && customExpPos !== doctorPos) {
-                autoPos = doctorPos
-                autoSubPos = customExpPos
+
+              if (customSubtitle) {
+                autoPos = customSubtitle
+              } else {
+                // Tách riêng chức danh/chức vụ và khoa/phòng
+                const titles = linkedDoc ? [linkedDoc.title, linkedDoc.degree, linkedDoc.professionalTitle].filter(Boolean) : []
+                const baseTitle = titles.join(' · ') || exp.position || ''
+                
+                const doctorPos = linkedDoc
+                  ? (shouldShowDept ? ([baseTitle, linkedDept].filter(Boolean).join(' · ') || linkedDept) : (baseTitle || linkedDept))
+                  : (exp.position || '')
+                
+                const customExpPos = (exp.position || '').trim()
+                autoPos = doctorPos || customExpPos || undefined
+                if (doctorPos && customExpPos && customExpPos !== doctorPos) {
+                  autoPos = doctorPos
+                  autoSubPos = customExpPos
+                }
               }
 
               // Ưu tiên Ảnh đại diện của Bác sĩ; chỉ khi bên Bác sĩ không có hình ảnh thì mới áp dụng hình ảnh bên Chuyên gia
@@ -565,20 +708,32 @@ export default async function HomePage() {
             })
 
             // 2. Dữ liệu trực tiếp từ Quản trị -> Tổ chức -> Bác sĩ (doctors collection)
-            const collectionDoctorSlides = doctors.map((doc: any) => {
-              const deptName = typeof doc.department === 'object' ? doc.department?.name : ''
-              const position = [doc.title, doc.degree, doc.professionalTitle, deptName].filter(Boolean).join(' · ') || deptName || 'Bác sĩ chuyên khoa'
-              return {
-                id: doc.id,
-                name: (doc.name || '').trim(),
-                position,
-                image: mediaUrl(doc.avatar) || '',
-                imageFit: 'contain',
-                url: `/bac-si/${doc.slug}`,
-                openNewTab: false,
-                visible: doc.active !== false,
-              }
-            })
+            // Lọc các bác sĩ cho phép hiển thị lên Trang chủ (showOnHome !== false)
+            const collectionDoctorSlides = doctors
+              .filter((doc: any) => doc.active !== false && doc.showOnHome !== false)
+              .map((doc: any) => {
+                const deptName = typeof doc.department === 'object' ? doc.department?.name : ''
+                const shouldShowDept = doc.showDepartment !== false
+                const titles = [doc.title, doc.degree, doc.professionalTitle].filter(Boolean)
+                const baseTitle = titles.join(' · ')
+                
+                const position = doc.customSubtitle?.trim()
+                  ? doc.customSubtitle.trim()
+                  : (shouldShowDept
+                      ? ([baseTitle, deptName].filter(Boolean).join(' · ') || deptName || 'Bác sĩ chuyên khoa')
+                      : (baseTitle || deptName || 'Bác sĩ chuyên khoa'))
+
+                return {
+                  id: doc.id,
+                  name: (doc.name || '').trim(),
+                  position,
+                  image: mediaUrl(doc.avatar) || '',
+                  imageFit: 'contain',
+                  url: `/bac-si/${doc.slug}`,
+                  openNewTab: false,
+                  visible: doc.active !== false,
+                }
+              })
 
             const hasCustomExpertList = Array.isArray(item.expertItems) && item.expertItems.length > 0
             const configuredExpertSlides = (item.expertItems || []).map((exp: any, expIdx: number) => {
@@ -591,15 +746,27 @@ export default async function HomePage() {
               const rawName = doctorBaseName || exp.name || 'Bác sĩ / Chuyên gia'
               const autoName = cleanTitleFromName(rawName, linkedDoc?.title)
 
-              // Chức vụ từ bác sĩ
-              const doctorPos = linkedDoc ? ([linkedDoc.title, linkedDoc.degree, linkedDoc.professionalTitle, linkedDept].filter(Boolean).join(' · ') || linkedDept) : ''
-              const customExpPos = (exp.position || '').trim()
+              const shouldShowDept = exp.showDepartment !== false && linkedDoc?.showDepartment !== false
+              const customSubtitle = (exp.customSubtitle || linkedDoc?.customSubtitle || '').trim()
 
-              let autoPos = doctorPos || customExpPos || undefined
+              let autoPos: string | undefined = undefined
               let autoSubPos: string | undefined = undefined
-              if (doctorPos && customExpPos && customExpPos !== doctorPos) {
-                autoPos = doctorPos
-                autoSubPos = customExpPos
+
+              if (customSubtitle) {
+                autoPos = customSubtitle
+              } else {
+                const titles = linkedDoc ? [linkedDoc.title, linkedDoc.degree, linkedDoc.professionalTitle].filter(Boolean) : []
+                const baseTitle = titles.join(' · ') || exp.position || ''
+                const doctorPos = linkedDoc
+                  ? (shouldShowDept ? ([baseTitle, linkedDept].filter(Boolean).join(' · ') || linkedDept) : (baseTitle || linkedDept))
+                  : (exp.position || '')
+                const customExpPos = (exp.position || '').trim()
+
+                autoPos = doctorPos || customExpPos || undefined
+                if (doctorPos && customExpPos && customExpPos !== doctorPos) {
+                  autoPos = doctorPos
+                  autoSubPos = customExpPos
+                }
               }
 
               // Ưu tiên Ảnh đại diện của Bác sĩ; chỉ khi bên Bác sĩ không có hình ảnh thì mới áp dụng hình ảnh bên Chuyên gia
@@ -674,9 +841,49 @@ export default async function HomePage() {
 
           if (type === 'news-portal') return <section className="sectionPro configurableHomeSection homePortalNewsSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem toàn bộ bài viết →</a></div><HomeNewsTabs items={news.map((article) => ({ id: article.id, title: article.title, slug: article.slug, excerpt: article.excerpt, category: article.category, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news }))} tabs={contentTabsFor('news-portal')} /></div></section>
 
-          if (type === 'notices') return <section className="sectionPro configurableHomeSection homeNoticeSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/thong-bao">Xem tất cả →</a></div>{notices.length > 0 ? <div className="homeEditorialGrid">{notices.slice(0, 5).map((notice, noticeIndex) => { const cover = mediaUrl(notice.cover || notice.seoImage) || defaultMedia.notices; return <a href={`/thong-bao/${notice.slug}`} className={noticeIndex === 0 ? 'featured' : ''} key={notice.id}><div className="homeEditorialImage" style={{ backgroundImage: `url("${cover}")` }}><span>THÔNG BÁO</span></div><div className="homeEditorialCopy"><small>{notice.publishedAt ? new Date(notice.publishedAt).toLocaleDateString('vi-VN') : (notice.startAt ? new Date(notice.startAt).toLocaleDateString('vi-VN') : 'Mới cập nhật')}</small><h3>{notice.title}</h3><p>{notice.excerpt || 'Thông tin mới được cập nhật từ Bệnh viện Đa khoa Khu vực Thới Lai.'}</p></div></a> })}</div> : <div className="professionalEmpty">Chưa có thông báo được đăng.</div>}</div></section>
+          if (type === 'notices') {
+            const noticeLayout = item.sectionLayout || 'editorial-grid'
+            const noticeLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
+            const noticeItems = notices.slice(0, noticeLimit).map((notice: any) => ({
+              id: notice.id,
+              href: `/thong-bao/${notice.slug}`,
+              cover: mediaUrl(notice.cover || notice.seoImage) || defaultMedia.notices,
+              title: notice.title,
+              excerpt: notice.excerpt || 'Thông tin mới được cập nhật từ Bệnh viện Đa khoa Khu vực Thới Lai.',
+              date: notice.publishedAt ? new Date(notice.publishedAt).toLocaleDateString('vi-VN') : (notice.startAt ? new Date(notice.startAt).toLocaleDateString('vi-VN') : 'Mới cập nhật'),
+              category: notice.category || '',
+            }))
+            return (
+              <section className="sectionPro configurableHomeSection homeNoticeSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/thong-bao">Xem tất cả →</a></div>
+                  {renderEditorialSection({ items: noticeItems, layout: noticeLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'THÔNG BÁO', emptyText: 'Chưa có thông báo được đăng.' })}
+                </div>
+              </section>
+            )
+          }
 
-          if (type === 'procurement') return <section className="sectionPro configurableHomeSection homeProcurementSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/dau-thau-mua-sam">Xem tất cả →</a></div>{procurement.length > 0 ? <div className="homeEditorialGrid">{procurement.slice(0, 5).map((entry, entryIndex) => { const cover = mediaUrl(entry.cover || entry.seoImage) || defaultMedia.procurement; return <a href={`/dau-thau-mua-sam/${entry.slug}`} className={entryIndex === 0 ? 'featured' : ''} key={entry.id}><div className="homeEditorialImage" style={{ backgroundImage: `url("${cover}")` }}><span>ĐẤU THẦU – MUA SẮM</span></div><div className="homeEditorialCopy"><small>{entry.publishedAt ? new Date(entry.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật'}</small><h3>{entry.title}</h3><p>{entry.excerpt || entry.summary || 'Thông tin công khai về đấu thầu và mua sắm của bệnh viện.'}</p></div></a> })}</div> : <div className="professionalEmpty">Chưa có hồ sơ đấu thầu – mua sắm.</div>}</div></section>
+          if (type === 'procurement') {
+            const procLayout = item.sectionLayout || 'editorial-grid'
+            const procLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
+            const procItems = procurement.slice(0, procLimit).map((entry: any) => ({
+              id: entry.id,
+              href: `/dau-thau-mua-sam/${entry.slug}`,
+              cover: mediaUrl(entry.cover || entry.seoImage) || defaultMedia.procurement,
+              title: entry.title,
+              excerpt: entry.excerpt || entry.summary || 'Thông tin công khai về đấu thầu và mua sắm của bệnh viện.',
+              date: entry.publishedAt ? new Date(entry.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+              category: entry.category || '',
+            }))
+            return (
+              <section className="sectionPro configurableHomeSection homeProcurementSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/dau-thau-mua-sam">Xem tất cả →</a></div>
+                  {renderEditorialSection({ items: procItems, layout: procLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'ĐẤU THẦU – MUA SẮM', emptyText: 'Chưa có hồ sơ đấu thầu – mua sắm.' })}
+                </div>
+              </section>
+            )
+          }
 
           if (type === 'schedules') return <section className="sectionPro configurableHomeSection homeScheduleSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/lich-kham">Xem tất cả →</a></div><ScheduleExplorer daily={homeDailySchedules} weekly={homeWeeklySchedules} attachments={homeAttachedSchedules} medpro={medpro} tabOrder={scheduleTabOrder.length ? scheduleTabOrder : undefined} tabs={scheduleTabs.length ? scheduleTabs : undefined} compact /></div></section>
 
@@ -684,23 +891,55 @@ export default async function HomePage() {
 
           if (type === 'science') return <section className="sectionPro configurableHomeSection homeScienceSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem thêm hoạt động →</a></div><HomeScienceTabs items={news.map((article) => ({ id: article.id, title: article.title, slug: article.slug, category: article.category, excerpt: article.excerpt, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news }))} tabs={contentTabsFor('science')} /></div></section>
 
-          if (type === 'documents') return <section className="sectionPro configurableHomeSection homeDocumentsSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/van-ban">Xem tất cả →</a></div>{documents.length > 0 ? <div className="homeEditorialGrid">{documents.slice(0, 5).map((document, documentIndex) => { const cover = mediaUrl(document.cover || document.seoImage) || defaultMedia.documents; const fileUrl = mediaUrl(document.file); return <a href={fileUrl || '/van-ban'} target={fileUrl ? '_blank' : undefined} rel={fileUrl ? 'noopener noreferrer' : undefined} className={documentIndex === 0 ? 'featured' : ''} key={document.id}><div className="homeEditorialImage" style={{ backgroundImage: `url("${cover}")` }}><span>VĂN BẢN – TÀI LIỆU</span></div><div className="homeEditorialCopy"><small>{document.issuedAt ? new Date(document.issuedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật'}</small><h3>{document.title}</h3><p>{document.summary || [document.number, document.issuer].filter(Boolean).join(' · ') || 'Văn bản, biểu mẫu và tài liệu được bệnh viện công khai.'}</p></div></a> })}</div> : <div className="professionalEmpty">Chưa có văn bản được đăng.</div>}</div></section>
+          if (type === 'documents') {
+            const docLayout = item.sectionLayout || 'editorial-grid'
+            const docLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
+            const docItems = documents.slice(0, docLimit).map((document: any) => ({
+              id: document.id,
+              href: mediaUrl(document.file) || '/van-ban',
+              cover: mediaUrl(document.cover || document.seoImage) || defaultMedia.documents,
+              title: document.title,
+              excerpt: document.summary || [document.number, document.issuer].filter(Boolean).join(' · ') || 'Văn bản, biểu mẫu và tài liệu được bệnh viện công khai.',
+              date: document.issuedAt ? new Date(document.issuedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+              category: document.type || document.category || '',
+            }))
+            return (
+              <section className="sectionPro configurableHomeSection homeDocumentsSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/van-ban">Xem tất cả →</a></div>
+                  {renderEditorialSection({ items: docItems, layout: docLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'VĂN BẢN – TÀI LIỆU', emptyText: 'Chưa có văn bản được đăng.' })}
+                </div>
+              </section>
+            )
+          }
 
 
           if (type === 'content-section') {
             const relationId = typeof item.linkedContentSection === 'object' ? item.linkedContentSection?.id : item.linkedContentSection
             const linkedSection = contentSections.find((section: any) => String(section.id) === String(relationId)) || (typeof item.linkedContentSection === 'object' ? item.linkedContentSection : null)
             if (!linkedSection) return null
-            const limit = Math.min(12, Math.max(1, Number(item.linkedContentLimit || 5)))
-            const sectionPosts = customPosts.filter((post: any) => String(typeof post.section === 'object' ? post.section?.id : post.section) === String(linkedSection.id)).slice(0, limit)
+            const csLayout = item.sectionLayout || 'editorial-grid'
+            const csLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || item.linkedContentLimit || 5)))
             const fallback = mediaUrl(linkedSection.defaultImage || linkedSection.seoImage)
             const sectionHref = `/${linkedSection.slug}`
-            return <section className="sectionPro configurableHomeSection homeDynamicContentSection" style={style} key={key}>
-              <div className="container">
-                <div className="homeSectionHead"><div><span className="sectionKicker">{item.eyebrow || 'NỘI DUNG'}</span><h2>{item.title || linkedSection.title}</h2><p>{item.description || linkedSection.description || `Các bài viết mới thuộc mục ${linkedSection.title}.`}</p></div><a href={sectionHref}>Xem tất cả →</a></div>
-                {sectionPosts.length > 0 ? <div className="homeEditorialGrid">{sectionPosts.map((post: any, postIndex: number) => { const cover = mediaUrl(post.cover || post.seoImage) || fallback; return <a href={`${sectionHref}/${post.slug}`} className={postIndex === 0 ? 'featured' : ''} key={post.id}><div className="homeEditorialImage" style={{ backgroundImage: `url("${cover}")` }}><span>{String(linkedSection.title || 'NỘI DUNG').toUpperCase()}</span></div><div className="homeEditorialCopy"><small>{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật'}</small><h3>{post.title}</h3><p>{post.excerpt || `Thông tin mới thuộc mục ${linkedSection.title}.`}</p></div></a> })}</div> : <div className="professionalEmpty">Chưa có bài viết trong mục {linkedSection.title}.</div>}
-              </div>
-            </section>
+            const sectionPosts = customPosts.filter((post: any) => String(typeof post.section === 'object' ? post.section?.id : post.section) === String(linkedSection.id)).slice(0, csLimit)
+            const csItems = sectionPosts.map((post: any) => ({
+              id: post.id,
+              href: `${sectionHref}/${post.slug}`,
+              cover: mediaUrl(post.cover || post.seoImage) || fallback,
+              title: post.title,
+              excerpt: post.excerpt || `Thông tin mới thuộc mục ${linkedSection.title}.`,
+              date: post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+              category: post.category || '',
+            }))
+            return (
+              <section className="sectionPro configurableHomeSection homeDynamicContentSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead"><div><span className="sectionKicker">{item.eyebrow || 'NỘI DUNG'}</span><h2>{item.title || linkedSection.title}</h2>{(item.description || linkedSection.description) && <p>{item.description || linkedSection.description || `Các bài viết mới thuộc mục ${linkedSection.title}.`}</p>}</div><a href={sectionHref}>Xem tất cả →</a></div>
+                  {renderEditorialSection({ items: csItems, layout: csLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || String(linkedSection.title || 'NỘI DUNG').toUpperCase(), emptyText: `Chưa có bài viết trong mục ${linkedSection.title}.` })}
+                </div>
+              </section>
+            )
           }
 
           if (type === 'dynamic-module') {

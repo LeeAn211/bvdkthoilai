@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { contentDeleteAccess, moduleAccess, publicPublished, workflowUpdateAccess } from '@/access'
-import { attachmentsField, categoryRelationshipField, seoFields, slugField, workflowFields } from '@/fields/common'
+import { attachmentsField, categoryRelationshipField, seoFields, slugField, workflowFields, layoutTemplateField, postSourceField } from '@/fields/common'
 import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
 
 export const Recruitment: CollectionConfig = {
@@ -24,6 +24,8 @@ export const Recruitment: CollectionConfig = {
     { name: 'deadlineAt', label: 'Hạn nộp hồ sơ', type: 'date' },
     { name: 'attachment', label: 'Tệp cũ (tương thích dữ liệu)', type: 'upload', relationTo: 'media', admin: { description: 'Giữ để các tin tuyển dụng cũ không mất tệp. Bài mới dùng danh sách Tệp đính kèm bên dưới.' } },
     attachmentsField(),
+    postSourceField,
+    layoutTemplateField,
     ...workflowFields,
     ...seoFields,
   ],

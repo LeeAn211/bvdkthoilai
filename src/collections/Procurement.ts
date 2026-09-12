@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { contentDeleteAccess, moduleAccess, publicPublished, workflowUpdateAccess } from '@/access'
-import { attachmentsField, categoryRelationshipField, seoFields, slugField, workflowFields } from '@/fields/common'
+import { attachmentsField, categoryRelationshipField, seoFields, slugField, workflowFields, layoutTemplateField, postSourceField } from '@/fields/common'
 import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
 
@@ -56,6 +56,8 @@ export const Procurement: CollectionConfig = {
         { name: 'note', label: 'Nội dung thay đổi', type: 'textarea', required: true },
       ],
     },
+    postSourceField,
+    layoutTemplateField,
     ...workflowFields,
     ...seoFields,
   ],

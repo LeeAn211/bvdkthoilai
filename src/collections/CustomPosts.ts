@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { moduleAccess, publicPublished, workflowUpdateAccess, contentDeleteAccess } from '@/access'
-import { attachmentsField, slugField, workflowFields, seoFields } from '@/fields/common'
+import { attachmentsField, slugField, workflowFields, seoFields, layoutTemplateField, postSourceField } from '@/fields/common'
 import { syncPublishedAt } from '@/hooks/contentWorkflow'
 
 export const CustomPosts: CollectionConfig = {
@@ -31,6 +31,8 @@ export const CustomPosts: CollectionConfig = {
     attachmentsField(),
     { name: 'publishedAt', label: 'Ngày đăng', type: 'date', admin: { position: 'sidebar' } },
     { name: 'pinned', label: 'Ghim bài viết', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
+    postSourceField,
+    layoutTemplateField,
     ...workflowFields,
     ...seoFields,
   ],

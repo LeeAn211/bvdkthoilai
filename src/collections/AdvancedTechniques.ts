@@ -42,7 +42,7 @@ export const AdvancedTechniques: CollectionConfig = {
       label: 'Hình ảnh / Poster kỹ thuật',
       type: 'upload',
       relationTo: 'media',
-      admin: { description: 'Hình ảnh đại diện hiển thị trên carousel và trang chi tiết.' },
+      admin: { description: 'Hình ảnh đại diện hiển thị trên carousel và danh sách kỹ thuật chuyên sâu.' },
     },
     {
       name: 'imageFit',
@@ -53,7 +53,16 @@ export const AdvancedTechniques: CollectionConfig = {
         { label: 'Vừa vặn khung, không bị cắt và giữ nguyên tỉ lệ (khuyên dùng)', value: 'contain' },
         { label: 'Lấp đầy khung (crop đều các cạnh)', value: 'cover' },
       ],
-      admin: { description: 'Chế độ Vừa vặn (contain) đảm bảo ảnh hoặc poster không bị méo hay biến dạng.' },
+      admin: { description: 'Chế độ Vừa vặn (contain) đảm bảo ảnh hoặc poster hiển thị trọn vẹn, không bị méo hay biến dạng.' },
+    },
+    {
+      name: 'showCoverInDetail',
+      label: 'Hiển thị ảnh đại diện lên đầu bài viết chi tiết',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Mặc định là TẮT để đầu bài viết chi tiết gọn gàng, không bị lặp lại ảnh đại diện lớn.',
+      },
     },
     {
       name: 'summary',

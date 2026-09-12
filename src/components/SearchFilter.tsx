@@ -1,5 +1,6 @@
 'use client'
 import { useMemo, useState } from 'react'
+import styles from './SearchFilter.module.css'
 
 const norm = (value: unknown) => String(value || '').trim()
 
@@ -47,32 +48,36 @@ export function SearchFilter({ items, kind = 'news', initialCategory = 'all' }: 
       </div>
 
       {filtered.length === 0 ? <div className="contentDirectoryEmpty"><strong>Không tìm thấy kết quả phù hợp.</strong><span>Thử từ khóa khác hoặc chọn lại chuyên mục.</span></div> : (
-        <div className="contentCardGrid">
+        <div className={`contentCardGrid ${styles.contentCardGrid}`}>
           {filtered.map((item, idx) => (
-            <a className="directoryCard" href={item.href || '#'} key={item.id || idx} target={item.external ? '_blank' : undefined} rel={item.external ? 'noopener noreferrer' : undefined}>
-              <span className={`directoryCardMedia ${item.coverUrl ? 'hasImage' : ''}`}>
-                <span className="directoryCardPlaceholder" aria-hidden="true">{kind === 'notice' ? 'TB' : kind === 'procurement' ? 'MS' : kind === 'recruitment' ? 'TD' : kind === 'schedule' ? 'LK' : kind === 'vaccination' ? 'TC' : kind === 'document' ? 'VB' : 'TT'}</span>
-                {item.coverUrl && (
+            <a className={`contentDirectoryPostCard ${styles.contentDirectoryPostCard}`} href={item.href || '#'} key={item.id || idx} target={item.external ? '_blank' : undefined} rel={item.external ? 'noopener noreferrer' : undefined}>
+              <div className={`postCardMediaWrap ${styles.postCardMediaWrap}`}>
+                {item.coverUrl ? (
                   <img
-                    className="directoryCardImage"
+                    className={`postCardImg ${styles.postCardImg}`}
                     src={item.coverUrl}
                     alt={item.title || item.name || ''}
                     loading="lazy"
                     onError={event => { event.currentTarget.style.display = 'none' }}
                   />
+                ) : (
+                  <div className={`postCardPlaceholder ${styles.postCardPlaceholder}`}>
+                    <span>{kind === 'notice' ? 'THÔNG BÁO' : kind === 'procurement' ? 'MUA SẮM' : kind === 'recruitment' ? 'TUYỂN DỤNG' : 'TIN BÀI'}</span>
+                  </div>
                 )}
-                {(item.category || item.type) && <span className="directoryCardCategory">{item.category || item.type}</span>}
-              </span>
-              <span className="directoryCardBody">
-                {(item.date || item.publishedAt || item.referenceCode || item.meta) && <small>
-                  {item.referenceCode ? `${item.referenceCode} · ` : ''}
-                  {(item.date || item.publishedAt) ? `${kind === 'schedule' || kind === 'vaccination' ? '' : 'Ngày đăng: '}${item.date || item.publishedAt}` : ''}
-                  {item.meta ? `${(item.date || item.publishedAt || item.referenceCode) ? ' · ' : ''}${item.meta}` : ''}
-                </small>}
-                <strong>{item.title || item.name}</strong>
-                {item.excerpt && <p>{item.excerpt}</p>}
-                <span className="directoryCardMore">{item.actionLabel || 'Xem chi tiết'} <i>→</i></span>
-              </span>
+                {(item.category || item.type) && <span className={`postCardBadge ${styles.postCardBadge}`}>{item.category || item.type}</span>}
+              </div>
+              <div className={`postCardBody ${styles.postCardBody}`}>
+                <div className={`postCardDate ${styles.postCardDate}`}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  <span>{(item.date || item.publishedAt) ? (item.date || item.publishedAt) : 'Mới cập nhật'}</span>
+                </div>
+                <h3 className={`postCardTitle ${styles.postCardTitle}`}>{item.title || item.name}</h3>
+                {item.excerpt && <p className={`postCardExcerpt ${styles.postCardExcerpt}`}>{item.excerpt}</p>}
+                <div className={`postCardFooter ${styles.postCardFooter}`}>
+                  <span className={`postCardAction ${styles.postCardAction}`}>Xem chi tiết <i aria-hidden="true">→</i></span>
+                </div>
+              </div>
             </a>
           ))}
         </div>
