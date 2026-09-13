@@ -50,4 +50,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - **5.5. An toàn cơ sở dữ liệu PostgreSQL (`dbName` Optimization)**:
   - Khi thêm các trường mảng, bảng phụ, hoặc quan hệ lồng nhau vào Payload CMS, **BẮT BUỘC phải đặt `dbName` ngắn gọn (< 63 ký tự)** và không kích hoạt `versions` không cần thiết trên Global để ngăn ngừa lỗi PostgreSQL Identifier length limit khiến server bị treo.
 
+## 6. Chiến lược đồng bộ Cơ sở dữ liệu xuyên suốt dự án (DATABASE SYNC MANDATE):
+- **Đồng bộ hóa trực tiếp qua `PAYLOAD_DB_PUSH=true`**:
+  - Trong suốt quá trình phát triển và hoàn thiện dự án, hệ thống áp dụng cơ chế tự động đồng bộ Schema trực tiếp giữa mã nguồn và cơ sở dữ liệu Neon DB thông qua `PAYLOAD_DB_PUSH=true`.
+  - Tuyệt đối không tạo các tệp migration thủ công (`migrate:create`) phức tạp gây xung đột hoặc lỗi schema (`relation does not exist`, `column does not exist`) giữa local và VPS/Railway.
+  - Cả môi trường Local và Railway VPS đều kết nối chung vào Neon PostgreSQL với biến môi trường `PAYLOAD_DB_PUSH=true`. Khi deploy hoặc khởi động, Payload CMS sẽ tự động khớp cấu trúc bảng, thêm cột, tạo quan hệ an toàn và tức thì.
+
 

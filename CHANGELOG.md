@@ -1,5 +1,20 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-13] - Thiết Lập Nguyên Tắc Cốt Lõi Số 6: Tối Ưu Đồng Bộ Database Qua PAYLOAD_DB_PUSH
+
+- **Thời gian thực hiện:** 19:55 (Asia/Saigon)
+- **Yêu cầu:** Thiết lập nguyên tắc chuẩn hóa phương pháp đồng bộ cơ sở dữ liệu xuyên suốt dự án giữa Local, Neon PostgreSQL và Railway VPS.
+- **Chi tiết đã thực hiện:**
+  1. Ban hành **Nguyên tắc số 6 (DATABASE SYNC MANDATE)** trong `AGENTS.md`:
+     - Sử dụng `PAYLOAD_DB_PUSH=true` làm cơ chế đồng bộ trực tiếp mặc định giữa mã nguồn và Neon DB.
+     - Loại bỏ việc tạo file migration thủ công phức tạp trong giai đoạn phát triển để triệt tiêu hoàn toàn lỗi xung đột schema (`relation does not exist`).
+     - Đảm bảo tính nhất quán tuyệt đối giữa Local và Railway khi cùng chia sẻ Neon Database.
+- **Tệp tin chỉnh sửa:**
+  - `AGENTS.md`
+  - `CHANGELOG.md`
+
+---
+
 ## [2026-09-13] - Đồng Bộ Migration Schema Và Đẩy Mã Nguồn Lên GitHub
 
 - **Thời gian thực hiện:** 19:51 (Asia/Saigon)
