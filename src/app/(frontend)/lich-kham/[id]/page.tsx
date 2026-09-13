@@ -5,6 +5,7 @@ import { SiteFooter } from '@/components/SiteFooter'
 import { RichText } from '@/components/RichText'
 import { AttachmentList } from '@/components/AttachmentList'
 import { BackToList } from '@/components/BackToList'
+import { EmergencyMatrixView } from '@/components/EmergencyMatrixView'
 import { getCMS, getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
 
@@ -46,10 +47,12 @@ export default async function ScheduleDetailPage({ params }: Props) {
   const { id } = await params
   let item: any
   let medpro = process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'
+  let emergencyPhone = '0292 3686 115'
 
   try {
     const [payload, settings] = await Promise.all([getCMS(), getGlobal('site-settings')])
     medpro = (settings as any)?.medproUrl || medpro
+    emergencyPhone = (settings as any)?.emergencyHotline || (settings as any)?.phone || emergencyPhone
     item = await payload.findByID({ collection: 'schedules', id, depth: 2 })
   } catch {
     notFound()
@@ -110,10 +113,56 @@ export default async function ScheduleDetailPage({ params }: Props) {
   
   // Format tuần cấp cứu
   let emergencyWeekLabel = ''
-  if (item.emergencyWeekStart || item.emergencyWeekEnd) {
-    const s = item.emergencyWeekStart ? new Date(item.emergencyWeekStart).toLocaleDateString('vi-VN') : ''
-    const e = item.emergencyWeekEnd ? new Date(item.emergencyWeekEnd).toLocaleDateString('vi-VN') : ''
+  const startD = item.emergencyWeekStart || item.weekStart
+  const endD = item.emergencyWeekEnd || item.weekEnd
+  if (startD || endD) {
+    const s = startD ? new Date(startD).toLocaleDateString('vi-VN') : ''
+    const e = endD ? new Date(endD).toLocaleDateString('vi-VN') : ''
     emergencyWeekLabel = [s && `Từ ${s}`, e && `Đến ${e}`].filter(Boolean).join(' – ')
+  }
+
+  const excelUrl = item.emergencyExcelFile ? mediaUrl(item.emergencyExcelFile) : undefined
+
+  let effectiveDeptSlots = weeklyDeptSlots
+  if (effectiveDeptSlots.length === 0 && rawEmergencySlots.length > 0) {
+    effectiveDeptSlots = [
+      {
+        deptName: 'CA SÁNG (07:00 – 13:00)',
+        deptType: 'clinical',
+        subRole: 'BÁC SĨ TRỰC',
+        day2: emergencyDayMap['2']?.morningDoctors,
+        day3: emergencyDayMap['3']?.morningDoctors,
+        day4: emergencyDayMap['4']?.morningDoctors,
+        day5: emergencyDayMap['5']?.morningDoctors,
+        day6: emergencyDayMap['6']?.morningDoctors,
+        day7: emergencyDayMap['7']?.morningDoctors,
+        day8: emergencyDayMap['8']?.morningDoctors,
+      },
+      {
+        deptName: 'CA CHIỀU (13:00 – 19:00)',
+        deptType: 'clinical',
+        subRole: 'BÁC SĨ TRỰC',
+        day2: emergencyDayMap['2']?.afternoonDoctors,
+        day3: emergencyDayMap['3']?.afternoonDoctors,
+        day4: emergencyDayMap['4']?.afternoonDoctors,
+        day5: emergencyDayMap['5']?.afternoonDoctors,
+        day6: emergencyDayMap['6']?.afternoonDoctors,
+        day7: emergencyDayMap['7']?.afternoonDoctors,
+        day8: emergencyDayMap['8']?.afternoonDoctors,
+      },
+      {
+        deptName: 'CA TỐI (19:00 – 07:00)',
+        deptType: 'clinical',
+        subRole: 'BÁC SĨ TRỰC',
+        day2: emergencyDayMap['2']?.nightDoctors,
+        day3: emergencyDayMap['3']?.nightDoctors,
+        day4: emergencyDayMap['4']?.nightDoctors,
+        day5: emergencyDayMap['5']?.nightDoctors,
+        day6: emergencyDayMap['6']?.nightDoctors,
+        day7: emergencyDayMap['7']?.nightDoctors,
+        day8: emergencyDayMap['8']?.nightDoctors,
+      },
+    ]
   }
 
   // Helper render badge khoa / bộ phận
@@ -244,7 +293,7 @@ export default async function ScheduleDetailPage({ params }: Props) {
     }
   }
 
-  // Helper tách và hiển thị danh sách bác sĩ thành từng thẻ Tag chuyên nghiệp
+  // Helper tách và hiển thị danh sách bác sĩ thành từng thẻ Tag chuyên nghiệp, kích thước bằng nhau
   const renderDoctorChips = (doctorStr?: string, shiftType?: 'morning' | 'noon' | 'afternoon' | 'evening') => {
     if (!doctorStr || !doctorStr.trim() || doctorStr.trim() === '-') {
       return <span className="dailyDoctorEmpty">–</span>
@@ -264,8 +313,10 @@ export default async function ScheduleDetailPage({ params }: Props) {
       <div
         className="dailyDoctorChipList"
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
           gap: '5px',
           width: '100%',
         }}
@@ -275,15 +326,35 @@ export default async function ScheduleDetailPage({ params }: Props) {
             key={idx}
             className={`dailyDoctorChip chip-${shiftType || 'default'}`}
             style={{
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
-              gap: '4px',
+              justifyContent: 'center',
+              gap: '5px',
               padding: '4px 6px',
               borderRadius: '6px',
-              minWidth: 0,
+              width: '105px',
+              maxWidth: '105px',
+              minWidth: '105px',
+              height: '28px',
+              boxSizing: 'border-box',
+              margin: '0 auto',
+              textAlign: 'center',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
             }}
+            title={name}
           >
-            <span className="dailyDoctorChipIcon" style={{ flexShrink: 0 }}>
+            <span
+              className="dailyDoctorChipIcon"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '16px',
+                height: '16px',
+                borderRadius: '3px',
+                flexShrink: 0,
+              }}
+            >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3" />
                 <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4" />
@@ -293,14 +364,15 @@ export default async function ScheduleDetailPage({ params }: Props) {
             <strong
               className="dailyDoctorChipName"
               style={{
-                fontSize: '12px',
+                fontSize: '11.5px',
                 fontWeight: 750,
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                lineHeight: 1.25,
+                lineHeight: 1.2,
+                textAlign: 'center',
+                flex: '1 1 auto',
               }}
-              title={name}
             >
               {name}
             </strong>
@@ -314,7 +386,7 @@ export default async function ScheduleDetailPage({ params }: Props) {
     <>
       <SiteHeader />
       <main className="article-shell container scheduleDetail">
-        {mode !== 'daily' && (
+        {mode !== 'daily' && mode !== 'emergency' && (
           <>
             <div className="article-meta">{eyebrow}</div>
             <h1>{item.title}</h1>
@@ -439,7 +511,16 @@ export default async function ScheduleDetailPage({ params }: Props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {dailyAssignments.map((row: any, rIdx: number) => (
+                  {dailyAssignments
+                    .filter((row: any) => {
+                      const shifts = [row.morningDoctors, row.noonDoctors, row.afternoonDoctors, row.eveningDoctors]
+                      const hasData = shifts.some((s) => {
+                        const val = (s || '').trim()
+                        return val.length > 0 && val !== '-' && val !== '–'
+                      })
+                      return hasData
+                    })
+                    .map((row: any, rIdx: number) => (
                     <tr key={row.id || rIdx} className={rIdx % 2 === 1 ? 'dailyRowEven' : 'dailyRowOdd'}>
                       <td className="dailyCellDept">
                         <div className="dailyDeptLabel">
@@ -488,269 +569,17 @@ export default async function ScheduleDetailPage({ params }: Props) {
         )}
 
         {mode === 'emergency' && (
-          <section className="emergencySchedulePoster">
-            {/* Header cấp cứu */}
-            <header className="emergencyMasthead">
-              <div className="emergencyTitleRibbon">
-                <span className="emergencyTitleIcon">
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="1" y="3" width="15" height="13" />
-                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-                    <circle cx="5.5" cy="18.5" r="2.5" />
-                    <circle cx="18.5" cy="18.5" r="2.5" />
-                    <path d="M7 8h4" /><path d="M9 6v4" />
-                  </svg>
-                </span>
-                <h2>{item.title || 'LỊCH TRỰC CẤP CỨU & BỆNH VIỆN'}</h2>
-              </div>
-              {emergencyWeekLabel && (
-                <div className="emergencyWeekBadge">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  <span>{emergencyWeekLabel}</span>
-                </div>
-              )}
-            </header>
-
-            {/* BẢNG 1: MA TRẬN KHOA × 7 NGÀY (Chuẩn theo truc.xlsx) */}
-            {weeklyDeptSlots.length > 0 ? (
-              <div className="emergencyTableWrapper">
-                <table className="emergencyShiftTable">
-                  <thead>
-                    <tr>
-                      <th className="emergencyColLabel" style={{ width: '16%' }}>
-                        <div className="emergencyThLabelContent">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                            <polyline points="9 22 9 12 15 12 15 22" />
-                          </svg>
-                          <span>KHOA / BỘ PHẬN</span>
-                        </div>
-                      </th>
-                      {DAY_KEYS.map((key) => (
-                        <th key={key} className="emergencyColDay" style={{ width: '12%' }}>
-                          <div className="emergencyThDayContent">
-                            <span className="emergencyDayShort">{DAY_LABELS[key]?.short || key}</span>
-                            <span className="emergencyDayFull">{DAY_LABELS[key]?.full || `Thứ ${key}`}</span>
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {weeklyDeptSlots.map((slot, sIdx) => {
-                      const badge = getDeptTypeBadge(slot.deptType)
-                      const daysData: Record<string, string | undefined> = {
-                        '2': slot.day2,
-                        '3': slot.day3,
-                        '4': slot.day4,
-                        '5': slot.day5,
-                        '6': slot.day6,
-                        '7': slot.day7,
-                        '8': slot.day8,
-                      }
-
-                      return (
-                        <tr key={sIdx}>
-                          <td className="emergencyRowHeader" style={{ textAlign: 'left', padding: '10px 12px' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                                <span style={{
-                                  fontSize: 10, fontWeight: 800, padding: '2px 6px', borderRadius: 4,
-                                  background: badge.bg, color: badge.color, border: `1px solid ${badge.border}`,
-                                  textTransform: 'uppercase', letterSpacing: '0.4px',
-                                }}>
-                                  {badge.label}
-                                </span>
-                                {slot.subRole && (
-                                  <span style={{ fontSize: 10.5, fontWeight: 700, color: '#4b5563', background: '#f3f4f6', padding: '2px 6px', borderRadius: 4 }}>
-                                    {slot.subRole}
-                                  </span>
-                                )}
-                              </div>
-                              <strong style={{ fontSize: 12.5, fontWeight: 800, color: '#1e293b', lineHeight: 1.3 }}>
-                                {slot.deptName}
-                              </strong>
-                              {slot.note && (
-                                <span style={{ fontSize: 10.5, color: '#64748b', fontStyle: 'italic' }}>
-                                  {slot.note}
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          {DAY_KEYS.map((key) => {
-                            const staffStr = daysData[key]
-                            return (
-                              <td key={key} style={{ verticalAlign: 'top', padding: '8px 6px' }}>
-                                {renderEmergencyDoctors(staffStr, slot.deptType === 'leader' ? 'morning' : slot.deptType === 'paraclinical' ? 'afternoon' : 'night')}
-                              </td>
-                            )
-                          })}
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              /* Fallback cho bản ghi cũ dùng weeklyEmergencySlots */
-              <div className="emergencyTableWrapper">
-                <table className="emergencyShiftTable">
-                  <thead>
-                    <tr>
-                      <th className="emergencyColLabel">
-                        <div className="emergencyThLabelContent">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                          </svg>
-                          <span>CA TRỰC</span>
-                        </div>
-                      </th>
-                      {DAY_KEYS.map((key) => (
-                        <th key={key} className="emergencyColDay">
-                          <div className="emergencyThDayContent">
-                            <span className="emergencyDayShort">{DAY_LABELS[key]?.short || key}</span>
-                            <span className="emergencyDayFull">{DAY_LABELS[key]?.full || `Thứ ${key}`}</span>
-                          </div>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="emergencyRowMorning">
-                      <td className="emergencyRowHeader">
-                        <div className="emergencyRowHeaderContent">
-                          <span className="emergencyRowHeaderIcon">☀️</span>
-                          <span className="emergencyRowHeaderLabel">CA SÁNG</span>
-                          <span className="emergencyRowHeaderTime">07:00 – 13:00</span>
-                        </div>
-                      </td>
-                      {DAY_KEYS.map((key) => (
-                        <td key={key}>{renderEmergencyDoctors(emergencyDayMap[key]?.morningDoctors, 'morning')}</td>
-                      ))}
-                    </tr>
-                    <tr className="emergencyRowAfternoon">
-                      <td className="emergencyRowHeader">
-                        <div className="emergencyRowHeaderContent">
-                          <span className="emergencyRowHeaderIcon">🌤️</span>
-                          <span className="emergencyRowHeaderLabel">CA CHIỀU</span>
-                          <span className="emergencyRowHeaderTime">13:00 – 19:00</span>
-                        </div>
-                      </td>
-                      {DAY_KEYS.map((key) => (
-                        <td key={key}>{renderEmergencyDoctors(emergencyDayMap[key]?.afternoonDoctors, 'afternoon')}</td>
-                      ))}
-                    </tr>
-                    <tr className="emergencyRowNight">
-                      <td className="emergencyRowHeader">
-                        <div className="emergencyRowHeaderContent">
-                          <span className="emergencyRowHeaderIcon">🌙</span>
-                          <span className="emergencyRowHeaderLabel">CA TỐI</span>
-                          <span className="emergencyRowHeaderTime">19:00 – 07:00</span>
-                        </div>
-                      </td>
-                      {DAY_KEYS.map((key) => (
-                        <td key={key}>{renderEmergencyDoctors(emergencyDayMap[key]?.nightDoctors, 'night')}</td>
-                      ))}
-                    </tr>
-                    {DAY_KEYS.some(k => emergencyDayMap[k]?.note) && (
-                      <tr className="emergencyNoteRow">
-                        <td className="emergencyRowHeader" style={{ borderRight: '2px solid #dc2626', textAlign: 'center', fontSize: 11, color: '#b91c1c', fontWeight: 800 }}>GHI CHÚ</td>
-                        {DAY_KEYS.map((key) => (
-                          <td key={key} className="emergencyNoteCell">
-                            {emergencyDayMap[key]?.note || ''}
-                          </td>
-                        ))}
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {/* BẢNG 2: DANH SÁCH NHÂN SỰ CỐ ĐỊNH / TRỰC THEO KHOA (Nếu có fixedStaff) */}
-            {weeklyDeptSlots.some(s => s.fixedStaff) && (
-              <div style={{ marginTop: 24, padding: 18, borderRadius: 12, border: '1.5px solid #fecaca', background: '#fff' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, color: '#b91c1c', fontWeight: 800, fontSize: 14 }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                  <span>PHÂN CÔNG NHÂN SỰ CÁC KHOA / BỘ PHẬN TRONG TUẦN</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
-                  {weeklyDeptSlots.filter(s => s.fixedStaff).map((s, idx) => (
-                    <div key={idx} style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid #fee2e2', background: '#fef2f2' }}>
-                      <div style={{ fontWeight: 800, fontSize: 12, color: '#991b1b', marginBottom: 4, textTransform: 'uppercase' }}>
-                        {s.deptName}
-                      </div>
-                      <div style={{ fontSize: 11.5, color: '#374151', whiteSpace: 'pre-line', lineHeight: 1.45 }}>
-                        {s.fixedStaff}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* BẢNG 3: GHI CHÚ ĐIỀU ĐỘNG / HỌC TẬP TRONG TUẦN (Nếu có) */}
-            {item.emergencyGeneralNote && (
-              <div style={{ marginTop: 20, padding: 16, borderRadius: 10, border: '1.5px solid #fed7aa', background: '#fffbeb' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#c2410c', fontWeight: 800, fontSize: 13, marginBottom: 6 }}>
-                  <span>📌 GHI CHÚ ĐIỀU ĐỘNG & CÔNG TÁC TRONG TUẦN</span>
-                </div>
-                <div style={{ fontSize: 12.5, color: '#7c2d12', whiteSpace: 'pre-line', lineHeight: 1.5, fontWeight: 500 }}>
-                  {item.emergencyGeneralNote}
-                </div>
-              </div>
-            )}
-
-            {/* BẢNG 4: DANH BẠ ĐIỆN THOẠI TRỰC & CẤP CỨU LIÊN VIỆN (Nếu có) */}
-            {Array.isArray(item.emergencyContacts) && item.emergencyContacts.length > 0 && (
-              <div style={{ marginTop: 20, padding: 18, borderRadius: 12, border: '1.5px solid #e2e8f0', background: '#f8fafc' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0f172a', fontWeight: 800, fontSize: 13.5, marginBottom: 14 }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                  <span>ĐƯỜNG DÂY NÓNG TRỰC & SỐ ĐIỆN THOẠI CẤP CỨU LIÊN VIỆN</span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 10 }}>
-                  {item.emergencyContacts.map((c: any, idx: number) => {
-                    const isHospital = c.type === 'emergency_unit'
-                    return (
-                      <div key={idx} style={{
-                        padding: '10px 12px', borderRadius: 8,
-                        border: isHospital ? '1px solid #fecaca' : '1px solid #e2e8f0',
-                        background: isHospital ? '#fff1f2' : '#ffffff',
-                        display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8,
-                      }}>
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ fontSize: 11.5, fontWeight: 700, color: isHospital ? '#991b1b' : '#1e293b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {c.name}
-                          </div>
-                          <div style={{ fontSize: 10, color: '#64748b' }}>
-                            {isHospital ? '🚑 Bệnh viện tuyến trên' : '📞 Nội bộ'}
-                          </div>
-                        </div>
-                        <a href={`tel:${String(c.phone).replace(/\s+/g, '')}`} style={{
-                          fontSize: 12, fontWeight: 800, color: '#dc2626', textDecoration: 'none',
-                          padding: '4px 8px', borderRadius: 6, background: '#fee2e2', whiteSpace: 'nowrap',
-                        }}>
-                          {c.phone}
-                        </a>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-          </section>
+          <EmergencyMatrixView
+            title={item.title}
+            weekStart={item.emergencyWeekStart}
+            weekEnd={item.emergencyWeekEnd}
+            weekLabel={emergencyWeekLabel}
+            slots={effectiveDeptSlots}
+            emergencyPhone={emergencyPhone}
+            excelUrl={excelUrl}
+            generalNote={item.emergencyGeneralNote}
+            contacts={item.emergencyContacts}
+          />
         )}
 
         {mode === 'weekly' && (
@@ -853,10 +682,33 @@ export default async function ScheduleDetailPage({ params }: Props) {
           title="Tệp lịch khám"
         />
         <div className="scheduleDetailActions">
-          <a className="btn btn-primary" href={medpro} target="_blank" rel="noopener noreferrer">
-            Đặt lịch khám
-          </a>
-          <BackToList href="/lich-kham" label="Trở lại danh sách lịch khám" />
+          {mode === 'emergency' ? (
+            <a
+              className="btn btn-primary"
+              href={`tel:${emergencyPhone.replace(/\s+/g, '')}`}
+              style={{
+                background: 'linear-gradient(135deg, #0369a1 0%, #0284c7 100%)',
+                borderColor: '#0284c7',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)',
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.12.45 2.33.69 3.58.69a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.33a1 1 0 011 1c0 1.25.24 2.46.69 3.58a1 1 0 01-.21 1.11l-2.19 2.2z" />
+              </svg>
+              <span>Hotline Cấp cứu 24/7 ({emergencyPhone})</span>
+            </a>
+          ) : (
+            <a className="btn btn-primary" href={medpro} target="_blank" rel="noopener noreferrer">
+              Đặt lịch khám
+            </a>
+          )}
+          <BackToList
+            href="/lich-kham"
+            label={mode === 'emergency' ? 'Trở lại danh sách lịch trực & khám' : 'Trở lại danh sách lịch khám'}
+          />
         </div>
       </main>
       <SiteFooter />

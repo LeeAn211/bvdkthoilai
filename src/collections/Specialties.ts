@@ -7,7 +7,7 @@ export const Specialties: CollectionConfig = {
   labels: { singular: 'Chuyên khoa', plural: 'Chuyên khoa' },
   admin: {
     useAsTitle: 'name',
-    group: 'Tổ chức',
+    group: '🩺 Chuyên môn & Tổ chức',
     defaultColumns: ['name', 'department', 'order', 'active', 'updatedAt'],
     description: 'Chuyên khoa là lĩnh vực chuyên môn, KHÔNG dùng để sao chép tên Khoa/Phòng. Mỗi chuyên khoa có thể liên kết với một Khoa/Phòng phụ trách.',
   },

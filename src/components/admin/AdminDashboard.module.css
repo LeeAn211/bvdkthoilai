@@ -262,6 +262,188 @@
   font-feature-settings: 'tnum';
 }
 
+/* 2.5. Modern Segmented Tab Navigation Hub */
+.tabNavContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 22px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.02);
+}
+
+.tabNavHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.tabNavTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tabNavPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  color: #0f766e;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.tabNavHint {
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.tabNavStatsText {
+  font-size: 12px;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid #e2e8f0;
+}
+
+.tabNavStatsText strong {
+  color: #0f766e;
+  font-weight: 750;
+}
+
+.tabList {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.tabList::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tabList::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.tabBtn {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.tabBtn:hover {
+  background: #f0fdfa;
+  color: #0f766e;
+  border-color: #99f6e4;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.12);
+}
+
+.tabBtnActive {
+  background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%) !important;
+  color: #ffffff !important;
+  border-color: #0f766e !important;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35) !important;
+  transform: translateY(-1px);
+}
+
+.tabBtnIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: #f1f5f9;
+  color: #0f766e;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.tabBtn:hover .tabBtnIcon {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+
+.tabBtnActive .tabBtnIcon {
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+}
+
+.tabBtnIcon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tabBtnLabel {
+  line-height: 1.2;
+}
+
+.tabBtnCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 800;
+  font-feature-settings: 'tnum';
+  line-height: 1;
+  border: 1px solid #e2e8f0;
+  transition: all 0.15s ease;
+}
+
+.tabBtn:hover .tabBtnCount {
+  background: #ccfbf1;
+  color: #0f766e;
+  border-color: #99f6e4;
+}
+
+.tabBtnActive .tabBtnCount,
+.tabBtnCountActive {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
 /* 3. Stats Grid (Minimalist Cards) */
 .statsGrid {
   display: grid;
@@ -376,24 +558,56 @@
 .statFooter {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 4px;
+  justify-content: space-between;
+  gap: 8px;
   margin-top: 10px;
   padding-top: 8px;
   border-top: 1px solid #f4f4f5;
-  color: #a1a1aa;
   font-size: 11px;
   font-weight: 600;
+}
+
+.statFooterLeft {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #a1a1aa;
   transition: color 0.15s ease;
 }
 
-.statFooter svg {
+.statCard:hover .statFooterLeft {
+  color: #0f766e;
+}
+
+.statFooterLeft svg {
   width: 12px;
   height: 12px;
 }
 
-.statCard:hover .statFooter {
-  color: var(--text-primary);
+.statCreateLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: #f0fdfa;
+  color: #0d9488;
+  border: 1px solid #ccfbf1;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.statCreateLink:hover {
+  background: #0d9488;
+  color: #ffffff;
+  border-color: #0d9488;
+}
+
+.statCreateLink svg {
+  width: 11px;
+  height: 11px;
 }
 
 /* 4. Main Bento Grid Section */

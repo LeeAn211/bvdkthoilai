@@ -12,6 +12,7 @@ import { News } from './src/collections/News'
 import { Notices } from './src/collections/Notices'
 import { Procurement } from './src/collections/Procurement'
 import { Documents } from './src/collections/Documents'
+import { ClinicalProtocols } from './src/collections/ClinicalProtocols'
 import { Departments } from './src/collections/Departments'
 import { Doctors } from './src/collections/Doctors'
 import { Specialties } from './src/collections/Specialties'
@@ -74,6 +75,7 @@ import { Appointments } from './src/collections/Appointments'
 import { QuickLinksSettings } from './src/globals/QuickLinksSettings'
 import { HospitalHistory } from './src/globals/HospitalHistory'
 import { AboutPage } from './src/globals/AboutPage'
+import { WorkingHoursSettings } from './src/globals/WorkingHoursSettings'
 import { withAudit, withGlobalAudit } from './src/lib/audit'
 import { hospitalEditor } from './src/editor/hospitalEditor'
 
@@ -176,10 +178,10 @@ export default buildConfig({
   },
   collections: [
     Users,
-    ...[Media, News, Notices, Procurement, Documents,
+    ...[Media, News, Notices, Procurement, Documents, ClinicalProtocols,
       Departments, Specialties, Doctors, Schedules, Appointments, Services, ServicePrices, Vaccinations, VaccinationSchedules, Vaccines, VaccinePrices, Recruitment, Pages, Categories, Feedback, Consultations, FeedbackCategories, FeedbackCases, FeedbackActions, FAQs, Forms, FormSubmissions, ChatbotIntents, ChatbotConversations, ChatbotUnanswered, SurveyTemplates, SurveyTemplateVersions, SurveyQuestions, SurveyCampaigns, SurveyCodes, SurveyResponses, SurveyAnswers, SurveyStatistics, Redirects, DynamicModules, ContentSections, CustomPosts, AdvancedTechniques, OurExperts, ScientificActivityGroups, ScientificActivities, ImportJobs
     ].map((collection) => withAudit(collection)),
     AuditLogs,
   ],
-  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
+  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, WorkingHoursSettings, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
 })

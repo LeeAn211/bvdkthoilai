@@ -7,7 +7,7 @@ export const ContentSections: CollectionConfig = {
   labels: { singular: 'Mục nội dung từ Menu', plural: 'Mục nội dung từ Menu' },
   admin: {
     useAsTitle: 'title',
-    group: 'Nội dung',
+    group: '🌐 Trang chủ & Giao diện Website',
     defaultColumns: ['title', 'slug', 'active', '_status'],
     description: 'Các mục này được tạo tự động khi Menu chọn “Tự tạo MỤC NỘI DUNG mới”. Ví dụ tạo Menu Chuyển đổi số thì Admin sẽ có mục Chuyển đổi số để quản lý bài viết.',
   },

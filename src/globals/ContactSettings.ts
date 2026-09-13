@@ -2,7 +2,7 @@ import type { GlobalConfig } from 'payload'
 import { loggedIn } from '@/access'
 
 export const ContactSettings: GlobalConfig = {
-  slug: 'contact-settings', label: 'Liên hệ & Bản đồ', admin: { group: 'Trang chủ & Giao diện' },
+  slug: 'contact-settings', label: 'Liên hệ & Bản đồ', admin: { group: '🌐 Trang chủ & Giao diện Website' },
   access: { read: loggedIn, update: loggedIn }, versions: { max: 20 },
   fields: [
     { name: 'address', label: 'Địa chỉ', type: 'textarea' },

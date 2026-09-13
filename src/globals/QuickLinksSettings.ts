@@ -17,7 +17,7 @@ export const QuickLinksSettings: GlobalConfig = {
   slug: 'quick-links-settings',
   label: 'Dịch vụ nhanh trang chủ',
   admin: {
-    group: 'Trang chủ & Giao diện',
+    group: '🌐 Trang chủ & Giao diện Website',
     description: 'Quản lý thanh dịch vụ nhanh dưới banner: thêm, bớt, ẩn/hiện, kéo thả thứ tự và chọn icon hoặc hình riêng cho từng mục.',
   },
   access: { read: loggedIn, update: loggedIn },

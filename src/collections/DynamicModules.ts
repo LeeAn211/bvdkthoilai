@@ -7,7 +7,7 @@ export const DynamicModules: CollectionConfig = {
   labels: { singular: 'Module động', plural: 'Module động' },
   admin: {
     useAsTitle: 'title',
-    group: 'Nội dung',
+    group: '🌐 Trang chủ & Giao diện Website',
     description: 'Tạo module nội dung tái sử dụng để chèn vào Trang chủ mà không hard-code giao diện.',
   },
   access: {

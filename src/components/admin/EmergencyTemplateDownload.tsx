@@ -2,6 +2,8 @@
 
 import { useRef, useState } from 'react'
 import { useForm } from '@payloadcms/ui'
+import * as XLSX from 'xlsx'
+import { parseEmergencyWorkbook } from '@/lib/emergencyExcelParser'
 
 type DeptSlot = {
   deptName: string
@@ -40,11 +42,8 @@ export default function EmergencyTemplateDownload() {
     if (!file || busy) return
     setBusy(true); setError(''); setSlots(null); setApplied(false)
     try {
-      // Đọc file trực tiếp tại trình duyệt bằng thư viện xlsx (siêu nhanh, không phụ thuộc API)
-      const XLSX = await import('xlsx')
       const buffer = await file.arrayBuffer()
       const workbook = XLSX.read(buffer, { type: 'array' })
-      const { parseEmergencyWorkbook } = await import('@/lib/emergencyExcelParser')
       const data = parseEmergencyWorkbook(workbook, file.name)
 
       setSlots(data.slots || [])
@@ -63,12 +62,11 @@ export default function EmergencyTemplateDownload() {
   const handleApply = () => {
     if (!slots || !dispatchFields) return
 
-    // 1. Điền bảng Khoa/Bộ phận
+    // 1. Điền bảng Khoa/Bộ phận (không truyền id giả lập để Payload tự sinh ID hợp lệ)
     dispatchFields({
       type: 'UPDATE',
       path: 'weeklyDeptSlots',
-      value: slots.map((s, i) => ({
-        id: `imported-${i}`,
+      value: slots.map((s) => ({
         deptName: s.deptName,
         subRole: s.subRole,
         deptType: s.deptType,
@@ -104,13 +102,12 @@ export default function EmergencyTemplateDownload() {
       })
     }
 
-    // 4. Điền danh bạ điện thoại trực & cấp cứu
+    // 4. Điền danh bạ điện thoại trực & cấp cứu (nếu có)
     if (contacts.length > 0) {
       dispatchFields({
         type: 'UPDATE',
         path: 'emergencyContacts',
-        value: contacts.map((c, i) => ({
-          id: `contact-${i}`,
+        value: contacts.map((c) => ({
           name: c.name,
           phone: c.phone,
           type: c.type || 'internal',
@@ -256,10 +253,10 @@ export default function EmergencyTemplateDownload() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
               <thead>
                 <tr style={{ background: '#dcfce7' }}>
-                  <th style={{ padding: '6px 8px', textAlign: 'left', fontWeight: 800, color: '#15803d', borderBottom: '1px solid #bbf7d0', width: 130, minWidth: 110 }}>Khoa / Bộ phận</th>
-                  <th style={{ padding: '6px 8px', textAlign: 'left', fontWeight: 800, color: '#15803d', borderBottom: '1px solid #bbf7d0', width: 80 }}>Loại</th>
+                  <th style={{ padding: '6px 8px', textAlign: 'left', fontWeight: 800, color: '#15803d', borderBottom: '1px solid #bbf7d0', width: 140, minWidth: 120 }}>Khoa / Bộ phận</th>
+                  <th style={{ padding: '6px 8px', textAlign: 'left', fontWeight: 800, color: '#15803d', borderBottom: '1px solid #bbf7d0', width: 85 }}>Vai trò</th>
                   {DAY_LABELS.map(d => (
-                    <th key={d} style={{ padding: '6px 8px', textAlign: 'center', fontWeight: 800, color: '#15803d', borderBottom: '1px solid #bbf7d0', width: 70 }}>{d}</th>
+                    <th key={d} style={{ padding: '6px 8px', textAlign: 'center', fontWeight: 800, color: '#15803d', borderBottom: '1px solid #bbf7d0', minWidth: 80 }}>{d}</th>
                   ))}
                 </tr>
               </thead>
@@ -269,12 +266,12 @@ export default function EmergencyTemplateDownload() {
                     <td style={{ padding: '5px 8px', fontWeight: 700, color: '#166534', borderBottom: '1px solid #dcfce7', fontSize: 11 }}>
                       {slot.deptName}
                     </td>
-                    <td style={{ padding: '5px 8px', color: '#6b7280', borderBottom: '1px solid #dcfce7', fontSize: 10 }}>
+                    <td style={{ padding: '5px 8px', color: '#6b7280', borderBottom: '1px solid #dcfce7', fontSize: 10, fontWeight: 600 }}>
                       {slot.subRole || '–'}
                     </td>
                     {[slot.day2, slot.day3, slot.day4, slot.day5, slot.day6, slot.day7, slot.day8].map((d, di) => (
                       <td key={di} style={{ padding: '4px 6px', color: '#374151', borderBottom: '1px solid #dcfce7', verticalAlign: 'top', fontSize: 10, lineHeight: 1.4 }}>
-                        {d ? d.split('\n').map((n, ni) => <div key={ni}>{n}</div>) : <span style={{ color: '#d1d5db' }}>–</span>}
+                        {d ? d.split('\n').map((n, ni) => <div key={ni} style={{ fontWeight: 500 }}>{n}</div>) : <span style={{ color: '#d1d5db' }}>–</span>}
                       </td>
                     ))}
                   </tr>
@@ -283,12 +280,12 @@ export default function EmergencyTemplateDownload() {
             </table>
           </div>
 
-          {/* Preview danh bạ & ghi chú */}
+          {/* Preview danh bạ & ghi chú nếu có */}
           {(generalNote || contacts.length > 0) && (
             <div style={{ padding: '10px 14px', borderTop: '1px solid #bbf7d0', background: '#f0fdf4', display: 'flex', flexDirection: 'column', gap: 6, fontSize: 11 }}>
               {generalNote && (
                 <div style={{ color: '#166534' }}>
-                  <b>📝 Ghi chú chung:</b> {generalNote}
+                  <b>📝 Ghi chú:</b> {generalNote}
                 </div>
               )}
               {contacts.length > 0 && (
@@ -303,7 +300,7 @@ export default function EmergencyTemplateDownload() {
 
           {applied && (
             <div style={{ padding: '8px 14px', background: '#dcfce7', fontSize: 11, color: '#15803d', fontWeight: 700, textAlign: 'center' }}>
-              ✅ Đã điền đầy đủ Bảng Khoa/Bộ phận, Ngày tuần, Ghi chú chung và Danh bạ điện thoại trực vào form! Kiểm tra rồi nhấn <b>Lưu</b>.
+              ✅ Đã điền đầy đủ {slots.length} dòng lịch trực theo ngày vào bảng bên dưới! Kiểm tra rồi nhấn <b>Lưu</b>.
             </div>
           )}
         </div>

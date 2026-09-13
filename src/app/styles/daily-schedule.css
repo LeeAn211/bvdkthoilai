@@ -355,31 +355,43 @@
   font-weight: 700 !important;
 }
 
-/* 1 dòng hiển thị 2 tên bác sĩ dạng grid 2 cột nhỏ gọn */
+/* Danh sách thẻ bác sĩ căn giữa đồng đều */
 .dailyDoctorChipList {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
   gap: 5px !important;
   width: 100% !important;
 }
 
-/* Thẻ bác sĩ con (Doctor Chip) cao cấp nhỏ gọn */
+/* Thẻ bác sĩ con (Doctor Chip) kích thước bằng nhau, căn giữa */
 .dailyDoctorChip {
-  display: flex !important;
+  display: inline-flex !important;
   align-items: center !important;
+  justify-content: center !important;
   gap: 5px !important;
   padding: 4px 6px !important;
   border-radius: 6px !important;
-  border: 1px solid #cbd5e1 !important;
-  background: #ffffff !important;
+  border: 1px solid #bae6fd !important;
+  background: #f0f9ff !important;
+  color: #0369a1 !important;
+  width: 105px !important;
+  max-width: 105px !important;
+  min-width: 105px !important;
+  height: 28px !important;
+  box-sizing: border-box !important;
+  margin: 0 auto !important;
+  text-align: center !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
-  transition: all 0.15s ease !important;
-  min-width: 0 !important;
+  transition: all 0.12s ease !important;
 }
 
 .dailyDoctorChip:hover {
   transform: translateY(-1px) !important;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 2px 5px rgba(2, 132, 199, 0.15) !important;
+  border-color: #7dd3fc !important;
+  background: #e0f2fe !important;
 }
 
 .dailyDoctorChip.chip-morning {
@@ -826,4 +838,870 @@
     font-size: 10.5px !important;
   }
 }
+
+/* ==========================================================================
+   CHUYÊN BIỆT: BẢNG LỊCH TRỰC CẤP CỨU & BỆNH VIỆN 12 BỘ PHẬN
+   Phong cách Banner Bệnh viện chuyên nghiệp đồng bộ như Lịch bác sĩ khám ngày
+   ========================================================================== */
+
+/* ==========================================================================
+   CHUYÊN BIỆT: BẢNG LỊCH TRỰC CẤP CỨU & BỆNH VIỆN 12 BỘ PHẬN
+   Phong cách Banner Bệnh viện Xanh - Trắng chuyên nghiệp đồng bộ như Lịch bác sĩ khám ngày
+   ========================================================================== */
+
+.emergPosterShell {
+  margin: 16px 0 36px !important;
+  background: #ffffff !important;
+  border-radius: 14px !important;
+  border: 2px solid #0284c7 !important;
+  box-shadow: 0 10px 30px rgba(2, 132, 199, 0.12) !important;
+  overflow: hidden !important;
+}
+
+/* 1. Header tinh gọn như Lịch khám ngày - Canh giữa trọn vẹn */
+.emergMastheadClassic {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%) !important;
+  border-bottom: 2.5px solid #0284c7 !important;
+  padding: 18px 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
+  text-align: center !important;
+}
+
+.emergMastheadBox {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  text-align: center !important;
+  margin: 0 auto !important;
+}
+
+.emergRibbon {
+  background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+  color: #ffffff !important;
+  padding: 9px 32px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  display: inline-block !important;
+}
+
+.emergRibbon h2 {
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  color: #ffffff !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25) !important;
+  text-align: center !important;
+}
+
+.emergDateBadge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  background: #ffffff !important;
+  color: #0369a1 !important;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  padding: 5px 22px !important;
+  border-radius: 99px !important;
+  border: 2px solid #0284c7 !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.12) !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}
+
+.emergDateBadge svg {
+  color: #0284c7 !important;
+  flex-shrink: 0 !important;
+}
+
+.emergMastheadTools {
+  position: absolute !important;
+  right: 24px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.emergPrintBtnQuick {
+  background: #ffffff !important;
+  border: 2px solid #0284c7 !important;
+  color: #0284c7 !important;
+  padding: 7px 16px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.1) !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.emergPrintBtnQuick:hover {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* 2. Container cuộn bảng */
+.emergTableWrapper {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  background: #ffffff !important;
+}
+
+/* 3. BẢNG MA TRẬN */
+.emergMatrixTable {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  min-width: 960px !important;
+  table-layout: fixed !important;
+  border: 2px solid #0284c7 !important;
+  background: #ffffff !important;
+}
+
+.emergMatrixTable thead tr {
+  border-bottom: 2.5px solid #0284c7 !important;
+}
+
+.emergMatrixTable th {
+  padding: 10px 6px !important;
+  border: 1.5px solid #bae6fd !important;
+  vertical-align: middle !important;
+  text-align: center !important;
+}
+
+/* Cột tiêu đề Khoa/Bộ phận */
+.emergColDeptHeader {
+  width: 22% !important;
+  background: linear-gradient(180deg, #0369a1 0%, #0284c7 100%) !important;
+  color: #ffffff !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+}
+
+.emergThDeptInner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  color: #ffffff !important;
+  white-space: nowrap !important;
+}
+
+/* Header nhóm ngày (hàng 1 của thead 2 hàng) */
+.emergColGroupHeader {
+  background: linear-gradient(180deg, #0369a1 0%, #0284c7 100%) !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  padding: 6px 4px !important;
+  letter-spacing: 0.3px !important;
+  border: 1.5px solid #7dd3fc !important;
+  white-space: nowrap !important;
+}
+
+/* Ô gộp 3 ngày (T2-T4 hoặc T5-T7) */
+.emergCellMerged3 {
+  text-align: center !important;
+  padding: 6px 8px !important;
+  vertical-align: middle !important;
+}
+
+/* Ô gộp 6 ngày (T2-T7) cho Sản + các khoa còn lại */
+.emergCellMerged6 {
+  text-align: center !important;
+  padding: 6px 8px !important;
+  vertical-align: middle !important;
+}
+
+/* Chip trong ô gộp: xếp theo hàng ngang, wrap để nhiều tên cạnh nhau → giảm độ rộng bảng */
+.emergCellMerged3 .emergDoctorChipList,
+.emergCellMerged6 .emergDoctorChipList {
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* Chip trong ô gộp thu nhỏ để nhiều chip vừa trên 1 hàng */
+.emergCellMerged3 .emergDoctorChip,
+.emergCellMerged6 .emergDoctorChip {
+  width: auto !important;
+  min-width: 80px !important;
+  max-width: none !important;        /* tự mở rộng theo nội dung */
+  height: auto !important;           /* tự mở rộng theo số dòng */
+  white-space: normal !important;    /* cho phép wrap */
+}
+
+.emergCellMerged3 .emergDoctorChipName,
+.emergCellMerged6 .emergDoctorChipName {
+  font-size: 11px !important;
+  white-space: normal !important;    /* hiển thị đầy đủ, không cắt */
+  word-break: break-word !important; /* xuống dòng nếu cần */
+  overflow: visible !important;
+  text-overflow: unset !important;
+  max-width: none !important;
+  text-align: left !important;
+  line-height: 1.35 !important;
+}
+
+/* Cột các ngày trong tuần (T2 - CN) */
+.emergColDayHeader {
+  width: calc(78% / 7) !important;
+  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+}
+
+.emergColDayHeader.isTodayCol {
+  background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%) !important;
+  border-color: #0284c7 !important;
+}
+
+.emergThDayInner {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  text-align: center !important;
+}
+
+.emergDayFullName {
+  font-size: 13.5px !important;
+  font-weight: 900 !important;
+  color: #0f172a !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+}
+
+.emergDayShortName {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: #0284c7 !important;
+  text-align: center !important;
+}
+
+.emergDayDateActual {
+  font-size: 12px !important;
+  font-weight: 850 !important;
+  color: #0284c7 !important;
+  text-align: center !important;
+  background: #ffffff !important;
+  padding: 1px 8px !important;
+  border-radius: 99px !important;
+  border: 1px solid #bae6fd !important;
+  box-shadow: 0 1px 3px rgba(2, 132, 199, 0.08) !important;
+  margin-top: 1px !important;
+  display: inline-block !important;
+  white-space: nowrap !important;
+}
+
+.emergTodayIndicator {
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  padding: 1px 6px !important;
+  border-radius: 99px !important;
+  margin-top: 2px !important;
+  letter-spacing: 0.3px !important;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.4) !important;
+}
+
+/* Dòng trong bảng */
+.emergRowItem {
+  border-bottom: 1.5px solid #bae6fd !important;
+  transition: background 0.12s ease !important;
+}
+
+.emergRowItem:last-child {
+  border-bottom: none !important;
+}
+
+.emergRowOdd {
+  background: #ffffff !important;
+}
+
+.emergRowEven {
+  background: #f8fafc !important;
+}
+
+.emergRowItem:hover {
+  background: #f0f9ff !important;
+}
+
+/* Cột tiêu đề Khoa / Bộ phận */
+.emergCellDeptTitle {
+  padding: 10px 12px !important;
+  border-right: 2px solid #0284c7 !important;
+  border-bottom: 1.5px solid #bae6fd !important;
+  background: #f0f9ff !important;
+  vertical-align: middle !important;
+}
+
+.emergDeptBox {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  white-space: nowrap !important;
+}
+
+.emergDeptIconWrap {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 8px !important;
+  background: #e0f2fe !important;
+  color: #0284c7 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  border: 1px solid #bae6fd !important;
+}
+
+.emergDeptNameText {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+  white-space: nowrap !important;
+}
+
+.emergDeptName {
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  color: #0f172a !important;
+  line-height: 1.3 !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.emergDeptSubRole {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: #0369a1 !important;
+  background: #e0f2fe !important;
+  padding: 2px 7px !important;
+  border-radius: 4px !important;
+  width: fit-content !important;
+  letter-spacing: 0.3px !important;
+  white-space: nowrap !important;
+}
+
+/* Ô THƯỜNG TRỰC LÃNH ĐẠO GỘP 1 Ô DUY NHẤT (T2 ĐẾN CN) */
+.emergPermanentRow {
+  background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%) !important;
+  border-left: 4px solid #0284c7 !important;
+}
+
+.emergPermanentRow:hover {
+  background: #e0f2fe !important;
+}
+
+.emergMergedLeaderCell {
+  padding: 14px 20px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  border-bottom: 1.5px solid #bae6fd !important;
+  white-space: nowrap !important;
+}
+
+.emergMergedLeaderCard {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 18px !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+}
+
+.emergMergedTag {
+  background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
+  color: #ffffff !important;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
+  padding: 6px 16px !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25) !important;
+  letter-spacing: 0.4px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.emergMergedTag.emergTagIT {
+  background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.28) !important;
+}
+
+.emergMergedTag svg {
+  flex-shrink: 0 !important;
+}
+
+.emergMergedTag span {
+  white-space: nowrap !important;
+}
+
+.emergMergedLeaderMain {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.emergMergedName {
+  font-size: 15.5px !important;
+  font-weight: 900 !important;
+  color: #0c4a6e !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.4px !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+}
+
+.emergMergedPhoneBtn {
+  background: #ffffff !important;
+  border: 1.5px solid #0284c7 !important;
+  color: #0369a1 !important;
+  padding: 5px 14px !important;
+  border-radius: 99px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.12) !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.emergMergedPhoneBtn:hover {
+  background: #e0f2fe !important;
+  color: #0284c7 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Nổi bật đặc biệt cho CẤP CỨU TỔNG HỢP (Bác sĩ & Điều dưỡng) */
+.emergEmergencyHighlightRow {
+  background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 30%, #f0f9ff 100%) !important;
+  border-left: 4px solid #0284c7 !important;
+}
+
+.emergEmergencyHighlightRow .emergCellDeptTitle {
+  background: #e0f2fe !important;
+  border-right: 2.5px solid #0284c7 !important;
+}
+
+.emergEmergencyHighlightRow .emergDeptIconWrap {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3) !important;
+}
+
+.emergEmergencyHighlightRow .emergDeptName {
+  color: #0284c7 !important;
+  font-size: 13.5px !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.2px !important;
+}
+
+.emergEmergencyHighlightRow .emergDeptSubRole {
+  background: #0284c7 !important;
+  color: #ffffff !important;
+  font-weight: 900 !important;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.2) !important;
+}
+
+.emergEmergencyHighlightRow .emergCellDayData {
+  background: rgba(240, 249, 255, 0.6) !important;
+}
+
+.emergEmergencyHighlightRow:hover {
+  background: #e0f2fe !important;
+}
+
+/* Ô dữ liệu từng ngày - Canh giữa toàn bộ */
+.emergCellDayData {
+  padding: 8px 6px !important;
+  border-right: 1.5px solid #bae6fd !important;
+  border-bottom: 1.5px solid #bae6fd !important;
+  vertical-align: middle !important;
+  text-align: center !important;
+}
+
+.emergCellDayData.isTodayCell {
+  background: rgba(224, 242, 254, 0.45) !important;
+}
+
+.emergCellDayData:last-child {
+  border-right: none !important;
+}
+
+.emergCellEmpty {
+  display: block !important;
+  text-align: center !important;
+  color: #94a3b8 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  padding-top: 4px !important;
+}
+
+/* Chip bác sĩ / điều dưỡng theo mẫu dailyDoctorChip - Căn giữa chuẩn đẹp */
+.emergDoctorChipList {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+.emergDoctorChip {
+  display: inline-flex !important;
+  align-items: flex-start !important;   /* icon luôn ở trên khi tên xuống dòng */
+  justify-content: flex-start !important;
+  gap: 2px !important;
+  padding: 3px 5px !important;
+  border-radius: 6px !important;
+  width: 105px !important;
+  max-width: 105px !important;
+  min-width: 105px !important;
+  min-height: 28px !important;          /* tự mở rộng nếu tên nhiều dòng */
+  height: auto !important;
+  box-sizing: border-box !important;
+  margin: 0 auto !important;
+  text-align: left !important;
+  transition: all 0.12s ease !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.emergDoctorChip:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 5px rgba(2, 132, 199, 0.15) !important;
+}
+
+.emergDoctorChip.chip-default {
+  background: #f0f9ff !important;
+  border: 1px solid #bae6fd !important;
+  color: #0369a1 !important;
+}
+
+.emergDoctorChip.chip-default:hover {
+  background: #e0f2fe !important;
+  border-color: #7dd3fc !important;
+}
+
+.emergDoctorChip.chip-leader {
+  background: #fef3c7 !important;
+  border: 1px solid #fde68a !important;
+  color: #92400e !important;
+}
+
+.emergDoctorChip.chip-nurse {
+  background: #f0f9ff !important;
+  border: 1px solid #7dd3fc !important;
+  color: #0369a1 !important;
+}
+
+.emergDoctorChip.chip-nurse:hover {
+  background: #e0f2fe !important;
+  border-color: #38bdf8 !important;
+}
+
+.emergDoctorChipIcon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 3px !important;
+  flex-shrink: 0 !important;
+}
+
+.chip-default .emergDoctorChipIcon {
+  background: #e0f2fe !important;
+  color: #0284c7 !important;
+}
+
+.chip-leader .emergDoctorChipIcon {
+  background: #fde68a !important;
+  color: #b45309 !important;
+}
+
+.chip-nurse .emergDoctorChipIcon {
+  background: #bae6fd !important;
+  color: #0284c7 !important;
+}
+
+.emergDoctorChipName {
+  font-size: 11.5px !important;
+  font-weight: 750 !important;
+  white-space: normal !important;      /* hiển thị đầy đủ, không cắt */
+  word-break: break-word !important;   /* xuống dòng nếu tên quá dài */
+  overflow: visible !important;
+  text-overflow: unset !important;
+  line-height: 1.3 !important;
+  text-align: left !important;
+  flex: 1 1 auto !important;
+}
+
+/* 4. Notes & Contacts Box */
+.emergNoteBox {
+  margin: 18px 20px !important;
+  padding: 14px 18px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid #bae6fd !important;
+  background: #f0f9ff !important;
+}
+
+.emergNoteTitle {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: #0369a1 !important;
+  margin-bottom: 6px !important;
+}
+
+.emergNoteContent {
+  font-size: 12.5px !important;
+  color: #0c4a6e !important;
+  white-space: pre-line !important;
+  line-height: 1.5 !important;
+  font-weight: 500 !important;
+}
+
+.emergContactsBox {
+  margin: 18px 20px 24px !important;
+  padding: 18px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+}
+
+.emergContactsTitle {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  margin-bottom: 14px !important;
+}
+
+.emergContactsGrid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.emergContactCard {
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 10px !important;
+  transition: all 0.15s ease !important;
+}
+
+.emergContactCard.isHospitalContact {
+  background: #f0f9ff !important;
+  border-color: #bae6fd !important;
+}
+
+.emergContactInfo {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+.emergContactName {
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  color: #1e293b !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.emergContactType {
+  font-size: 10px !important;
+  color: #64748b !important;
+}
+
+.emergContactPhone {
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  color: #0284c7 !important;
+  text-decoration: none !important;
+  padding: 4px 10px !important;
+  border-radius: 6px !important;
+  background: #e0f2fe !important;
+  white-space: nowrap !important;
+}
+
+.emergContactPhone:hover {
+  background: #bae6fd !important;
+  color: #0369a1 !important;
+}
+
+/* ==========================================================================
+   PRINT STYLESHEET (Khổ in A4 ngang chuẩn y tế)
+   ========================================================================== */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10pt !important;
+  }
+
+  .site-header,
+  .mainHeader,
+  .utilityBar,
+  .site-footer,
+  .emergMastheadTools,
+  .scheduleDetailActions,
+  .backToList {
+    display: none !important;
+  }
+
+  .emergPosterShell {
+    border: 1.5px solid #000000 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    page-break-inside: avoid !important;
+  }
+
+  .emergMastheadClassic {
+    background: #ffffff !important;
+    border-bottom: 2px solid #000000 !important;
+    padding: 8px 12px !important;
+  }
+
+  .emergRibbon {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #000000 !important;
+    padding: 4px 0 !important;
+  }
+
+  .emergRibbon h2 {
+    color: #000000 !important;
+    text-shadow: none !important;
+    font-size: 14pt !important;
+  }
+
+  .emergDateBadge {
+    border: 1px solid #000000 !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .emergMatrixTable {
+    min-width: 100% !important;
+    width: 100% !important;
+    border: 1px solid #000000 !important;
+  }
+
+  .emergMatrixTable th,
+  .emergMatrixTable td {
+    border: 1px solid #000000 !important;
+    padding: 4px !important;
+  }
+
+  .emergColDeptHeader {
+    background: #e5e5e5 !important;
+    color: #000000 !important;
+  }
+
+  .emergThDeptInner {
+    color: #000000 !important;
+  }
+
+  .emergMergedTag {
+    background: none !important;
+    border: 1px solid #000000 !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .emergMergedName {
+    color: #000000 !important;
+  }
+
+  .emergDoctorChip {
+    background: none !important;
+    border: none !important;
+    padding: 1px 0 !important;
+  }
+
+  .emergDoctorChipName {
+    color: #000000 !important;
+    font-size: 8.5pt !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .emergMastheadClassic {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 16px 14px !important;
+  }
+  .emergMastheadTools {
+    position: static !important;
+    transform: none !important;
+    margin-top: 4px !important;
+  }
+  .emergRibbon h2 {
+    font-size: 15px !important;
+  }
+  .emergDateBadge {
+    font-size: 12px !important;
+    padding: 4px 14px !important;
+  }
+}
+
 

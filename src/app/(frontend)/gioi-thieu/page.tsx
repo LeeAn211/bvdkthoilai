@@ -139,36 +139,39 @@ export default async function AboutHospitalPage() {
 
   // Stats
   const statsFallback = [
-    { number: 'Hạng II', label: 'Xếp hạng bệnh viện', icon: '🎖️' },
-    { number: '200+', label: 'Giường bệnh kế hoạch', icon: '🛏️' },
-    { number: '100+', label: 'Cán bộ, viên chức y tế', icon: '👨‍⚕️' },
-    { number: '96%+', label: 'Hài lòng người bệnh', icon: '⭐' },
+    { enabled: true, number: 'Hạng II', label: 'Xếp hạng bệnh viện', icon: '🎖️' },
+    { enabled: true, number: '200+', label: 'Giường bệnh kế hoạch', icon: '🛏️' },
+    { enabled: true, number: '100+', label: 'Cán bộ, viên chức y tế', icon: '👨‍⚕️' },
+    { enabled: true, number: '96%+', label: 'Hài lòng người bệnh', icon: '⭐' },
   ]
-  const stats = Array.isArray(aboutData?.stats) && aboutData.stats.length > 0 ? aboutData.stats : statsFallback
+  const rawStats = Array.isArray(aboutData?.stats) && aboutData.stats.length > 0 ? aboutData.stats : statsFallback
+  const stats = rawStats.filter((s: any) => s?.enabled !== false)
 
   // Functions & Duties (Chức năng & Nhiệm vụ trọng tâm - Phân biệt rõ với Lịch sử phát triển)
   const corePrinciples = aboutData?.corePrinciples || {}
   const coreTitle = corePrinciples.title || 'Chức năng & Nhiệm vụ trọng tâm'
   const coreSubtitle = corePrinciples.subtitle || 'Thực hiện chức năng khám chữa bệnh đa khoa, cấp cứu và chăm sóc sức khỏe nhân dân toàn diện theo quy chuẩn của Bộ Y tế và Sở Y tế TP. Cần Thơ.'
   const coreItemsFallback = [
-    { title: 'Cấp cứu & Khám chữa bệnh đa khoa', desc: 'Tổ chức tiếp nhận cấp cứu 24/7, khám bệnh ngoại trú, điều trị nội trú đa khoa và phục hồi chức năng cho người dân huyện Thới Lai và khu vực lân cận.' },
-    { title: 'Phát triển kỹ thuật & Phẫu thuật ngoại khoa', desc: 'Ứng dụng phẫu thuật nội soi, chẩn đoán hình ảnh kỹ thuật số, xét nghiệm tự động và từng bước phát triển các kỹ thuật chuyên sâu tuyến khu vực.' },
-    { title: 'Y tế dự phòng & Hỗ trợ chỉ đạo tuyến', desc: 'Chủ động phối hợp phòng chống dịch bệnh, giám sát dịch tễ, truyền thông giáo dục sức khỏe và hỗ trợ chuyên môn kỹ thuật cho y tế cơ sở.' },
-    { title: 'Chuyển đổi số & Bệnh án điện tử', desc: 'Triển khai toàn diện hồ sơ bệnh án điện tử (EMR), lưu trữ hình ảnh PACS không in phim, thanh toán không tiền mặt và đặt lịch khám trực tuyến.' },
+    { enabled: true, title: 'Cấp cứu & Khám chữa bệnh đa khoa', desc: 'Tổ chức tiếp nhận cấp cứu 24/7, khám bệnh ngoại trú, điều trị nội trú đa khoa và phục hồi chức năng cho người dân huyện Thới Lai và khu vực lân cận.' },
+    { enabled: true, title: 'Phát triển kỹ thuật & Phẫu thuật ngoại khoa', desc: 'Ứng dụng phẫu thuật nội soi, chẩn đoán hình ảnh kỹ thuật số, xét nghiệm tự động và từng bước phát triển các kỹ thuật chuyên sâu tuyến khu vực.' },
+    { enabled: true, title: 'Y tế dự phòng & Hỗ trợ chỉ đạo tuyến', desc: 'Chủ động phối hợp phòng chống dịch bệnh, giám sát dịch tễ, truyền thông giáo dục sức khỏe và hỗ trợ chuyên môn kỹ thuật cho y tế cơ sở.' },
+    { enabled: true, title: 'Chuyển đổi số & Bệnh án điện tử', desc: 'Triển khai toàn diện hồ sơ bệnh án điện tử (EMR), lưu trữ hình ảnh PACS không in phim, thanh toán không tiền mặt và đặt lịch khám trực tuyến.' },
   ]
-  const coreItems = Array.isArray(corePrinciples.items) && corePrinciples.items.length > 0 ? corePrinciples.items : coreItemsFallback
+  const rawCoreItems = Array.isArray(corePrinciples.items) && corePrinciples.items.length > 0 ? corePrinciples.items : coreItemsFallback
+  const coreItems = rawCoreItems.filter((item: any) => item?.enabled !== false)
 
   // Facilities
   const facilities = aboutData?.facilities || {}
   const facTitle = facilities.title || 'Cơ sở hạ tầng & Trang thiết bị y tế'
   const facDesc = facilities.description || 'Bệnh viện được đầu tư đồng bộ hệ thống máy móc cận lâm sàng hiện đại, phòng mổ đạt chuẩn vô khuẩn và khu điều trị nội trú khang trang.'
   const facItemsFallback = [
-    { title: 'Chẩn đoán hình ảnh kỹ thuật số', desc: 'Hệ thống chụp X-quang kỹ thuật số hiện đại, siêu âm màu Doppler 4D hỗ trợ chẩn đoán nhanh, chính xác.' },
-    { title: 'Xét nghiệm tự động hoàn toàn', desc: 'Hệ thống sinh hóa, huyết học, miễn dịch tự động đạt chuẩn nội kiểm, ngoại kiểm chất lượng nghiêm ngặt.' },
-    { title: 'Phòng mổ vô trùng & Gây mê hồi sức', desc: 'Khu phẫu thuật hiện đại với hệ thống khí sạch áp lực dương, đảm bảo an toàn tối đa cho các ca phẫu thuật.' },
-    { title: 'Khoa Cấp cứu & Điều trị tích cực', desc: 'Trực cấp cứu 24/7 với đầy đủ máy thở, monitor theo dõi đa thông số, máy sốc điện và xe cứu thương chuyên dụng.' },
+    { enabled: true, title: 'Chẩn đoán hình ảnh kỹ thuật số', desc: 'Hệ thống chụp X-quang kỹ thuật số hiện đại, siêu âm màu Doppler 4D hỗ trợ chẩn đoán nhanh, chính xác.' },
+    { enabled: true, title: 'Xét nghiệm tự động hoàn toàn', desc: 'Hệ thống sinh hóa, huyết học, miễn dịch tự động đạt chuẩn nội kiểm, ngoại kiểm chất lượng nghiêm ngặt.' },
+    { enabled: true, title: 'Phòng mổ vô trùng & Gây mê hồi sức', desc: 'Khu phẫu thuật hiện đại với hệ thống khí sạch áp lực dương, đảm bảo an toàn tối đa cho các ca phẫu thuật.' },
+    { enabled: true, title: 'Khoa Cấp cứu & Điều trị tích cực', desc: 'Trực cấp cứu 24/7 với đầy đủ máy thở, monitor theo dõi đa thông số, máy sốc điện và xe cứu thương chuyên dụng.' },
   ]
-  const facItems = Array.isArray(facilities.items) && facilities.items.length > 0 ? facilities.items : facItemsFallback
+  const rawFacItems = Array.isArray(facilities.items) && facilities.items.length > 0 ? facilities.items : facItemsFallback
+  const facItems = rawFacItems.filter((item: any) => item?.enabled !== false)
 
   // Commitment
   const commitment = aboutData?.commitment || {}
@@ -181,12 +184,13 @@ export default async function AboutHospitalPage() {
   const relTitle = relatedLinksData.title || 'Thông tin chuyên đề khác'
   const relSubtitle = relatedLinksData.subtitle || 'Tìm hiểu chi tiết hơn qua các trang chuyên đề của bệnh viện:'
   const fallbackRelLinks = [
-    { title: 'Lịch sử hình thành & Phát triển', url: '/gioi-thieu/lich-su-phat-trien', desc: 'Hơn hai thập kỷ trưởng thành và các mốc son tiêu biểu' },
-    { title: 'Sơ đồ tổ chức 3 cấp', url: '/so-do-to-chuc', desc: 'Ban Giám đốc và các khối trực thuộc' },
-    { title: 'Danh mục Khoa – Phòng', url: '/khoa-phong', desc: 'Chi tiết các khoa lâm sàng, cận lâm sàng và phòng chức năng' },
-    { title: 'Đội ngũ Bác sĩ chuyên khoa', url: '/bac-si', desc: 'Danh sách các thầy thuốc, bác sĩ uy tín tại bệnh viện' },
+    { enabled: true, title: 'Lịch sử hình thành & Phát triển', url: '/gioi-thieu/lich-su-phat-trien', desc: 'Hơn hai thập kỷ trưởng thành và các mốc son tiêu biểu' },
+    { enabled: true, title: 'Sơ đồ tổ chức 3 cấp', url: '/so-do-to-chuc', desc: 'Ban Giám đốc và các khối trực thuộc' },
+    { enabled: true, title: 'Danh mục Khoa – Phòng', url: '/khoa-phong', desc: 'Chi tiết các khoa lâm sàng, cận lâm sàng và phòng chức năng' },
+    { enabled: true, title: 'Đội ngũ Bác sĩ chuyên khoa', url: '/bac-si', desc: 'Danh sách các thầy thuốc, bác sĩ uy tín tại bệnh viện' },
   ]
-  const relLinks = Array.isArray(relatedLinksData.links) && relatedLinksData.links.length > 0 ? relatedLinksData.links : fallbackRelLinks
+  const rawRelLinks = Array.isArray(relatedLinksData.links) && relatedLinksData.links.length > 0 ? relatedLinksData.links : fallbackRelLinks
+  const relLinks = rawRelLinks.filter((link: any) => link?.enabled !== false)
 
   const cssVars = {
     '--about-primary': appearance.primaryColor || '#0878D1',
@@ -198,26 +202,33 @@ export default async function AboutHospitalPage() {
       <SiteHeader />
       <main className="aboutPage" style={cssVars}>
         {/* ── BANNER HERO ─────────────────────────────────── */}
-        <section className="aboutHero" style={{ backgroundImage: `url("${bannerImg}")` }}>
-          <div className="aboutHeroOverlay" />
-          <div className="container aboutHeroInner">
-            <span className="aboutBadge">{eyebrow}</span>
-            <h1>{hospitalName}</h1>
-            <p className="aboutSlogan">"{tagline}"</p>
-            <p className="aboutIntro">{intro}</p>
+        {hero.enabled !== false && (
+          <section className="aboutHero" style={{ backgroundImage: `url("${bannerImg}")` }}>
+            <div className="aboutHeroOverlay" />
+            <div
+              className="container aboutHeroInner"
+              style={hero.textAlign && hero.textAlign !== 'left' ? { textAlign: hero.textAlign, margin: hero.textAlign === 'center' ? '0 auto' : undefined } : undefined}
+            >
+              <span className="aboutBadge">{eyebrow}</span>
+              <h1 style={{ textWrap: 'balance' }}>{hospitalName}</h1>
+              <p className="aboutSlogan">"{tagline}"</p>
+              <p className="aboutIntro" style={{ whiteSpace: 'pre-line', textWrap: 'balance' }}>{intro}</p>
 
-            {/* Quy mô & Chỉ số hoạt động */}
-            <div className="aboutHeroStats">
-              {stats.map((s: any, i: number) => (
-                <div className="aboutHeroStat" key={i}>
-                  {s.icon && <span className="aboutHeroStatIcon">{s.icon}</span>}
-                  <span className="aboutHeroStatNum">{s.number}</span>
-                  <span className="aboutHeroStatLabel">{s.label}</span>
+              {/* Quy mô & Chỉ số hoạt động */}
+              {stats.length > 0 && (
+                <div className="aboutHeroStats">
+                  {stats.map((s: any, i: number) => (
+                    <div className="aboutHeroStat" key={i}>
+                      {s.icon && <span className="aboutHeroStatIcon">{s.icon}</span>}
+                      <span className="aboutHeroStatNum">{s.number}</span>
+                      <span className="aboutHeroStatLabel">{s.label}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ── SUB-NAV ĐIỀU HƯỚNG CÁC TRANG LIÊN QUAN ─────── */}
         <nav className="aboutSubNav" aria-label="Điều hướng chuyên mục Giới thiệu">
@@ -231,101 +242,122 @@ export default async function AboutHospitalPage() {
         </nav>
 
         {/* ── CHỨC NĂNG & NHIỆM VỤ TRỌNG TÂM ─────────── */}
-        <section className="container aboutSection">
-          <div className="aboutSectionHead">
-            <span className="aboutKicker">CHỨC NĂNG & NHIỆM VỤ</span>
-            <h2>{coreTitle}</h2>
-            <p>{coreSubtitle}</p>
-          </div>
-
-          <div className="aboutCoreGrid">
-            {coreItems.map((item: any, idx: number) => {
-              const svgIcon = coreSVGs[idx % coreSVGs.length]
-              const colorClass = `coreTheme${idx % 4}`
-              return (
-                <div className={`aboutCoreCard ${colorClass}`} key={idx}>
-                  <div className="aboutCoreIconBox">
-                    {svgIcon}
-                  </div>
-                  <h3>{item.title}</h3>
-                  <p>{item.desc}</p>
-                  <div className="aboutCoreCardGlow" />
-                </div>
-              )
-            })}
-          </div>
-        </section>
-
-        {/* ── CƠ SỞ VẬT CHẤT & NĂNG LỰC KỸ THUẬT ───────── */}
-        <section className="aboutFacSection">
-          <div className="container">
+        {corePrinciples.enabled !== false && coreItems.length > 0 && (
+          <section className="container aboutSection">
             <div className="aboutSectionHead">
-              <span className="aboutKicker">NĂNG LỰC ĐIỀU TRỊ</span>
-              <h2>{facTitle}</h2>
-              <p>{facDesc}</p>
+              <span className="aboutKicker">CHỨC NĂNG & NHIỆM VỤ</span>
+              <h2 style={{ textWrap: 'balance' }}>{coreTitle}</h2>
+              <p style={{ whiteSpace: 'pre-line', textWrap: 'balance' }}>{coreSubtitle}</p>
             </div>
 
-            <div className="aboutFacGrid">
-              {facItems.map((f: any, idx: number) => {
-                const facIcon = facSVGs[idx % facSVGs.length]
+            <div className="aboutCoreGrid">
+              {coreItems.map((item: any, idx: number) => {
+                const svgIcon = coreSVGs[idx % coreSVGs.length]
+                const colorClass = `coreTheme${idx % 4}`
+                const itemAlign = item.textAlign || 'left'
                 return (
-                  <div className="aboutFacCard" key={idx}>
-                    <div className="aboutFacTopRow">
-                      <div className="aboutFacIconBox">
-                        {facIcon}
-                      </div>
-                      <span className="aboutFacIndex">0{idx + 1}</span>
+                  <div
+                    className={`aboutCoreCard ${colorClass}`}
+                    key={idx}
+                    style={itemAlign !== 'left' ? { textAlign: itemAlign } : undefined}
+                  >
+                    <div className="aboutCoreIconBox">
+                      {svgIcon}
                     </div>
-                    <h3>{f.title}</h3>
-                    <p>{f.desc}</p>
+                    <h3 style={{ textWrap: 'balance' }}>{item.title}</h3>
+                    <p style={{ whiteSpace: 'pre-line', textAlign: itemAlign }}>{item.desc}</p>
+                    <div className="aboutCoreCardGlow" />
                   </div>
                 )
               })}
             </div>
-          </div>
-        </section>
+          </section>
+        )}
+
+        {/* ── CƠ SỞ VẬT CHẤT & NĂNG LỰC KỸ THUẬT ───────── */}
+        {facilities.enabled !== false && facItems.length > 0 && (
+          <section className="aboutFacSection">
+            <div className="container">
+              <div className="aboutSectionHead">
+                <span className="aboutKicker">NĂNG LỰC ĐIỀU TRỊ</span>
+                <h2 style={{ textWrap: 'balance' }}>{facTitle}</h2>
+                <p style={{ whiteSpace: 'pre-line', textWrap: 'balance' }}>{facDesc}</p>
+              </div>
+
+              <div className="aboutFacGrid">
+                {facItems.map((f: any, idx: number) => {
+                  const facIcon = facSVGs[idx % facSVGs.length]
+                  const facAlign = f.textAlign || 'left'
+                  return (
+                    <div
+                      className="aboutFacCard"
+                      key={idx}
+                      style={facAlign !== 'left' ? { textAlign: facAlign } : undefined}
+                    >
+                      <div className="aboutFacTopRow">
+                        <div className="aboutFacIconBox">
+                          {facIcon}
+                        </div>
+                        <span className="aboutFacIndex">0{idx + 1}</span>
+                      </div>
+                      <h3 style={{ textWrap: 'balance' }}>{f.title}</h3>
+                      <p style={{ whiteSpace: 'pre-line', textAlign: facAlign }}>{f.desc}</p>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── CAM KẾT CHẤT LƯỢNG PHỤC VỤ ──────── */}
-        <section className="container aboutCommitSection">
-          <div className="aboutCommitCard">
-            <div className="aboutCommitIconBox">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                <path d="M8 10h.01" /><path d="M12 10h.01" /><path d="M16 10h.01" />
-              </svg>
+        {commitment.enabled !== false && (
+          <section className="container aboutCommitSection">
+            <div
+              className="aboutCommitCard"
+              style={commitment.textAlign && commitment.textAlign !== 'center' ? { textAlign: commitment.textAlign } : undefined}
+            >
+              <div className="aboutCommitIconBox">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  <path d="M8 10h.01" /><path d="M12 10h.01" /><path d="M16 10h.01" />
+                </svg>
+              </div>
+              <h2 style={{ textWrap: 'balance' }}>{commitTitle}</h2>
+              <blockquote style={{ whiteSpace: 'pre-line', textWrap: 'balance' }}>"{commitQuote}"</blockquote>
+              <p className="aboutCommitAuthor">— {commitAuthor}</p>
             </div>
-            <h2>{commitTitle}</h2>
-            <blockquote>"{commitQuote}"</blockquote>
-            <p className="aboutCommitAuthor">— {commitAuthor}</p>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* ── KHỐI LIÊN KẾT CHUYÊN SÂU (ĐIỀU HƯỚNG TỚI LỊCH SỬ, SƠ ĐỒ, KHOA PHÒNG) ─── */}
-        <section className="container aboutRelatedSection">
-          <div className="aboutSectionHead">
-            <span className="aboutKicker">CHUYÊN MỤC LIÊN QUAN</span>
-            <h2>{relTitle}</h2>
-            <p>{relSubtitle}</p>
-          </div>
+        {relatedLinksData.enabled !== false && relLinks.length > 0 && (
+          <section className="container aboutRelatedSection">
+            <div className="aboutSectionHead">
+              <span className="aboutKicker">CHUYÊN MỤC LIÊN QUAN</span>
+              <h2 style={{ textWrap: 'balance' }}>{relTitle}</h2>
+              <p style={{ whiteSpace: 'pre-line', textWrap: 'balance' }}>{relSubtitle}</p>
+            </div>
 
-          <div className="aboutRelatedGrid">
-            {relLinks.map((link: any, idx: number) => (
-              <a href={link.url} className="aboutRelatedCard" key={idx}>
-                <div className="aboutRelatedBadge">0{idx + 1}</div>
-                <div className="aboutRelatedBody">
-                  <h3 className="aboutRelatedTitle">
-                    {link.title}
-                    <svg className="aboutRelatedArrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                      <polyline points="12 5 19 12 12 19"></polyline>
-                    </svg>
-                  </h3>
-                  {link.desc && <p className="aboutRelatedDesc">{link.desc}</p>}
-                </div>
-              </a>
-            ))}
-          </div>
-        </section>
+            <div className="aboutRelatedGrid">
+              {relLinks.map((link: any, idx: number) => (
+                <a href={link.url} className="aboutRelatedCard" key={idx}>
+                  <div className="aboutRelatedBadge">0{idx + 1}</div>
+                  <div className="aboutRelatedBody">
+                    <h3 className="aboutRelatedTitle">
+                      {link.title}
+                      <svg className="aboutRelatedArrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </h3>
+                    {link.desc && <p className="aboutRelatedDesc">{link.desc}</p>}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
       <SiteFooter />
     </>

@@ -5,7 +5,7 @@ export const SeoSettings: GlobalConfig = {
   slug: 'seo-settings',
   label: 'SEO & Công cụ tìm kiếm',
   admin: {
-    group: 'Hệ thống',
+    group: '⚙️ Hệ thống & Dữ liệu',
     description: 'Cấu hình SEO mặc định, robots, sitemap và thông tin chia sẻ mạng xã hội cho toàn website.',
   },
   access: { read: () => true, update: admins },

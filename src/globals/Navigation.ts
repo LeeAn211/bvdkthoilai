@@ -60,6 +60,7 @@ const menuLinkFields = (): Field[] => [
       { label: 'Tiêm chủng – Toàn bộ mục', value: '/tiem-chung' },
       { label: 'Đấu thầu – Mua sắm', value: '/dau-thau-mua-sam' },
       { label: 'Văn bản – Tài liệu', value: '/van-ban' },
+      { label: 'Phác đồ điều trị', value: '/phac-do-dieu-tri' },
       { label: 'Tuyển dụng', value: '/tuyen-dung' },
       { label: 'Hướng dẫn khám BHYT', value: '/trang/kham-bhyt' },
       { label: 'Liên hệ', value: '/lien-he' },
@@ -169,7 +170,7 @@ export const Navigation: GlobalConfig = {
   slug: 'navigation',
   label: 'Menu website',
   admin: {
-    group: 'Trang chủ & Giao diện',
+    group: '🌐 Trang chủ & Giao diện Website',
     description:
       'Mỗi menu và menu con có thể gắn cả một mục website (Tin tức, Thông báo, Lịch khám…), một bài cụ thể hoặc một liên kết bên ngoài.',
   },

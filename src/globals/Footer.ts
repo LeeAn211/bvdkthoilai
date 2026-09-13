@@ -28,7 +28,7 @@ export const Footer: GlobalConfig = {
   slug: 'footer',
   label: 'Chân trang',
   admin: {
-    group: 'Trang chủ & Giao diện',
+    group: '🌐 Trang chủ & Giao diện Website',
     description: 'Quản lý toàn bộ nội dung Footer. Có thể ẩn/hiện từng thông tin, thêm/bớt cột và từng liên kết mà không cần sửa code.',
   },
   access: { read: loggedIn, update: loggedIn },
@@ -66,9 +66,53 @@ export const Footer: GlobalConfig = {
       minRows: 0,
       maxRows: 6,
       admin: { description: 'Kéo thả để sắp xếp. Có thể xóa toàn bộ cột nếu không cần. Mỗi cột và mỗi liên kết đều có công tắc ẩn/hiện.' },
+      defaultValue: [
+        {
+          visible: true,
+          title: 'Dành cho người bệnh',
+          links: [
+            { visible: true, label: 'Đặt lịch khám', linkMode: 'external', url: 'https://medpro.vn/' },
+            { visible: true, label: 'Giờ làm việc', linkMode: 'internal', url: '/lich-lam-viec' },
+            { visible: true, label: 'Lịch khám & Trực', linkMode: 'internal', url: '/lich-kham' },
+            { visible: true, label: 'Bảng giá dịch vụ', linkMode: 'internal', url: '/bang-gia' },
+            { visible: true, label: 'Hướng dẫn BHYT', linkMode: 'internal', url: '/trang/kham-bhyt' },
+          ],
+        },
+        {
+          visible: true,
+          title: 'Thông tin bệnh viện',
+          links: [
+            { visible: true, label: 'Giới thiệu', linkMode: 'internal', url: '/gioi-thieu' },
+            { visible: true, label: 'Tin tức', linkMode: 'internal', url: '/tin-tuc' },
+            { visible: true, label: 'Thông báo', linkMode: 'internal', url: '/thong-bao' },
+            { visible: true, label: 'Đấu thầu – Mua sắm', linkMode: 'internal', url: '/dau-thau-mua-sam' },
+          ],
+        },
+        {
+          visible: true,
+          title: 'Hỗ trợ',
+          links: [
+            { visible: true, label: 'Góp ý – Phản hồi', linkMode: 'internal', url: '/lien-he' },
+            { visible: true, label: 'Văn bản – Tài liệu', linkMode: 'internal', url: '/van-ban' },
+            { visible: true, label: 'Tìm kiếm thông tin', linkMode: 'internal', url: '/tim-kiem' },
+          ],
+        },
+      ],
       fields: [
         { name: 'visible', label: 'Hiển thị cột này', type: 'checkbox', defaultValue: true },
         { name: 'title', label: 'Tiêu đề cột', type: 'text', required: true },
+        {
+          name: 'textAlign',
+          label: 'Canh lề cột',
+          type: 'select',
+          dbName: 'ft_col_align',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh phải', value: 'right' },
+          ],
+        },
         { name: 'links', label: 'Liên kết', type: 'array', minRows: 0, fields: footerLinkFields },
       ],
     },

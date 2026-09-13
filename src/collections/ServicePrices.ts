@@ -6,7 +6,7 @@ export const ServicePrices: CollectionConfig = {
   labels: { singular: 'Mức giá dịch vụ', plural: 'Lịch sử giá dịch vụ' },
   admin: {
     useAsTitle: 'decisionNo',
-    group: 'Khám bệnh',
+    group: '🏥 Khám bệnh & Dịch vụ Y tế',
     description: 'Lưu lịch sử giá theo thời gian hiệu lực. Không ghi đè lịch sử khi có quyết định giá mới.',
     defaultColumns: ['service', 'insurancePrice', 'servicePrice', 'effectiveFrom', 'effectiveTo', 'active'],
   },

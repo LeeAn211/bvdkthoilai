@@ -4,7 +4,7 @@ import { moduleAccess } from '@/access'
 export const ImportJobs: CollectionConfig = {
   slug: 'importJobs',
   labels: { singular: 'Lần nhập dữ liệu', plural: 'Lịch sử nhập dữ liệu' },
-  admin: { useAsTitle: 'fileName', group: 'Hệ thống', defaultColumns: ['module', 'fileName', 'status', 'createdCount', 'updatedCount', 'skippedCount', 'createdAt'] },
+  admin: { useAsTitle: 'fileName', group: '⚙️ Hệ thống & Dữ liệu', defaultColumns: ['module', 'fileName', 'status', 'createdCount', 'updatedCount', 'skippedCount', 'createdAt'] },
   access: {
     read: moduleAccess('services', 'view'),
     create: moduleAccess('services', 'import'),

@@ -31,19 +31,46 @@ export const OrganizationChart: GlobalConfig = {
   slug: 'organization-chart',
   label: 'Sơ đồ tổ chức',
   admin: {
-    group: 'Tổ chức',
+    group: '🩺 Chuyên môn & Tổ chức',
     description: 'Quản lý sơ đồ bộ máy: Giám đốc, các Phó Giám đốc, Khối Phòng chức năng và Khối Khoa chuyên môn.',
   },
   access: { read: () => true, update: admins },
   versions: { max: 20 },
   fields: [
     { name: 'pageTitle', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Sơ đồ tổ chức Bệnh viện Đa khoa Khu vực Thới Lai', required: true },
-    { name: 'description', label: 'Mô tả ngắn', type: 'textarea', defaultValue: 'Cơ cấu tổ chức bộ máy và hệ thống các khoa, phòng trực thuộc Bệnh viện Đa khoa Khu vực Thới Lai.' },
+    { name: 'description', label: 'Mô tả ngắn (Hỗ trợ Enter xuống dòng)', type: 'textarea', defaultValue: 'Cơ cấu tổ chức bộ máy và hệ thống các khoa, phòng trực thuộc Bệnh viện Đa khoa Khu vực Thới Lai.' },
+    {
+      name: 'showLeadershipSection',
+      label: 'Hiển thị Khối 1: Ban Lãnh đạo Bệnh viện',
+      type: 'checkbox',
+      defaultValue: true,
+    },
+    {
+      name: 'leadershipTitle',
+      label: 'Tiêu đề Khối 1',
+      type: 'text',
+      defaultValue: 'Ban Lãnh đạo Bệnh Viện',
+    },
+    {
+      name: 'showTreeSection',
+      label: 'Hiển thị Khối 2: Sơ đồ tổ chức bộ máy',
+      type: 'checkbox',
+      defaultValue: true,
+    },
+    {
+      name: 'treeTitle',
+      label: 'Tiêu đề Khối 2',
+      type: 'text',
+      defaultValue: 'Sơ đồ tổ chức bộ máy',
+    },
     {
       name: 'director',
       label: 'Bậc 1 – Giám đốc Bệnh viện',
       type: 'group',
-      fields: leaderFields(),
+      fields: [
+        { name: 'enabled', label: 'Hiển thị ô Giám đốc', type: 'checkbox', defaultValue: true },
+        ...leaderFields(),
+      ],
     },
     {
       name: 'deputyDirectors',
@@ -51,7 +78,10 @@ export const OrganizationChart: GlobalConfig = {
       type: 'array',
       maxRows: 8,
       admin: { description: 'Có thể thêm các Phó Giám đốc (tối đa 8); tự động canh đều cân đối trên sơ đồ; kéo thả để đổi vị trí.' },
-      fields: leaderFields(),
+      fields: [
+        { name: 'enabled', label: 'Hiển thị ô Phó Giám đốc này', type: 'checkbox', defaultValue: true },
+        ...leaderFields(),
+      ],
     },
     {
       name: 'offices',

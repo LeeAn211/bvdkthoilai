@@ -4,7 +4,7 @@ import { moduleAccess } from '@/access'
 export const FormSubmissions: CollectionConfig = {
   slug: 'formSubmissions',
   labels: { singular: 'Dữ liệu biểu mẫu', plural: 'Dữ liệu biểu mẫu' },
-  admin: { useAsTitle: 'publicCode', group: 'CSKH', defaultColumns: ['publicCode', 'form', 'status', 'createdAt'] },
+  admin: { useAsTitle: 'publicCode', group: '💬 Chăm sóc người bệnh & Khảo sát', defaultColumns: ['publicCode', 'form', 'status', 'createdAt'] },
   access: { read: moduleAccess('forms', 'view'), create: moduleAccess('forms', 'create'), update: moduleAccess('forms', 'edit'), delete: moduleAccess('forms', 'delete') },
   fields: [
     { name: 'publicCode', label: 'Mã tiếp nhận', type: 'text', unique: true, index: true, required: true },

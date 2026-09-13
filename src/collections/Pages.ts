@@ -7,7 +7,7 @@ import { createSlugRedirect } from '@/hooks/contentWorkflow'
 export const Pages: CollectionConfig = {
   slug: 'pages',
   labels: { singular: 'Trang nội dung', plural: 'Trang nội dung' },
-  admin: { useAsTitle: 'title', group: 'Nội dung' },
+  admin: { useAsTitle: 'title', group: '🌐 Trang chủ & Giao diện Website' },
   access: { read: publicPublished, create: moduleAccess('pages', 'create'), update: workflowUpdateAccess('pages'), delete: contentDeleteAccess('pages') },
   trash: true,
   versions: { drafts: { autosave: true, schedulePublish: false }, maxPerDoc: 30 },

@@ -10,7 +10,7 @@ export const ScientificActivityGroups: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    group: 'Nội dung',
+    group: '🩺 Chuyên môn & Tổ chức',
     defaultColumns: ['name', 'order', 'active', 'updatedAt'],
     description: 'Thêm, sửa, sắp xếp hoặc xóa các nhóm dùng cho bài viết Hoạt động khoa học.',
   },

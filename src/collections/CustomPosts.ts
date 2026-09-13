@@ -8,7 +8,7 @@ export const CustomPosts: CollectionConfig = {
   labels: { singular: 'Bài viết theo mục Menu', plural: 'Bài viết theo mục Menu' },
   admin: {
     useAsTitle: 'title',
-    group: 'Nội dung',
+    group: '🌐 Trang chủ & Giao diện Website',
     defaultColumns: ['title', 'section', 'publishedAt', '_status'],
     description: 'Đăng bài cho các mục nội dung mở rộng được tạo từ Menu, ví dụ Chuyển đổi số.',
   },

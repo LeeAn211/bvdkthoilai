@@ -3,7 +3,7 @@ import { mediaUrl } from '@/lib/media'
 import { SocialBrandIcon } from './SocialBrandIcon'
 
 const legacyColumns = (medpro: string, hotline: string) => [
-  { title: 'Dành cho người bệnh', links: [{ label: 'Đặt lịch khám', url: medpro }, { label: 'Lịch khám', url: '/lich-kham' }, { label: 'Bảng giá dịch vụ', url: '/bang-gia' }, { label: 'Hướng dẫn BHYT', url: '/trang/kham-bhyt' }] },
+  { title: 'Dành cho người bệnh', links: [{ label: 'Đặt lịch khám', url: medpro }, { label: 'Giờ làm việc', url: '/lich-lam-viec' }, { label: 'Lịch khám & Trực', url: '/lich-kham' }, { label: 'Bảng giá dịch vụ', url: '/bang-gia' }, { label: 'Hướng dẫn BHYT', url: '/trang/kham-bhyt' }] },
   { title: 'Thông tin bệnh viện', links: [{ label: 'Giới thiệu', url: '/gioi-thieu' }, { label: 'Tin tức', url: '/tin-tuc' }, { label: 'Thông báo', url: '/thong-bao' }, { label: 'Đấu thầu – Mua sắm', url: '/dau-thau-mua-sam' }] },
   { title: 'Hỗ trợ', links: [{ label: `Hotline: ${hotline}`, url: `tel:${hotline}` }, { label: 'Góp ý – Phản hồi', url: '/lien-he' }, { label: 'Văn bản – Tài liệu', url: '/van-ban' }, { label: 'Tìm kiếm thông tin', url: '/tim-kiem' }] },
 ]
@@ -64,10 +64,23 @@ export async function SiteFooter() {
           </div>
         </div>
 
-        {columns.map((column: any, index: number) => <div className="footerLinkColumn" key={column.id || index}>
-          <h3>{column.title}</h3>
-          {(column.links || []).filter((link: any) => link?.visible !== false).map((link: any, linkIndex: number) => <a key={link.id || linkIndex} href={link.url || '#'} target={link.openNewTab ? '_blank' : undefined} rel={link.openNewTab ? 'noreferrer' : undefined}>{link.label}</a>)}
-        </div>)}
+        {columns.map((column: any, index: number) => {
+          const colAlign = column.textAlign || 'left'
+          return (
+            <div
+              className="footerLinkColumn"
+              key={column.id || index}
+              style={colAlign !== 'left' ? { textAlign: colAlign as any } : undefined}
+            >
+              <h3>{column.title}</h3>
+              {(column.links || []).filter((link: any) => link?.visible !== false).map((link: any, linkIndex: number) => (
+                <a key={link.id || linkIndex} href={link.url || '#'} target={link.openNewTab ? '_blank' : undefined} rel={link.openNewTab ? 'noreferrer' : undefined}>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          )
+        })}
       </div>
       {(bottom.showCopyright !== false || bottom.showRightText !== false) && <div className="container footerBottom">
         {bottom.showCopyright !== false && <span>{String(bottom.copyright || footer?.copyright || '© {CURRENT_YEAR} Bệnh viện Đa khoa Khu vực Thới Lai').replace('{CURRENT_YEAR}', String(new Date().getFullYear()))}</span>}

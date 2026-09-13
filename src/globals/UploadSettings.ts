@@ -5,7 +5,7 @@ export const UploadSettings: GlobalConfig = {
   slug: 'upload-settings',
   label: 'Giới hạn Upload',
   admin: {
-    group: 'Hệ thống',
+    group: '⚙️ Hệ thống & Dữ liệu',
     description: 'Cấu hình giới hạn upload theo Baseline V1.1. Giai đoạn Foundation tạo nguồn cấu hình tập trung; middleware enforcement sẽ hoàn thiện ở System hardening.',
   },
   access: {

@@ -7,7 +7,7 @@ export const Doctors: CollectionConfig = {
   slug: 'doctors',
   labels: { singular: 'Bác sĩ', plural: 'Bác sĩ' },
   admin: {
-    useAsTitle: 'name', group: 'Tổ chức',
+    useAsTitle: 'name', group: '🩺 Chuyên môn & Tổ chức',
     defaultColumns: ['name', 'department', 'specialtyRef', 'title', 'active', 'order'],
     description: 'Khoa/Phòng là quan hệ tổ chức chính của bác sĩ. Chuyên khoa chỉ chọn khi bác sĩ thực sự thuộc một lĩnh vực chuyên môn riêng.',
   },

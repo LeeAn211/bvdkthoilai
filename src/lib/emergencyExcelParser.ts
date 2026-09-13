@@ -1,7 +1,4 @@
-/**
- * Parser file Excel lịch trực cấp cứu & bệnh viện (truc.xlsx)
- * Chạy trực tiếp trên trình duyệt hoặc server bằng thư viện xlsx
- */
+import * as XLSX from 'xlsx'
 
 export type ParsedEmergencyData = {
   slots: Array<{
@@ -30,12 +27,7 @@ export type ParsedEmergencyData = {
 export function parseEmergencyWorkbook(workbook: any, fileName?: string): ParsedEmergencyData {
   const sheetName = workbook.SheetNames[0]
   const ws = workbook.Sheets[sheetName]
-  
-  // Dùng thư viện xlsx để lấy mảng 2 chiều
-  // @ts-ignore
-  const XLSX = typeof window !== 'undefined' ? (window as any).XLSX : null
-  const utils = XLSX ? XLSX.utils : require('xlsx').utils
-  const raw: any[][] = utils.sheet_to_json(ws, { header: 1, defval: '' })
+  const raw: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
 
   // ── Bước 1: Tìm dòng header ngày (có "Thứ Hai" hoặc "Thứ Ba") ──────────
   let headerRow = -1
@@ -72,17 +64,23 @@ export function parseEmergencyWorkbook(workbook: any, fileName?: string): Parsed
   const dayCols = Object.entries(dayColMap).map(([col, day]) => ({ col: Number(col), day }))
   const dataStart = headerRow + 1
 
-  // ── Bước 2: Tìm dòng bắt đầu bảng nhân sự cố định ──────────────────────
-  let fixedTableStart = -1
-  for (let i = dataStart; i < raw.length; i++) {
-    const joined = raw[i].map(c => String(c || '')).join('|').toLowerCase()
-    if (joined.includes('bác sĩ') || joined.includes('bac si') || (joined.includes('khoa') && joined.includes('điều dưỡng'))) {
-      fixedTableStart = i + 1
+  // ── Bước 2: Tìm điểm kết thúc của Bảng Lịch Trực (Bảng 1) ──────────────────
+  // Bảng 1 dừng khi gặp dòng tiêu đề "KHOA", "Ghi chú:" hoặc hết bảng
+  let table1End = raw.length
+  for (let i = dataStart + 1; i < raw.length; i++) {
+    const c0 = String(raw[i][0] || '').trim().toUpperCase()
+    const joined = raw[i].map((c: any) => String(c || '')).join('|').toUpperCase()
+    if (
+      c0 === 'KHOA' ||
+      c0.startsWith('GHI CHÚ:') ||
+      (c0 === '' && joined.includes('SỐ ĐIỆN THOẠI'))
+    ) {
+      table1End = i
       break
     }
   }
 
-  // ── Bước 3: Parse bảng lịch trực (bảng 1: hàng 8 - 24) ──────────────────
+  // ── Bước 3: Parse đúng và đủ các dòng thuộc bảng lịch trực 7 ngày ──────────
   const deptMap: Map<string, {
     deptName: string; subRole: string; deptType: string;
     dayData: Record<string, string[]>; fixedStaff: string; note: string
@@ -91,30 +89,76 @@ export function parseEmergencyWorkbook(workbook: any, fileName?: string): Parsed
   let currentDept = ''
   let currentSubRole = ''
 
-  const endRow = fixedTableStart > 0 ? fixedTableStart - 1 : raw.length
+  const isRoleKeyword = (s: string) => {
+    const norm = s.toUpperCase().trim()
+    return norm === 'BÁC SĨ' || norm === 'BAC SI' || norm === 'ĐIỀU DƯỠNG' || norm === 'DIEU DUONG' || norm === 'KTV' || norm === 'HSTH'
+  }
 
-  for (let i = dataStart; i < endRow; i++) {
+  for (let i = dataStart; i < table1End; i++) {
     const row = raw[i]
     let col0 = String(row[0] || '').trim()
     let col1 = String(row[1] || '').trim()
 
-    // Bỏ qua dòng tiêu đề phụ thừa như "TRỰC"
-    if (col0.toUpperCase() === 'TRỰC') {
+    // Bỏ qua hàng hoàn toàn trống
+    if (!col0 && !col1 && row.slice(2, 9).every((c: any) => !String(c || '').trim())) {
       continue
     }
 
+    // Nếu col0 là 'TRỰC' (tiêu đề khối ở góc trái trên)
+    if (col0.toUpperCase() === 'TRỰC') {
+      if (!col1 && row.slice(2, 9).every((c: any) => !String(c || '').trim())) {
+        // Dòng tiêu đề phụ độc lập hoàn toàn rỗng -> bỏ qua
+        continue
+      }
+      // Ngược lại, tên thực sự của hàng nằm ở col1
+      col0 = col1
+      col1 = ''
+    }
+
+    const rowText = (col0 + ' ' + col1).toLowerCase()
+
+    // Xử lý trường hợp hàng đặc biệt như "THƯỜNG TRỰC LÃNH ĐẠO" (ô merged suốt 7 ngày)
+    if (rowText.includes('thường trực')) {
+      const deptName = col0.toLowerCase().includes('thường trực') ? col0 : (col1 || 'THƯỜNG TRỰC LÃNH ĐẠO')
+      const mergedVal = row.slice(2, 9).filter((c: any) => String(c || '').trim()).map((c: any) => String(c).trim()).join(' ')
+      if (mergedVal) {
+        deptMap.set(deptName, {
+          deptName,
+          subRole: '',
+          deptType: 'leader',
+          dayData: {
+            '2': [mergedVal], '3': [mergedVal], '4': [mergedVal],
+            '5': [mergedVal], '6': [mergedVal], '7': [mergedVal], '8': [mergedVal],
+          },
+          fixedStaff: '',
+          note: '',
+        })
+        continue
+      }
+    }
+
+    // Phân định currentDept và currentSubRole
     if (col0) {
-      currentDept = col0
-      currentSubRole = col1 || ''
+      if (isRoleKeyword(col0)) {
+        currentSubRole = col0
+      } else {
+        currentDept = col0
+        currentSubRole = col1 || ''
+      }
     } else if (col1) {
-      currentSubRole = col1
+      if (isRoleKeyword(col1)) {
+        currentSubRole = col1
+      } else {
+        currentDept = col1
+        currentSubRole = ''
+      }
     }
 
     if (!currentDept) continue
 
     let deptType = 'clinical'
     const lower = currentDept.toLowerCase()
-    if (lower.includes('lãnh đạo') || lower.includes('ban giám')) deptType = 'leader'
+    if (lower.includes('lãnh đạo') || lower.includes('ban giám') || lower.includes('thường trực')) deptType = 'leader'
     else if (lower.includes('x quang') || lower.includes('xét nghiệm') || lower.includes('cận lâm')) deptType = 'paraclinical'
     else if (lower.includes('tài xế') || lower.includes('viện phí') || lower.includes('điện') || lower.includes('bảo vệ')) deptType = 'admin'
 
@@ -133,79 +177,7 @@ export function parseEmergencyWorkbook(workbook: any, fileName?: string): Parsed
     }
   }
 
-  // ── Bước 4: Parse bảng nhân sự cố định (bảng 2: hàng 25+) ────────────────
-  let generalNote = ''
-  if (fixedTableStart > 0) {
-    for (let i = fixedTableStart; i < raw.length; i++) {
-      const row = raw[i]
-      const col0 = String(row[0] || '').trim()
-      const col2 = String(row[2] || '').trim()
-      const col5 = String(row[5] || '').trim()
-
-      if (col0.toLowerCase().startsWith('ghi chú:')) {
-        generalNote = (generalNote ? generalNote + '\n' : '') + col0
-        continue
-      }
-
-      if (col0 && (col2 || col5)) {
-        const staffParts: string[] = []
-        if (col2) staffParts.push(col2)
-        if (col5) staffParts.push(`ĐD/KTV: ${col5}`)
-        const staffStr = staffParts.join('\n')
-
-        let matched = false
-        for (const [, entry] of deptMap) {
-          if (entry.deptName.toLowerCase().includes(col0.toLowerCase()) || col0.toLowerCase().includes(entry.deptName.toLowerCase())) {
-            entry.fixedStaff = (entry.fixedStaff ? entry.fixedStaff + '\n' : '') + staffStr
-            matched = true
-          }
-        }
-
-        if (!matched) {
-          deptMap.set(col0, {
-            deptName: col0,
-            subRole: '',
-            deptType: col0.toLowerCase().includes('phòng') ? 'admin' : 'clinical',
-            dayData: {},
-            fixedStaff: staffStr,
-            note: '',
-          })
-        }
-      }
-    }
-  }
-
-  // ── Bước 5: Parse bảng số điện thoại trực & cấp cứu (hàng 48+) ──────────
-  const contacts: Array<{ name: string; phone: string; type: 'internal' | 'emergency_unit'; note?: string }> = []
-  for (let i = fixedTableStart > 0 ? fixedTableStart : dataStart; i < raw.length; i++) {
-    const row = raw[i]
-    const col0 = String(row[0] || '').trim()
-    const col3 = String(row[3] || '').trim()
-    const col4 = String(row[4] || '').trim()
-    const col7 = String(row[7] || '').trim()
-
-    const isHeaderRow = (str: string) => str.toLowerCase().includes('số điện thoại') || str.toLowerCase().includes('bệnh viện')
-
-    // 1. Danh bạ nội bộ (Tài xế, Điện nước, Bảo vệ, Công an, Huyện đội...)
-    if (col0 && col3 && !isHeaderRow(col3)) {
-      contacts.push({
-        name: col0,
-        phone: col3,
-        type: 'internal',
-      })
-    }
-
-    // 2. Danh bạ bệnh viện tuyến trên / cấp cứu
-    if (col4 && col7 && !isHeaderRow(col7)) {
-      contacts.push({
-        name: col4,
-        phone: col7,
-        type: 'emergency_unit',
-      })
-    }
-  }
-
-  // ── Bước 6: Chuyển thành array weeklyDeptSlots ───────────────────────────
+  // ── Bước 4: Chuyển thành array weeklyDeptSlots ───────────────────────────
   const slots = Array.from(deptMap.values()).map(entry => ({
     deptName: entry.deptName,
     subRole: entry.subRole,
@@ -217,9 +189,12 @@ export function parseEmergencyWorkbook(workbook: any, fileName?: string): Parsed
     day6: (entry.dayData['6'] || []).join('\n'),
     day7: (entry.dayData['7'] || []).join('\n'),
     day8: (entry.dayData['8'] || []).join('\n'),
-    fixedStaff: entry.fixedStaff,
-    note: entry.note,
+    fixedStaff: '',
+    note: '',
   }))
+
+  const contacts: Array<{ name: string; phone: string; type: 'internal' | 'emergency_unit'; note?: string }> = []
+  let generalNote = ''
 
   // Trích xuất tiêu đề và ngày tuần từ file
   let title = ''

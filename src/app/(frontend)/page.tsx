@@ -9,6 +9,7 @@ import { HeroBannerCarousel } from '@/components/HeroBannerCarousel'
 import { FeaturedContentCarousel } from '@/components/FeaturedContentCarousel'
 import { AdvancedTechniquesCarousel } from '@/components/AdvancedTechniquesCarousel'
 import { OurExpertsCarousel } from '@/components/OurExpertsCarousel'
+import { HomeScrollSnapHandler } from '@/components/HomeScrollSnapHandler'
 import { getCMS, getGlobal, getHomepage } from '@/lib/payload'
 import { mediaFormat, mediaLabel, mediaUrl } from '@/lib/media'
 import { getDefaultContentMedia, scientificActivityGroupName } from '@/lib/defaultMedia'
@@ -36,6 +37,7 @@ export default async function HomePage() {
   let notices: any[] = []
   let procurement: any[] = []
   let documents: any[] = []
+  let clinicalProtocols: any[] = []
   let doctors: any[] = []
   let departments: any[] = []
   let specialties: any[] = []
@@ -62,16 +64,17 @@ export default async function HomePage() {
     defaultMedia = contentDefaults
     quickLinksSettings = quickSettings || {}
 
-    const [newsResult, noticeResult, procurementResult, documentResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult, scientificActivitiesResult, scientificActivityGroupsResult] = await Promise.all([
+    const [newsResult, noticeResult, procurementResult, documentResult, clinicalProtocolsResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult, scientificActivitiesResult, scientificActivityGroupsResult] = await Promise.all([
       payload.find({ collection: 'news', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 100, depth: 1 }),
       payload.find({ collection: 'notices', where: { and: [{ _status: { equals: 'published' } }, { showOnHome: { equals: true } }] }, sort: '-startAt', limit: 6, depth: 1 }),
       payload.find({ collection: 'procurement', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 6, depth: 1 }),
-      payload.find({ collection: 'documents', sort: '-issuedAt', limit: 6, depth: 1 }),
+      payload.find({ collection: 'documents', sort: '-issuedAt', limit: 12, depth: 1 }),
+      payload.find({ collection: 'clinical-protocols' as any, sort: '-issuedAt', limit: 12, depth: 2 }).catch(() => ({ docs: [] })),
       payload.find({ collection: 'doctors', where: { active: { equals: true } }, limit: 50, sort: ['order', 'name'], depth: 2 }),
       payload.find({ collection: 'departments', limit: 100, sort: 'name', depth: 0 }),
       payload.find({ collection: 'specialties', where: { active: { equals: true } }, limit: 100, sort: 'order', depth: 1 }),
       payload.find({ collection: 'services', where: { active: { equals: true } }, limit: 8, sort: 'name', depth: 0 }),
-      payload.find({ collection: 'schedules', where: { active: { equals: true } }, limit: 100, sort: 'date', depth: 1 }),
+      payload.find({ collection: 'schedules', where: { active: { equals: true } }, limit: 100, sort: '-createdAt', depth: 2 }),
       payload.find({ collection: 'vaccinationSchedules', where: { active: { equals: true } }, limit: 200, sort: '-date', depth: 1 }),
       payload.find({ collection: 'vaccines', where: { active: { equals: true } }, limit: 200, sort: 'name', depth: 1 }),
       payload.find({ collection: 'vaccinePrices', where: { active: { equals: true } }, limit: 1000, sort: '-effectiveFrom', depth: 1 }),
@@ -86,6 +89,7 @@ export default async function HomePage() {
     notices = noticeResult.docs as any[]
     procurement = procurementResult.docs as any[]
     documents = documentResult.docs as any[]
+    clinicalProtocols = (clinicalProtocolsResult?.docs || []) as any[]
     doctors = doctorResult.docs as any[]
     departments = departmentResult.docs as any[]
     specialties = specialtyResult.docs as any[]
@@ -280,10 +284,31 @@ export default async function HomePage() {
     '--section-content-width': item.contentWidth ? `${item.contentWidth}px` : undefined,
   } as CSSProperties)
 
-  const homeDailySchedules = schedules.filter(item => !item.mode || item.mode === 'daily').map(item => ({ id: item.id, title: item.title, summary: item.summary, doctor: item.doctor?.name, department: item.department?.name, date: item.date, startTime: item.startTime, endTime: item.endTime, room: item.room, note: item.note, imageUrl: mediaUrl(item.coverImage) || defaultMedia.schedules }))
+  const homeEmergencySchedules = schedules.filter(item => item.mode === 'emergency').map(item => ({ id: item.id, title: item.title, summary: item.summary, note: item.note, emergencyWeekStart: item.emergencyWeekStart, emergencyWeekEnd: item.emergencyWeekEnd, imageUrl: mediaUrl(item.coverImage || item.scheduleImage) || defaultMedia.schedules, href: `/lich-kham/${item.id}` }))
+  const homeDailySchedules = schedules.filter(item => !item.mode || item.mode === 'daily').map(item => ({ id: item.id, title: item.title, summary: item.summary, doctor: item.doctor?.name || item.dailyAssignments?.[0]?.doctor?.name, department: item.department?.name || item.dailyAssignments?.[0]?.department?.name, date: item.date, startTime: item.startTime || item.dailyAssignments?.[0]?.startTime, endTime: item.endTime || item.dailyAssignments?.[0]?.endTime, room: item.room || item.dailyAssignments?.[0]?.room, note: item.note, imageUrl: mediaUrl(item.coverImage) || defaultMedia.schedules }))
   const homeWeeklySchedules = schedules.filter(item => item.mode === 'weekly').map(item => ({ id: item.id, title: item.title, summary: item.summary, weekStart: item.weekStart, weekEnd: item.weekEnd, note: item.note, imageUrl: mediaUrl(item.coverImage) || defaultMedia.schedules, slots: (item.weeklySlots || []).map((slot: any) => ({ id: slot.id, dayOfWeek: slot.dayOfWeek, doctor: slot.doctor?.name || 'Bác sĩ', department: slot.department?.name || '', startTime: slot.startTime, endTime: slot.endTime, room: slot.room, note: slot.note })) }))
   const homeAttachedSchedules = schedules.filter(item => item.mode === 'attachment').map(item => ({ id: item.id, title: item.title, summary: item.summary, note: item.note, validFrom: item.validFrom, validTo: item.validTo, imageUrl: mediaUrl(item.coverImage || item.scheduleImage) || defaultMedia.schedules, fileUrl: mediaUrl(item.scheduleFile), fileName: mediaLabel(item.scheduleFile), fileFormat: mediaFormat(item.scheduleFile) }))
-  const scheduleTabOrder = (sectionConfig('schedules')?.scheduleTabOrder || []).filter((item: any) => item.visible !== false && item.tab).map((item: any) => item.tab)
+  const configuredScheduleOrder = (sectionConfig('schedules')?.scheduleTabOrder || []).filter((tab: any) => tab.visible !== false)
+  const defaultHomeScheduleTabs = [
+    { label: 'Lịch trực cấp cứu', kind: 'emergency', tab: 'emergency', visible: true },
+    { label: 'Theo ngày', kind: 'daily', tab: 'daily', visible: true },
+    { label: 'Theo tuần', kind: 'weekly', tab: 'weekly', visible: true },
+    { label: 'Lịch đính kèm', kind: 'attachments', tab: 'attachments', visible: true },
+  ]
+  const rawScheduleTabs = configuredScheduleOrder.length ? configuredScheduleOrder : defaultHomeScheduleTabs
+  // Nếu database đã lưu danh sách tab từ trước mà chưa có 'emergency', tự động bổ sung tab 'emergency' lên đầu nếu có lịch trực cấp cứu
+  const hasEmergencyTab = rawScheduleTabs.some((t: any) => (t.tab || t.kind) === 'emergency')
+  const mergedScheduleTabs = (!hasEmergencyTab && homeEmergencySchedules.length > 0)
+    ? [{ label: 'Lịch trực cấp cứu', kind: 'emergency', tab: 'emergency', visible: true }, ...rawScheduleTabs]
+    : rawScheduleTabs
+
+  const scheduleTabOrder = mergedScheduleTabs.filter((item: any) => item.visible !== false && (item.tab || item.kind)).map((item: any) => item.tab || item.kind)
+  const scheduleTabs = mergedScheduleTabs.filter((tab: any) => tab.visible !== false).map((tab: any, tabIndex: number) => ({
+    label: tab.label?.trim(),
+    kind: tab.tab || tab.kind,
+    manualItems: (tab.manualItems || []).filter((entry: any) => entry.title?.trim()).map((entry: any, itemIndex: number) => ({ id: entry.id || `manual-schedule-${tabIndex}-${itemIndex}`, title: entry.title, summary: entry.description, imageUrl: mediaUrl(entry.image, 'card'), href: entry.url || '/lich-kham' })),
+  })).filter((tab: any) => tab.label || tab.kind || tab.manualItems.length)
+
   const nowForVaccinePrice = new Date()
   const currentVaccinePrice = new Map<string, number>()
   for (const price of vaccinePrices) {
@@ -304,11 +329,6 @@ export default async function HomePage() {
     categories: (tab.values || []).map((entry: any) => entry.value?.trim()).filter(Boolean),
     manualItems: (tab.manualItems || []).filter((entry: any) => entry.title?.trim()).map((entry: any, itemIndex: number) => ({ id: entry.id || `manual-${tabIndex}-${itemIndex}`, title: entry.title, slug: '', excerpt: entry.description, coverUrl: mediaUrl(entry.image, 'card'), href: entry.url || '/tin-tuc' })),
   })).filter((tab: any) => tab.label || tab.categories.length || tab.manualItems.length)
-  const scheduleTabs = (sectionConfig('schedules')?.scheduleTabOrder || []).filter((tab: any) => tab.visible !== false).map((tab: any, tabIndex: number) => ({
-    label: tab.label?.trim(),
-    kind: tab.tab,
-    manualItems: (tab.manualItems || []).filter((entry: any) => entry.title?.trim()).map((entry: any, itemIndex: number) => ({ id: entry.id || `manual-schedule-${tabIndex}-${itemIndex}`, title: entry.title, summary: entry.description, imageUrl: mediaUrl(entry.image, 'card'), href: entry.url || '/lich-kham' })),
-  })).filter((tab: any) => tab.label || tab.kind || tab.manualItems.length)
   const vaccinationTabs = (sectionConfig('vaccinations')?.vaccinationTabOrder || []).filter((tab: any) => tab.visible !== false).map((tab: any, tabIndex: number) => ({
     label: tab.label?.trim(),
     kind: tab.tab,
@@ -316,12 +336,141 @@ export default async function HomePage() {
   })).filter((tab: any) => tab.label || tab.kind || tab.manualItems.length)
 
 
-  const featuredItems = [
-    ...news.slice(0, 8).map((item: any) => ({ id: `news-${item.id}`, title: item.title, excerpt: item.excerpt, image: mediaUrl(item.cover || item.seoImage) || defaultMedia.news, href: `/tin-tuc/${item.slug}`, kind: 'TIN TỨC', dateValue: item.publishedAt || item.updatedAt, date: item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật' })),
-    ...notices.slice(0, 6).map((item: any) => ({ id: `notice-${item.id}`, title: item.title, excerpt: item.excerpt, image: mediaUrl(item.cover || item.seoImage) || defaultMedia.notices, href: `/thong-bao/${item.slug}`, kind: 'THÔNG BÁO', dateValue: item.publishedAt || item.startAt || item.updatedAt, date: (item.publishedAt || item.startAt) ? new Date(item.publishedAt || item.startAt).toLocaleDateString('vi-VN') : 'Mới cập nhật' })),
-    ...procurement.slice(0, 6).map((item: any) => ({ id: `procurement-${item.id}`, title: item.title, excerpt: item.excerpt || item.summary, image: mediaUrl(item.cover || item.seoImage) || defaultMedia.procurement, href: `/dau-thau-mua-sam/${item.slug}`, kind: 'ĐẤU THẦU – MUA SẮM', dateValue: item.publishedAt || item.updatedAt, date: item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật' })),
-    ...schedules.slice(0, 12).map((item: any) => ({ id: `schedule-${item.id}`, title: item.title, excerpt: item.summary || item.note || 'Lịch khám mới được cập nhật từ bệnh viện.', image: mediaUrl(item.coverImage || item.scheduleImage) || defaultMedia.schedules, href: `/lich-kham/${item.id}`, kind: 'LỊCH KHÁM', dateValue: item.date || item.validFrom || item.weekStart || item.updatedAt, date: (item.date || item.validFrom || item.weekStart) ? new Date(item.date || item.validFrom || item.weekStart).toLocaleDateString('vi-VN') : 'Mới cập nhật' })),
-  ].sort((a: any, b: any) => new Date(b.dateValue || 0).getTime() - new Date(a.dateValue || 0).getTime()).slice(0, featuredItemLimit)
+  const fnConfig = sectionConfig('featured-news') as any
+  const fnSources = (Array.isArray(fnConfig?.featuredSources) && fnConfig.featuredSources.length > 0)
+    ? fnConfig.featuredSources
+    : [
+        { source: 'news', limit: 8, enabled: true },
+        { source: 'notices', limit: 6, enabled: true },
+        { source: 'procurement', limit: 4, enabled: true },
+        { source: 'schedules', limit: 0, enabled: false },
+      ]
+  const fnFilterMode = fnConfig?.featuredFilterMode || 'all'
+
+  const dynamicFeaturedItems: any[] = []
+
+  for (const src of fnSources) {
+    if (src.enabled === false) continue
+    const limit = Math.max(1, Number(src.limit || 6))
+    const customBadge = (src.customBadge || '').trim()
+
+    if (src.source === 'news') {
+      let filteredNews = news
+      if (fnFilterMode === 'only-featured') {
+        filteredNews = filteredNews.filter((item: any) => item.featured === true)
+      }
+      const items = filteredNews.slice(0, limit).map((item: any) => ({
+        id: `news-${item.id}`,
+        title: item.title,
+        excerpt: item.excerpt,
+        image: mediaUrl(item.cover || item.seoImage) || defaultMedia.news,
+        imageFit: item.coverFit || fnConfig?.featuredCardFit || 'cover',
+        imagePosition: item.coverPosition ? (item.coverPosition === 'center' ? 'center center' : (item.coverPosition === 'bottom' ? 'center bottom' : 'top center')) : undefined,
+        href: `/tin-tuc/${item.slug}`,
+        kind: customBadge || (typeof item.categoryRef === 'object' && item.categoryRef?.name ? item.categoryRef.name.toUpperCase() : (item.category ? item.category.toUpperCase() : 'TIN TỨC')),
+        dateValue: item.publishedAt || item.updatedAt,
+        date: item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+      }))
+      dynamicFeaturedItems.push(...items)
+    } else if (src.source === 'news-category') {
+      const targetCatId = typeof src.categoryRef === 'object' ? String(src.categoryRef?.id || '') : String(src.categoryRef || '')
+      const targetCatName = (typeof src.categoryRef === 'object' ? src.categoryRef?.name : src.categoryName || '').trim().toLowerCase()
+
+      let matchingNews = news.filter((item: any) => {
+        const itemCatId = typeof item.categoryRef === 'object' ? String(item.categoryRef?.id || '') : String(item.categoryRef || '')
+        const itemCatName = (typeof item.categoryRef === 'object' ? item.categoryRef?.name : item.category || '').trim().toLowerCase()
+        if (targetCatId && itemCatId && targetCatId === itemCatId) return true
+        if (targetCatName && itemCatName && (itemCatName === targetCatName || itemCatName.includes(targetCatName))) return true
+        return false
+      })
+
+      if (fnFilterMode === 'only-featured') {
+        matchingNews = matchingNews.filter((item: any) => item.featured === true)
+      }
+
+      const defaultBadge = (typeof src.categoryRef === 'object' && src.categoryRef?.name) || src.categoryName || 'TIN TỨC'
+      const items = matchingNews.slice(0, limit).map((item: any) => ({
+        id: `news-cat-${item.id}`,
+        title: item.title,
+        excerpt: item.excerpt,
+        image: mediaUrl(item.cover || item.seoImage) || defaultMedia.news,
+        imageFit: item.coverFit || fnConfig?.featuredCardFit || 'cover',
+        imagePosition: item.coverPosition ? (item.coverPosition === 'center' ? 'center center' : (item.coverPosition === 'bottom' ? 'center bottom' : 'top center')) : undefined,
+        href: `/tin-tuc/${item.slug}`,
+        kind: customBadge || defaultBadge.toUpperCase(),
+        dateValue: item.publishedAt || item.updatedAt,
+        date: item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+      }))
+      dynamicFeaturedItems.push(...items)
+    } else if (src.source === 'notices') {
+      const items = notices.slice(0, limit).map((item: any) => ({
+        id: `notice-${item.id}`,
+        title: item.title,
+        excerpt: item.excerpt,
+        image: mediaUrl(item.cover || item.seoImage) || defaultMedia.notices,
+        imageFit: item.coverFit || fnConfig?.featuredCardFit || 'cover',
+        imagePosition: item.coverPosition ? (item.coverPosition === 'center' ? 'center center' : (item.coverPosition === 'bottom' ? 'center bottom' : 'top center')) : undefined,
+        href: `/thong-bao/${item.slug}`,
+        kind: customBadge || 'THÔNG BÁO',
+        dateValue: item.publishedAt || item.startAt || item.updatedAt,
+        date: (item.publishedAt || item.startAt) ? new Date(item.publishedAt || item.startAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+      }))
+      dynamicFeaturedItems.push(...items)
+    } else if (src.source === 'procurement') {
+      const items = procurement.slice(0, limit).map((item: any) => ({
+        id: `procurement-${item.id}`,
+        title: item.title,
+        excerpt: item.excerpt || item.summary,
+        image: mediaUrl(item.cover || item.seoImage) || defaultMedia.procurement,
+        imageFit: item.coverFit || fnConfig?.featuredCardFit || 'cover',
+        imagePosition: item.coverPosition ? (item.coverPosition === 'center' ? 'center center' : (item.coverPosition === 'bottom' ? 'center bottom' : 'top center')) : undefined,
+        href: `/dau-thau-mua-sam/${item.slug}`,
+        kind: customBadge || 'ĐẤU THẦU – MUA SẮM',
+        dateValue: item.publishedAt || item.updatedAt,
+        date: item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+      }))
+      dynamicFeaturedItems.push(...items)
+    } else if (src.source === 'schedules') {
+      const items = schedules.slice(0, limit).map((item: any) => ({
+        id: `schedule-${item.id}`,
+        title: item.title,
+        excerpt: item.summary || item.note || 'Lịch khám mới được cập nhật từ bệnh viện.',
+        image: mediaUrl(item.coverImage || item.scheduleImage) || defaultMedia.schedules,
+        imageFit: fnConfig?.featuredCardFit || 'cover',
+        href: `/lich-kham/${item.id}`,
+        kind: customBadge || (item.mode === 'emergency' ? 'LỊCH TRỰC CẤP CỨU' : 'LỊCH KHÁM'),
+        dateValue: item.date || item.validFrom || item.weekStart || item.emergencyWeekStart || item.updatedAt,
+        date: (item.date || item.validFrom || item.weekStart || item.emergencyWeekStart) ? new Date(item.date || item.validFrom || item.weekStart || item.emergencyWeekStart).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+      }))
+      dynamicFeaturedItems.push(...items)
+    } else if (src.source === 'documents') {
+      const items = documents.slice(0, limit).map((item: any) => ({
+        id: `doc-${item.id}`,
+        title: item.title,
+        excerpt: item.summary || [item.number, item.issuer].filter(Boolean).join(' · ') || 'Văn bản, biểu mẫu của bệnh viện.',
+        image: mediaUrl(item.cover || item.seoImage) || defaultMedia.documents,
+        imageFit: item.coverFit || fnConfig?.featuredCardFit || 'cover',
+        imagePosition: item.coverPosition ? (item.coverPosition === 'center' ? 'center center' : (item.coverPosition === 'bottom' ? 'center bottom' : 'top center')) : undefined,
+        href: item.slug ? `/van-ban/${item.slug}` : (mediaUrl(item.file) || '/van-ban'),
+        kind: customBadge || 'VĂN BẢN',
+        dateValue: item.issuedAt || item.updatedAt,
+        date: item.issuedAt ? new Date(item.issuedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+      }))
+      dynamicFeaturedItems.push(...items)
+    }
+  }
+
+  // Khử trùng lặp ID (nếu có bài thuộc cả 2 nguồn)
+  const uniqueFeaturedItemsMap = new Map<string, any>()
+  for (const it of dynamicFeaturedItems) {
+    if (!uniqueFeaturedItemsMap.has(it.id)) {
+      uniqueFeaturedItemsMap.set(it.id, it)
+    }
+  }
+
+  const featuredItems = Array.from(uniqueFeaturedItemsMap.values())
+    .sort((a: any, b: any) => new Date(b.dateValue || 0).getTime() - new Date(a.dateValue || 0).getTime())
+    .slice(0, featuredItemLimit)
 
   // ── HÀM RENDER SECTION THEO MẪU BỐ CỤC (đọc từ Admin config) ──
   // Mỗi section notices/procurement/documents/content-section đều gọi hàm này
@@ -530,7 +679,7 @@ export default async function HomePage() {
   return (
     <main className="homePortalPage">
       <SiteHeader />
-
+      <HomeScrollSnapHandler enabled={home?.enableSectionScrollSnap !== false} />
 
       {showHeroBanners && <HeroBannerCarousel slides={heroSlides} intervalSeconds={home?.bannerAutoplaySeconds || 6} bannerWidth={siteSettings?.headerBannerWidth || 1920} />}
 
@@ -575,9 +724,24 @@ export default async function HomePage() {
             </div>
           </section>
 
-          if (type === 'featured-news') return <section className="sectionPro configurableHomeSection homeFeaturedSection" style={style} key={key}>
-            <div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/tim-kiem">Xem tất cả →</a></div><FeaturedContentCarousel items={featuredItems} interval={featuredInterval} /></div>
-          </section>
+          if (type === 'featured-news') {
+            const seeAllUrl = cfg.featuredSeeAllUrl || '/tin-tuc'
+            return (
+              <section className="sectionPro configurableHomeSection homeFeaturedSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead">
+                    <div>
+                      <span className="sectionKicker">{cfg.eyebrow}</span>
+                      <h2>{cfg.title}</h2>
+                      {cfg.description && <p>{cfg.description}</p>}
+                    </div>
+                    <a href={seeAllUrl}>Xem tất cả →</a>
+                  </div>
+                  <FeaturedContentCarousel items={featuredItems} interval={featuredInterval} cardFit={cfg.featuredCardFit || 'cover'} />
+                </div>
+              </section>
+            )
+          }
 
           if (type === 'advanced-techniques') {
             const fallbackTechniques = [
@@ -972,7 +1136,7 @@ export default async function HomePage() {
             )
           }
 
-          if (type === 'schedules') return <section className="sectionPro configurableHomeSection homeScheduleSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/lich-kham">Xem tất cả →</a></div><ScheduleExplorer daily={homeDailySchedules} weekly={homeWeeklySchedules} attachments={homeAttachedSchedules} medpro={medpro} tabOrder={scheduleTabOrder.length ? scheduleTabOrder : undefined} tabs={scheduleTabs.length ? scheduleTabs : undefined} compact /></div></section>
+          if (type === 'schedules') return <section id="schedules" className="sectionPro configurableHomeSection homeScheduleSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/lich-kham">Xem tất cả →</a></div><ScheduleExplorer daily={homeDailySchedules} weekly={homeWeeklySchedules} attachments={homeAttachedSchedules} emergency={homeEmergencySchedules} medpro={medpro} tabOrder={scheduleTabOrder.length ? scheduleTabOrder : undefined} tabs={scheduleTabs.length ? scheduleTabs : undefined} compact /></div></section>
 
           if (type === 'vaccinations') return <section className="sectionPro configurableHomeSection homeVaccinationSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/tiem-chung">Xem tất cả →</a></div><VaccinationTabs announcements={homeVaccinationAnnouncements} campaigns={homeVaccinationCampaigns} vaccines={homeVaccines} medpro={medpro} tabOrder={vaccinationTabOrder.length ? vaccinationTabOrder : undefined} tabs={vaccinationTabs.length ? vaccinationTabs : undefined} compact /></div></section>
 
@@ -981,22 +1145,46 @@ export default async function HomePage() {
           if (type === 'documents') {
             const docLayout = item.sectionLayout || 'editorial-grid'
             const docLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
-            const docItems = documents.slice(0, docLimit).map((document: any) => ({
-              id: document.id,
-              href: mediaUrl(document.file) || '/van-ban',
-              cover: mediaUrl(document.cover || document.seoImage) || defaultMedia.documents,
-              title: document.title,
-              excerpt: document.summary || [document.number, document.issuer].filter(Boolean).join(' · ') || 'Văn bản, biểu mẫu và tài liệu được bệnh viện công khai.',
-              date: document.issuedAt ? new Date(document.issuedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
-              category: document.type || document.category || '',
-              coverFit: document.coverFit || 'cover',
-              coverPosition: document.coverPosition || 'top',
+
+            const normalDocItems = documents.map((docItem: any) => ({
+              id: `doc-${docItem.id}`,
+              href: docItem.slug ? `/van-ban/${docItem.slug}` : (mediaUrl(docItem.file) || '/van-ban'),
+              cover: mediaUrl(docItem.cover || docItem.seoImage) || defaultMedia.documents,
+              title: docItem.title,
+              excerpt: docItem.summary || [docItem.number, docItem.issuer].filter(Boolean).join(' · ') || 'Văn bản, biểu mẫu và tài liệu được bệnh viện công khai.',
+              dateValue: docItem.issuedAt || docItem.updatedAt,
+              date: docItem.issuedAt ? new Date(docItem.issuedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+              category: docItem.documentType || docItem.type || docItem.category || 'Văn bản – Tài liệu',
+              coverFit: docItem.coverFit || 'cover',
+              coverPosition: docItem.coverPosition || 'top',
             }))
+
+            const cpDocItems = clinicalProtocols.map((cpItem: any) => {
+              const spec = typeof cpItem.specialty === 'object' && cpItem.specialty?.name ? cpItem.specialty.name : ''
+              const cat = spec ? `Phác đồ (${spec})` : (cpItem.documentType || 'Phác đồ điều trị')
+              return {
+                id: `cp-${cpItem.id}`,
+                href: cpItem.slug ? `/phac-do-dieu-tri/${cpItem.slug}` : (mediaUrl(cpItem.file) || '/phac-do-dieu-tri'),
+                cover: mediaUrl(cpItem.cover || cpItem.seoImage) || defaultMedia.documents,
+                title: cpItem.title,
+                excerpt: cpItem.summary || [cpItem.code, cpItem.issuer || 'BVĐK Thới Lai'].filter(Boolean).join(' · ') || 'Phác đồ điều trị và hướng dẫn chẩn đoán chuyên môn.',
+                dateValue: cpItem.issuedAt || cpItem.updatedAt,
+                date: cpItem.issuedAt ? new Date(cpItem.issuedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+                category: cat,
+                coverFit: 'cover',
+                coverPosition: 'top',
+              }
+            })
+
+            const allDocItems = [...normalDocItems, ...cpDocItems]
+              .sort((a, b) => new Date(b.dateValue || 0).getTime() - new Date(a.dateValue || 0).getTime())
+              .slice(0, docLimit)
+
             return (
               <section className="sectionPro configurableHomeSection homeDocumentsSection" style={style} key={key}>
                 <div className="container">
                   <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/van-ban">Xem tất cả →</a></div>
-                  {renderEditorialSection({ items: docItems, layout: docLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'VĂN BẢN – TÀI LIỆU', emptyText: 'Chưa có văn bản được đăng.' })}
+                  {renderEditorialSection({ items: allDocItems, layout: docLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'VĂN BẢN – TÀI LIỆU', emptyText: 'Chưa có văn bản được đăng.' })}
                 </div>
               </section>
             )

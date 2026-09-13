@@ -9,7 +9,7 @@ export const News: CollectionConfig = {
   labels: { singular: 'Tin tức', plural: 'Tin tức' },
   admin: {
     useAsTitle: 'title',
-    group: 'Nội dung',
+    group: '📰 Truyền thông & Văn bản',
     defaultColumns: ['title', 'categoryRef', 'workflowState', '_status', 'publishedAt', 'updatedAt'],
     description: 'Đăng và quản lý tin tức, hoạt động và kiến thức sức khỏe.',
   },

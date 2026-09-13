@@ -18,7 +18,7 @@ export const HospitalHistory: GlobalConfig = {
   slug: 'hospital-history',
   label: 'Lịch sử phát triển',
   admin: {
-    group: 'Giới thiệu & Lịch sử',
+    group: '🌐 Trang chủ & Giao diện Website',
     description: 'Quản lý toàn bộ nội dung, hình ảnh, icon, bố cục, căn lề và bật/tắt các khối trên trang Lịch sử hình thành và phát triển.',
   },
   access: { read: () => true, update: admins },

@@ -4,7 +4,7 @@ import { moduleAccess, publicActive } from '@/access'
 export const VaccinePrices: CollectionConfig = {
   slug: 'vaccinePrices',
   labels: { singular: 'Giá vắc xin', plural: 'Lịch sử giá vắc xin' },
-  admin: { useAsTitle: 'decisionNo', group: 'Khám bệnh', defaultColumns: ['vaccine', 'price', 'effectiveFrom', 'effectiveTo', 'active'] },
+  admin: { useAsTitle: 'decisionNo', group: '🏥 Khám bệnh & Dịch vụ Y tế', defaultColumns: ['vaccine', 'price', 'effectiveFrom', 'effectiveTo', 'active'] },
   access: {
     read: publicActive,
     create: moduleAccess('vaccinations', 'create'),

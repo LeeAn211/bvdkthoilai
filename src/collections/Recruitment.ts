@@ -6,7 +6,7 @@ import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
 export const Recruitment: CollectionConfig = {
   slug: 'recruitment',
   labels: { singular: 'Tin tuyển dụng', plural: 'Tuyển dụng' },
-  admin: { useAsTitle: 'title', group: 'Nội dung', defaultColumns: ['title', 'department', 'quantity', 'publishedAt', 'deadlineAt', 'workflowState', '_status'] },
+  admin: { useAsTitle: 'title', group: '📰 Truyền thông & Văn bản', defaultColumns: ['title', 'department', 'quantity', 'publishedAt', 'deadlineAt', 'workflowState', '_status'] },
   access: { read: publicPublished, create: moduleAccess('recruitment', 'create'), update: workflowUpdateAccess('recruitment'), delete: contentDeleteAccess('recruitment') },
   trash: true,
   versions: { drafts: { autosave: true, schedulePublish: false }, maxPerDoc: 30 },

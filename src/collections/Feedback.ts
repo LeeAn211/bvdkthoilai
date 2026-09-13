@@ -4,7 +4,7 @@ import { moduleAccess } from '@/access'
 export const Feedback: CollectionConfig = {
   slug: 'feedback',
   labels: { singular: 'Phản hồi người bệnh', plural: 'Phản hồi người bệnh' },
-  admin: { useAsTitle: 'name', group: 'CSKH' },
+  admin: { useAsTitle: 'name', group: '💬 Chăm sóc người bệnh & Khảo sát' },
   access: {
     create: moduleAccess('feedback', 'create'),
     read: moduleAccess('feedback', 'view'),

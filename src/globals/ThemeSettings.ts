@@ -12,7 +12,7 @@ const colorField = (name: string, label: string, defaultValue?: string): Field =
 export const ThemeSettings: GlobalConfig = {
   slug: 'theme-settings',
   label: 'Màu sắc & Giao diện',
-  admin: { group: 'Trang chủ & Giao diện' },
+  admin: { group: '🌐 Trang chủ & Giao diện Website' },
   access: { read: loggedIn, update: loggedIn },
   versions: { max: 20 },
   fields: [

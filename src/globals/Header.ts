@@ -12,7 +12,7 @@ const colorField = (name: string, label: string, defaultValue?: string) => ({
 export const Header: GlobalConfig = {
   slug: 'header',
   label: 'Header & Nhận diện',
-  admin: { group: 'Trang chủ & Giao diện' },
+  admin: { group: '🌐 Trang chủ & Giao diện Website' },
   access: { read: loggedIn, update: loggedIn },
   versions: { max: 30 },
   fields: [

@@ -60,10 +60,120 @@ export default async function PricePage({ searchParams }: Props) {
   const rowsPerPage = settings.rowsPerPage === '50' || settings.rowsPerPage === 50 ? 50 : 40
   const visiblePages = Array.from(new Set([1, currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2, totalPages])).filter(page => page >= 1 && page <= totalPages).sort((a, b) => a - b)
 
-  return <><SiteHeader/><PageHero eyebrow="CÔNG KHAI – MINH BẠCH" title={settings.title || 'Bảng giá dịch vụ'} description={settings.description || 'Tra cứu giá BHYT và giá dịch vụ được cập nhật trực tiếp từ hệ thống quản trị.'}/><main className="section servicePricePage"><div className="container">
-    <form className="serviceSearch" action="/bang-gia" method="get"><div className="serviceSearchInput"><span>⌕</span><label htmlFor="service-query">Tìm dịch vụ</label><input id="service-query" name="q" defaultValue={query} placeholder={settings.searchPlaceholder || 'Nhập tên, mã dịch vụ, nhóm hoặc ghi chú…'}/></div><button type="submit">Tìm kiếm</button>{query && <a href="/bang-gia">Xóa bộ lọc</a>}</form>
-    <div className="serviceResultBar"><div><strong>{new Intl.NumberFormat('vi-VN').format(result.totalDocs || 0)}</strong><span>{query ? ` kết quả cho “${query}”` : ' dịch vụ đang công khai'}</span></div><span>Hiển thị {rowsPerPage} dòng / trang</span></div>
-    <div className="price-table price-table-full"><div className="price-head"><span>STT</span><span>Mã dịch vụ / Tên dịch vụ</span><span>Giá BHYT</span><span>Giá dịch vụ</span><span>Ghi chú</span></div>{docs.map((item:any,index:number)=>{const current=priceMap.get(String(item.id)); return <div className="price-row" key={item.id}><span>{item.sequence || (currentPage - 1) * rowsPerPage + index + 1}</span><span><b>{item.code}</b><strong>{item.name}</strong>{item.category && <small>{item.category}{item.unit ? ` · ${item.unit}` : ''}</small>}</span><strong>{money(current?.insurancePrice ?? item.insurancePrice)}</strong><strong>{money(current?.servicePrice ?? item.price)}</strong><span>{current?.decisionNo ? `${current.decisionNo}${current.note ? ` · ${current.note}` : ''}` : (item.note || '-')}</span></div>})}{docs.length === 0 && <div className="serviceEmpty"><span>⌕</span><strong>{settings.emptyText || 'Không tìm thấy dịch vụ phù hợp.'}</strong><a href="/bang-gia">Xem toàn bộ bảng giá</a></div>}</div>
-    {totalPages > 1 && <nav className="servicePagination" aria-label="Phân trang bảng giá"><a className={currentPage <= 1 ? 'disabled' : ''} href={pageHref(Math.max(1,currentPage-1),query)}>← Trước</a><div>{visiblePages.map((page,index)=><span key={page}>{index>0&&page-visiblePages[index-1]>1&&<i>…</i>}<a className={page===currentPage?'active':''} href={pageHref(page,query)} aria-current={page===currentPage?'page':undefined}>{page}</a></span>)}</div><a className={currentPage >= totalPages ? 'disabled' : ''} href={pageHref(Math.min(totalPages,currentPage+1),query)}>Sau →</a></nav>}
-  </div></main><SiteFooter/></>
+  return <>
+    <SiteHeader />
+    <PageHero eyebrow="CÔNG KHAI – MINH BẠCH" title={settings.title || 'Bảng giá dịch vụ'} description={settings.description || 'Tra cứu giá BHYT và giá dịch vụ được cập nhật trực tiếp từ hệ thống quản trị.'} />
+    <main className="section servicePricePage">
+      <div className="container">
+        {settings.showNoticeBanner !== false && (settings.noticeContent || settings.noticeTitle) && (
+          <div
+            style={{
+              background: '#f0fdf4',
+              border: '1.5px solid #86efac',
+              borderRadius: '16px',
+              padding: '20px 24px',
+              marginBottom: '24px',
+              boxShadow: '0 4px 14px rgba(22, 163, 74, 0.08)',
+              textAlign: settings.noticeAlign || 'left',
+            }}
+          >
+            {settings.noticeTitle && (
+              <h3
+                style={{
+                  margin: '0 0 10px',
+                  color: '#166534',
+                  fontSize: '17px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  justifyContent: settings.noticeAlign === 'center' ? 'center' : settings.noticeAlign === 'right' ? 'flex-end' : 'flex-start',
+                  textWrap: 'balance',
+                }}
+              >
+                <span>ℹ️</span> {settings.noticeTitle}
+              </h3>
+            )}
+            {settings.noticeContent && (
+              <p
+                style={{
+                  margin: 0,
+                  color: '#15803d',
+                  fontSize: '14px',
+                  lineHeight: 1.7,
+                  whiteSpace: 'pre-line',
+                  textWrap: 'balance',
+                }}
+              >
+                {settings.noticeContent}
+              </p>
+            )}
+          </div>
+        )}
+        <form className="serviceSearch" action="/bang-gia" method="get">
+          <div className="serviceSearchInput">
+            <span>⌕</span>
+            <label htmlFor="service-query">Tìm dịch vụ</label>
+            <input id="service-query" name="q" defaultValue={query} placeholder={settings.searchPlaceholder || 'Nhập tên, mã dịch vụ, nhóm hoặc ghi chú…'} />
+          </div>
+          <button type="submit">Tìm kiếm</button>
+          {query && <a href="/bang-gia">Xóa bộ lọc</a>}
+        </form>
+        <div className="serviceResultBar">
+          <div>
+            <strong>{new Intl.NumberFormat('vi-VN').format(result.totalDocs || 0)}</strong>
+            <span>{query ? ` kết quả cho “${query}”` : ' dịch vụ đang công khai'}</span>
+          </div>
+          <span>Hiển thị {rowsPerPage} dòng / trang</span>
+        </div>
+        <div className="price-table price-table-full">
+          <div className="price-head">
+            <span>STT</span>
+            <span>Mã dịch vụ / Tên dịch vụ</span>
+            <span>Giá BHYT</span>
+            <span>Giá dịch vụ</span>
+            <span>Ghi chú</span>
+          </div>
+          {docs.map((item: any, index: number) => {
+            const current = priceMap.get(String(item.id))
+            return (
+              <div className="price-row" key={item.id}>
+                <span>{item.sequence || (currentPage - 1) * rowsPerPage + index + 1}</span>
+                <span>
+                  <b>{item.code}</b>
+                  <strong>{item.name}</strong>
+                  {item.category && <small>{item.category}{item.unit ? ` · ${item.unit}` : ''}</small>}
+                </span>
+                <strong>{money(current?.insurancePrice ?? item.insurancePrice)}</strong>
+                <strong>{money(current?.servicePrice ?? item.price)}</strong>
+                <span>{current?.decisionNo ? `${current.decisionNo}${current.note ? ` · ${current.note}` : ''}` : (item.note || '-')}</span>
+              </div>
+            )
+          })}
+          {docs.length === 0 && (
+            <div className="serviceEmpty">
+              <span>⌕</span>
+              <strong>{settings.emptyText || 'Không tìm thấy dịch vụ phù hợp.'}</strong>
+              <a href="/bang-gia">Xem toàn bộ bảng giá</a>
+            </div>
+          )}
+        </div>
+        {totalPages > 1 && (
+          <nav className="servicePagination" aria-label="Phân trang bảng giá">
+            <a className={currentPage <= 1 ? 'disabled' : ''} href={pageHref(Math.max(1, currentPage - 1), query)}>← Trước</a>
+            <div>
+              {visiblePages.map((page, index) => (
+                <span key={page}>
+                  {index > 0 && page - visiblePages[index - 1] > 1 && <i>…</i>}
+                  <a className={page === currentPage ? 'active' : ''} href={pageHref(page, query)} aria-current={page === currentPage ? 'page' : undefined}>{page}</a>
+                </span>
+              ))}
+            </div>
+            <a className={currentPage >= totalPages ? 'disabled' : ''} href={pageHref(Math.min(totalPages, currentPage + 1), query)}>Sau →</a>
+          </nav>
+        )}
+      </div>
+    </main>
+    <SiteFooter />
+  </>
 }

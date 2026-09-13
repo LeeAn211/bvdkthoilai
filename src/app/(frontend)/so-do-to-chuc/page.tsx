@@ -132,67 +132,76 @@ export default async function OrganizationChartPage() {
   )
 
   // Phó giám đốc
-  const rawDeputies = Array.isArray(chart?.deputyDirectors) ? chart.deputyDirectors.filter((p: any) => p?.name?.trim() || p?.doctorRef) : []
+  const rawDeputies = Array.isArray(chart?.deputyDirectors) ? chart.deputyDirectors.filter((p: any) => p?.enabled !== false && (p?.name?.trim() || p?.doctorRef)) : []
   const deputies = rawDeputies.length > 0
     ? rawDeputies
     : (deputyDoctors.length > 0 ? deputyDoctors.map((doc: any) => ({ name: doc.name, title: doc.title, doctorRef: doc })) : [])
+
+  const showLeadership = chart?.showLeadershipSection !== false
+  const showTree = chart?.showTreeSection !== false
+  const showDirector = chart?.director?.enabled !== false
 
   return (
     <>
       <SiteHeader />
       <PageHero
         eyebrow="CƠ CẤU BỘ MÁY"
-        title="Sơ đồ tổ chức Bệnh viện"
-        description="Cơ cấu tổ chức bộ máy và hệ thống các khoa, phòng trực thuộc Bệnh viện Đa khoa Khu vực Thới Lai."
+        title={chart?.pageTitle || 'Sơ đồ tổ chức Bệnh viện'}
+        description={chart?.description || 'Cơ cấu tổ chức bộ máy và hệ thống các khoa, phòng trực thuộc Bệnh viện Đa khoa Khu vực Thới Lai.'}
       />
       <main className="bmOrgPage">
         <div className="container">
           {/* SECTION 1: BAN LÃNH ĐẠO BỆNH VIỆN */}
-          <section className="bmLeadershipSection" aria-label="Ban Lãnh đạo Bệnh Viện">
-            <div className="bmSectionHeader">
-              <h2 className="bmSectionTitle">Ban Lãnh đạo Bệnh Viện</h2>
-            </div>
-
-            {/* Giám đốc ở trên cùng */}
-            <div className="bmDirectorWrap">
-              <LeaderCard
-                kind="director"
-                person={chart?.director}
-                fallbackRole="Giám đốc Bệnh viện"
-                fallbackDoctor={directorDoctor}
-              />
-            </div>
-
-            {/* Các Phó Giám đốc ở hàng dưới - tự cănh chỉnh theo số lượng */}
-            {deputies.length > 0 && (
-              <div
-                className="bmDeputiesGrid"
-                data-count={String(Math.min(deputies.length, 8))}
-              >
-                {deputies.map((person: any, index: number) => (
-                  <LeaderCard
-                    key={person?.id || index}
-                    kind="deputy"
-                    person={person}
-                    fallbackRole="Phó Giám đốc Bệnh viện"
-                    fallbackDoctor={deputyDoctors[index]}
-                  />
-                ))}
+          {showLeadership && (showDirector || deputies.length > 0) && (
+            <section className="bmLeadershipSection" aria-label="Ban Lãnh đạo Bệnh Viện">
+              <div className="bmSectionHeader">
+                <h2 className="bmSectionTitle" style={{ textWrap: 'balance' }}>{chart?.leadershipTitle || 'Ban Lãnh đạo Bệnh Viện'}</h2>
               </div>
-            )}
-          </section>
+
+              {/* Giám đốc ở trên cùng */}
+              {showDirector && (
+                <div className="bmDirectorWrap">
+                  <LeaderCard
+                    kind="director"
+                    person={chart?.director}
+                    fallbackRole="Giám đốc Bệnh viện"
+                    fallbackDoctor={directorDoctor}
+                  />
+                </div>
+              )}
+
+              {/* Các Phó Giám đốc ở hàng dưới - tự cănh chỉnh theo số lượng */}
+              {deputies.length > 0 && (
+                <div
+                  className="bmDeputiesGrid"
+                  data-count={String(Math.min(deputies.length, 8))}
+                >
+                  {deputies.map((person: any, index: number) => (
+                    <LeaderCard
+                      key={person?.id || index}
+                      kind="deputy"
+                      person={person}
+                      fallbackRole="Phó Giám đốc Bệnh viện"
+                      fallbackDoctor={deputyDoctors[index]}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
           {/* SECTION 2: SƠ ĐỒ TỔ CHỨC BỘ MÁY */}
-          <section className="bmTreeSection" aria-label="Sơ đồ tổ chức bộ máy">
-            <div className="bmSectionHeader treeHead">
-              <h2 className="bmSectionTitle">Sơ đồ tổ chức bộ máy</h2>
-            </div>
+          {showTree && (
+            <section className="bmTreeSection" aria-label="Sơ đồ tổ chức bộ máy">
+              <div className="bmSectionHeader treeHead">
+                <h2 className="bmSectionTitle" style={{ textWrap: 'balance' }}>{chart?.treeTitle || 'Sơ đồ tổ chức bộ máy'}</h2>
+              </div>
 
-            <div className="bmTreeWrap">
-              {/* Cấp cao nhất: BAN GIÁM ĐỐC */}
-              <div className="bmTreeBoardWrap">
-                <div className="bmTreeBoardBox">
-                  <h3 className="bmTreeBoardBoxTitle">Ban Giám Đốc</h3>
+              <div className="bmTreeWrap">
+                {/* Cấp cao nhất: BAN GIÁM ĐỐC */}
+                <div className="bmTreeBoardWrap">
+                  <div className="bmTreeBoardBox">
+                    <h3 className="bmTreeBoardBoxTitle">Ban Giám Đốc</h3>
                   <div className="bmTreeBoardBoxSub">Chỉ đạo & Điều hành toàn diện</div>
                 </div>
               </div>
@@ -282,9 +291,10 @@ export default async function OrganizationChartPage() {
               </div>
             </div>
           </section>
-        </div>
-      </main>
-      <SiteFooter />
-    </>
+        )}
+      </div>
+    </main>
+    <SiteFooter />
+  </>
   )
 }

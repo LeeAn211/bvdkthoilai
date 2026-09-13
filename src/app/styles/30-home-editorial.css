@@ -460,3 +460,39 @@
   border-color: #0754a8 !important;
   color: #ffffff !important;
 }
+
+/* ==========================================================================
+   CSS SECTION SCROLL SNAP (PHƯƠNG ÁN 1)
+   Tự động hít nhẹ và căn chỉnh chuẩn từng Section khi lăn chuột
+   ========================================================================== */
+html.hasSectionScrollSnap {
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+}
+
+.hasSectionScrollSnap .homePortalPage {
+  scroll-snap-type: y proximity;
+}
+
+/* Các section tham gia Scroll Snap */
+.hasSectionScrollSnap .heroCarouselWrap,
+.hasSectionScrollSnap .homeQuickWrap,
+.hasSectionScrollSnap .noticeTicker,
+.hasSectionScrollSnap .homeSections > section,
+.hasSectionScrollSnap .configurableHomeSection {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  /* Trừ khoảng cách menu header cố định phía trên để tiêu đề không bị che lấp */
+  scroll-margin-top: 76px;
+}
+
+@media (max-width: 900px) {
+  .hasSectionScrollSnap .heroCarouselWrap,
+  .hasSectionScrollSnap .homeQuickWrap,
+  .hasSectionScrollSnap .noticeTicker,
+  .hasSectionScrollSnap .homeSections > section,
+  .hasSectionScrollSnap .configurableHomeSection {
+    scroll-margin-top: 64px;
+  }
+}
+

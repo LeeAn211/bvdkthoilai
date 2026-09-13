@@ -11,7 +11,7 @@ export const Vaccinations: CollectionConfig = {
   labels: { singular: 'Tiêm ngừa cũ', plural: 'Tiêm ngừa cũ (Legacy)' },
   admin: {
     useAsTitle: 'vaccineName',
-    group: 'Khám bệnh',
+    group: '🏥 Khám bệnh & Dịch vụ Y tế',
     hidden: true,
     description: 'Dữ liệu tương thích phiên bản cũ. Không nhập mới. Hãy dùng Lịch tiêm chủng và Danh mục vắc xin.',
   },

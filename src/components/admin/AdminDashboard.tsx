@@ -2,7 +2,7 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import Link from 'next/link'
 import AdminAccountSummary from './AdminAccountSummary'
-import AdminDashboardClient, { MetricCardConfig } from './AdminDashboardClient'
+import AdminDashboardClient, { DashboardGlyph, MetricCardConfig, GlyphName } from './AdminDashboardClient'
 import styles from './AdminDashboard.module.css'
 
 async function count(payload: any, collection: string, where?: any) {
@@ -11,62 +11,62 @@ async function count(payload: any, collection: string, where?: any) {
 
 const formatDate = (value?: string) => value ? new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(value)) : 'Chưa cập nhật'
 
-type GlyphName = 'content' | 'feedback' | 'procurement' | 'schedule' | 'chat' | 'news' | 'notice' | 'document' | 'settings' | 'people' | 'medical' | 'media' | 'chart' | 'survey' | 'shield' | 'price' | 'arrowUpRight' | 'sparkles' | 'check' | 'clock' | 'building' | 'cpu' | 'briefcase' | 'folder'
-
-function DashboardGlyph({ name }: { name: GlyphName }) {
-  const paths: Record<GlyphName, React.ReactNode> = {
-    content: <><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10M6 14h6"/></>,
-    feedback: <><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></>,
-    procurement: <><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>,
-    schedule: <><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="m9 16 2 2 4-4"/></>,
-    chat: <><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></>,
-    news: <><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6Z"/></>,
-    notice: <><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></>,
-    document: <><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></>,
-    settings: <><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></>,
-    people: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>,
-    medical: <><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M12 11v6"/><path d="M9 14h6"/></>,
-    media: <><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></>,
-    chart: <><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></>,
-    survey: <><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></>,
-    shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>,
-    price: <><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></>,
-    arrowUpRight: <><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></>,
-    sparkles: <><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></>,
-    check: <polyline points="20 6 9 17 4 12"/>,
-    clock: <><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>,
-    building: <><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></>,
-    cpu: <><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9"/><path d="M15 2v2M9 2v2M20 15h2M20 9h2M9 20v2M15 20v2M2 9h2M2 15h2"/></>,
-    briefcase: <><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>,
-    folder: <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>,
-  }
-  return <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>
-}
-
 export default async function AdminDashboard() {
   const payload = await getPayload({ config })
+  // Truy vấn đồng thời toàn bộ chỉ số thực tế từ cơ sở dữ liệu
   const [
-    news, publishedNews, notices, priorityNotices, procurement, openProcurement, documents, recruitment, customPosts,
-    feedbackNew, feedbackProcessing, feedbackDone, doctors, departments, specialties, schedules, vaccinationSchedules,
-    vaccines, services, servicePrices, consultations, surveys, surveyResponses, users, media,
+    // 📰 Truyền thông & Văn bản
+    news, publishedNews,
+    notices, priorityNotices,
+    procurement, openProcurement,
+    documents, recruitment, customPosts,
+    // 🩺 Chuyên môn & Tổ chức
+    clinicalProtocols, effectiveProtocols,
+    doctors, departments, specialties,
+    advancedTechniques, scientificActivities, ourExperts,
+    // 🏥 Khám bệnh & Dịch vụ Y tế
+    schedules, appointments, pendingAppointments,
+    vaccines, vaccinationSchedules, services, servicePrices,
+    // 💬 Chăm sóc & Khảo sát
+    feedbackNew, feedbackProcessing, feedbackDone,
+    consultations, surveys, surveyResponses,
+    // 🌐 Trang chủ & Giao diện Website
+    pages, faqs,
+    // ⚙️ Hệ thống & Dữ liệu
+    users, media, auditLogs,
+    // Cài đặt & Nội dung động
     dynamicSectionsResult,
     systemSettings,
   ] = await Promise.all([
+    // Truyền thông & Văn bản
     count(payload, 'news'), count(payload, 'news', { _status: { equals: 'published' } }),
     count(payload, 'notices'), count(payload, 'notices', { level: { in: ['important', 'urgent'] } }),
     count(payload, 'procurement'), count(payload, 'procurement', { procurementStatus: { in: ['open', 'closing'] } }),
     count(payload, 'documents'), count(payload, 'recruitment'), count(payload, 'custom-posts'),
-    count(payload, 'feedback', { status: { equals: 'new' } }), count(payload, 'feedback', { status: { equals: 'processing' } }), count(payload, 'feedback', { status: { equals: 'done' } }),
-    count(payload, 'doctors'), count(payload, 'departments'), count(payload, 'specialties'), count(payload, 'schedules'), count(payload, 'vaccinationSchedules'),
-    count(payload, 'vaccines'), count(payload, 'services'), count(payload, 'servicePrices'),
+    // Chuyên môn & Tổ chức
+    count(payload, 'clinical-protocols'), count(payload, 'clinical-protocols', { status: { equals: 'effective' } }),
+    count(payload, 'doctors'), count(payload, 'departments'), count(payload, 'specialties'),
+    count(payload, 'advanced-techniques'), count(payload, 'scientific-activities'), count(payload, 'our-experts'),
+    // Khám bệnh & Dịch vụ Y tế
+    count(payload, 'schedules'), count(payload, 'appointments'), count(payload, 'appointments', { status: { equals: 'pending' } }),
+    count(payload, 'vaccines'), count(payload, 'vaccinationSchedules'), count(payload, 'services'), count(payload, 'servicePrices'),
+    // Chăm sóc & Khảo sát
+    count(payload, 'feedback', { status: { equals: 'new' } }),
+    count(payload, 'feedback', { status: { equals: 'processing' } }),
+    count(payload, 'feedback', { status: { equals: 'done' } }),
     count(payload, 'consultations', { status: { in: ['new', 'processing'] } }),
-    count(payload, 'surveyCampaigns', { active: { equals: true } }), count(payload, 'surveyResponses'),
-    count(payload, 'users'), count(payload, 'media'),
+    count(payload, 'surveyCampaigns', { active: { equals: true } }),
+    count(payload, 'surveyResponses'),
+    // Trang chủ & Giao diện Website
+    count(payload, 'pages'), count(payload, 'faqs'),
+    // Hệ thống & Dữ liệu
+    count(payload, 'users'), count(payload, 'media'), count(payload, 'audit-logs'),
+    // Nội dung động
     payload.find({ collection: 'content-sections', limit: 20, overrideAccess: true }).catch(() => ({ docs: [] })),
     payload.findGlobal({ slug: 'system-settings' as any }).catch(() => null),
   ])
 
-  // Lấy thống kê số bài viết thực tế cho từng mục nội dung động (vd: Chuyển đổi số)
+  // Lấy bài viết chuyên đề động
   const dynamicSections = dynamicSectionsResult?.docs || []
   const dynamicSectionStats = await Promise.all(
     dynamicSections.map(async (sec: any) => {
@@ -85,17 +85,19 @@ export default async function AdminDashboard() {
     })
   )
 
-  const [latestNews, latestFeedback] = await Promise.all([
+  // Danh sách feed mới cập nhật
+  const [latestNews, latestFeedback, latestProtocols] = await Promise.all([
     payload.find({ collection: 'news', limit: 5, sort: '-updatedAt', depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
     payload.find({ collection: 'feedback', limit: 5, sort: '-createdAt', where: { status: { not_equals: 'done' } }, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
+    payload.find({ collection: 'clinical-protocols', limit: 5, sort: '-updatedAt', depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
   ])
 
-  const totalContent = news + notices + procurement + documents + recruitment + customPosts
+  const totalContent = news + notices + procurement + documents + recruitment + clinicalProtocols + customPosts
   const publishedPercent = news ? Math.round((publishedNews / news) * 100) : 0
   const totalFeedback = feedbackNew + feedbackProcessing + feedbackDone
   const feedbackDonePercent = totalFeedback ? `${Math.round((feedbackDone / totalFeedback) * 100)}%` : '0%'
   const feedbackProcessingPercent = totalFeedback ? `${Math.round((feedbackProcessing / totalFeedback) * 100)}%` : '0%'
-  const maxContent = Math.max(news, notices, procurement, documents, recruitment, customPosts, 1)
+  const maxContent = Math.max(news, notices, procurement, documents, clinicalProtocols, recruitment, 1)
   const today = new Intl.DateTimeFormat('vi-VN', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date())
 
   // Cấu hình ẩn hiện tùy chỉnh từ Quản trị hệ thống (System Settings)
@@ -113,106 +115,316 @@ export default async function AdminDashboard() {
     dynamicSections: dSettings.showDynamicSections !== false,
   }
 
-  // Thẻ thống kê chính - TÁCH RIÊNG TỪNG MỤC (Thông báo riêng, Đấu thầu riêng)
+  // Danh sách thẻ thống kê chuẩn mực theo từng phân hệ nghiệp vụ y tế
   const coreMetricCards: MetricCardConfig[] = [
+    // 1. KHÁM BỆNH & DỊCH VỤ Y TẾ
+    {
+      id: 'schedules',
+      title: 'Lịch trực & Khám bệnh',
+      value: schedules,
+      badge: `${departments} khoa phòng`,
+      badgeType: 'info',
+      subtext: 'Lịch khám thường & trực cấp cứu 24/7',
+      href: '/admin/collections/schedules',
+      createHref: '/admin/collections/schedules/create',
+      icon: 'schedule',
+      categoryGroup: 'kham-benh',
+      visible: cardVisibility.schedules,
+    },
+    {
+      id: 'appointments',
+      title: 'Đặt lịch khám trực tuyến',
+      value: appointments,
+      badge: pendingAppointments > 0 ? `${pendingAppointments} chờ duyệt` : 'Đã duyệt xong',
+      badgeType: pendingAppointments > 0 ? 'warning' : 'success',
+      subtext: `${appointments} lượt đăng ký khám qua website`,
+      href: '/admin/collections/appointments',
+      createHref: '/admin/collections/appointments/create',
+      icon: 'schedule',
+      categoryGroup: 'kham-benh',
+      visible: true,
+    },
+    {
+      id: 'services',
+      title: 'Dịch vụ kỹ thuật y tế',
+      value: services,
+      badge: `${servicePrices} mục viện phí`,
+      badgeType: 'info',
+      subtext: 'Kỹ thuật lâm sàng & cận lâm sàng phân tuyến',
+      href: '/admin/collections/services',
+      createHref: '/admin/collections/services/create',
+      icon: 'price',
+      categoryGroup: 'kham-benh',
+      visible: true,
+    },
+    {
+      id: 'service-prices',
+      title: 'Bảng giá viện phí & BHYT',
+      value: servicePrices,
+      badge: 'Công khai giá',
+      badgeType: 'success',
+      subtext: 'Minh bạch viện phí BHYT và thu phí tự nguyện',
+      href: '/admin/collections/service-prices',
+      createHref: '/admin/collections/service-prices/create',
+      icon: 'price',
+      categoryGroup: 'kham-benh',
+      visible: true,
+    },
+    {
+      id: 'vaccines',
+      title: 'Tiêm chủng & Vắc xin',
+      value: vaccines,
+      badge: `${vaccinationSchedules} Lịch tiêm`,
+      badgeType: 'success',
+      subtext: `${vaccines} loại vắc xin phòng ngừa sẵn sàng`,
+      href: '/admin/collections/vaccines',
+      createHref: '/admin/collections/vaccines/create',
+      icon: 'medical',
+      categoryGroup: 'kham-benh',
+      visible: cardVisibility.vaccines,
+    },
+
+    // 2. CHUYÊN MÔN & TỔ CHỨC
+    {
+      id: 'clinical-protocols',
+      title: 'Phác đồ điều trị chuẩn',
+      value: clinicalProtocols,
+      badge: `${effectiveProtocols} đang áp dụng`,
+      badgeType: 'success',
+      subtext: 'Hướng dẫn chẩn đoán & điều trị chuẩn Bộ Y tế',
+      href: '/admin/collections/clinical-protocols',
+      createHref: '/admin/collections/clinical-protocols/create',
+      icon: 'stethoscope',
+      categoryGroup: 'chuyen-mon',
+      visible: true,
+    },
+    {
+      id: 'doctors',
+      title: 'Đội ngũ Thầy thuốc & Bác sĩ',
+      value: doctors,
+      badge: `${specialties} chuyên khoa`,
+      badgeType: 'info',
+      subtext: 'Ban Giám đốc & các Bác sĩ chuyên môn',
+      href: '/admin/collections/doctors',
+      createHref: '/admin/collections/doctors/create',
+      icon: 'people',
+      categoryGroup: 'chuyen-mon',
+      visible: true,
+    },
+    {
+      id: 'departments',
+      title: 'Khoa / Phòng chức năng',
+      value: departments,
+      badge: 'Cơ cấu tổ chức',
+      badgeType: 'neutral',
+      subtext: 'Khối Lâm sàng, Cận lâm sàng & Khối Hành chính',
+      href: '/admin/collections/departments',
+      createHref: '/admin/collections/departments/create',
+      icon: 'building',
+      categoryGroup: 'chuyen-mon',
+      visible: true,
+    },
+    {
+      id: 'advanced-techniques',
+      title: 'Kỹ thuật cao chuyên sâu',
+      value: advancedTechniques,
+      badge: 'Mũi nhọn',
+      badgeType: 'info',
+      subtext: 'Kỹ thuật chẩn đoán và điều trị hiện đại của viện',
+      href: '/admin/collections/advanced-techniques',
+      createHref: '/admin/collections/advanced-techniques/create',
+      icon: 'sparkles',
+      categoryGroup: 'chuyen-mon',
+      visible: true,
+    },
+    {
+      id: 'scientific-activities',
+      title: 'Nghiên cứu & Sinh hoạt KH',
+      value: scientificActivities,
+      badge: 'Y học thực chứng',
+      badgeType: 'neutral',
+      subtext: 'Hội thảo chuyên môn, sinh hoạt khoa học kỹ thuật',
+      href: '/admin/collections/scientific-activities',
+      createHref: '/admin/collections/scientific-activities/create',
+      icon: 'microscope',
+      categoryGroup: 'chuyen-mon',
+      visible: true,
+    },
+
+    // 3. TRUYỀN THÔNG, VĂN BẢN & ĐẤU THẦU
     {
       id: 'news',
-      title: 'Tin tức & Hoạt động',
+      title: 'Tin tức & Hoạt động y tế',
       value: news,
       badge: `${publishedPercent}% online`,
       badgeType: 'neutral',
       subtext: `${publishedNews} bài công khai · ${news - publishedNews} bản nháp`,
       href: '/admin/collections/news',
+      createHref: '/admin/collections/news/create',
       icon: 'news',
+      categoryGroup: 'truyen-thong',
       visible: cardVisibility.news,
     },
     {
       id: 'notices',
-      title: 'Thông báo & Công văn',
+      title: 'Thông báo & Chỉ đạo điều hành',
       value: notices,
       badge: priorityNotices ? `${priorityNotices} khẩn/quan trọng` : 'Bình thường',
       badgeType: priorityNotices ? 'warning' : 'neutral',
-      subtext: `${notices} thông báo chỉ đạo điều hành`,
+      subtext: `${notices} thông báo chỉ đạo, lịch công tác`,
       href: '/admin/collections/notices',
+      createHref: '/admin/collections/notices/create',
       icon: 'notice',
+      categoryGroup: 'truyen-thong',
       visible: cardVisibility.notices,
     },
     {
       id: 'procurement',
-      title: 'Đấu thầu & Mua sắm',
+      title: 'Đấu thầu & Mua sắm trang thiết bị',
       value: procurement,
       badge: openProcurement ? `${openProcurement} gói đang mở` : 'Đã đóng thầu',
       badgeType: openProcurement ? 'warning' : 'info',
-      subtext: `${procurement} gói thầu trang thiết bị & thuốc`,
+      subtext: `${procurement} gói thầu thuốc, vật tư y tế`,
       href: '/admin/collections/procurement',
+      createHref: '/admin/collections/procurement/create',
       icon: 'procurement',
+      categoryGroup: 'truyen-thong',
       visible: cardVisibility.procurement,
     },
     {
       id: 'documents',
-      title: 'Văn bản pháp quy',
+      title: 'Văn bản pháp quy & Biểu mẫu',
       value: documents,
       badge: `${documents} tệp văn bản`,
       badgeType: 'info',
-      subtext: 'Quy định, chính sách & biểu mẫu y tế',
+      subtext: 'Quy chế, quyết định và văn bản chỉ đạo',
       href: '/admin/collections/documents',
+      createHref: '/admin/collections/documents/create',
       icon: 'document',
+      categoryGroup: 'truyen-thong',
       visible: cardVisibility.documents,
     },
     {
       id: 'recruitment',
-      title: 'Tuyển dụng nhân sự',
+      title: 'Tuyển dụng nhân sự y tế',
       value: recruitment,
-      badge: `${recruitment} tin tuyển dụng`,
+      badge: `${recruitment} vị trí tuyển`,
       badgeType: 'success',
-      subtext: 'Thông báo tuyển dụng bác sĩ, nhân viên',
+      subtext: 'Thông báo tuyển dụng bác sĩ, điều dưỡng, nhân viên',
       href: '/admin/collections/recruitment',
+      createHref: '/admin/collections/recruitment/create',
       icon: 'briefcase',
+      categoryGroup: 'truyen-thong',
       visible: cardVisibility.recruitment,
     },
-    {
-      id: 'schedules',
-      title: 'Lịch trực & Khám bệnh',
-      value: schedules,
-      badge: `${doctors} Bác sĩ`,
-      badgeType: 'info',
-      subtext: `${departments} khoa phòng · ${specialties} chuyên khoa`,
-      href: '/admin/collections/schedules',
-      icon: 'schedule',
-      visible: cardVisibility.schedules,
-    },
-    {
-      id: 'vaccines',
-      title: 'Tiêm chủng dịch vụ',
-      value: vaccines,
-      badge: `${vaccinationSchedules} Lịch tiêm`,
-      badgeType: 'success',
-      subtext: `${vaccines} loại vắc xin đang sẵn sàng`,
-      href: '/admin/collections/vaccines',
-      icon: 'medical',
-      visible: cardVisibility.vaccines,
-    },
+
+    // 4. CHĂM SÓC NGƯỜI BỆNH & KHẢO SÁT
     {
       id: 'feedback',
-      title: 'Phản ánh & CSKH',
-      value: feedbackNew + feedbackProcessing + consultations,
-      badge: feedbackNew > 0 ? `${feedbackNew} mới` : 'Đã xử lý',
+      title: 'Hộp thư phản ánh & Khiếu nại',
+      value: feedbackNew + feedbackProcessing,
+      badge: feedbackNew > 0 ? `${feedbackNew} mới` : 'Đã giải quyết',
       badgeType: feedbackNew > 0 ? 'danger' : 'success',
-      subtext: `${feedbackDone} đã giải quyết · ${consultations} tư vấn`,
+      subtext: `${feedbackDone} đã xử lý · ${feedbackNew} chờ tiếp nhận`,
       href: '/admin/collections/feedback',
+      createHref: '/admin/collections/feedback/create',
       icon: 'feedback',
+      categoryGroup: 'cskh',
       visible: cardVisibility.feedback,
     },
     {
+      id: 'consultations',
+      title: 'Hộp thư Tư vấn sức khỏe',
+      value: consultations,
+      badge: consultations > 0 ? `${consultations} chờ phản hồi` : 'Đã phản hồi',
+      badgeType: consultations > 0 ? 'warning' : 'success',
+      subtext: 'Bệnh nhân đăng ký giải đáp thắc mắc chuyên môn',
+      href: '/admin/collections/consultations',
+      createHref: '/admin/collections/consultations/create',
+      icon: 'chat',
+      categoryGroup: 'cskh',
+      visible: true,
+    },
+    {
       id: 'surveys',
-      title: 'Khảo sát chất lượng',
+      title: 'Khảo sát sự hài lòng người bệnh',
       value: surveyResponses,
-      badge: `${surveys} Chiến dịch`,
+      badge: `${surveys} đợt đang mở`,
       badgeType: 'info',
-      subtext: 'Thu thập ý kiến theo chuẩn Bộ Y tế',
+      subtext: 'Đánh giá chất lượng bệnh viện theo chuẩn Bộ Y tế',
       href: '/admin/collections/survey-responses',
+      createHref: '/admin/collections/survey-campaigns/create',
       icon: 'survey',
+      categoryGroup: 'cskh',
       visible: cardVisibility.surveys,
+    },
+
+    // 5. TRANG CHỦ & GIAO DIỆN WEBSITE
+    {
+      id: 'pages',
+      title: 'Trang thông tin tĩnh',
+      value: pages,
+      badge: 'Giao diện',
+      badgeType: 'neutral',
+      subtext: 'Trang giới thiệu, hướng dẫn và điều khoản viện',
+      href: '/admin/collections/pages',
+      createHref: '/admin/collections/pages/create',
+      icon: 'layout',
+      categoryGroup: 'giao-dien',
+      visible: true,
+    },
+    {
+      id: 'faqs',
+      title: 'Hỏi đáp Y tế thường gặp',
+      value: faqs,
+      badge: 'Hỗ trợ 24/7',
+      badgeType: 'info',
+      subtext: 'Giải đáp thắc mắc về khám chữa bệnh, BHYT & viện phí',
+      href: '/admin/collections/faqs',
+      createHref: '/admin/collections/faqs/create',
+      icon: 'chat',
+      categoryGroup: 'giao-dien',
+      visible: true,
+    },
+
+    // 6. HỆ THỐNG & DỮ LIỆU
+    {
+      id: 'media',
+      title: 'Thư viện tệp tin & Hình ảnh',
+      value: media,
+      badge: 'Lưu trữ R2/Local',
+      badgeType: 'neutral',
+      subtext: 'Ảnh chân dung, tư liệu và văn bản số hóa',
+      href: '/admin/collections/media',
+      createHref: '/admin/collections/media/create',
+      icon: 'media',
+      categoryGroup: 'he-thong',
+      visible: true,
+    },
+    {
+      id: 'users',
+      title: 'Quản trị viên & Phân quyền',
+      value: users,
+      badge: 'Bảo mật tài khoản',
+      badgeType: 'info',
+      subtext: 'Cán bộ IT, Biên tập viên và Lãnh đạo duyệt bài',
+      href: '/admin/collections/users',
+      createHref: '/admin/collections/users/create',
+      icon: 'people',
+      categoryGroup: 'he-thong',
+      visible: true,
+    },
+    {
+      id: 'audit-logs',
+      title: 'Nhật ký kiểm toán an toàn',
+      value: auditLogs,
+      badge: 'Audit Trail',
+      badgeType: 'success',
+      subtext: 'Ghi vết đầy đủ mọi thao tác thêm, sửa, xóa dữ liệu',
+      href: '/admin/collections/audit-logs',
+      icon: 'shieldCheck',
+      categoryGroup: 'he-thong',
+      visible: true,
     },
   ]
 
@@ -226,41 +438,23 @@ export default async function AdminDashboard() {
         badgeType: 'info' as const,
         subtext: `${sec.count} bài viết chuyên đề${sec.slug ? ` (${sec.slug})` : ''}`,
         href: `/admin/collections/custom-posts?where[section][equals]=${sec.id}`,
+        createHref: `/admin/collections/custom-posts/create`,
         icon: (sec.slug.includes('so') || sec.title.toLowerCase().includes('số') ? 'cpu' : 'folder') as GlyphName,
+        categoryGroup: 'truyen-thong',
         visible: true,
       }))
     : []
 
   const initialMetricCards = [...coreMetricCards, ...dynamicMetricCards]
 
-  // Cơ cấu dữ liệu hệ thống - Tách riêng từng mục & Tự động nối các mục mới (như Chuyển đổi số)
-  const coreBreakdown = [
-    { id: 'news', label: 'Tin tức y khoa & hoạt động', count: news, totalPercent: Math.round((news / maxContent) * 100), color: '#0f766e', href: '/admin/collections/news', visible: cardVisibility.news },
-    { id: 'notices', label: 'Thông báo nội bộ & công khai', count: notices, totalPercent: Math.round((notices / maxContent) * 100), color: '#0284c7', href: '/admin/collections/notices', visible: cardVisibility.notices },
-    { id: 'procurement', label: 'Gói thầu mua sắm trang thiết bị', count: procurement, totalPercent: Math.round((procurement / maxContent) * 100), color: '#d97706', href: '/admin/collections/procurement', visible: cardVisibility.procurement },
-    { id: 'documents', label: 'Văn bản pháp quy & biểu mẫu', count: documents, totalPercent: Math.round((documents / maxContent) * 100), color: '#0d9488', href: '/admin/collections/documents', visible: cardVisibility.documents },
-    { id: 'recruitment', label: 'Thông tin tuyển dụng nhân sự', count: recruitment, totalPercent: Math.round((recruitment / maxContent) * 100), color: '#059669', href: '/admin/collections/recruitment', visible: cardVisibility.recruitment },
-  ].filter((item) => item.visible)
-
-  const dynamicBreakdown = cardVisibility.dynamicSections
-    ? dynamicSectionStats.map((sec, idx) => {
-        const dynamicColors = ['#8b5cf6', '#ec4899', '#f97316', '#14b8a6', '#6366f1']
-        return {
-          label: `Chuyên mục: ${sec.title}`,
-          count: sec.count,
-          totalPercent: Math.round((sec.count / maxContent) * 100),
-          color: dynamicColors[idx % dynamicColors.length],
-          href: `/admin/collections/custom-posts?where[section][equals]=${sec.id}`,
-        }
-      })
-    : []
-
-  // Nếu chưa có mục con nào thì để fallback customPosts tổng
+  // Cơ cấu dữ liệu hệ thống
   const contentBreakdown = [
-    ...coreBreakdown,
-    ...(dynamicBreakdown.length > 0
-      ? dynamicBreakdown
-      : [{ label: 'Nội dung chuyên đề mở rộng', count: customPosts, totalPercent: Math.round((customPosts / maxContent) * 100), color: '#6366f1', href: '/admin/collections/custom-posts' }]),
+    { id: 'clinical-protocols', label: 'Phác đồ điều trị chuẩn', count: clinicalProtocols, totalPercent: Math.round((clinicalProtocols / maxContent) * 100), color: '#0f766e', href: '/admin/collections/clinical-protocols' },
+    { id: 'news', label: 'Tin tức y tế & hoạt động', count: news, totalPercent: Math.round((news / maxContent) * 100), color: '#0284c7', href: '/admin/collections/news' },
+    { id: 'notices', label: 'Thông báo & Chỉ đạo điều hành', count: notices, totalPercent: Math.round((notices / maxContent) * 100), color: '#059669', href: '/admin/collections/notices' },
+    { id: 'documents', label: 'Văn bản pháp quy & Biểu mẫu', count: documents, totalPercent: Math.round((documents / maxContent) * 100), color: '#0d9488', href: '/admin/collections/documents' },
+    { id: 'procurement', label: 'Gói thầu mua sắm trang thiết bị', count: procurement, totalPercent: Math.round((procurement / maxContent) * 100), color: '#d97706', href: '/admin/collections/procurement' },
+    { id: 'recruitment', label: 'Thông tin tuyển dụng viên chức', count: recruitment, totalPercent: Math.round((recruitment / maxContent) * 100), color: '#8b5cf6', href: '/admin/collections/recruitment' },
   ]
 
   // Mock timeline and department statistics for visualization
@@ -290,11 +484,13 @@ export default async function AdminDashboard() {
     showDepartmentBar: dSettings.showDepartmentBar !== false,
     showSatisfactionGauge: dSettings.showSatisfactionGauge !== false,
     showSlaStats: dSettings.showSlaStats !== false,
+    showWeeklyWorkload: dSettings.showWeeklyWorkload !== false,
+    showProtocolDistribution: dSettings.showProtocolDistribution !== false,
   }
 
-  // Node UI tĩnh truyền vào Client Component
+  // Live Metrics Command Bar
   const commandBarNode = (
-    <div className={styles.commandBar}>
+    <div key="command-bar-node" className={styles.commandBar}>
       <div className={styles.commandBarItem}>
         <DashboardGlyph name="clock" />
         <span>{today}</span>
@@ -302,42 +498,54 @@ export default async function AdminDashboard() {
       <div className={styles.commandDivider} />
       <div className={styles.commandMetrics}>
         <div className={styles.subMetric}>
-          <span className={styles.subMetricLabel}>Tổng nội dung:</span>
+          <span className={styles.subMetricLabel}>Tổng nội dung số:</span>
           <strong className={styles.subMetricValue}>{totalContent}</strong>
         </div>
         <div className={styles.subMetric}>
-          <span className={styles.subMetricLabel}>Dịch vụ & Kỹ thuật:</span>
+          <span className={styles.subMetricLabel}>Phác đồ điều trị:</span>
+          <strong className={styles.subMetricValue}>{clinicalProtocols}</strong>
+        </div>
+        <div className={styles.subMetric}>
+          <span className={styles.subMetricLabel}>Bác sĩ & Nhân sự:</span>
+          <strong className={styles.subMetricValue}>{doctors}</strong>
+        </div>
+        <div className={styles.subMetric}>
+          <span className={styles.subMetricLabel}>Dịch vụ kỹ thuật:</span>
           <strong className={styles.subMetricValue}>{services}</strong>
         </div>
         <div className={styles.subMetric}>
-          <span className={styles.subMetricLabel}>Tài khoản:</span>
-          <strong className={styles.subMetricValue}>{users}</strong>
+          <span className={styles.subMetricLabel}>Ý kiến phản ánh:</span>
+          <strong className={styles.subMetricValue}>{totalFeedback}</strong>
         </div>
         <div className={styles.subMetric}>
           <span className={styles.subMetricLabel}>Tệp Media:</span>
           <strong className={styles.subMetricValue}>{media}</strong>
+        </div>
+        <div className={styles.subMetric}>
+          <span className={styles.subMetricLabel}>Audit Logs:</span>
+          <strong className={styles.subMetricValue}>{auditLogs}</strong>
         </div>
       </div>
     </div>
   )
 
   const bentoContentNode = (
-    <>
+    <div key="bento-content-wrapper">
       {/* 4. Main Bento Grid (Operational & Triage Hub) */}
       <div className={styles.bentoGrid}>
         {/* Card 1: Phân bổ dữ liệu & Tình trạng kho nội dung */}
         <div className={styles.bentoCard}>
           <div className={styles.cardHeading}>
             <div>
-              <span className={styles.cardCategory}>XUẤT BẢN NỘI DUNG</span>
-              <h2 className={styles.cardTitle}>Cơ cấu dữ liệu hệ thống</h2>
+              <span className={styles.cardCategory}>KHO NỘI DUNG SỐ & PHÁC ĐỒ</span>
+              <h2 className={styles.cardTitle}>Cơ cấu tài nguyên bệnh viện</h2>
             </div>
-            <span className={styles.countPill}>{totalContent} mục</span>
+            <span className={styles.countPill}>{totalContent} tài nguyên</span>
           </div>
 
           <div className={styles.breakdownList}>
             {contentBreakdown.map((row, idx) => (
-              <Link href={row.href} key={idx} className={styles.breakdownRow}>
+              <Link href={row.href} key={row.id || idx} className={styles.breakdownRow}>
                 <div className={styles.rowInfo}>
                   <span className={styles.rowDot} style={{ background: row.color }} />
                   <span className={styles.rowName}>{row.label}</span>
@@ -355,7 +563,7 @@ export default async function AdminDashboard() {
 
           <div className={styles.cardFooter}>
             <span className={styles.footerNote}>
-              Cập nhật đồng bộ theo thời gian thực
+              Đồng bộ dữ liệu thời gian thực từ PostgreSQL
             </span>
             <Link href="/admin/globals/homepage" className={styles.cardLink}>
               Tùy biến Trang chủ →
@@ -410,8 +618,8 @@ export default async function AdminDashboard() {
               <DashboardGlyph name={feedbackNew > 0 ? 'notice' : 'check'} />
             </span>
             <div className={styles.bannerContent}>
-              <strong>{feedbackNew > 0 ? `Có ${feedbackNew} phản hồi mới chưa xử lý` : 'Đã giải quyết toàn bộ góp ý'}</strong>
-              <p>Phản hồi nhanh chóng giúp gia tăng chỉ số hài lòng của bệnh nhân và người nhà.</p>
+              <strong>{feedbackNew > 0 ? `Có ${feedbackNew} phản hồi mới cần xử lý kịp thời` : 'Đã giải quyết toàn bộ góp ý của bệnh nhân'}</strong>
+              <p>Phản hồi nhanh chóng giúp nâng cao chỉ số hài lòng của bệnh nhân và người nhà.</p>
             </div>
           </div>
         </div>
@@ -419,42 +627,42 @@ export default async function AdminDashboard() {
 
       {/* 5. Linear Activity Feeds Grid */}
       <div className={styles.bentoGrid}>
-        {/* Feed: Bài viết chỉnh sửa gần đây */}
+        {/* Feed 1: Phác đồ điều trị & Văn bản mới cập nhật */}
         <div className={styles.bentoCard}>
           <div className={styles.cardHeading}>
             <div>
-              <span className={styles.cardCategory}>BIÊN TẬP NỘI DUNG</span>
-              <h2 className={styles.cardTitle}>Bài viết vừa cập nhật</h2>
+              <span className={styles.cardCategory}>CHUYÊN MÔN Y TẾ</span>
+              <h2 className={styles.cardTitle}>Phác đồ điều trị vừa cập nhật</h2>
             </div>
-            <Link href="/admin/collections/news" className={styles.cardLink}>Xem tất cả →</Link>
+            <Link href="/admin/collections/clinical-protocols" className={styles.cardLink}>Xem tất cả →</Link>
           </div>
 
           <div className={styles.activityFeed}>
-            {(latestNews.docs as any[]).length === 0 && (
-              <div className={styles.emptyFeed}>Chưa có bài viết nào trong hệ thống.</div>
+            {(latestProtocols.docs as any[]).length === 0 && (
+              <div className={styles.emptyFeed}>Chưa có phác đồ điều trị nào trong hệ thống.</div>
             )}
-            {(latestNews.docs as any[]).map((item) => (
-              <Link href={`/admin/collections/news/${item.id}`} key={item.id} className={styles.feedRow}>
+            {(latestProtocols.docs as any[]).map((item) => (
+              <Link href={`/admin/collections/clinical-protocols/${item.id}`} key={item.id} className={styles.feedRow}>
                 <div className={styles.feedAvatar}>
-                  <DashboardGlyph name="news" />
+                  <DashboardGlyph name="stethoscope" />
                 </div>
                 <div className={styles.feedBody}>
                   <span className={styles.feedTitle}>{item.title || 'Chưa đặt tiêu đề'}</span>
                   <div className={styles.feedSub}>
-                    <span>{item.category || 'Tin tức'}</span>
+                    <span>{item.protocolNumber ? `Số ${item.protocolNumber}` : 'Phác đồ điều trị'}</span>
                     <span>·</span>
                     <span>{formatDate(item.updatedAt)}</span>
                   </div>
                 </div>
-                <span className={`${styles.statusBadge} ${item._status === 'published' ? styles.statusPublished : styles.statusDraft}`}>
-                  {item._status === 'published' ? 'Đã xuất bản' : 'Bản nháp'}
+                <span className={`${styles.statusBadge} ${item.status === 'effective' ? styles.statusPublished : styles.statusDraft}`}>
+                  {item.status === 'effective' ? 'Hiệu lực' : 'Đang dự thảo'}
                 </span>
               </Link>
             ))}
           </div>
         </div>
 
-        {/* Feed: Ý kiến người bệnh chờ xử lý */}
+        {/* Feed 2: Ý kiến người bệnh chờ xử lý */}
         <div className={styles.bentoCard}>
           <div className={styles.cardHeading}>
             <div>
@@ -468,7 +676,7 @@ export default async function AdminDashboard() {
             {(latestFeedback.docs as any[]).length === 0 && (
               <div className={styles.emptyFeed}>
                 <span className={styles.emptyIcon}>✓</span>
-                <span>Hộp thư đang trống. Tất cả phản hồi đã được xử lý xong!</span>
+                <span>Hộp thư đang trống. Tất cả ý kiến đã được xử lý hoàn tất!</span>
               </div>
             )}
             {(latestFeedback.docs as any[]).map((item) => (
@@ -497,25 +705,25 @@ export default async function AdminDashboard() {
       <section className={styles.bentoCard}>
         <div className={styles.cardHeading}>
           <div>
-            <span className={styles.cardCategory}>DANH MỤC CƠ SỞ</span>
-            <h2 className={styles.cardTitle}>Dữ liệu nghiệp vụ bệnh viện</h2>
+            <span className={styles.cardCategory}>DANH MỤC CƠ SỞ & HỆ THỐNG</span>
+            <h2 className={styles.cardTitle}>Năng lực số bệnh viện & Dữ liệu cốt lõi</h2>
           </div>
           <Link href="/admin/collections/users" className={styles.cardLink}>Quản trị tài khoản →</Link>
         </div>
 
         <div className={styles.masterGrid}>
+          <Link href="/admin/collections/clinical-protocols" className={styles.masterItem}>
+            <div className={styles.masterItemIcon}><DashboardGlyph name="stethoscope" /></div>
+            <div className={styles.masterItemInfo}>
+              <strong className={styles.masterItemNum}>{clinicalProtocols}</strong>
+              <span className={styles.masterItemLabel}>Phác đồ điều trị</span>
+            </div>
+          </Link>
           <Link href="/admin/collections/departments" className={styles.masterItem}>
             <div className={styles.masterItemIcon}><DashboardGlyph name="building" /></div>
             <div className={styles.masterItemInfo}>
               <strong className={styles.masterItemNum}>{departments}</strong>
               <span className={styles.masterItemLabel}>Khoa / Phòng ban</span>
-            </div>
-          </Link>
-          <Link href="/admin/collections/specialties" className={styles.masterItem}>
-            <div className={styles.masterItemIcon}><DashboardGlyph name="medical" /></div>
-            <div className={styles.masterItemInfo}>
-              <strong className={styles.masterItemNum}>{specialties}</strong>
-              <span className={styles.masterItemLabel}>Chuyên khoa y tế</span>
             </div>
           </Link>
           <Link href="/admin/collections/doctors" className={styles.masterItem}>
@@ -539,77 +747,77 @@ export default async function AdminDashboard() {
               <span className={styles.masterItemLabel}>Tệp & Media</span>
             </div>
           </Link>
-          <Link href="/admin/collections/users" className={styles.masterItem}>
-            <div className={styles.masterItemIcon}><DashboardGlyph name="shield" /></div>
+          <Link href="/admin/collections/audit-logs" className={styles.masterItem}>
+            <div className={styles.masterItemIcon}><DashboardGlyph name="shieldCheck" /></div>
             <div className={styles.masterItemInfo}>
-              <strong className={styles.masterItemNum}>{users}</strong>
-              <span className={styles.masterItemLabel}>Tài khoản người dùng</span>
+              <strong className={styles.masterItemNum}>{auditLogs}</strong>
+              <span className={styles.masterItemLabel}>Nhật ký kiểm toán</span>
             </div>
           </Link>
         </div>
       </section>
 
-      {/* 7. Quick Launch Command Grid (Shadcn Keyboard Shortcuts) */}
+      {/* 7. Quick Launch Command Grid */}
       <section className={styles.quickCommandsSection}>
         <div className={styles.quickCommandsHead}>
-          <span className={styles.cardCategory}>TRUY CẬP NHANH</span>
-          <h2 className={styles.cardTitle}>Phím tắt tác vụ quản trị</h2>
+          <span className={styles.cardCategory}>TRUY CẬP TÁC VỤ NHANH</span>
+          <h2 className={styles.cardTitle}>Phím tắt tạo mới & Điều hành nhanh</h2>
         </div>
 
         <div className={styles.commandsGrid}>
-          <Link href="/admin/collections/news/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="news" />
-            <span>Đăng tin tức mới</span>
-            <kbd className={styles.shortcutKey}>⌘N</kbd>
+          <Link href="/admin/collections/clinical-protocols/create" className={styles.commandActionBtn}>
+            <DashboardGlyph name="stethoscope" />
+            <span>Thêm Phác đồ điều trị</span>
+            <kbd className={styles.shortcutKey}>⌘P</kbd>
           </Link>
-          <Link href="/admin/collections/notices/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="notice" />
-            <span>Tạo thông báo</span>
-            <kbd className={styles.shortcutKey}>⌘T</kbd>
-          </Link>
-          <Link href="/admin/collections/procurement/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="procurement" />
-            <span>Tạo gói thầu</span>
+          <Link href="/admin/collections/doctors/create" className={styles.commandActionBtn}>
+            <DashboardGlyph name="people" />
+            <span>Thêm Bác sĩ mới</span>
             <kbd className={styles.shortcutKey}>⌘B</kbd>
           </Link>
           <Link href="/admin/collections/schedules/create" className={styles.commandActionBtn}>
             <DashboardGlyph name="schedule" />
-            <span>Cập nhật lịch khám</span>
+            <span>Cập nhật Lịch khám</span>
             <kbd className={styles.shortcutKey}>⌘L</kbd>
           </Link>
-          <Link href="/admin/collections/vaccinationSchedules/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="medical" />
-            <span>Lịch tiêm chủng</span>
-            <kbd className={styles.shortcutKey}>⌘V</kbd>
+          <Link href="/admin/collections/news/create" className={styles.commandActionBtn}>
+            <DashboardGlyph name="news" />
+            <span>Đăng bài Tin tức</span>
+            <kbd className={styles.shortcutKey}>⌘N</kbd>
+          </Link>
+          <Link href="/admin/collections/notices/create" className={styles.commandActionBtn}>
+            <DashboardGlyph name="notice" />
+            <span>Tạo Thông báo khẩn</span>
+            <kbd className={styles.shortcutKey}>⌘T</kbd>
+          </Link>
+          <Link href="/admin/collections/procurement/create" className={styles.commandActionBtn}>
+            <DashboardGlyph name="procurement" />
+            <span>Tạo Gói thầu</span>
+            <kbd className={styles.shortcutKey}>⌘G</kbd>
           </Link>
           <Link href="/admin/collections/documents/create" className={styles.commandActionBtn}>
             <DashboardGlyph name="document" />
-            <span>Đăng tải văn bản</span>
+            <span>Đăng tải Văn bản</span>
             <kbd className={styles.shortcutKey}>⌘D</kbd>
           </Link>
-          <Link href="/admin/collections/consultations" className={styles.commandActionBtn}>
-            <DashboardGlyph name="chat" />
-            <span>Hộp thư tư vấn ({consultations})</span>
-            <kbd className={styles.shortcutKey}>⌘C</kbd>
+          <Link href="/admin/collections/appointments" className={styles.commandActionBtn}>
+            <DashboardGlyph name="schedule" />
+            <span>Duyệt lịch đặt khám</span>
+            <kbd className={styles.shortcutKey}>⌘A</kbd>
           </Link>
-          <Link href="/admin/globals/site-settings" className={styles.commandActionBtn}>
-            <DashboardGlyph name="settings" />
-            <span>Logo & Header</span>
-            <kbd className={styles.shortcutKey}>⌘H</kbd>
+          <Link href="/admin/collections/feedback" className={styles.commandActionBtn}>
+            <DashboardGlyph name="feedback" />
+            <span>Hộp thư phản ánh ({feedbackNew})</span>
+            <kbd className={styles.shortcutKey}>⌘F</kbd>
           </Link>
           <Link href="/admin/globals/homepage" className={styles.commandActionBtn}>
             <DashboardGlyph name="chart" />
             <span>Cấu hình Trang chủ</span>
-            <kbd className={styles.shortcutKey}>⌘P</kbd>
-          </Link>
-          <Link href="/admin/globals/theme-settings" className={styles.commandActionBtn}>
-            <DashboardGlyph name="settings" />
-            <span>Giao diện & Theme</span>
-            <kbd className={styles.shortcutKey}>⌘S</kbd>
+            <kbd className={styles.shortcutKey}>⌘H</kbd>
           </Link>
         </div>
       </section>
-    </>
+    </div>
   )
 
   return (
@@ -621,7 +829,9 @@ export default async function AdminDashboard() {
       satisfactionScore={satisfactionScore}
       surveyResponses={surveyResponses || 120}
       slaResolvedPercent={slaResolvedPercent}
-      accountSummaryNode={<AdminAccountSummary />}
+      totalAppointments={appointments}
+      clinicalProtocols={clinicalProtocols}
+      accountSummaryNode={<AdminAccountSummary key="account-summary-node" />}
       commandBarNode={commandBarNode}
       bentoContentNode={bentoContentNode}
     />

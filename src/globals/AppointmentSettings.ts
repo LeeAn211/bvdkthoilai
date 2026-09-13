@@ -20,7 +20,7 @@ export const AppointmentSettings: GlobalConfig = {
   slug: 'appointment-settings',
   label: 'Cấu hình Đặt lịch khám tại cơ sở',
   admin: {
-    group: 'Khám bệnh',
+    group: '🏥 Khám bệnh & Dịch vụ Y tế',
     description: 'Tùy chỉnh toàn diện thiết kế, màu sắc, font chữ, bố cục, tùy chỉnh nội dung/nhãn/khung giờ các trường có sẵn và thêm/bớt trường mới.',
   },
   access: {

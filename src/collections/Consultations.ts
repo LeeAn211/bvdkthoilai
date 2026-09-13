@@ -6,7 +6,7 @@ export const Consultations: CollectionConfig = {
   labels: { singular: 'Tư vấn trực tuyến', plural: 'Tư vấn trực tuyến' },
   admin: {
     useAsTitle: 'question',
-    group: 'CSKH',
+    group: '💬 Chăm sóc người bệnh & Khảo sát',
     defaultColumns: ['question', 'status', 'createdAt', 'answeredAt'],
   },
   access: {

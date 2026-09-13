@@ -5,7 +5,7 @@ export const DefaultMediaSettings: GlobalConfig = {
   slug: 'default-media-settings',
   label: 'Ảnh mặc định nội dung',
   admin: {
-    group: 'Trang chủ & Giao diện',
+    group: '🌐 Trang chủ & Giao diện Website',
     description: 'Ảnh đại diện mặc định dùng ở trang chủ và danh sách khi nội dung không chọn ảnh riêng. Ảnh đại diện không hiển thị ở đầu trang chi tiết; ảnh chèn trong nội dung vẫn hiển thị bình thường.',
   },
   access: { read: loggedIn, update: admins },

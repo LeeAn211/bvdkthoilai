@@ -11,9 +11,11 @@ type Item = {
   href: string
   kind: string
   date?: string
+  imageFit?: 'cover' | 'contain'
+  imagePosition?: string
 }
 
-export function FeaturedContentCarousel({ items, interval = 4500 }: { items: Item[]; interval?: number }) {
+export function FeaturedContentCarousel({ items, interval = 4500, cardFit = 'cover' }: { items: Item[]; interval?: number; cardFit?: 'cover' | 'contain' }) {
   const safeItems = useMemo(() => items.filter((item) => item?.title && item?.href), [items])
   const [start, setStart] = useState(0)
   const visibleCount = Math.min(4, safeItems.length)
@@ -33,17 +35,34 @@ export function FeaturedContentCarousel({ items, interval = 4500 }: { items: Ite
   return <div className={styles.carousel} aria-label="Nội dung nổi bật">
     <div className={styles.viewport}>
       <div className={styles.grid} data-count={visibleCount} key={start}>
-        {visible.map((item) => <a href={item.href} className={styles.card} key={`${item.id}-${start}`}>
-          <div className={styles.imageFrame}>
-            {item.image && <img className={styles.image} src={item.image} alt={item.title} loading="lazy" decoding="async" />}
-            <span className={styles.badge}>{item.kind}</span>
-          </div>
-          <div className={styles.copy}>
-            <small>{item.date || 'Mới cập nhật'}</small>
-            <h3>{item.title}</h3>
-            {item.excerpt && <p>{item.excerpt}</p>}
-          </div>
-        </a>)}
+        {visible.map((item) => {
+          const fit = item.imageFit || cardFit
+          return (
+            <a href={item.href} className={styles.card} key={`${item.id}-${start}`}>
+              <div className={styles.imageFrame} style={{ background: fit === 'contain' ? '#f0f7fd' : undefined }}>
+                {item.image && (
+                  <img
+                    className={styles.image}
+                    src={item.image}
+                    alt={item.title}
+                    loading="lazy"
+                    decoding="async"
+                    style={{
+                      objectFit: fit,
+                      objectPosition: item.imagePosition || (fit === 'contain' ? 'center center' : 'top center'),
+                    }}
+                  />
+                )}
+                <span className={styles.badge}>{item.kind}</span>
+              </div>
+              <div className={styles.copy}>
+                <small>{item.date || 'Mới cập nhật'}</small>
+                <h3>{item.title}</h3>
+                {item.excerpt && <p>{item.excerpt}</p>}
+              </div>
+            </a>
+          )
+        })}
       </div>
     </div>
     {safeItems.length > visibleCount && <div className={styles.controls}>

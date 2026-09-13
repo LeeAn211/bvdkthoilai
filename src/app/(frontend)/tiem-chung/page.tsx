@@ -2,7 +2,7 @@ import { PageHero } from '@/components/PageHero'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SearchFilter } from '@/components/SearchFilter'
-import { getCMS } from '@/lib/payload'
+import { getCMS, getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
 import { getDefaultContentMedia } from '@/lib/defaultMedia'
 
@@ -12,8 +12,12 @@ const formatDate = (value?: string) => value ? new Date(value).toLocaleDateStrin
 
 export default async function VaccinationPage() {
   let items: any[] = []
+  let pageSettings: any = {}
+
   try {
-    const payload = await getCMS()
+    const [payload, siteSettings] = await Promise.all([getCMS(), getGlobal('site-settings')])
+    pageSettings = (siteSettings as any)?.vaccinationPage || {}
+
     const [scheduleResult, vaccineResult, priceResult, defaults] = await Promise.all([
       payload.find({ collection: 'vaccinationSchedules', where: { active: { equals: true } }, sort: '-date', limit: 300, depth: 1 }),
       payload.find({ collection: 'vaccines', where: { active: { equals: true } }, sort: 'name', limit: 300, depth: 1 }),
@@ -82,10 +86,65 @@ export default async function VaccinationPage() {
     console.error('[VaccinationPage] Lỗi khi tải dữ liệu tiêm chủng:', error)
   }
 
-  return <>
-    <SiteHeader />
-    <PageHero eyebrow="TIÊM NGỪA AN TOÀN" title="Thông tin tiêm ngừa" description="Theo dõi thông báo lịch tiêm, các đợt tiêm và danh mục vắc xin tại bệnh viện." />
-    <main className="section"><div className="container"><SearchFilter items={items} kind="vaccination" /></div></main>
-    <SiteFooter />
-  </>
+  const eyebrow = pageSettings.eyebrow || 'TIÊM NGỪA AN TOÀN'
+  const title = pageSettings.title || 'Thông tin tiêm ngừa'
+  const description = pageSettings.description || 'Theo dõi thông báo lịch tiêm, các đợt tiêm và danh mục vắc xin tại bệnh viện.'
+
+  return (
+    <>
+      <SiteHeader />
+      <PageHero eyebrow={eyebrow} title={title} description={description} />
+      <main className="section">
+        <div className="container">
+          {pageSettings.showNoticeBanner !== false && (pageSettings.noticeContent || pageSettings.noticeTitle) && (
+            <div
+              style={{
+                background: '#eff6ff',
+                border: '1.5px solid #93c5fd',
+                borderRadius: '16px',
+                padding: '20px 24px',
+                marginBottom: '24px',
+                boxShadow: '0 4px 14px rgba(37, 99, 235, 0.08)',
+                textAlign: pageSettings.noticeAlign || 'left',
+              }}
+            >
+              {pageSettings.noticeTitle && (
+                <h3
+                  style={{
+                    margin: '0 0 10px',
+                    color: '#1e40af',
+                    fontSize: '17px',
+                    fontWeight: 800,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    justifyContent: pageSettings.noticeAlign === 'center' ? 'center' : pageSettings.noticeAlign === 'right' ? 'flex-end' : 'flex-start',
+                    textWrap: 'balance',
+                  }}
+                >
+                  <span>💉</span> {pageSettings.noticeTitle}
+                </h3>
+              )}
+              {pageSettings.noticeContent && (
+                <p
+                  style={{
+                    margin: 0,
+                    color: '#1d4ed8',
+                    fontSize: '14px',
+                    lineHeight: 1.7,
+                    whiteSpace: 'pre-line',
+                    textWrap: 'balance',
+                  }}
+                >
+                  {pageSettings.noticeContent}
+                </p>
+              )}
+            </div>
+          )}
+          <SearchFilter items={items} kind="vaccination" />
+        </div>
+      </main>
+      <SiteFooter />
+    </>
+  )
 }

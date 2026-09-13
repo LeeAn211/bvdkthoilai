@@ -15,6 +15,8 @@ export interface ChartVisibility {
   showDepartmentBar: boolean
   showSatisfactionGauge: boolean
   showSlaStats: boolean
+  showWeeklyWorkload?: boolean
+  showProtocolDistribution?: boolean
 }
 
 interface AdminDashboardCustomizerProps {
@@ -77,6 +79,8 @@ export default function AdminDashboardCustomizer({
       showDepartmentBar: true,
       showSatisfactionGauge: true,
       showSlaStats: true,
+      showWeeklyWorkload: true,
+      showProtocolDistribution: true,
     }
     setCards(resetCards)
     setCharts(resetCharts)
@@ -259,6 +263,36 @@ export default function AdminDashboardCustomizer({
                       type="checkbox"
                       checked={charts.showSlaStats}
                       onChange={() => toggleChart('showSlaStats')}
+                    />
+                    <span className={styles.slider} />
+                  </label>
+                </div>
+
+                <div className={`${styles.itemRow} ${charts.showWeeklyWorkload === false ? styles.itemRowDisabled : ''}`}>
+                  <div>
+                    <div className={styles.itemTitle}>Biểu đồ tải lượng khám & Cấp cứu 24/7 tuần</div>
+                    <div className={styles.itemDesc}>Lượt khám ngoại trú & ca tiếp nhận cấp cứu qua các ngày trong tuần.</div>
+                  </div>
+                  <label className={styles.switchWrap}>
+                    <input
+                      type="checkbox"
+                      checked={charts.showWeeklyWorkload !== false}
+                      onChange={() => toggleChart('showWeeklyWorkload')}
+                    />
+                    <span className={styles.slider} />
+                  </label>
+                </div>
+
+                <div className={`${styles.itemRow} ${charts.showProtocolDistribution === false ? styles.itemRowDisabled : ''}`}>
+                  <div>
+                    <div className={styles.itemTitle}>Biểu đồ phân bổ phác đồ điều trị chuẩn</div>
+                    <div className={styles.itemDesc}>Cơ cấu phác đồ điều trị theo 6 khối chuyên môn theo chuẩn Bộ Y tế.</div>
+                  </div>
+                  <label className={styles.switchWrap}>
+                    <input
+                      type="checkbox"
+                      checked={charts.showProtocolDistribution !== false}
+                      onChange={() => toggleChart('showProtocolDistribution')}
                     />
                     <span className={styles.slider} />
                   </label>

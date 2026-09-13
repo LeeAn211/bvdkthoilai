@@ -7,7 +7,7 @@ export const Categories: CollectionConfig = {
   labels: { singular: 'Chuyên mục', plural: 'Chuyên mục nội dung' },
   admin: {
     useAsTitle: 'name',
-    group: 'Nội dung',
+    group: '📰 Truyền thông & Văn bản',
     defaultColumns: ['name', 'scope', 'order', 'active', 'updatedAt'],
     description: 'Danh mục dùng chung cho Tin tức, Thông báo, Đấu thầu, Tuyển dụng và Văn bản.',
   },
@@ -33,6 +33,7 @@ export const Categories: CollectionConfig = {
         { label: 'Đấu thầu – Mua sắm', value: 'procurement' },
         { label: 'Tuyển dụng', value: 'recruitment' },
         { label: 'Văn bản – Tài liệu', value: 'documents' },
+        { label: 'Phác đồ điều trị', value: 'clinical-protocols' },
       ],
     },
     { name: 'description', label: 'Mô tả', type: 'textarea' },

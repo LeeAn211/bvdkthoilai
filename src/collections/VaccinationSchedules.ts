@@ -6,7 +6,7 @@ export const VaccinationSchedules: CollectionConfig = {
   labels: { singular: 'Lịch tiêm chủng', plural: 'Lịch tiêm chủng' },
   admin: {
     useAsTitle: 'title',
-    group: 'Khám bệnh',
+    group: '🏥 Khám bệnh & Dịch vụ Y tế',
     description: 'Ưu tiên đăng ảnh/tệp lịch chính thức; có thể khai báo ngày, đối tượng và địa điểm để tra cứu.',
     defaultColumns: ['title', 'date', 'endDate', 'scheduleKind', 'active'],
   },

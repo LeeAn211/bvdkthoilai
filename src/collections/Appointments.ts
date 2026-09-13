@@ -6,7 +6,7 @@ export const Appointments: CollectionConfig = {
   labels: { singular: 'Lịch đặt khám', plural: 'Quản lý lịch đặt khám' },
   admin: {
     useAsTitle: 'code',
-    group: 'Khám bệnh',
+    group: '🏥 Khám bệnh & Dịch vụ Y tế',
     defaultColumns: ['code', 'fullName', 'phone', 'specialtyTitle', 'appointmentDate', 'timeSlot', 'status', 'createdAt'],
     description: 'Danh sách phiếu đặt lịch khám tại cơ sở từ website. Có bảng thống kê và tính năng xuất dữ liệu Excel màu xanh.',
     components: {

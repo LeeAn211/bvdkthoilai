@@ -25,10 +25,14 @@ export interface AdminChartsProps {
   totalSurveys?: number
   slaRate?: number
   feedbackAvgHours?: number
+  totalAppointments?: number
+  clinicalProtocols?: number
   showAreaChart?: boolean
   showDepartmentBar?: boolean
   showSatisfactionGauge?: boolean
   showSlaStats?: boolean
+  showWeeklyWorkload?: boolean
+  showProtocolDistribution?: boolean
 }
 
 export default function AdminCharts({
@@ -38,12 +42,17 @@ export default function AdminCharts({
   totalSurveys = 120,
   slaRate = 98.2,
   feedbackAvgHours = 4.5,
+  totalAppointments = 85,
+  clinicalProtocols = 24,
   showAreaChart = true,
   showDepartmentBar = true,
   showSatisfactionGauge = true,
   showSlaStats = true,
+  showWeeklyWorkload = true,
+  showProtocolDistribution = true,
 }: AdminChartsProps) {
   const [activePoint, setActivePoint] = useState<MonthData | null>(null)
+  const [activeDay, setActiveDay] = useState<{ day: string; fullDay: string; appointments: number; emergency: number; total: number } | null>(null)
 
   // Calculate SVG Coordinates for Area Chart
   const svgWidth = 600
@@ -89,10 +98,47 @@ export default function AdminCharts({
     { name: 'Thời gian chờ khám & cấp thuốc', score: '94.6%', percent: 94.6 },
   ]
 
+  // Weekly Workload Data (Thứ 2 -> Chủ Nhật)
+  const workloadData = [
+    { day: 'T2', fullDay: 'Thứ Hai', appointments: 195, emergency: 38, total: 233 },
+    { day: 'T3', fullDay: 'Thứ Ba', appointments: 180, emergency: 34, total: 214 },
+    { day: 'T4', fullDay: 'Thứ Tư', appointments: 185, emergency: 36, total: 221 },
+    { day: 'T5', fullDay: 'Thứ Năm', appointments: 170, emergency: 32, total: 202 },
+    { day: 'T6', fullDay: 'Thứ Sáu', appointments: 175, emergency: 35, total: 210 },
+    { day: 'T7', fullDay: 'Thứ Bảy', appointments: 125, emergency: 46, total: 171 },
+    { day: 'CN', fullDay: 'Chủ Nhật', appointments: 60, emergency: 52, total: 112 },
+  ]
+
+  const totalWeeklyIntake = workloadData.reduce((acc, d) => acc + d.total, 0)
+  const totalWeeklyEmergency = workloadData.reduce((acc, d) => acc + d.emergency, 0)
+
+  // Coordinates for Weekly Workload SVG Bar Chart
+  const wlSvgWidth = 600
+  const wlSvgHeight = 180
+  const wlPadX = 35
+  const wlPadY = 25
+  const wlWidth = wlSvgWidth - wlPadX * 2
+  const wlHeight = wlSvgHeight - wlPadY * 2
+  const maxWlVal = Math.max(...workloadData.map((d) => d.total), 220)
+  const slotW = wlWidth / workloadData.length
+  const barW = 14
+
+  // Clinical Protocols & Medical Guidelines Breakdown
+  const protoCount = clinicalProtocols || 24
+  const protocolGroups = [
+    { name: 'Khối Hồi sức Cấp cứu & Chống độc', count: Math.max(1, Math.round(protoCount * 0.28)), percent: 28, color: '#0f766e', tag: 'Cấp cứu 24/7' },
+    { name: 'Khối Nội khoa - Nhi khoa', count: Math.max(1, Math.round(protoCount * 0.26)), percent: 26, color: '#0284c7', tag: 'Nội - Nhi' },
+    { name: 'Khối Ngoại khoa & Gây mê HSTC', count: Math.max(1, Math.round(protoCount * 0.20)), percent: 20, color: '#d97706', tag: 'Phẫu thuật' },
+    { name: 'Khối Sản phụ khoa', count: Math.max(1, Math.round(protoCount * 0.14)), percent: 14, color: '#8b5cf6', tag: 'Sản khoa' },
+    { name: 'Khối Y học cổ truyền & PHCN', count: Math.max(1, Math.round(protoCount * 0.08)), percent: 8, color: '#14b8a6', tag: 'Đông y' },
+    { name: 'Khối Cận lâm sàng & Chẩn đoán HA', count: Math.max(1, protoCount - Math.round(protoCount * 0.96)), percent: 4, color: '#e11d48', tag: 'Xét nghiệm' },
+  ]
+
   const hasRow1 = showAreaChart || showDepartmentBar
   const hasRow2 = showSatisfactionGauge || showSlaStats
+  const hasRow3 = showWeeklyWorkload || showProtocolDistribution
 
-  if (!hasRow1 && !hasRow2) {
+  if (!hasRow1 && !hasRow2 && !hasRow3) {
     return null
   }
 
@@ -335,6 +381,201 @@ export default function AdminCharts({
               <div className={styles.chartFooter}>
                 <span>Mọi phản ánh đều được Ban Giám đốc kiểm tra định kỳ</span>
                 <span className={styles.statHighlight}>Minh bạch 100%</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Hàng 3: Tải lượng Khám & Cấp cứu tuần + Cơ cấu Phác đồ điều trị chuẩn */}
+      {hasRow3 && (
+        <div className={showWeeklyWorkload && showProtocolDistribution ? styles.chartsRow : styles.chartsRowSingle}>
+          {/* Biểu đồ 5: Tải lượng Khám & Trực Cấp cứu 24/7 trong tuần */}
+          {showWeeklyWorkload && (
+            <div className={styles.chartCard}>
+              <div className={styles.cardHeader}>
+                <div className={styles.headerInfo}>
+                  <span className={styles.categoryTag}>LƯỢNG BỆNH & CẤP CỨU 24/7</span>
+                  <h2 className={styles.cardTitle}>Tải lượng Khám bệnh & Cấp cứu trong tuần</h2>
+                  <p className={styles.cardSubtitle}>Theo dõi lượt khám ngoại trú & ca tiếp nhận cấp cứu từ Thứ 2 đến Chủ Nhật</p>
+                </div>
+                <div className={styles.headerPill}>
+                  <span>Trực 24/7:</span>
+                  <b>100% Thông suốt</b>
+                </div>
+              </div>
+
+              <div className={styles.workloadStatsHeader}>
+                <div className={styles.workloadKpi}>
+                  <strong className={styles.workloadKpiNum}>{totalWeeklyIntake.toLocaleString('vi-VN')} lượt</strong>
+                  <span className={styles.workloadKpiLabel}>Tổng lượt tiếp nhận tuần</span>
+                </div>
+                <div className={styles.workloadKpi}>
+                  <strong className={styles.workloadKpiNum} style={{ color: '#e11d48' }}>{totalWeeklyEmergency} ca</strong>
+                  <span className={styles.workloadKpiLabel}>Tiếp nhận Cấp cứu 24/7</span>
+                </div>
+                <div className={styles.workloadKpi}>
+                  <strong className={styles.workloadKpiNum} style={{ color: '#0f766e' }}>07:30 - 10:30</strong>
+                  <span className={styles.workloadKpiLabel}>Khung giờ cao điểm nhất</span>
+                </div>
+              </div>
+
+              <div className={styles.workloadSvgWrapper}>
+                <svg viewBox={`0 0 ${wlSvgWidth} ${wlSvgHeight}`} className={styles.workloadSvg}>
+                  <defs>
+                    <linearGradient id="aptBarGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#0d9488" />
+                      <stop offset="100%" stopColor="#14b8a6" />
+                    </linearGradient>
+                    <linearGradient id="emgBarGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#e11d48" />
+                      <stop offset="100%" stopColor="#f43f5e" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Gridlines */}
+                  <line x1={wlPadX} y1={wlPadY} x2={wlSvgWidth - wlPadX} y2={wlPadY} className={styles.chartGridline} />
+                  <line x1={wlPadX} y1={wlPadY + wlHeight / 2} x2={wlSvgWidth - wlPadX} y2={wlPadY + wlHeight / 2} className={styles.chartGridline} />
+                  <line x1={wlPadX} y1={wlSvgHeight - wlPadY} x2={wlSvgWidth - wlPadX} y2={wlSvgHeight - wlPadY} className={styles.chartGridline} />
+
+                  {workloadData.map((d, idx) => {
+                    const slotCenterX = wlPadX + idx * slotW + slotW / 2
+                    const aptH = (d.appointments / maxWlVal) * wlHeight
+                    const emgH = (d.emergency / maxWlVal) * wlHeight
+                    const aptX = slotCenterX - barW - 2
+                    const emgX = slotCenterX + 2
+                    const aptY = wlSvgHeight - wlPadY - aptH
+                    const emgY = wlSvgHeight - wlPadY - emgH
+                    const isHovered = activeDay?.day === d.day
+
+                    return (
+                      <g
+                        key={idx}
+                        className={styles.workloadBarGroup}
+                        onMouseEnter={() => setActiveDay(d)}
+                        onMouseLeave={() => setActiveDay(null)}
+                      >
+                        {/* Outpatient / Appointments Bar */}
+                        <rect
+                          x={aptX}
+                          y={aptY}
+                          width={barW}
+                          height={aptH}
+                          rx="3"
+                          fill="url(#aptBarGradient)"
+                          className={styles.workloadBarAppointments}
+                          opacity={isHovered ? 1 : 0.88}
+                        />
+
+                        {/* Emergency 24/7 Bar */}
+                        <rect
+                          x={emgX}
+                          y={emgY}
+                          width={barW}
+                          height={emgH}
+                          rx="3"
+                          fill="url(#emgBarGradient)"
+                          className={styles.workloadBarEmergency}
+                          opacity={isHovered ? 1 : 0.88}
+                        />
+
+                        {/* Day Label */}
+                        <text
+                          x={slotCenterX}
+                          y={wlSvgHeight - 7}
+                          textAnchor="middle"
+                          className={styles.chartAxisText}
+                          fontWeight={isHovered ? '800' : '600'}
+                          fill={isHovered ? '#0f766e' : '#64748b'}
+                        >
+                          {d.day}
+                        </text>
+
+                        {/* Value Tooltip above highest bar */}
+                        {isHovered && (
+                          <text
+                            x={slotCenterX}
+                            y={Math.min(aptY, emgY) - 6}
+                            textAnchor="middle"
+                            fill="#0f172a"
+                            fontSize="10"
+                            fontWeight="800"
+                          >
+                            {d.total} lượt
+                          </text>
+                        )}
+                      </g>
+                    )
+                  })}
+                </svg>
+              </div>
+
+              <div className={styles.chartFooter}>
+                <div className={styles.chartLegend}>
+                  <div className={styles.legendItem}>
+                    <span className={styles.legendColor} style={{ background: '#0d9488' }} />
+                    <span className={styles.legendText}>Khám ngoại trú & Đặt lịch</span>
+                  </div>
+                  <div className={styles.legendItem}>
+                    <span className={styles.legendColor} style={{ background: '#e11d48' }} />
+                    <span className={styles.legendText}>Trực Cấp cứu 24/7</span>
+                  </div>
+                </div>
+                <span>
+                  {activeDay
+                    ? `${activeDay.fullDay}: ${activeDay.appointments} khám ngoại trú · ${activeDay.emergency} ca cấp cứu`
+                    : 'Rà chuột vào từng cột để xem chi tiết ca tiếp nhận'}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Biểu đồ 6: Cơ cấu Phác đồ Điều trị & Chuyên môn Kỹ thuật */}
+          {showProtocolDistribution && (
+            <div className={styles.chartCard}>
+              <div className={styles.cardHeader}>
+                <div className={styles.headerInfo}>
+                  <span className={styles.categoryTag}>CHUẨN HÓA CHUYÊN MÔN</span>
+                  <h2 className={styles.cardTitle}>Phân bổ Phác đồ điều trị chuẩn</h2>
+                  <p className={styles.cardSubtitle}>Cơ cấu hướng dẫn chẩn đoán & phác đồ theo các khối chuyên môn y tế</p>
+                </div>
+                <div className={styles.headerPill}>
+                  <span>Quy chuẩn:</span>
+                  <b>Bộ Y tế</b>
+                </div>
+              </div>
+
+              {/* Multi-segment Progress Bar */}
+              <div className={styles.protocolMultiBar}>
+                {protocolGroups.map((g, i) => (
+                  <div
+                    key={i}
+                    className={styles.protocolBarSegment}
+                    style={{ width: `${g.percent}%`, background: g.color }}
+                    title={`${g.name}: ${g.percent}% (${g.count} phác đồ)`}
+                  />
+                ))}
+              </div>
+
+              {/* Protocol Discipline Cards Grid */}
+              <div className={styles.protocolGrid}>
+                {protocolGroups.map((g, i) => (
+                  <div key={i} className={styles.protocolCard}>
+                    <div className={styles.protocolCardLeft}>
+                      <span className={styles.protocolDot} style={{ background: g.color }} />
+                      <div>
+                        <div className={styles.protocolName} title={g.name}>{g.name}</div>
+                        <div className={styles.protocolCount}>{g.count} phác đồ ban hành</div>
+                      </div>
+                    </div>
+                    <span className={styles.protocolPercentPill}>{g.percent}%</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className={styles.chartFooter}>
+                <span>100% Phác đồ ban hành đúng quy chuẩn Hội đồng KHTK</span>
+                <span className={styles.statHighlight}>Đang hiệu lực 100%</span>
               </div>
             </div>
           )}

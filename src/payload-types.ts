@@ -73,6 +73,7 @@ export interface Config {
     notices: Notice;
     procurement: Procurement;
     documents: Document;
+    'clinical-protocols': ClinicalProtocol;
     departments: Department;
     specialties: Specialty;
     doctors: Doctor;
@@ -129,6 +130,7 @@ export interface Config {
     notices: NoticesSelect<false> | NoticesSelect<true>;
     procurement: ProcurementSelect<false> | ProcurementSelect<true>;
     documents: DocumentsSelect<false> | DocumentsSelect<true>;
+    'clinical-protocols': ClinicalProtocolsSelect<false> | ClinicalProtocolsSelect<true>;
     departments: DepartmentsSelect<false> | DepartmentsSelect<true>;
     specialties: SpecialtiesSelect<false> | SpecialtiesSelect<true>;
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
@@ -193,6 +195,7 @@ export interface Config {
     'organization-chart': OrganizationChart;
     'hospital-history': HospitalHistory;
     'about-page': AboutPage;
+    'working-hours-settings': WorkingHoursSetting;
     'upload-settings': UploadSetting;
     'default-media-settings': DefaultMediaSetting;
     'seo-settings': SeoSetting;
@@ -214,6 +217,7 @@ export interface Config {
     'organization-chart': OrganizationChartSelect<false> | OrganizationChartSelect<true>;
     'hospital-history': HospitalHistorySelect<false> | HospitalHistorySelect<true>;
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
+    'working-hours-settings': WorkingHoursSettingsSelect<false> | WorkingHoursSettingsSelect<true>;
     'upload-settings': UploadSettingsSelect<false> | UploadSettingsSelect<true>;
     'default-media-settings': DefaultMediaSettingsSelect<false> | DefaultMediaSettingsSelect<true>;
     'seo-settings': SeoSettingsSelect<false> | SeoSettingsSelect<true>;
@@ -614,7 +618,7 @@ export interface Category {
    * Tự động tạo từ Tên khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
-  scope: 'news' | 'notices' | 'procurement' | 'recruitment' | 'documents';
+  scope: 'news' | 'notices' | 'procurement' | 'recruitment' | 'documents' | 'clinical-protocols';
   description?: string | null;
   order?: number | null;
   active?: boolean | null;
@@ -842,7 +846,41 @@ export interface Document {
   issuedAt?: string | null;
   effectiveAt?: string | null;
   year?: number | null;
+  documentType?: string | null;
+  signer?: string | null;
   summary?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Nếu tắt, nút Tải về sẽ bị ẩn và link tải trực tiếp bị khóa để chỉ cho phép xem trực tuyến.
+   */
+  allowDownload?: boolean | null;
+  /**
+   * Khi bật: chặn chuột phải, chặn bôi đen/copy chữ và chặn các phím tắt sao chép nội dung.
+   */
+  preventCopy?: boolean | null;
+  /**
+   * Tự động mở trình đọc tài liệu PDF/Word trực tiếp ngay trên trang chi tiết.
+   */
+  showViewer?: boolean | null;
+  textAlign?: ('left' | 'center' | 'right' | 'justify') | null;
+  titleColor?: ('default' | 'navy' | 'blue' | 'green' | 'red') | null;
+  titleSize?: ('normal' | 'large' | 'xlarge') | null;
+  summaryColor?: ('default' | 'slate' | 'dark') | null;
+  summarySize?: ('normal' | 'large' | 'small') | null;
   /**
    * Không bắt buộc. Nếu bỏ trống website dùng ảnh mặc định Văn bản – Tài liệu trong Admin → Ảnh mặc định nội dung.
    */
@@ -851,6 +889,86 @@ export interface Document {
    * Tải tệp mới hoặc chọn lại tệp đã có trong Thư viện Tệp & Hình ảnh.
    */
   file: number | Media;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  /**
+   * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
+   */
+  seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Quản lý danh mục và tài liệu Phác đồ điều trị, Hướng dẫn chẩn đoán & điều trị chuẩn y khoa của Bệnh viện.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clinical-protocols".
+ */
+export interface ClinicalProtocol {
+  id: number;
+  title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  code?: string | null;
+  /**
+   * Chọn chuyên khoa áp dụng (Nội, Ngoại, Sản, Nhi, Cấp cứu...)
+   */
+  specialty?: (number | null) | Specialty;
+  documentType?: string | null;
+  issuer?: string | null;
+  signer?: string | null;
+  issuedAt?: string | null;
+  effectiveAt?: string | null;
+  summary?: string | null;
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Bật: hiển thị nút Tải về. Tắt: chỉ cho phép xem trực tuyến trên website.
+   */
+  allowDownload?: boolean | null;
+  /**
+   * Bật: chặn chuột phải, chặn bôi đen/copy chữ và chặn các phím tắt sao chép nội dung.
+   */
+  preventCopy?: boolean | null;
+  /**
+   * Tự động mở khung đọc tài liệu PDF/Word trực tiếp ngay trên trang chi tiết.
+   */
+  showViewer?: boolean | null;
+  textAlign?: ('left' | 'center' | 'right' | 'justify') | null;
+  titleColor?: ('default' | 'navy' | 'blue' | 'green' | 'red') | null;
+  titleSize?: ('normal' | 'large' | 'xlarge') | null;
+  summaryColor?: ('default' | 'slate' | 'dark') | null;
+  summarySize?: ('normal' | 'large' | 'small') | null;
+  /**
+   * Tải tệp PDF/Word phác đồ để hệ thống nhúng khung đọc trực tiếp cho bác sĩ và người xem.
+   */
+  file: number | Media;
+  /**
+   * Không bắt buộc. Nếu bỏ trống sẽ dùng ảnh mặc định của mục Văn bản – Tài liệu.
+   */
+  cover?: (number | null) | Media;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
@@ -2719,6 +2837,10 @@ export interface PayloadLockedDocument {
         value: number | Document;
       } | null)
     | ({
+        relationTo: 'clinical-protocols';
+        value: number | ClinicalProtocol;
+      } | null)
+    | ({
         relationTo: 'departments';
         value: number | Department;
       } | null)
@@ -3132,9 +3254,56 @@ export interface DocumentsSelect<T extends boolean = true> {
   issuedAt?: T;
   effectiveAt?: T;
   year?: T;
+  documentType?: T;
+  signer?: T;
   summary?: T;
+  content?: T;
+  allowDownload?: T;
+  preventCopy?: T;
+  showViewer?: T;
+  textAlign?: T;
+  titleColor?: T;
+  titleSize?: T;
+  summaryColor?: T;
+  summarySize?: T;
   cover?: T;
   file?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clinical-protocols_select".
+ */
+export interface ClinicalProtocolsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  code?: T;
+  specialty?: T;
+  documentType?: T;
+  issuer?: T;
+  signer?: T;
+  issuedAt?: T;
+  effectiveAt?: T;
+  summary?: T;
+  content?: T;
+  allowDownload?: T;
+  preventCopy?: T;
+  showViewer?: T;
+  textAlign?: T;
+  titleColor?: T;
+  titleSize?: T;
+  summaryColor?: T;
+  summarySize?: T;
+  file?: T;
+  cover?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
@@ -4469,15 +4638,31 @@ export interface SiteSetting {
   googleMapsEmbed?: string | null;
   footerText?: string | null;
   /**
-   * Tùy chỉnh tiêu đề, ô tìm kiếm và số dịch vụ hiển thị trên mỗi trang.
+   * Tùy chỉnh tiêu đề, thông báo lưu ý BHYT, ô tìm kiếm và số dịch vụ hiển thị trên mỗi trang.
    */
   servicePricePage: {
     title?: string | null;
     description?: string | null;
+    showNoticeBanner?: boolean | null;
+    noticeTitle?: string | null;
+    noticeContent?: string | null;
+    noticeAlign?: ('left' | 'center' | 'justify') | null;
     searchPlaceholder?: string | null;
     rowsPerPage: '40' | '50';
     searchNotes?: boolean | null;
     emptyText?: string | null;
+  };
+  /**
+   * Tùy chỉnh tiêu đề, banner thông báo và lưu ý an toàn tiêm chủng trên trang /tiem-chung.
+   */
+  vaccinationPage?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    description?: string | null;
+    showNoticeBanner?: boolean | null;
+    noticeTitle?: string | null;
+    noticeContent?: string | null;
+    noticeAlign?: ('left' | 'center' | 'justify') | null;
   };
   /**
    * Tùy chỉnh trợ lý hỗ trợ hiển thị ở góc phải trên toàn bộ website.
@@ -4579,6 +4764,7 @@ export interface Navigation {
               | '/tiem-chung'
               | '/dau-thau-mua-sam'
               | '/van-ban'
+              | '/phac-do-dieu-tri'
               | '/tuyen-dung'
               | '/trang/kham-bhyt'
               | '/lien-he'
@@ -4685,6 +4871,7 @@ export interface Navigation {
                     | '/tiem-chung'
                     | '/dau-thau-mua-sam'
                     | '/van-ban'
+                    | '/phac-do-dieu-tri'
                     | '/tuyen-dung'
                     | '/trang/kham-bhyt'
                     | '/lien-he'
@@ -4798,6 +4985,7 @@ export interface Footer {
     | {
         visible?: boolean | null;
         title: string;
+        textAlign?: ('left' | 'center' | 'right') | null;
         links?:
           | {
               visible?: boolean | null;
@@ -5039,6 +5227,10 @@ export interface Homepage {
    */
   bannerAutoplaySeconds?: number | null;
   /**
+   * Khi bật: người dùng lăn chuột trên trang chủ, trình duyệt sẽ tự động hít nhẹ và căn chỉnh chuẩn đỉnh của từng Section (không bị dừng lửng lơ giữa 2 khối).
+   */
+  enableSectionScrollSnap?: boolean | null;
+  /**
    * Quản lý toàn bộ các ô dịch vụ nhanh. Có thể thêm/xóa, bật/tắt, kéo thả đổi thứ tự và chọn icon có sẵn hoặc hình riêng từ Media cho từng mục.
    */
   quickLinks?:
@@ -5211,13 +5403,54 @@ export interface Homepage {
             }[]
           | null;
         /**
-         * Điểm tin nổi bật tự động chuyển qua Tin tức, Thông báo, Đấu thầu – Mua sắm và Lịch khám mới.
+         * Điểm tin nổi bật tự động chuyển qua các thẻ nội dung được chọn.
          */
         carouselSeconds?: number | null;
         /**
-         * Khung ngoài luôn hiển thị 4 card trên desktop. Số này quy định tổng số nội dung được đưa vào vòng chuyển động, ví dụ 8, 12, 16, 20...
+         * Khung ngoài hiển thị 4 card trên desktop. Số này quy định tổng số nội dung tối đa được đưa vào vòng chuyển động.
          */
         featuredItemLimit?: number | null;
+        /**
+         * Tùy chọn những chuyên mục / nguồn tin nào được đưa lên Điểm tin, bật/tắt từng mục và quy định mỗi mục được lấy bao nhiêu bài.
+         */
+        featuredSources?:
+          | {
+              source: 'news' | 'news-category' | 'notices' | 'procurement' | 'schedules' | 'documents';
+              /**
+               * Chỉ lấy các bài viết thuộc chuyên mục tin tức này.
+               */
+              categoryRef?: (number | null) | Category;
+              /**
+               * Nếu đã chọn chuyên mục ở trên thì có thể để trống ô này.
+               */
+              categoryName?: string | null;
+              /**
+               * Tùy chỉnh nhãn nổi bật gắn ở góc dưới ảnh đại diện.
+               */
+              customBadge?: string | null;
+              /**
+               * Quy định lấy tối đa bao nhiêu bài mới nhất từ nguồn/chuyên mục này đưa lên Điểm tin.
+               */
+              limit: number;
+              /**
+               * Bỏ chọn nếu muốn tạm ẩn nội dung của chuyên mục này khỏi Điểm tin mà không cần xóa cấu hình.
+               */
+              enabled?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Tùy chọn hiển thị bài mới nhất thông thường hoặc chỉ hiển thị các bài được ban biên tập đánh dấu "Tin nổi bật".
+         */
+        featuredFilterMode?: ('all' | 'only-featured') | null;
+        /**
+         * Đổi liên kết khi bấm nút Xem tất cả phía trên bên phải của mục Điểm tin.
+         */
+        featuredSeeAllUrl?: string | null;
+        /**
+         * Cố định tỷ lệ, tuyệt đối không bị méo hình theo Quy tắc cốt lõi bắt buộc.
+         */
+        featuredCardFit?: ('cover' | 'contain') | null;
         /**
          * Tải ảnh mới hoặc chọn ảnh đã có trong thư viện. Ảnh hiển thị ở giữa danh sách chuyên khoa và khối Medpro.
          */
@@ -5322,7 +5555,7 @@ export interface Homepage {
         scheduleTabOrder?:
           | {
               label?: string | null;
-              tab?: ('attachments' | 'daily' | 'weekly') | null;
+              tab?: ('emergency' | 'daily' | 'weekly' | 'attachments') | null;
               visible?: boolean | null;
               manualItems?:
                 | {
@@ -5485,7 +5718,12 @@ export interface OrganizationChart {
   id: number;
   pageTitle: string;
   description?: string | null;
+  showLeadershipSection?: boolean | null;
+  leadershipTitle?: string | null;
+  showTreeSection?: boolean | null;
+  treeTitle?: string | null;
   director?: {
+    enabled?: boolean | null;
     /**
      * Nếu chọn bác sĩ, hệ thống sẽ tự động lấy tên, ảnh đại diện và chức danh của bác sĩ.
      */
@@ -5505,6 +5743,7 @@ export interface OrganizationChart {
    */
   deputyDirectors?:
     | {
+        enabled?: boolean | null;
         /**
          * Nếu chọn bác sĩ, hệ thống sẽ tự động lấy tên, ảnh đại diện và chức danh của bác sĩ.
          */
@@ -5691,6 +5930,7 @@ export interface HospitalHistory {
 export interface AboutPage {
   id: number;
   hero?: {
+    enabled?: boolean | null;
     /**
      * Tải ảnh chính thức của Bệnh viện Đa khoa Khu vực Thới Lai. Khuyến nghị ảnh ngang 1920x600 hoặc 16:9. Bỏ trống sẽ dùng ảnh banner chuẩn của bệnh viện.
      */
@@ -5698,9 +5938,11 @@ export interface AboutPage {
     eyebrow?: string | null;
     tagline?: string | null;
     intro?: string | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
   };
   stats?:
     | {
+        enabled?: boolean | null;
         number: string;
         label: string;
         icon?: string | null;
@@ -5708,38 +5950,48 @@ export interface AboutPage {
       }[]
     | null;
   corePrinciples?: {
+    enabled?: boolean | null;
     title?: string | null;
     subtitle?: string | null;
     items?:
       | {
+          enabled?: boolean | null;
           icon: string;
           title: string;
           desc: string;
+          textAlign?: ('left' | 'center' | 'justify') | null;
           id?: string | null;
         }[]
       | null;
   };
   facilities?: {
+    enabled?: boolean | null;
     title?: string | null;
     description?: string | null;
     items?:
       | {
+          enabled?: boolean | null;
           title: string;
           desc: string;
+          textAlign?: ('left' | 'center' | 'justify') | null;
           id?: string | null;
         }[]
       | null;
   };
   commitment?: {
+    enabled?: boolean | null;
     title?: string | null;
     quote?: string | null;
     author?: string | null;
+    textAlign?: ('center' | 'left' | 'justify') | null;
   };
   relatedLinks?: {
+    enabled?: boolean | null;
     title?: string | null;
     subtitle?: string | null;
     links?:
       | {
+          enabled?: boolean | null;
           title: string;
           url: string;
           desc?: string | null;
@@ -5754,6 +6006,133 @@ export interface AboutPage {
   seo?: {
     title?: string | null;
     description?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Quản lý toàn diện nội dung, giờ làm việc từng khoa phòng, các liên kết tab lịch khám và bật/tắt các ô chưa sử dụng trên trang /lich-lam-viec.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "working-hours-settings".
+ */
+export interface WorkingHoursSetting {
+  id: number;
+  hero: {
+    badgeText?: string | null;
+    title: string;
+    titleSize?: ('default' | 'compact' | 'large') | null;
+    titleColor?: ('white' | 'yellow' | 'cyan') | null;
+    slogan?: string | null;
+    bgType?: ('gradient' | 'image' | 'solid') | null;
+    bgGradient?: ('blue-teal' | 'ocean-navy' | 'teal-emerald' | 'royal-blue' | 'slate-blue') | null;
+    /**
+     * Tải lên hình ảnh khuôn viên bệnh viện, sảnh tiếp đón hoặc hoạt động khám chữa bệnh (khuyên dùng tỉ lệ 16:9 hoặc 21:9).
+     */
+    bgImage?: (number | null) | Media;
+    overlayOpacity?: ('medium' | 'dark' | 'light') | null;
+    showPrimaryBtn?: boolean | null;
+    primaryBtnText?: string | null;
+    primaryBtnLink?: string | null;
+    showSecondaryBtn?: boolean | null;
+    secondaryBtnText?: string | null;
+    secondaryBtnLink?: string | null;
+  };
+  announcement?: {
+    enabled?: boolean | null;
+    badge?: string | null;
+    effectiveDate?: string | null;
+    introText?: string | null;
+    milestones?:
+      | {
+          enabled?: boolean | null;
+          time: string;
+          title: string;
+          desc?: string | null;
+          highlight?: boolean | null;
+          textAlign?: ('left' | 'center' | 'right' | 'justify') | null;
+          titleColor?: ('default' | 'green' | 'navy' | 'red') | null;
+          titleSize?: ('normal' | 'large' | 'xlarge') | null;
+          descColor?: ('default' | 'black' | 'navy') | null;
+          descSize?: ('normal' | 'large') | null;
+          id?: string | null;
+        }[]
+      | null;
+    closingText?: string | null;
+  };
+  emergencyBanner?: {
+    enabled?: boolean | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
+    title?: string | null;
+    titleSize?: ('normal' | 'large' | 'xlarge') | null;
+    description?: string | null;
+    descSize?: ('normal' | 'large') | null;
+    hotline?: string | null;
+    buttonLabel?: string | null;
+  };
+  /**
+   * Tùy chỉnh bật/tắt (enabled), chỉnh sửa nội dung, thêm ô mới hoặc sắp xếp thứ tự hiển thị.
+   */
+  departments?:
+    | {
+        enabled?: boolean | null;
+        title: string;
+        subtitle?: string | null;
+        iconType?:
+          | ('stethoscope' | 'calendar' | 'syringe' | 'flask' | 'card' | 'building' | 'heart' | 'clock' | 'custom')
+          | null;
+        customIconText?: string | null;
+        badgeColor?: ('blue' | 'teal' | 'amber' | 'red' | 'emerald') | null;
+        timeRows?:
+          | {
+              label: string;
+              value: string;
+              highlight?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+        textAlign?: ('left' | 'center' | 'right' | 'justify') | null;
+        titleColor?: ('default' | 'navy' | 'blue' | 'green' | 'red' | 'slate') | null;
+        titleSize?: ('small' | 'normal' | 'large' | 'xlarge') | null;
+        note?: string | null;
+        noteColor?: ('default' | 'navy' | 'green' | 'red') | null;
+        noteSize?: ('normal' | 'large') | null;
+        id?: string | null;
+      }[]
+    | null;
+  scheduleLinksSection?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    description?: string | null;
+    links?:
+      | {
+          enabled?: boolean | null;
+          title: string;
+          subtitle?: string | null;
+          url: string;
+          iconType?: ('home' | 'calendar' | 'clock' | 'paperclip' | 'ambulance' | 'fileText') | null;
+          isEmergency?: boolean | null;
+          textAlign?: ('left' | 'center') | null;
+          titleColor?: ('default' | 'blue' | 'navy' | 'red') | null;
+          titleSize?: ('normal' | 'large') | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  notesSection?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    items?:
+      | {
+          enabled?: boolean | null;
+          boldPrefix?: string | null;
+          content: string;
+          textAlign?: ('left' | 'justify') | null;
+          textColor?: ('default' | 'black' | 'navy' | 'red') | null;
+          textSize?: ('normal' | 'large') | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -5912,6 +6291,40 @@ export interface SystemSetting {
  */
 export interface ScheduleSetting {
   id: number;
+  hero: {
+    eyebrow?: string | null;
+    title: string;
+    titleSize?: ('default' | 'compact' | 'large') | null;
+    titleColor?: ('white' | 'yellow' | 'cyan') | null;
+    description?: string | null;
+    bgType?: ('gradient' | 'image' | 'solid') | null;
+    bgGradient?: ('blue-teal' | 'ocean-navy' | 'teal-emerald' | 'royal-blue') | null;
+    bgImage?: (number | null) | Media;
+    overlayOpacity?: ('medium' | 'dark' | 'light') | null;
+  };
+  quickNotice?: {
+    enabled?: boolean | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
+    title?: string | null;
+    titleColor?: ('red' | 'navy' | 'green') | null;
+    content?: string | null;
+    hotline?: string | null;
+  };
+  notesSection?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    items?:
+      | {
+          enabled?: boolean | null;
+          boldPrefix?: string | null;
+          content: string;
+          textAlign?: ('left' | 'justify') | null;
+          textColor?: ('default' | 'black' | 'navy' | 'red') | null;
+          textSize?: ('normal' | 'large') | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   preferWeeklyImage?: boolean | null;
   showDailyTab?: boolean | null;
   showWeeklyTab?: boolean | null;
@@ -6234,10 +6647,25 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+        showNoticeBanner?: T;
+        noticeTitle?: T;
+        noticeContent?: T;
+        noticeAlign?: T;
         searchPlaceholder?: T;
         rowsPerPage?: T;
         searchNotes?: T;
         emptyText?: T;
+      };
+  vaccinationPage?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        showNoticeBanner?: T;
+        noticeTitle?: T;
+        noticeContent?: T;
+        noticeAlign?: T;
       };
   websiteAssistant?:
     | T
@@ -6356,6 +6784,7 @@ export interface FooterSelect<T extends boolean = true> {
     | {
         visible?: T;
         title?: T;
+        textAlign?: T;
         links?:
           | T
           | {
@@ -6537,6 +6966,7 @@ export interface HomepageSelect<T extends boolean = true> {
       };
   showHeroBanners?: T;
   bannerAutoplaySeconds?: T;
+  enableSectionScrollSnap?: T;
   quickLinks?:
     | T
     | {
@@ -6621,6 +7051,20 @@ export interface HomepageSelect<T extends boolean = true> {
             };
         carouselSeconds?: T;
         featuredItemLimit?: T;
+        featuredSources?:
+          | T
+          | {
+              source?: T;
+              categoryRef?: T;
+              categoryName?: T;
+              customBadge?: T;
+              limit?: T;
+              enabled?: T;
+              id?: T;
+            };
+        featuredFilterMode?: T;
+        featuredSeeAllUrl?: T;
+        featuredCardFit?: T;
         organizationImage?: T;
         organizationMedpro?:
           | T
@@ -6774,9 +7218,14 @@ export interface HomepageSelect<T extends boolean = true> {
 export interface OrganizationChartSelect<T extends boolean = true> {
   pageTitle?: T;
   description?: T;
+  showLeadershipSection?: T;
+  leadershipTitle?: T;
+  showTreeSection?: T;
+  treeTitle?: T;
   director?:
     | T
     | {
+        enabled?: T;
         doctorRef?: T;
         name?: T;
         title?: T;
@@ -6788,6 +7237,7 @@ export interface OrganizationChartSelect<T extends boolean = true> {
   deputyDirectors?:
     | T
     | {
+        enabled?: T;
         doctorRef?: T;
         name?: T;
         title?: T;
@@ -6934,14 +7384,17 @@ export interface AboutPageSelect<T extends boolean = true> {
   hero?:
     | T
     | {
+        enabled?: T;
         bannerImage?: T;
         eyebrow?: T;
         tagline?: T;
         intro?: T;
+        textAlign?: T;
       };
   stats?:
     | T
     | {
+        enabled?: T;
         number?: T;
         label?: T;
         icon?: T;
@@ -6950,45 +7403,55 @@ export interface AboutPageSelect<T extends boolean = true> {
   corePrinciples?:
     | T
     | {
+        enabled?: T;
         title?: T;
         subtitle?: T;
         items?:
           | T
           | {
+              enabled?: T;
               icon?: T;
               title?: T;
               desc?: T;
+              textAlign?: T;
               id?: T;
             };
       };
   facilities?:
     | T
     | {
+        enabled?: T;
         title?: T;
         description?: T;
         items?:
           | T
           | {
+              enabled?: T;
               title?: T;
               desc?: T;
+              textAlign?: T;
               id?: T;
             };
       };
   commitment?:
     | T
     | {
+        enabled?: T;
         title?: T;
         quote?: T;
         author?: T;
+        textAlign?: T;
       };
   relatedLinks?:
     | T
     | {
+        enabled?: T;
         title?: T;
         subtitle?: T;
         links?:
           | T
           | {
+              enabled?: T;
               title?: T;
               url?: T;
               desc?: T;
@@ -7006,6 +7469,133 @@ export interface AboutPageSelect<T extends boolean = true> {
     | {
         title?: T;
         description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "working-hours-settings_select".
+ */
+export interface WorkingHoursSettingsSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        badgeText?: T;
+        title?: T;
+        titleSize?: T;
+        titleColor?: T;
+        slogan?: T;
+        bgType?: T;
+        bgGradient?: T;
+        bgImage?: T;
+        overlayOpacity?: T;
+        showPrimaryBtn?: T;
+        primaryBtnText?: T;
+        primaryBtnLink?: T;
+        showSecondaryBtn?: T;
+        secondaryBtnText?: T;
+        secondaryBtnLink?: T;
+      };
+  announcement?:
+    | T
+    | {
+        enabled?: T;
+        badge?: T;
+        effectiveDate?: T;
+        introText?: T;
+        milestones?:
+          | T
+          | {
+              enabled?: T;
+              time?: T;
+              title?: T;
+              desc?: T;
+              highlight?: T;
+              textAlign?: T;
+              titleColor?: T;
+              titleSize?: T;
+              descColor?: T;
+              descSize?: T;
+              id?: T;
+            };
+        closingText?: T;
+      };
+  emergencyBanner?:
+    | T
+    | {
+        enabled?: T;
+        textAlign?: T;
+        title?: T;
+        titleSize?: T;
+        description?: T;
+        descSize?: T;
+        hotline?: T;
+        buttonLabel?: T;
+      };
+  departments?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+        iconType?: T;
+        customIconText?: T;
+        badgeColor?: T;
+        timeRows?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              highlight?: T;
+              id?: T;
+            };
+        textAlign?: T;
+        titleColor?: T;
+        titleSize?: T;
+        note?: T;
+        noteColor?: T;
+        noteSize?: T;
+        id?: T;
+      };
+  scheduleLinksSection?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        description?: T;
+        links?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              subtitle?: T;
+              url?: T;
+              iconType?: T;
+              isEmergency?: T;
+              textAlign?: T;
+              titleColor?: T;
+              titleSize?: T;
+              id?: T;
+            };
+      };
+  notesSection?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        items?:
+          | T
+          | {
+              enabled?: T;
+              boldPrefix?: T;
+              content?: T;
+              textAlign?: T;
+              textColor?: T;
+              textSize?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
@@ -7141,6 +7731,46 @@ export interface SystemSettingsSelect<T extends boolean = true> {
  * via the `definition` "schedule-settings_select".
  */
 export interface ScheduleSettingsSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        titleSize?: T;
+        titleColor?: T;
+        description?: T;
+        bgType?: T;
+        bgGradient?: T;
+        bgImage?: T;
+        overlayOpacity?: T;
+      };
+  quickNotice?:
+    | T
+    | {
+        enabled?: T;
+        textAlign?: T;
+        title?: T;
+        titleColor?: T;
+        content?: T;
+        hotline?: T;
+      };
+  notesSection?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        items?:
+          | T
+          | {
+              enabled?: T;
+              boldPrefix?: T;
+              content?: T;
+              textAlign?: T;
+              textColor?: T;
+              textSize?: T;
+              id?: T;
+            };
+      };
   preferWeeklyImage?: T;
   showDailyTab?: T;
   showWeeklyTab?: T;

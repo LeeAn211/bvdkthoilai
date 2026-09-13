@@ -5,7 +5,7 @@ import { slugField } from '@/fields/common'
 export const Forms: CollectionConfig = {
   slug: 'forms',
   labels: { singular: 'Biểu mẫu', plural: 'Biểu mẫu' },
-  admin: { useAsTitle: 'title', group: 'CSKH', defaultColumns: ['title', 'slug', 'active'] },
+  admin: { useAsTitle: 'title', group: '💬 Chăm sóc người bệnh & Khảo sát', defaultColumns: ['title', 'slug', 'active'] },
   access: { read: moduleAccess('forms', 'view'), create: moduleAccess('forms', 'create'), update: moduleAccess('forms', 'edit'), delete: moduleAccess('forms', 'delete') },
   fields: [
     { name: 'title', label: 'Tên biểu mẫu', type: 'text', required: true },

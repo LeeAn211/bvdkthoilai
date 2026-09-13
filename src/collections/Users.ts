@@ -30,7 +30,7 @@ export const Users: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    group: 'Hệ thống',
+    group: '⚙️ Hệ thống & Dữ liệu',
     defaultColumns: ['name', 'email', 'role', 'department', 'status', 'updatedAt'],
     description: 'Tài khoản, vai trò, phạm vi khoa/phòng và quyền bổ sung theo module.',
   },

@@ -5,7 +5,7 @@ export const ChatbotIntents: CollectionConfig = {
   slug: 'chatbotIntents',
   labels: { singular: 'Kịch bản Chatbot', plural: 'Kịch bản Chatbot' },
   admin: {
-    useAsTitle: 'name', group: 'CSKH', defaultColumns: ['name', 'active', 'priority'],
+    useAsTitle: 'name', group: '💬 Chăm sóc người bệnh & Khảo sát', defaultColumns: ['name', 'active', 'priority'],
     description: 'Thêm từng kịch bản hoặc dùng khung nhập Excel phía trên danh sách để cập nhật nhanh hàng loạt.',
     components: { beforeList: ['/src/components/admin/ChatbotIntentExcelImport'] },
   },

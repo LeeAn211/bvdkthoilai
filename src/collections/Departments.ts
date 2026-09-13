@@ -8,7 +8,7 @@ export const Departments: CollectionConfig = {
   labels: { singular: 'Khoa / Phòng', plural: 'Khoa / Phòng' },
   admin: {
     useAsTitle: 'name',
-    group: 'Tổ chức',
+    group: '🩺 Chuyên môn & Tổ chức',
     defaultColumns: ['name', 'kind', 'leader', 'order', 'active', 'updatedAt'],
     description: 'Hồ sơ đơn vị dùng chung cho sơ đồ tổ chức, chuyên khoa, bác sĩ và trang giới thiệu khoa/phòng.',
   },

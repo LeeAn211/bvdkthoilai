@@ -4,7 +4,7 @@ import { moduleAccess } from '@/access'
 export const FeedbackCases: CollectionConfig = {
   slug: 'feedbackCases',
   labels: { singular: 'Hồ sơ phản ánh', plural: 'Hồ sơ phản ánh' },
-  admin: { useAsTitle: 'code', group: 'CSKH', defaultColumns: ['code', 'subject', 'category', 'priority', 'status', 'department', 'createdAt'] },
+  admin: { useAsTitle: 'code', group: '💬 Chăm sóc người bệnh & Khảo sát', defaultColumns: ['code', 'subject', 'category', 'priority', 'status', 'department', 'createdAt'] },
   access: { read: moduleAccess('feedback', 'view'), create: moduleAccess('feedback', 'create'), update: moduleAccess('feedback', 'edit'), delete: moduleAccess('feedback', 'delete') },
   hooks: {
     beforeChange: [({ data, originalDoc }) => {

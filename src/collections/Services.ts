@@ -6,7 +6,7 @@ export const Services: CollectionConfig = {
   labels: { singular: 'Bảng giá dịch vụ', plural: 'Bảng giá dịch vụ' },
   admin: {
     useAsTitle: 'name',
-    group: 'Khám bệnh',
+    group: '🏥 Khám bệnh & Dịch vụ Y tế',
     description: 'Thêm từng dịch vụ hoặc dùng khung nhập Excel ngay phía trên danh sách.',
     components: { beforeList: ['/src/components/admin/ServicesExcelImport'] },
   },

@@ -5,7 +5,7 @@ export const SystemSettings: GlobalConfig = {
   slug: 'system-settings',
   label: 'Cấu hình hệ thống',
   admin: {
-    group: 'Hệ thống',
+    group: '⚙️ Hệ thống & Dữ liệu',
     description: 'Thiết lập vận hành, bảo mật, audit, sao lưu và chế độ bảo trì.',
   },
   access: { read: loggedIn, update: admins },

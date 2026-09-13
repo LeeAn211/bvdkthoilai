@@ -9,7 +9,7 @@ export const AuditLogs: CollectionConfig = {
   slug: 'audit-logs',
   labels: { singular: 'Nhật ký hệ thống', plural: 'Nhật ký hệ thống' },
   admin: {
-    group: 'Hệ thống',
+    group: '⚙️ Hệ thống & Dữ liệu',
     useAsTitle: 'summary',
     defaultColumns: ['createdAt', 'actorEmail', 'action', 'resource', 'documentId', 'ip'],
     description: 'Audit Log bất biến. Không cho sửa hoặc xóa từ Admin/API thông thường.',

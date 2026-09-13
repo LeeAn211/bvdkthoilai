@@ -7,7 +7,7 @@ import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
 export const Notices: CollectionConfig = {
   slug: 'notices',
   labels: { singular: 'Thông báo', plural: 'Thông báo' },
-  admin: { useAsTitle: 'title', group: 'Nội dung', defaultColumns: ['title', 'level', 'workflowState', '_status', 'publishedAt', 'startAt', 'expireAt'] },
+  admin: { useAsTitle: 'title', group: '📰 Truyền thông & Văn bản', defaultColumns: ['title', 'level', 'workflowState', '_status', 'publishedAt', 'startAt', 'expireAt'] },
   access: { read: publicPublished, create: moduleAccess('notices', 'create'), update: workflowUpdateAccess('notices'), delete: contentDeleteAccess('notices') },
   trash: true,
   versions: { drafts: { autosave: true, schedulePublish: false }, maxPerDoc: 50 },

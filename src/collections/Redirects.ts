@@ -6,7 +6,7 @@ export const Redirects: CollectionConfig = {
   labels: { singular: 'Chuyển hướng 301', plural: 'Chuyển hướng 301' },
   admin: {
     useAsTitle: 'fromPath',
-    group: 'Hệ thống',
+    group: '⚙️ Hệ thống & Dữ liệu',
     defaultColumns: ['fromPath', 'toPath', 'sourceCollection', 'active', 'updatedAt'],
     description: 'Được tạo tự động khi đổi slug của nội dung đã xuất bản. Có thể thêm thủ công khi cần.',
   },

@@ -8,7 +8,7 @@ export const AdvancedTechniques: CollectionConfig = {
   labels: { singular: 'Kỹ thuật chuyên sâu', plural: 'Kỹ thuật chuyên sâu' },
   admin: {
     useAsTitle: 'title',
-    group: 'Nội dung',
+    group: '🩺 Chuyên môn & Tổ chức',
     defaultColumns: ['title', 'badge', 'department', 'order', 'active', 'updatedAt'],
     description: 'Quản lý thông tin giới thiệu chi tiết các kỹ thuật cao, công nghệ y tế hiện đại của bệnh viện.',
   },

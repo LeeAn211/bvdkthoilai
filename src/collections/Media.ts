@@ -51,7 +51,7 @@ export const Media: CollectionConfig = {
   slug: 'media',
   labels: { singular: 'Tệp & Hình ảnh', plural: 'Thư viện Tệp & Hình ảnh' },
   admin: {
-    group: 'Dữ liệu & File',
+    group: '⚙️ Hệ thống & Dữ liệu',
     useAsTitle: 'originalFilename',
     defaultColumns: ['originalFilename', 'group', 'accessLevel', 'mimeType', 'filesize', 'hash', 'updatedAt'],
     description: 'Kho media dùng chung. Online Production lưu R2; local/offline mặc định lưu thư mục media. Ảnh và tệp đính kèm chỉ lưu một file gốc.',

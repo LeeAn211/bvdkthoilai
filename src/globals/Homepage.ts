@@ -71,7 +71,7 @@ const defaultHomepageSections = [
   { type: 'organization', eyebrow: 'TỔ CHỨC BỆNH VIỆN', title: 'Đơn vị trực thuộc', visible: true },
   { type: 'notices', eyebrow: 'THÔNG BÁO', title: 'Thông báo mới từ bệnh viện', description: 'Cập nhật thông tin quan trọng dành cho người bệnh và cộng đồng.', visible: true },
   { type: 'procurement', eyebrow: 'CÔNG KHAI MUA SẮM', title: 'Đấu thầu – Mua sắm', description: 'Thông tin mời thầu, kế hoạch lựa chọn nhà thầu và kết quả mua sắm.', visible: true },
-  { type: 'schedules', eyebrow: 'THÔNG TIN KHÁM BỆNH', title: 'Lịch khám bệnh', description: 'Tra cứu bác sĩ, chuyên khoa, thời gian và phòng khám trước khi đến bệnh viện.', visible: true, scheduleTabOrder: [{ tab: 'attachments', visible: true }, { tab: 'daily', visible: true }, { tab: 'weekly', visible: true }] },
+  { type: 'schedules', eyebrow: 'THÔNG TIN KHÁM BỆNH', title: 'Lịch khám bệnh', description: 'Tra cứu bác sĩ, chuyên khoa, thời gian và phòng khám trước khi đến bệnh viện.', visible: true, scheduleTabOrder: [{ tab: 'emergency', visible: true }, { tab: 'daily', visible: true }, { tab: 'weekly', visible: true }, { tab: 'attachments', visible: true }] },
   { type: 'vaccinations', eyebrow: 'TIÊM NGỪA AN TOÀN', title: 'Thông tin tiêm ngừa', description: 'Thông báo lịch tiêm chung, các đợt tiêm và danh mục vắc xin tại bệnh viện.', visible: true, vaccinationTabOrder: [{ tab: 'announcements', visible: true }, { tab: 'campaigns', visible: true }, { tab: 'vaccines', visible: true }] },
   { type: 'science', eyebrow: 'CHUYÊN MÔN – ĐÀO TẠO', title: 'Hoạt động khoa học', visible: true },
   { type: 'introduction', eyebrow: 'VỀ CHÚNG TÔI', title: 'Đồng hành cùng sức khỏe cộng đồng', visible: true },
@@ -98,9 +98,10 @@ const defaultDepartmentTabs = [
 ]
 
 const defaultScheduleTabs = [
-  { label: 'Lịch đính kèm', tab: 'attachments', visible: true },
+  { label: 'Lịch trực cấp cứu', tab: 'emergency', visible: true },
   { label: 'Theo ngày', tab: 'daily', visible: true },
   { label: 'Theo tuần', tab: 'weekly', visible: true },
+  { label: 'Lịch đính kèm', tab: 'attachments', visible: true },
 ]
 
 const defaultVaccinationTabs = [
@@ -113,7 +114,7 @@ export const Homepage: GlobalConfig = {
   slug: 'homepage',
   label: 'Giao diện & bố cục trang chủ',
   admin: {
-    group: 'Trang chủ & Giao diện',
+    group: '🌐 Trang chủ & Giao diện Website',
     description: 'Quản lý banner, nội dung, thứ tự, màu sắc và cỡ chữ của các mục trên trang chủ.',
   },
   access: { read: () => true, update: loggedIn },
@@ -174,6 +175,15 @@ export const Homepage: GlobalConfig = {
       max: 30,
       defaultValue: 6,
       admin: { description: 'Khuyên dùng 5–7 giây. Chỉ áp dụng khi có từ 2 banner đang hiển thị.' },
+    },
+    {
+      name: 'enableSectionScrollSnap',
+      label: 'Bật hiệu ứng cuộn bắt dính từng Section (Scroll Snap)',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        description: 'Khi bật: người dùng lăn chuột trên trang chủ, trình duyệt sẽ tự động hít nhẹ và căn chỉnh chuẩn đỉnh của từng Section (không bị dừng lửng lơ giữa 2 khối).',
+      },
     },
     {
       name: 'quickLinks',
@@ -508,8 +518,131 @@ export const Homepage: GlobalConfig = {
             { name: 'visible', label: 'Hiển thị thẻ này', type: 'checkbox', defaultValue: true },
           ],
         },
-        { name: 'carouselSeconds', label: 'Thời gian chuyển nội dung nổi bật (giây)', type: 'number', min: 2.5, max: 20, defaultValue: 4.5, admin: { condition: (_data, siblingData) => siblingData?.type === 'featured-news', description: 'Điểm tin nổi bật tự động chuyển qua Tin tức, Thông báo, Đấu thầu – Mua sắm và Lịch khám mới.' } },
-        { name: 'featuredItemLimit', label: 'Tổng số nội dung tham gia chuyển động', type: 'number', min: 4, max: 40, defaultValue: 16, admin: { condition: (_data, siblingData) => siblingData?.type === 'featured-news', description: 'Khung ngoài luôn hiển thị 4 card trên desktop. Số này quy định tổng số nội dung được đưa vào vòng chuyển động, ví dụ 8, 12, 16, 20...' } },
+        { name: 'carouselSeconds', label: 'Thời gian chuyển nội dung nổi bật (giây)', type: 'number', min: 2.5, max: 20, defaultValue: 4.5, admin: { condition: (_data, siblingData) => siblingData?.type === 'featured-news', description: 'Điểm tin nổi bật tự động chuyển qua các thẻ nội dung được chọn.' } },
+        { name: 'featuredItemLimit', label: 'Tổng số nội dung tối đa tham gia chuyển động', type: 'number', min: 4, max: 40, defaultValue: 16, admin: { condition: (_data, siblingData) => siblingData?.type === 'featured-news', description: 'Khung ngoài hiển thị 4 card trên desktop. Số này quy định tổng số nội dung tối đa được đưa vào vòng chuyển động.' } },
+        {
+          name: 'featuredSources',
+          dbName: 'fn_sources',
+          label: 'Cấu hình các chuyên mục & số lượng bài đưa lên Điểm tin',
+          type: 'array',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'featured-news',
+            description: 'Tùy chọn những chuyên mục / nguồn tin nào được đưa lên Điểm tin, bật/tắt từng mục và quy định mỗi mục được lấy bao nhiêu bài.',
+            initCollapsed: false,
+          },
+          defaultValue: [
+            { source: 'news', label: 'Tin tức & Hoạt động', limit: 8, enabled: true },
+            { source: 'notices', label: 'Thông báo', limit: 6, enabled: true },
+            { source: 'procurement', label: 'Đấu thầu – Mua sắm', limit: 4, enabled: true },
+            { source: 'schedules', label: 'Lịch khám & Lịch trực', limit: 0, enabled: false },
+          ],
+          fields: [
+            {
+              name: 'source',
+              label: 'Nguồn nội dung',
+              type: 'select',
+              required: true,
+              options: [
+                { label: 'Tin tức chung (toàn bộ)', value: 'news' },
+                { label: 'Tin theo chuyên mục cụ thể', value: 'news-category' },
+                { label: 'Thông báo', value: 'notices' },
+                { label: 'Đấu thầu – Mua sắm', value: 'procurement' },
+                { label: 'Lịch khám & Lịch trực', value: 'schedules' },
+                { label: 'Văn bản – Tài liệu', value: 'documents' },
+              ],
+            },
+            {
+              name: 'categoryRef',
+              label: 'Chọn Chuyên mục cụ thể (khi chọn "Tin theo chuyên mục cụ thể")',
+              type: 'relationship',
+              relationTo: 'categories',
+              filterOptions: { scope: { equals: 'news' }, active: { equals: true } },
+              admin: {
+                condition: (_data, siblingData) => siblingData?.source === 'news-category',
+                description: 'Chỉ lấy các bài viết thuộc chuyên mục tin tức này.',
+              },
+            },
+            {
+              name: 'categoryName',
+              label: 'Hoặc nhập tên chuyên mục (tương thích dữ liệu cũ)',
+              type: 'text',
+              admin: {
+                condition: (_data, siblingData) => siblingData?.source === 'news-category',
+                placeholder: 'Ví dụ: Hoạt động bệnh viện, Tin y tế, Kiến thức sức khỏe...',
+                description: 'Nếu đã chọn chuyên mục ở trên thì có thể để trống ô này.',
+              },
+            },
+            {
+              name: 'customBadge',
+              label: 'Tên nhãn hiển thị trên thẻ (Badge)',
+              type: 'text',
+              admin: {
+                placeholder: 'Để trống sẽ tự động lấy theo tên nguồn / tên chuyên mục (Ví dụ: TIN TỨC, THÔNG BÁO)',
+                description: 'Tùy chỉnh nhãn nổi bật gắn ở góc dưới ảnh đại diện.',
+              },
+            },
+            {
+              name: 'limit',
+              label: 'Số lượng bài lấy từ nguồn này',
+              type: 'number',
+              min: 1,
+              max: 20,
+              defaultValue: 6,
+              required: true,
+              admin: {
+                description: 'Quy định lấy tối đa bao nhiêu bài mới nhất từ nguồn/chuyên mục này đưa lên Điểm tin.',
+              },
+            },
+            {
+              name: 'enabled',
+              label: 'Bật hiển thị nguồn này',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Bỏ chọn nếu muốn tạm ẩn nội dung của chuyên mục này khỏi Điểm tin mà không cần xóa cấu hình.',
+              },
+            },
+          ],
+        },
+        {
+          name: 'featuredFilterMode',
+          label: 'Cách lọc bài viết Tin tức trong Điểm tin',
+          type: 'select',
+          defaultValue: 'all',
+          options: [
+            { label: 'Lấy tất cả bài mới nhất theo số lượng quy định ở trên', value: 'all' },
+            { label: 'Chỉ lấy những bài được tích chọn "Tin nổi bật" trong Quản trị', value: 'only-featured' },
+          ],
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'featured-news',
+            description: 'Tùy chọn hiển thị bài mới nhất thông thường hoặc chỉ hiển thị các bài được ban biên tập đánh dấu "Tin nổi bật".',
+          },
+        },
+        {
+          name: 'featuredSeeAllUrl',
+          label: 'Đường dẫn liên kết "Xem tất cả →"',
+          type: 'text',
+          defaultValue: '/tin-tuc',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'featured-news',
+            placeholder: '/tin-tuc hoặc /tim-kiem',
+            description: 'Đổi liên kết khi bấm nút Xem tất cả phía trên bên phải của mục Điểm tin.',
+          },
+        },
+        {
+          name: 'featuredCardFit',
+          label: 'Cách hiển thị ảnh trên thẻ Điểm tin',
+          type: 'select',
+          defaultValue: 'cover',
+          options: [
+            { label: 'Lấp đầy khung ảnh (Chuẩn giao diện y tế)', value: 'cover' },
+            { label: 'Vừa vặn toàn bộ ảnh (Không crop, giữ trọn 100% chi tiết ảnh)', value: 'contain' },
+          ],
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'featured-news',
+            description: 'Cố định tỷ lệ, tuyệt đối không bị méo hình theo Quy tắc cốt lõi bắt buộc.',
+          },
+        },
         { name: 'organizationImage', label: 'Hình ảnh giữa khối Chuyên khoa', type: 'upload', relationTo: 'media', admin: { condition: (_data, siblingData) => siblingData?.type === 'organization', description: 'Tải ảnh mới hoặc chọn ảnh đã có trong thư viện. Ảnh hiển thị ở giữa danh sách chuyên khoa và khối Medpro.' } },
         {
           name: 'organizationMedpro',
@@ -607,9 +740,10 @@ export const Homepage: GlobalConfig = {
           fields: [
             { name: 'label', label: 'Tên tab', type: 'text', admin: { placeholder: 'Có thể tự nhập tên tab' } },
             { name: 'tab', label: 'Nguồn dữ liệu có sẵn (không bắt buộc)', type: 'select', options: [
-              { label: 'Lịch đính kèm', value: 'attachments' },
+              { label: 'Lịch trực cấp cứu', value: 'emergency' },
               { label: 'Theo ngày', value: 'daily' },
               { label: 'Theo tuần', value: 'weekly' },
+              { label: 'Lịch đính kèm', value: 'attachments' },
             ] },
             { name: 'visible', label: 'Hiển thị tab', type: 'checkbox', defaultValue: true },
             {

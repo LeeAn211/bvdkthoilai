@@ -33,3 +33,21 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - **TUYỆT ĐỐI KHÔNG BAO GIỜ** được điền, hiển thị hoặc gắn tên của bất kỳ đơn vị, bệnh viện hay tổ chức y tế nào khác (như Bạch Mai, Chợ Rẫy, v.v.) vào giao diện website, Admin CMS, label, placeholder hay mô tả trường của Bệnh viện Đa khoa Khu vực Thới Lai.
 - Mọi mẫu thiết kế tham khảo chỉ dùng để áp dụng cấu trúc giao diện y tế hiện đại, văn bản và nhãn hiển thị phải luôn luôn thuộc về và đại diện cho **Bệnh viện Đa khoa Khu vực Thới Lai**.
 
+## 5. Nguyên tắc bắt buộc đối với Trang Lịch làm việc và các Khối nội dung động trong Admin CMS (MANDATE BẮT BUỘC):
+- **5.1. Đưa toàn bộ vào Admin CMS (Không hardcode giao diện)**:
+  - Mọi nội dung, hình nền, biểu tượng (icon), liên kết tab, khung giờ, và ghi chú của trang Lịch làm việc (`/lich-lam-viec`) cũng như các khối thông tin dịch vụ **BẮT BUỘC PHẢI ĐƯỢC QUẢN LÝ 100% TỪ ADMIN CMS**.
+  - Không được hardcode văn bản cố định ngoài frontend nếu chưa có trường tương ứng trong Global/Collection schema.
+- **5.2. Quyền bật/tắt độc lập từng ô thông tin (Granular Toggles)**:
+  - Tất cả các khối lớn (Banner Cấp cứu, Khối thông báo, Khối liên kết, Khối lưu ý) VÀ từng phần tử con (từng ô khoa phòng, từng mốc giờ, từng thẻ link, từng dòng lưu ý) **BẮT BUỘC phải có trường checkbox `enabled` riêng biệt** để người quản trị có thể bật/tắt tùy ý những mục chưa sử dụng tới.
+- **5.3. Định dạng và thẩm mỹ linh hoạt trên từng ô (Styling Controls)**:
+  - Từng ô nội dung phải hỗ trợ đầy đủ các tùy chọn:
+    - **Canh lề (`textAlign`)**: Canh trái, Canh giữa, Canh phải, Canh đều 2 bên (Justify).
+    - **Tự do xuống dòng (Multiline)**: Toàn bộ các vùng nhập văn bản, ghi chú, mô tả phải giữ nguyên định dạng ngắt dòng khi gõ phím Enter (`white-space: pre-line`).
+    - **Màu sắc chữ (`titleColor`, `textColor`, `noteColor`)**: Đa dạng tông màu chuẩn y tế (Đen đậm, Xanh dương đậm Navy, Xanh y tế Primary Blue, Xanh lá, Đỏ nổi bật, Xám đậm).
+    - **Kích thước cỡ chữ (`titleSize`, `textSize`, `noteSize`)**: Chuẩn, Lớn, Rất lớn, hoặc Nhỏ vừa.
+- **5.4. Chống lỗi rớt từ mồ côi (No Orphan Words)**:
+  - Tiêu đề Hero và tiêu đề các ô thông tin phải áp dụng `text-wrap: balance` và chiều rộng khung hợp lý, tuyệt đối không để xảy ra hiện tượng rớt 1 từ lẻ loi xuống hàng mới (như chữ "bệnh" rớt riêng một dòng).
+- **5.5. An toàn cơ sở dữ liệu PostgreSQL (`dbName` Optimization)**:
+  - Khi thêm các trường mảng, bảng phụ, hoặc quan hệ lồng nhau vào Payload CMS, **BẮT BUỘC phải đặt `dbName` ngắn gọn (< 63 ký tự)** và không kích hoạt `versions` không cần thiết trên Global để ngăn ngừa lỗi PostgreSQL Identifier length limit khiến server bị treo.
+
+

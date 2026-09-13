@@ -123,7 +123,17 @@ export async function SiteHeader() {
         { label: 'Đội ngũ Bác sĩ', url: '/bac-si' },
       ],
     },
-    { label: 'Lịch khám', url: '/lich-kham' },
+    {
+      label: 'Lịch khám & Trực',
+      url: '/lich-kham',
+      children: [
+        { label: 'Giờ làm việc bệnh viện', url: '/lich-lam-viec' },
+        { label: 'Tất cả lịch', url: '/lich-kham' },
+        { label: 'Lịch trực cấp cứu 24/24', url: '/lich-kham?type=emergency' },
+        { label: 'Lịch khám bệnh theo tuần', url: '/lich-kham?type=weekly' },
+        { label: 'Lịch khám bác sĩ theo ngày', url: '/lich-kham?type=daily' },
+      ],
+    },
     { label: 'Tiêm chủng', url: '/tiem-chung' },
     { label: 'Bảng giá', url: '/bang-gia' },
     { label: 'Tin tức', url: '/tin-tuc' },

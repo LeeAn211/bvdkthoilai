@@ -5,7 +5,7 @@ import { slugField } from '@/fields/common'
 export const Vaccines: CollectionConfig = {
   slug: 'vaccines',
   labels: { singular: 'Vắc xin', plural: 'Danh mục vắc xin' },
-  admin: { useAsTitle: 'name', group: 'Khám bệnh', defaultColumns: ['name', 'manufacturer', 'origin', 'availability', 'active'] },
+  admin: { useAsTitle: 'name', group: '🏥 Khám bệnh & Dịch vụ Y tế', defaultColumns: ['name', 'manufacturer', 'origin', 'availability', 'active'] },
   access: {
     read: publicActive,
     create: moduleAccess('vaccinations', 'create'),

@@ -9,7 +9,7 @@ export const ScientificActivities: CollectionConfig = {
   labels: { singular: 'Bài viết Hoạt động khoa học', plural: 'Hoạt động khoa học' },
   admin: {
     useAsTitle: 'title',
-    group: 'Nội dung',
+    group: '🩺 Chuyên môn & Tổ chức',
     defaultColumns: ['title', 'categoryGroup', 'workflowState', '_status', 'publishedAt', 'updatedAt'],
     description: 'Thêm và quản lý bài viết cho mục Hoạt động khoa học trên trang chủ và trang danh sách riêng.',
   },

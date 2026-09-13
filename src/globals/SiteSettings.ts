@@ -38,7 +38,7 @@ const defaultAssistantAnswers = [
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: 'Header & Nhận diện',
-  admin: { group: 'Trang chủ & Giao diện' },
+  admin: { group: '🌐 Trang chủ & Giao diện Website' },
   access: { read: () => true, update: loggedIn },
   versions: { max: 20 },
   hooks: {
@@ -664,10 +664,40 @@ export const SiteSettings: GlobalConfig = {
       name: 'servicePricePage',
       label: 'Trang Bảng giá dịch vụ',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, ô tìm kiếm và số dịch vụ hiển thị trên mỗi trang.' },
+      admin: { description: 'Tùy chỉnh tiêu đề, thông báo lưu ý BHYT, ô tìm kiếm và số dịch vụ hiển thị trên mỗi trang.' },
       fields: [
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Bảng giá dịch vụ' },
         { name: 'description', label: 'Mô tả', type: 'textarea', defaultValue: 'Tra cứu giá BHYT và giá dịch vụ được cập nhật trực tiếp từ hệ thống quản trị.' },
+        {
+          name: 'showNoticeBanner',
+          label: 'Bật thông báo / lưu ý bảng giá trên đầu trang',
+          type: 'checkbox',
+          defaultValue: true,
+        },
+        {
+          name: 'noticeTitle',
+          label: 'Tiêu đề lưu ý bảng giá',
+          type: 'text',
+          defaultValue: 'Lưu ý về giá khám chữa bệnh BHYT và Viện phí',
+        },
+        {
+          name: 'noticeContent',
+          label: 'Nội dung lưu ý (Hỗ trợ Enter xuống dòng)',
+          type: 'textarea',
+          defaultValue: '• Bảng giá dịch vụ khám bệnh, chữa bệnh được thực hiện công khai theo đúng quy định hiện hành của Bộ Y tế.\n• Người bệnh có thẻ BHYT đúng tuyến hoặc thông tuyến được hưởng đầy đủ quyền lợi chi trả theo quy định.\n• Các dịch vụ kỹ thuật cao, dịch vụ theo yêu cầu được tư vấn rõ ràng trước khi thực hiện.',
+        },
+        {
+          name: 'noticeAlign',
+          label: 'Canh lề bảng lưu ý',
+          type: 'select',
+          dbName: 'sp_not_align',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
         { name: 'searchPlaceholder', label: 'Chữ gợi ý trong ô tìm kiếm', type: 'text', defaultValue: 'Nhập tên, mã dịch vụ, nhóm hoặc ghi chú…' },
         { name: 'rowsPerPage', label: 'Số dòng hiển thị trên mỗi trang', type: 'select', defaultValue: '40', required: true, options: [
           { label: '40 dịch vụ / trang', value: '40' },
@@ -675,6 +705,47 @@ export const SiteSettings: GlobalConfig = {
         ] },
         { name: 'searchNotes', label: 'Cho phép tìm trong cột Ghi chú', type: 'checkbox', defaultValue: true },
         { name: 'emptyText', label: 'Thông báo khi không có kết quả', type: 'text', defaultValue: 'Không tìm thấy dịch vụ phù hợp.' },
+      ],
+    },
+    {
+      name: 'vaccinationPage',
+      label: 'Trang Tiêm chủng vắc xin',
+      type: 'group',
+      admin: { description: 'Tùy chỉnh tiêu đề, banner thông báo và lưu ý an toàn tiêm chủng trên trang /tiem-chung.' },
+      fields: [
+        { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'TIÊM NGỪA AN TOÀN' },
+        { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Thông tin tiêm ngừa' },
+        { name: 'description', label: 'Mô tả', type: 'textarea', defaultValue: 'Theo dõi thông báo lịch tiêm, các đợt tiêm và danh mục vắc xin tại bệnh viện.' },
+        {
+          name: 'showNoticeBanner',
+          label: 'Bật thông báo lưu ý tiêm chủng',
+          type: 'checkbox',
+          defaultValue: true,
+        },
+        {
+          name: 'noticeTitle',
+          label: 'Tiêu đề lưu ý tiêm chủng',
+          type: 'text',
+          defaultValue: 'Quy trình và An toàn Tiêm chủng tại Bệnh viện',
+        },
+        {
+          name: 'noticeContent',
+          label: 'Nội dung lưu ý (Hỗ trợ Enter xuống dòng)',
+          type: 'textarea',
+          defaultValue: '• Người đến tiêm chủng được khám sàng lọc trước tiêm và tư vấn chỉ định vắc xin phù hợp.\n• Theo dõi sức khỏe ít nhất 30 phút sau tiêm tại phòng theo dõi của bệnh viện.\n• Vui lòng mang theo sổ tiêm chủng hoặc ứng dụng tiêm chủng điện tử khi đến tiêm.',
+        },
+        {
+          name: 'noticeAlign',
+          label: 'Canh lề bảng lưu ý',
+          type: 'select',
+          dbName: 'vc_not_align',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
       ],
     },
     {

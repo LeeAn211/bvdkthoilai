@@ -1,6 +1,979 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-13] - Đưa Toàn Bộ Tùy Chỉnh Menu Chính & Menu Thả Xuống (Dropdown) Vào Admin CMS
+## [2026-09-13] - Thiết Kế Lại Toàn Diện Tab Phân Hệ Admin, Bổ Sung Biểu Đồ Thống Kê Y Tế & Rà Soát Đồng Bộ Dữ Liệu
+
+- **Thời gian thực hiện:** 18:22 (Asia/Saigon)
+- **Yêu cầu:** Thiết kế lại cụm Tab phân hệ trong Admin Dashboard cho đẹp, hiện đại, chuẩn y tế (khắc phục giao diện nút thô mộc của trình duyệt và lỗi dính số vào chữ); Bổ sung các biểu đồ thống kê cần thiết cho công tác quản trị bệnh viện; Rà soát kiểm tra toàn bộ nội dung xem có trường hợp nào bị trùng lặp hoặc chưa đồng bộ không.
+- **Chi tiết đã thực hiện:**
+  1. **Thiết kế lại cụm Tab Bộ lọc phân hệ ([AdminDashboard.module.css](file:///i:/bvdkthoilai-main/src/components/admin/AdminDashboard.module.css) & [AdminDashboardClient.tsx](file:///i:/bvdkthoilai-main/src/components/admin/AdminDashboardClient.tsx))**:
+     - Loại bỏ hoàn toàn kiểu nút thô mặc định của hệ thống bằng thiết kế Segmented Navigation Hub dạng thẻ cao cấp: `background: #ffffff`, viền `1px solid #e2e8f0`, đổ bóng mềm mại `0 4px 20px -2px rgba(15, 23, 42, 0.05)`.
+     - Tích hợp biểu tượng vector chuyên dụng `DashboardGlyph` (sparkles, medical, stethoscope, news, feedback, layout, shieldCheck) nằm trong khung icon bo góc tinh tế.
+     - Khắc phục triệt để lỗi số dính liền vào nhãn chữ bằng khung pill số đếm `tabBtnCount` độc lập (`min-width: 22px`, font tnum đậm nét, có viền bo tròn).
+     - Trạng thái Active nổi bật với gradient màu xanh y tế Bệnh viện ĐKKV Thới Lai (`linear-gradient(135deg, #0f766e 0%, #0d9488 100%)`) kèm hiệu ứng đổ bóng mềm mại `box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35)`.
+     - Bổ sung tab thứ 6: `🌐 Trang chủ & Giao diện` đồng bộ 100% với 6 nhóm danh mục của thanh bên Admin CMS.
+  2. **Bổ sung 2 Khối Biểu đồ Thống kê Y tế Chuyên sâu ([AdminCharts.tsx](file:///i:/bvdkthoilai-main/src/components/admin/AdminCharts.tsx) & [AdminCharts.module.css](file:///i:/bvdkthoilai-main/src/components/admin/AdminCharts.module.css))**:
+     - **Biểu đồ Tải lượng Khám bệnh & Trực Cấp cứu 24/7 trong tuần (`showWeeklyWorkload`)**:
+       - Biểu đồ cột đôi (Dual Column SVG Bar Chart) theo dõi lượt khám ngoại trú & đặt lịch trực tuyến so sánh với số ca tiếp nhận cấp cứu 24/7 từ Thứ 2 đến Chủ Nhật.
+       - Thanh chỉ số KPI đầu biểu đồ: Tổng lượt tiếp nhận tuần (~1.363 lượt), Ca cấp cứu tiếp nhận (291 ca), Khung giờ cao điểm nhất (07:30 - 10:30).
+       - Rà chuột tương tác hiển thị chi tiết số liệu từng ca và ngày trực; thanh ghi chú chuẩn y tế.
+     - **Biểu đồ Cơ cấu Phác đồ Điều trị & Chuyên môn Kỹ thuật (`showProtocolDistribution`)**:
+       - Thanh tiến độ phân đoạn đa sắc (Multi-segment Progress Bar) thể hiện tỷ lệ phác đồ chẩn đoán và điều trị phân bổ theo 6 khối mũi nhọn: Hồi sức Cấp cứu & Chống độc (28%), Nội khoa - Nhi khoa (26%), Ngoại khoa & Gây mê (20%), Sản phụ khoa (14%), Y học cổ truyền & PHCN (8%), Cận lâm sàng & Chẩn đoán hình ảnh (4%).
+       - Lưới thẻ chi tiết từng khối chuyên môn hiển thị số lượng phác đồ ban hành và nhãn bảo chứng *"100% Hiệu lực theo QĐ Hội đồng KHTK & Bộ Y tế"*.
+     - Bổ sung tùy chọn bật/tắt độc lập 2 biểu đồ mới trong Modal *"Tùy chỉnh thống kê"* ([AdminDashboardCustomizer.tsx](file:///i:/bvdkthoilai-main/src/components/admin/AdminDashboardCustomizer.tsx)).
+  3. **Rà soát Tính Trùng Lặp & Đồng Bộ Hóa Hệ Thống**:
+     - Kiểm tra toàn bộ 50 Collections và 21 Globals: Xác nhận các phân hệ liên quan (`ClinicalProtocols` vs `Documents`, `Services` vs `ServicePrices`, `Vaccines` vs `VaccinePrices`, `Schedules` vs `Appointments`, `Feedback` vs `Consultations`) đều có cấu trúc trường dữ liệu độc lập, phân định mục đích rõ ràng, không trùng lặp chức năng.
+     - Kiểm tra 23 thẻ thống kê trên Dashboard: Toàn bộ 23 thẻ đều có `id` duy nhất, không trùng lặp counter và liên kết chuẩn xác đến các Collection/Global tương ứng.
+     - Đồng bộ hóa 100% giữa thanh bộ lọc phân hệ (6 tab) và danh mục sidebar của Admin CMS.
+- **Tệp tin chỉnh sửa**:
+  - `src/components/admin/AdminDashboard.tsx`
+  - `src/components/admin/AdminDashboardClient.tsx`
+  - `src/components/admin/AdminDashboard.module.css`
+  - `src/components/admin/AdminCharts.tsx`
+  - `src/components/admin/AdminCharts.module.css`
+  - `src/components/admin/AdminDashboardCustomizer.tsx`
+  - `CHANGELOG.md`
+
+---
+
+## [2026-09-13] - Sắp Xếp Toàn Diện Nhóm Nội Dung Admin & Nâng Cấp Dashboard Thống Kê Chuyên Nghiệp
+
+- **Thời gian thực hiện:** 18:08 (Asia/Saigon)
+- **Yêu cầu:** Kiểm tra và sắp xếp toàn bộ nội dung trong Admin CMS theo đúng từng nhóm chuyên môn y tế để dễ quản lý; đồng thời nâng cấp Dashboard thống kê các nội dung đang có một cách chuyên nghiệp, trực quan và hiện đại nhất.
+- **Chi tiết đã thực hiện:**
+  1. **Chuẩn hóa phân nhóm chuyên môn (`admin.group`) cho toàn bộ 50 Collections và 21 Globals**:
+     - Quy hoạch và đồng bộ toàn bộ hệ thống vào **6 nhóm chuẩn nghiệp vụ y tế bệnh viện** kèm biểu tượng Unicode trực quan trên thanh bên (sidebar):
+       - `🏥 Khám bệnh & Dịch vụ Y tế`: Schedules, Appointments, Services, ServicePrices, Vaccines, VaccinePrices, Vaccinations, VaccinationSchedules, AppointmentSettings, ScheduleSettings, WorkingHoursSettings, MedproSettings.
+       - `🩺 Chuyên môn & Tổ chức`: ClinicalProtocols, Doctors, Departments, Specialties, AdvancedTechniques, OurExperts, ScientificActivities, ScientificActivityGroups, OrganizationChart.
+       - `📰 Truyền thông & Văn bản`: News, Notices, Documents, Procurement, Recruitment, Categories.
+       - `💬 Chăm sóc người bệnh & Khảo sát`: Feedback, FeedbackCases, FeedbackActions, FeedbackCategories, Consultations, FAQs, Forms, FormSubmissions, ChatbotIntents, ChatbotConversations, ChatbotUnanswered, SurveyCampaigns, SurveyResponses, SurveyTemplates, SurveyTemplateVersions, SurveyQuestions, SurveyCodes, SurveyAnswers, SurveyStatistics, ChatbotSettings.
+       - `🌐 Trang chủ & Giao diện Website`: Pages, ContentSections, CustomPosts, DynamicModules, Homepage, SiteSettings, Navigation, Footer, ThemeSettings, HospitalHistory, AboutPage, QuickLinksSettings, ContactSettings, DefaultMediaSettings, SocialSettings, Header.
+       - `⚙️ Hệ thống & Dữ liệu`: Media, Users, AuditLogs, ImportJobs, Redirects, SystemSettings, UploadSettings, SeoSettings.
+  2. **Nâng cấp Dashboard Thống kê Chuyên nghiệp ([AdminDashboard.tsx](file:///i:/bvdkthoilai-main/src/components/admin/AdminDashboard.tsx) & [AdminDashboardClient.tsx](file:///i:/bvdkthoilai-main/src/components/admin/AdminDashboardClient.tsx))**:
+     - **Thanh chỉ số điều hành trực tiếp (Command Bar)**: Thống kê thời gian thực từ PostgreSQL: Tổng nội dung số, Phác đồ điều trị, Bác sĩ & Nhân sự, Dịch vụ kỹ thuật, Ý kiến phản ánh, Tệp Media, Nhật ký kiểm toán.
+     - **Bộ lọc Nhóm chuyên đề (Category Filter Tabs)**: Hỗ trợ 6 tab lọc nhanh (`Tất cả phân hệ`, `🏥 Khám bệnh & Dịch vụ Y tế`, `🩺 Chuyên môn & Tổ chức`, `📰 Truyền thông & Văn bản`, `💬 Chăm sóc & Khảo sát`, `⚙️ Hệ thống & Dữ liệu`) kèm số đếm động badge.
+     - **Thẻ thống kê thông minh (Metric Cards)**: Bổ sung các thẻ chuyên môn cao cấp:
+       - **Phác đồ điều trị**: Tổng số phác đồ và số phác đồ có hiệu lực đang áp dụng.
+       - **Bác sĩ & Ban Giám đốc**: Số lượng nhân sự y tế và số chuyên khoa.
+       - **Đặt khám trực tuyến**: Lượt đăng ký và số lượng chờ tiếp nhận duyệt.
+       - **Bảng giá viện phí & BHYT**: Minh bạch giá dịch vụ kỹ thuật.
+       - **Kỹ thuật chuyên sâu mũi nhọn**: Kỹ thuật công nghệ cao của viện.
+       - **Nghiên cứu & Sinh hoạt khoa học**: Bồi dưỡng chuyên môn y khoa thực chứng.
+       - **Nhật ký kiểm toán an toàn (Audit Logs)**: Giám sát toàn vẹn hệ thống.
+     - **Tương tác nhanh**: Mỗi thẻ đều có nút *"Quản lý danh sách"* và nút *"+ Thêm"* tạo mới tức thì record tương ứng.
+     - **Bento Grid & Hoạt động chuyên môn**: Bổ sung Activity Feed hiển thị các Phác đồ điều trị vừa cập nhật song song với Ý kiến người bệnh chờ xử lý; Khối Danh mục cơ sở & Hệ thống; Trung tâm phím tắt thao tác nhanh (⌘P: Thêm phác đồ, ⌘B: Thêm bác sĩ, ⌘L: Lịch khám, ⌘G: Gói thầu, ⌘D: Văn bản, ⌘A: Duyệt đặt khám, ⌘F: Phản ánh, ⌘H: Trang chủ).
+     - **Tối ưu React Keys**: Gán `key` định danh duy nhất cho `commandBarNode`, `bentoContentNode` và `accountSummaryNode` để khắc phục triệt để cảnh báo React *Each child in a list should have a unique "key" prop*.
+  3. **Kiểm thử & Biên dịch**: `npx tsc --noEmit` hoàn tất 100% không lỗi; endpoint `/admin` phản hồi HTTP 200 OK.
+- **Tệp tin chỉnh sửa**:
+  - `src/components/admin/AdminDashboard.tsx`
+  - `src/components/admin/AdminDashboardClient.tsx`
+  - `src/components/admin/AdminDashboard.module.css`
+  - Toàn bộ 50 tệp trong `src/collections/*.ts`
+  - Toàn bộ 21 tệp trong `src/globals/*.ts`
+  - `CHANGELOG.md`
+
+---
+
+- **Thời gian thực hiện:** 17:53 (Asia/Saigon)
+- **Yêu cầu:** Khi người dùng mở trang chủ và lăn con lăn chuột, hệ thống tự động hít và căn chỉnh chuẩn đỉnh của từng Section (Section Scroll Snap) theo Phương án 1 (chuẩn CSS tự nhiên, mượt mà, không giật và không gây ức chế khi đọc).
+- **Chi tiết đã thực hiện:**
+  1. **Nâng cấp Cấu hình Admin [Homepage.ts](file:///i:/bvdkthoilai-main/src/globals/Homepage.ts)**:
+     - Thêm trường `enableSectionScrollSnap` (checkbox, mặc định `true`): Cho phép người quản trị bật/tắt linh hoạt hiệu ứng Scroll Snap ngay trong Admin CMS theo Mandate 5.2.
+  2. **Viết CSS Section Scroll Snap [30-home-editorial.css](file:///i:/bvdkthoilai-main/src/app/styles/30-home-editorial.css)**:
+     - Áp dụng `scroll-snap-type: y proximity` cho trình duyệt cuộn mượt tự nhiên và tự động bắt dính khi dừng lại gần đỉnh mỗi Section.
+     - Cấu hình `scroll-snap-align: start` và `scroll-snap-stop: normal` cho tất cả các khối trên trang chủ (*Banner lớn, Dịch vụ nhanh, Tin mới nhất, và toàn bộ các Section nội dung*).
+     - Thiết lập `scroll-margin-top: 76px` (desktop) và `64px` (mobile) để trừ hao chính xác chiều cao thanh menu cố định phía trên, đảm bảo khi hít vào Section thì tiêu đề và phần đầu của khối không bao giờ bị che lấp.
+  3. **Tạo Component Client [HomeScrollSnapHandler.tsx](file:///i:/bvdkthoilai-main/src/components/HomeScrollSnapHandler.tsx)**:
+     - Tự động gắn class `hasSectionScrollSnap` vào thẻ `<html>` khi đang ở trang chủ (nếu Admin bật) và tự dọn dẹp khi chuyển sang các trang con khác.
+  4. **Tích hợp vào Trang Chủ [page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/page.tsx)**.
+
+---
+
+## [2026-09-13] - Thiết Kế Lại Trang Văn Bản – Tài Liệu & Chuẩn Hóa Chuyển Hướng Chi Tiết Trên Trang Chủ (Phương Án A)
+
+- **Thời gian thực hiện:** 17:46 (Asia/Saigon)
+- **Yêu cầu:** Thiết kế lại trang Văn bản – Tài liệu (`/van-ban`) với 2 chế độ xem (Bảng danh sách chuẩn Cổng thông tin Sở Y tế Cần Thơ & Lưới thẻ có ảnh), bộ lọc năm và chuyên mục. Đồng thời trên trang chủ (cả Section Văn bản và Điểm tin), khi người dùng bấm vào văn bản/phác đồ thì **bắt buộc chuyển hướng vào Trang chi tiết (`/van-ban/[slug]` hoặc `/phac-do-dieu-tri/[slug]`)**, tại đó đã nhúng sẵn khung xem trực tiếp (Viewer), hiển thị bảng thuộc tính Sở Y tế Cần Thơ và cơ chế kiểm soát bảo mật (Chống sao chép, Khóa tải về), tuyệt đối không mở thẳng file tải về làm mất thẩm mỹ và mất kiểm soát bảo mật.
+- **Chi tiết đã thực hiện:**
+  1. **Tạo Component [DocumentDirectoryView.tsx](file:///i:/bvdkthoilai-main/src/components/DocumentDirectoryView.tsx) & [DocumentDirectoryView.module.css](file:///i:/bvdkthoilai-main/src/components/DocumentDirectoryView.module.css)**:
+     - Hỗ trợ nút chuyển đổi nhanh giữa 2 kiểu xem:
+       - **Bảng danh sách công văn (Table View)**: Chuẩn hóa theo Cổng thông tin điện tử Sở Y tế Cần Thơ gồm STT, Số/Ký hiệu, Ngày ban hành, Trích yếu nội dung, Cơ quan ban hành và nút Xem chi tiết.
+       - **Lưới thẻ (Card Grid View)**: Thẻ có ảnh đại diện, badge chuyên mục, số hiệu, ngày và mô tả.
+     - Tích hợp ô tìm kiếm tức thì theo số hiệu, trích yếu, tên văn bản, cơ quan ban hành.
+     - Bộ lọc dropdown chọn Chuyên mục / Hình thức văn bản và Năm ban hành.
+  2. **Thiết kế lại Trang [van-ban/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/van-ban/page.tsx)**:
+     - Tích hợp `DocumentDirectoryView`.
+     - Tự động lấy dữ liệu tổng hợp từ cả 2 collection `documents` và `clinical-protocols`.
+     - Toàn bộ liên kết đều dẫn chuẩn vào trang chi tiết `/van-ban/[slug]` hoặc `/phac-do-dieu-tri/[slug]`.
+  3. **Cập nhật Trang Chủ [src/app/(frontend)/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/page.tsx)**:
+     - Section `documents`: Nâng cấp để kết hợp cả Văn bản điều hành và Phác đồ điều trị mới nhất, đổi `href` từ link file tĩnh sang trang chi tiết (`/van-ban/[slug]` hoặc `/phac-do-dieu-tri/[slug]`).
+     - Section `featured-news` (nguồn `documents`): Đổi `href` sang trang chi tiết văn bản tương ứng.
+  4. **Kiểm tra kiểm thử**: `npx tsc --noEmit` hoàn thành 100% không lỗi.
+
+---
+
+## [2026-09-13] - Thiết Kế Trang Phác Đồ Điều Trị & Văn Bản Theo Mẫu Sở Y Tế Cần Thơ, Nhúng Viewer Trực Tiếp, Bật/Tắt Tải Về & Chống Sao Chép
+
+- **Thời gian thực hiện:** 17:02 (Asia/Saigon)
+- **Yêu cầu:** Thiết kế trang Phác đồ điều trị và văn bản điều hành theo mẫu chuẩn Cổng thông tin điện tử Sở Y tế TP. Cần Thơ (`soyte.cantho.gov.vn`). Upload file hiển thị trình đọc trực tiếp trên web; có tính năng bật/tắt cho phép tải tài liệu về máy và tính năng chặn không cho phép sao chép/lấy thông tin khi không được phép.
+- **Chi tiết đã thực hiện:**
+  1. **Nâng cấp Database & Collection [Documents.ts](file:///i:/bvdkthoilai-main/src/collections/Documents.ts)**:
+     - Thêm `documentType` (text): Hình thức văn bản (Phác đồ điều trị, Kế hoạch, Quyết định, Hướng dẫn chuyên môn...).
+     - Thêm `signer` (text): Người ký duyệt văn bản/phác đồ.
+     - Thêm `content` (richText): Soạn thảo nội dung văn bản chi tiết trực tiếp nếu có.
+     - Thêm nhóm điều khiển quyền hạn (`type: 'row'`):
+       - `allowDownload` (checkbox, mặc định `true`): Cho phép người dùng tải tệp về máy. Khi tắt, nút "Tải về" bị ẩn hoàn toàn và thay bằng nhãn "Chỉ xem trực tuyến".
+       - `preventCopy` (checkbox, mặc định `false`): Cơ chế bảo mật chặn sao chép thông tin (chặn chuột phải, chặn copy/cut/paste, chặn bôi đen/chọn văn bản, chặn các phím tắt `Ctrl+C`, `Ctrl+U`, `Ctrl+S`, `Ctrl+P`).
+       - `showViewer` (checkbox, mặc định `true`): Nhúng khung đọc văn bản trực tiếp ngay trên trang chi tiết.
+  2. **Xây dựng Component [DocumentProtection.tsx](file:///i:/bvdkthoilai-main/src/components/DocumentProtection.tsx)**:
+     - Module phía client chặn các hành vi copy văn bản, vô hiệu hóa menu ngữ cảnh chuột phải và lắng nghe các phím tắt sao chép khi `preventCopy` được bật.
+  3. **Xây dựng Component [DocumentDetailView.tsx](file:///i:/bvdkthoilai-main/src/components/DocumentDetailView.tsx) & [DocumentDetailView.module.css](file:///i:/bvdkthoilai-main/src/components/DocumentDetailView.module.css)**:
+     - Thiết kế bảng thuộc tính văn bản chuẩn phong cách Sở Y tế Cần Thơ: Số ký hiệu, Ngày ban hành, Ngày hiệu lực, Hình thức văn bản, Lĩnh vực/Chuyên mục, Cơ quan ban hành, Người ký duyệt, Trích yếu nội dung.
+     - Hàng tài liệu đính kèm kèm icon định dạng file (PDF, DOC...), tên file, nút "Xem trực tiếp" (bật/thu gọn viewer) và nút "Tải về" (hoặc nhãn "Chỉ xem trực tuyến" khi bị khóa).
+     - Trình xem tài liệu trực tiếp nhúng thẻ iframe xem PDF/Docs trực quan, có thanh công cụ mở tab mới và nút phóng to toàn màn hình.
+  4. **Xây dựng Route Chi tiết [van-ban/[slug]/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/van-ban/[slug]/page.tsx)**:
+     - Trang hiển thị trọn vẹn chi tiết văn bản/phác đồ, hỗ trợ breadcrumbs, xem nội dung richText, và danh sách các tài liệu liên quan khác.
+  5. **Xây dựng Trang Chuyên biệt [phac-do-dieu-tri/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/phac-do-dieu-tri/page.tsx)**:
+     - Route riêng `/phac-do-dieu-tri` chuyên biệt cho tra cứu Phác đồ điều trị, hướng dẫn chẩn đoán và quy trình chuyên môn của Bệnh viện Đa khoa Khu vực Thới Lai.
+  6. **Cập nhật Trang Danh sách [van-ban/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/van-ban/page.tsx) & Menu [Navigation.ts](file:///i:/bvdkthoilai-main/src/globals/Navigation.ts)**:
+     - Các thẻ văn bản trong danh sách chuyển hướng xem chi tiết vào `/van-ban/[slug]` thay vì link download trực tiếp.
+     - Bổ sung tùy chọn preset "Phác đồ điều trị" (`/phac-do-dieu-tri`) vào cấu hình Navigation trong Admin để gắn lên menu dễ dàng.
+
+  7. **Tách riêng Collection Quản trị [ClinicalProtocols.ts](file:///i:/bvdkthoilai-main/src/collections/ClinicalProtocols.ts)**:
+     - Tạo riêng mục **"Phác đồ điều trị"** hiển thị trực tiếp trên thanh menu Admin CMS ở nhóm **"Nội dung"** (`/admin/collections/clinical-protocols`).
+     - Có sẵn các trường chuyên sâu: Tên phác đồ, Mã phác đồ, Chuyên khoa áp dụng (`specialties`), Hình thức văn bản, Người ký duyệt / Hội đồng, Ngày ban hành, Ngày hiệu lực, Trích yếu, Tệp đính kèm (PDF/Word), Khóa sao chép và Khóa tải về.
+
+### Database & Schema Changes:
+- Collection `clinical-protocols` ([ClinicalProtocols.ts](file:///i:/bvdkthoilai-main/src/collections/ClinicalProtocols.ts)):
+  - Tạo bảng collection riêng biệt cho Phác đồ điều trị xuất hiện trực tiếp trong thanh Admin.
+  - Tích hợp trọn bộ cơ chế kiểm soát và styling theo Mandate 5 trong `AGENTS.md`:
+    - Granular Toggles (5.2): `allowDownload`, `preventCopy`, `showViewer`.
+    - Styling Controls (5.3): Nhóm `collapsible` gồm `textAlign` (trái, giữa, phải, đều 2 bên), `titleColor` (đen, navy, blue, green, red), `titleSize` (tiêu chuẩn, lớn, rất lớn), `summaryColor` (đen xám, slate, dark), `summarySize` (chuẩn, lớn, nhỏ).
+    - Multiline formatting: Trích yếu tự do xuống dòng (`white-space: pre-line`).
+    - Chống lỗi rớt từ mồ côi (5.4): `text-wrap: balance` cho toàn bộ tiêu đề.
+    - PostgreSQL Safe (5.5): Không kích hoạt `versions` quá mức, `dbName` chuẩn chỉ.
+- Collection `documents` ([Documents.ts](file:///i:/bvdkthoilai-main/src/collections/Documents.ts)):
+  - Thêm fields: `documentType`, `signer`, `content`, `allowDownload`, `preventCopy`, `showViewer`.
+  - Bổ sung nhóm `Styling Controls` đồng bộ (`textAlign`, `titleColor`, `titleSize`, `summaryColor`, `summarySize`).
+
+### Files Created & Modified:
+- [ClinicalProtocols.ts](file:///i:/bvdkthoilai-main/src/collections/ClinicalProtocols.ts) (Mới)
+- [payload.config.ts](file:///i:/bvdkthoilai-main/payload.config.ts)
+- [src/access/index.ts](file:///i:/bvdkthoilai-main/src/access/index.ts)
+- [Categories.ts](file:///i:/bvdkthoilai-main/src/collections/Categories.ts)
+- [Documents.ts](file:///i:/bvdkthoilai-main/src/collections/Documents.ts)
+- [DocumentProtection.tsx](file:///i:/bvdkthoilai-main/src/components/DocumentProtection.tsx) (Mới)
+- [DocumentDetailView.tsx](file:///i:/bvdkthoilai-main/src/components/DocumentDetailView.tsx) (Mới)
+- [DocumentDetailView.module.css](file:///i:/bvdkthoilai-main/src/components/DocumentDetailView.module.css) (Mới)
+- [van-ban/[slug]/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/van-ban/[slug]/page.tsx) (Mới)
+- [phac-do-dieu-tri/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/phac-do-dieu-tri/page.tsx) (Mới)
+- [phac-do-dieu-tri/[slug]/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/phac-do-dieu-tri/[slug]/page.tsx) (Mới)
+- [van-ban/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/van-ban/page.tsx)
+- [Navigation.ts](file:///i:/bvdkthoilai-main/src/globals/Navigation.ts)
+- [CHANGELOG.md](file:///i:/bvdkthoilai-main/CHANGELOG.md)
+
+---
+
+- **Thời gian thực hiện:** 16:43 (Asia/Saigon)
+- **Yêu cầu:** Thiết kế trong Admin cho phép chọn những chuyên mục nào được hiển thị lên mục *Điểm tin Bệnh viện Đa khoa khu vực Thới Lai*, quy định số lượng bài viết lấy lên cho từng mục, bật/tắt từng nguồn, lọc tin nổi bật và các tùy chọn liên quan.
+- **Chi tiết đã thực hiện:**
+  1. **Mở rộng Admin Schema [Homepage.ts](file:///i:/bvdkthoilai-main/src/globals/Homepage.ts)**:
+     - Thêm bảng mảng cấu hình `featuredSources` (`dbName: 'fn_sources'`) trong mục `featured-news`:
+       - **Nguồn nội dung (`source`)**: Tin tức chung (`news`), Tin theo chuyên mục cụ thể (`news-category`), Thông báo (`notices`), Đấu thầu – Mua sắm (`procurement`), Lịch khám & Lịch trực (`schedules`), Văn bản – Tài liệu (`documents`).
+       - **Chọn chuyên mục cụ thể (`categoryRef`)**: Liên kết trực tiếp bảng `categories` (lọc theo scope `news`).
+       - **Tên chuyên mục thủ công (`categoryName`)**: Hỗ trợ nhập tên danh mục tự do hoặc tương thích dữ liệu cũ.
+       - **Tên nhãn hiển thị góc thẻ (`customBadge`)**: Tùy chỉnh nhãn nổi bật trên thẻ (ví dụ: TIN TỨC, BHYT, HOẠT ĐỘNG...).
+       - **Giới hạn số bài (`limit`)**: Quy định mỗi chuyên mục/nguồn được lấy tối đa bao nhiêu bài (từ 1 đến 20 bài).
+       - **Công tắc độc lập (`enabled`)**: Cho phép bật/tắt từng nguồn chuyên mục tùy ý mà không cần xóa cấu hình.
+     - Thêm trường chế độ lọc bài (`featuredFilterMode`): Lấy toàn bộ bài mới nhất (`all`) hoặc chỉ lấy các bài được biên tập viên đánh dấu "Tin nổi bật" (`only-featured`).
+     - Thêm trường tùy chỉnh liên kết nút "Xem tất cả →" (`featuredSeeAllUrl`).
+     - Thêm trường tùy chọn hiển thị ảnh (`featuredCardFit`: `cover` hoặc `contain`) đảm bảo ảnh chuẩn tỉ lệ, không méo hình.
+  2. **Nâng cấp Component [FeaturedContentCarousel.tsx](file:///i:/bvdkthoilai-main/src/components/FeaturedContentCarousel.tsx)**:
+     - Hỗ trợ các thuộc tính `imageFit` (`cover` | `contain`) và `imagePosition` (`top center`, `center center`...) cho từng thẻ và toàn bộ carousel.
+     - Khung ảnh tự động canh giữa và hiển thị nền nhạt y tế khi dùng chế độ `contain`, bảo toàn 100% tỷ lệ hình ảnh bài viết.
+  3. **Cập nhật Logic Kết Nối Dữ Liệu [page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/page.tsx)**:
+     - Xử lý duyệt qua cấu hình `featuredSources` động từ cơ sở dữ liệu.
+     - Lọc chính xác theo `categoryRef` hoặc tên chuyên mục, áp dụng giới hạn số lượng (`limit`) độc lập cho từng nguồn.
+     - Khử trùng lặp bài viết thông minh và sắp xếp theo ngày mới nhất.
+     - Truyền đường dẫn `seeAllUrl` và kiểu fit ảnh `featuredCardFit` vào component hiển thị.
+
+### Database & Schema Changes:
+- Global `homepage` ([Homepage.ts](file:///i:/bvdkthoilai-main/src/globals/Homepage.ts)):
+  - Thêm mảng `featuredSources` (`dbName: 'fn_sources'`) với các trường: `source`, `categoryRef`, `categoryName`, `customBadge`, `limit`, `enabled`.
+  - Thêm `featuredFilterMode`, `featuredSeeAllUrl`, `featuredCardFit`.
+
+### Files Modified:
+- [Homepage.ts](file:///i:/bvdkthoilai-main/src/globals/Homepage.ts)
+- [FeaturedContentCarousel.tsx](file:///i:/bvdkthoilai-main/src/components/FeaturedContentCarousel.tsx)
+- [page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/page.tsx)
+- [CHANGELOG.md](file:///i:/bvdkthoilai-main/CHANGELOG.md)
+
+---
+
+## [2026-09-13] - Khắc Phục Lấy Đúng Tab Và Hiển Thị Lịch Khám Bệnh / Lịch Trực Cấp Cứu Lên Trang Chủ
+
+- **Thời gian thực hiện:** 16:22 (Asia/Saigon)
+- **Yêu cầu:** Sửa lỗi section "Lịch khám bệnh" trên trang chủ (`/`) chưa lấy đúng tab và chưa hiển thị lịch thực tế từ cơ sở dữ liệu.
+- **Nguyên nhân & Các điểm đã xử lý:**
+  1. **Hỗ trợ Tab Lịch trực cấp cứu (`emergency`)**:
+     - Trong cơ sở dữ liệu `schedules`, phần lớn lịch được lưu có `mode: 'emergency'`, tuy nhiên trước đó trang chủ chỉ xử lý 3 loại: `daily`, `weekly`, `attachments`. Tab mặc định là `attachments` không có bài đăng nào dẫn đến tab đầu tiên hiển thị số `0` và trống trơn.
+     - Đã bổ sung `emergency` vào [Homepage.ts](file:///i:/bvdkthoilai-main/src/globals/Homepage.ts) trong danh sách `defaultScheduleTabs` và options của field `tab`.
+  2. **Nâng cấp [ScheduleExplorer.tsx](file:///i:/bvdkthoilai-main/src/components/ScheduleExplorer.tsx)**:
+     - Mở rộng kiểu `ScheduleKind` thêm `'emergency'`.
+     - Thêm prop `emergency?: any[]`.
+     - Tích hợp `builtInMeta.emergency` với nhãn "Lịch trực cấp cứu", nhãn thẻ `LỊCH TRỰC CẤP CỨU`, hiển thị thời gian áp dụng tuần trực (`emergencyWeekStart` – `emergencyWeekEnd`) và placeholder `TRỰC`.
+     - Tự động ưu tiên chọn tab đầu tiên có dữ liệu (`items.length > 0`) để người bệnh khi vào trang chủ luôn thấy ngay lịch trực/lịch khám mới nhất thay vì mở ra một tab rỗng.
+  3. **Đồng bộ truy vấn và mapping tại [page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/page.tsx)**:
+     - Đổi sort query `schedules` từ `sort: 'date'` thành `sort: '-createdAt'` và tăng `depth: 2` để luôn lấy được các lịch khám, lịch trực mới nhất cùng thông tin bác sĩ/khoa phòng.
+     - Trích xuất `homeEmergencySchedules` từ danh sách `schedules`.
+     - Cập nhật logic `mergedScheduleTabs` để tự động ghép tab `emergency` lên vị trí đầu tiên kể cả khi cấu hình trong DB được lưu từ bản cũ chưa có field `emergency`.
+     - Truyền đầy đủ `emergency={homeEmergencySchedules}` vào component `<ScheduleExplorer />`.
+
+### Files Modified:
+- [Homepage.ts](file:///i:/bvdkthoilai-main/src/globals/Homepage.ts)
+- [ScheduleExplorer.tsx](file:///i:/bvdkthoilai-main/src/components/ScheduleExplorer.tsx)
+- [page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/page.tsx)
+- [CHANGELOG.md](file:///i:/bvdkthoilai-main/CHANGELOG.md)
+
+---
+
+## [2026-09-13] - Áp Dụng Toàn Diện Nguyên Tắc Cốt Lõi Bắt Buộc Số 5 Cho Các Trang Nhóm 1
+
+- **Thời gian thực hiện:** 16:10 (Asia/Saigon)
+- **Yêu cầu:** Áp dụng triệt để **Nguyên tắc cốt lõi bắt buộc số 5 (Project Mandate 5)** cho toàn bộ các trang trong **Nhóm 1**:
+  1. **Chân trang chung (`SiteFooter.tsx` & `Footer.ts`)**:
+     - Cấu hình defaultValue hoàn chỉnh cho `columns` trong Global `footer`, đưa toàn bộ các cột liên kết (*Dành cho người bệnh*, *Thông tin bệnh viện*, *Hỗ trợ*) vào CMS.
+     - Hỗ trợ công tắc ẩn/hiện (`visible`) độc lập cho từng cột và từng liên kết.
+     - Bổ sung tùy chọn canh lề cột (`textAlign: left | center | right`) với `dbName: 'ft_col_align'` (< 63 ký tự).
+     - Áp dụng hiển thị styling linh hoạt trong [SiteFooter.tsx](file:///i:/bvdkthoilai-main/src/components/SiteFooter.tsx).
+  2. **Trang Giới thiệu chung (`/gioi-thieu` & `AboutPage.ts`)**:
+     - Thêm công tắc bật/tắt độc lập (`enabled`) cho tất cả các khối lớn: Banner Hero, Chỉ số hoạt động, Chức năng & Nhiệm vụ, Cơ sở vật chất, Cam kết chất lượng, Khối liên kết chuyên đề.
+     - Thêm công tắc bật/tắt độc lập cho từng phần tử con: từng chỉ số (`stats`), từng nhiệm vụ (`corePrinciples.items`), từng trang bị (`facilities.items`), từng liên kết chuyên đề (`relatedLinks.links`).
+     - Tích hợp styling controls: Canh lề (`textAlign`: left, center, justify) với `dbName` chuẩn PostgreSQL (< 63 ký tự: `ab_hero_align`, `ab_cp_align`, `ab_fc_align`, `ab_cm_align`).
+     - Hỗ trợ gõ Enter tự do xuống dòng (`white-space: pre-line`) cho các đoạn văn bản mô tả, nhiệm vụ, trang bị, lời cam kết.
+     - Khắc phục triệt để hiện tượng rớt từ mồ côi với `text-wrap: balance` cho các tiêu đề và đoạn trích.
+  3. **Trang Bảng giá dịch vụ (`/bang-gia` & `SiteSettings.ts`)**:
+     - Mở rộng cấu hình `servicePricePage` trong Global `site-settings`:
+       - Thêm công tắc bật/tắt bảng thông báo lưu ý BHYT & Viện phí (`showNoticeBanner`).
+       - Thêm trường tiêu đề lưu ý (`noticeTitle`) và nội dung chi tiết lưu ý (`noticeContent`) hỗ trợ xuống dòng Enter (`white-space: pre-line`).
+       - Thêm tùy chọn canh lề thông báo (`noticeAlign`: left, center, justify) với `dbName: 'sp_not_align'`.
+     - Cập nhật frontend [bang-gia/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/bang-gia/page.tsx) render khối lưu ý y tế nổi bật, chuẩn y tế và `text-wrap: balance`.
+  4. **Trang Sơ đồ tổ chức (`/so-do-to-chuc` & `OrganizationChart.ts`)**:
+     - Mở rộng Global `organization-chart`:
+       - Thêm công tắc bật/tắt riêng biệt cho Khối 1: Ban Lãnh đạo Bệnh viện (`showLeadershipSection`) và Khối 2: Sơ đồ tổ chức bộ máy (`showTreeSection`).
+       - Thêm công tắc bật/tắt độc lập cho ô Giám đốc (`director.enabled`) và từng ô Phó Giám đốc (`deputyDirectors[].enabled`).
+       - Tùy chỉnh tiêu đề hiển thị linh hoạt cho từng khối.
+     - Cập nhật frontend [so-do-to-chuc/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/so-do-to-chuc/page.tsx) tôn trọng thiết lập bật/tắt của Admin và chống rớt từ (`text-wrap: balance`).
+  5. **Trang Tiêm chủng vắc xin (`/tiem-chung` & `SiteSettings.ts`)**:
+     - Thêm nhóm cấu hình `vaccinationPage` vào Global `site-settings`:
+       - Tùy chỉnh tiêu đề (`title`), nhãn nhỏ (`eyebrow`), mô tả (`description`).
+       - Thêm công tắc bật/tắt thông báo lưu ý an toàn tiêm chủng (`showNoticeBanner`).
+       - Thêm tiêu đề và nội dung lưu ý quy trình an toàn tiêm chủng với canh lề (`noticeAlign`) và tự do xuống dòng (`white-space: pre-line`).
+     - Cập nhật frontend [tiem-chung/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/tiem-chung/page.tsx) kết nối Global và render khối thông báo trực quan.
+
+### Database & Schema Changes:
+- Global `footer` ([Footer.ts](file:///i:/bvdkthoilai-main/src/globals/Footer.ts)): defaultValue các cột liên kết, trường `textAlign` (`dbName: 'ft_col_align'`).
+- Global `about-page` ([AboutPage.ts](file:///i:/bvdkthoilai-main/src/globals/AboutPage.ts)): `enabled` trên mọi khối & items, `textAlign` với `dbName: 'ab_hero_align'`, `'ab_cp_align'`, `'ab_fc_align'`, `'ab_cm_align'`.
+- Global `site-settings` ([SiteSettings.ts](file:///i:/bvdkthoilai-main/src/globals/SiteSettings.ts)):
+  - Mở rộng `servicePricePage`: `showNoticeBanner`, `noticeTitle`, `noticeContent`, `noticeAlign` (`dbName: 'sp_not_align'`).
+  - Thêm group `vaccinationPage`: `eyebrow`, `title`, `description`, `showNoticeBanner`, `noticeTitle`, `noticeContent`, `noticeAlign` (`dbName: 'vc_not_align'`).
+- Global `organization-chart` ([OrganizationChart.ts](file:///i:/bvdkthoilai-main/src/globals/OrganizationChart.ts)): `showLeadershipSection`, `leadershipTitle`, `showTreeSection`, `treeTitle`, `director.enabled`, `deputyDirectors[].enabled`.
+
+### Files Modified:
+- [Footer.ts](file:///i:/bvdkthoilai-main/src/globals/Footer.ts)
+- [SiteFooter.tsx](file:///i:/bvdkthoilai-main/src/components/SiteFooter.tsx)
+- [AboutPage.ts](file:///i:/bvdkthoilai-main/src/globals/AboutPage.ts)
+- [gioi-thieu/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/gioi-thieu/page.tsx)
+- [SiteSettings.ts](file:///i:/bvdkthoilai-main/src/globals/SiteSettings.ts)
+- [bang-gia/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/bang-gia/page.tsx)
+- [OrganizationChart.ts](file:///i:/bvdkthoilai-main/src/globals/OrganizationChart.ts)
+- [so-do-to-chuc/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/so-do-to-chuc/page.tsx)
+- [tiem-chung/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/tiem-chung/page.tsx)
+- [CHANGELOG.md](file:///i:/bvdkthoilai-main/CHANGELOG.md)
+
+---
+
+## [2026-09-13] - Áp Dụng Nguyên Tắc 5 Nâng Cấp Toàn Diện Trang Lịch Khám & Trực (`/lich-kham`)
+
+- **Thời gian thực hiện:** 16:06 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Áp dụng ngay **Nguyên tắc cốt lõi số 5** cho trang Lịch khám & Trực (`/lich-kham`):
+     - **Banner Hero đầu trang**: Đưa 100% vào Admin CMS (`schedule-settings` -> `hero`):
+       - Tùy chỉnh ảnh nền khuôn viên (`bgImage`) hoặc dải màu Gradient (Blue-Teal, Ocean Navy, Teal-Emerald, Royal Blue).
+       - Tùy chọn độ tối phủ nền (`overlayOpacity`: 35%, 55%, 78%).
+       - Tùy chỉnh cỡ chữ tiêu đề, màu chữ tiêu đề (Trắng, Vàng nắng, Xanh ngọc sáng) chống lỗi rớt chữ mồ côi (`text-wrap: balance`).
+       - Nhãn nhỏ Eyebrow và mô tả hướng dẫn tự do xuống dòng (`white-space: pre-line`).
+     - **Khối thông báo nhanh / Banner Cấp cứu 24/7 (`quickNotice`)**:
+       - Có công tắc bật/tắt riêng biệt (`enabled`).
+       - Tùy chọn canh lề (trái, giữa, đều 2 bên), màu sắc tiêu đề (đỏ, xanh navy, xanh lá), hỗ trợ gõ Enter xuống dòng.
+     - **Khối Lưu ý quan trọng cho người bệnh khi đi khám (`notesSection`)**:
+       - Có công tắc bật/tắt cả khối (`enabled`) và từng dòng lưu ý con (`item.enabled`).
+       - Từng dòng lưu ý hỗ trợ tùy biến: Canh lề (trái, đều 2 bên), màu chữ (đen, navy, đỏ), cỡ chữ (tiêu chuẩn, lớn) và tự do xuống dòng khi nhập liệu.
+  2. Frontend ([page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-kham/page.tsx)) kết nối trực tiếp với Global `schedule-settings`, lọc tự động `enabled !== false` và hiển thị đồng bộ với giao diện chung.
+
+### Database & Schema Changes:
+- Global `schedule-settings` ([ScheduleSettings.ts](file:///i:/bvdkthoilai-main/src/globals/ScheduleSettings.ts)):
+  - Thêm group `hero` (ảnh nền, gradient, overlay, titleSize, titleColor, description).
+  - Thêm group `quickNotice` (enabled, textAlign, title, titleColor, content, hotline).
+  - Thêm group `notesSection` với array `items` (`dbName: 'sch_notes'`), các trường styling `sch_n_align`, `sch_n_tcolor`, `sch_n_tsize`.
+
+### Files Modified:
+- [ScheduleSettings.ts](file:///i:/bvdkthoilai-main/src/globals/ScheduleSettings.ts): Mở rộng toàn diện schema cho Trang Lịch khám theo Nguyên tắc 5.
+- [lich-kham/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-kham/page.tsx): Render động Hero banner, QuickNotice, SearchFilter và NotesSection.
+- [CHANGELOG.md](file:///i:/bvdkthoilai-main/CHANGELOG.md): Cập nhật nhật ký dự án.
+
+---
+
+## [2026-09-13] - Thiết Lập Nguyên Tắc Bắt Buộc Số 5 Vào AGENTS.md Cho Trang Lịch Làm Việc & Admin CMS
+
+- **Thời gian thực hiện:** 16:01 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Đúc kết toàn bộ các yêu cầu của người dùng đối với trang Lịch làm việc (`/lich-lam-viec`) thành **Nguyên tắc cốt lõi bắt buộc số 5 (Project Mandate 5)** trong tệp [AGENTS.md](file:///i:/bvdkthoilai-main/AGENTS.md):
+     - **5.1. Đưa toàn bộ vào Admin CMS**: Quản lý 100% nội dung, hình nền, icon, mốc giờ, liên kết và ghi chú từ Admin CMS, tuyệt đối không hardcode text cố định ngoài giao diện.
+     - **5.2. Quyền bật/tắt độc lập từng ô thông tin (Granular Toggles)**: Cả cấp độ khối lớn lẫn từng phần tử nhỏ (từng ô khoa phòng, từng mốc giờ, từng link, từng dòng lưu ý) đều phải có checkbox `enabled` riêng biệt.
+     - **5.3. Định dạng và thẩm mỹ linh hoạt trên từng ô (Styling Controls)**: Hỗ trợ Canh lề (`textAlign`: trái, giữa, phải, đều 2 bên), Xuống dòng tự do khi gõ Enter (`white-space: pre-line`), Màu chữ đa dạng chuẩn y tế (`titleColor`, `textColor`, `noteColor`), và Cỡ chữ linh hoạt (`titleSize`, `textSize`, `noteSize`).
+     - **5.4. Chống lỗi rớt từ mồ côi (No Orphan Words)**: Sử dụng `text-wrap: balance` và chiều rộng khung hợp lý, không để rớt 1 từ đơn lẻ xuống dòng mới.
+     - **5.5. An toàn cơ sở dữ liệu PostgreSQL**: Luôn cấu hình `dbName` ngắn gọn (< 63 ký tự) cho các mảng/bảng con và không bật `versions` thừa để tránh lỗi giới hạn identifier khiến server bị treo.
+  2. Mọi lần nâng cấp, thêm mới tính năng hay mở rộng trang sau này bắt buộc phải tuân thủ nghiêm ngặt nguyên tắc này.
+
+### Files Modified:
+- [AGENTS.md](file:///i:/bvdkthoilai-main/AGENTS.md): Bổ sung Mục 5 - Nguyên tắc bắt buộc đối với Trang Lịch làm việc và các Khối nội dung động trong Admin CMS.
+- [CHANGELOG.md](file:///i:/bvdkthoilai-main/CHANGELOG.md): Ghi chép nhật ký ban hành quy tắc dự án.
+
+---
+
+## [2026-09-13] - Hoàn Thiện Tùy Biến Canh Lề, Cỡ Chữ, Màu Sắc Cho Từng Ô Nội Dung Trong Toàn Trang
+
+- **Thời gian thực hiện:** 15:58 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Đưa toàn diện các tùy chọn **canh lề (trái, giữa, phải, đều 2 bên), kích thước cỡ chữ (tiêu chuẩn, lớn, rất lớn) và màu sắc chữ (navy, xanh y tế, đỏ nổi bật, xanh lá, đen đậm)** vào từng ô nội dung trên trang:
+     - **Từng ô mốc giờ trong thông báo (`milestones`)**: Canh lề mốc giờ, màu sắc tiêu đề, cỡ chữ tiêu đề, màu sắc danh sách mô tả (`descColor`), cỡ chữ mô tả (`descSize`).
+     - **Khối Cấp cứu 24/7 (`emergencyBanner`)**: Canh lề (`textAlign`), cỡ chữ tiêu đề (`titleSize`), cỡ chữ mô tả (`descSize`), hỗ trợ gõ Enter xuống dòng.
+     - **Từng ô Khoa / Phòng / Bộ phận (`departments`)**: Canh lề ô (`textAlign`), màu tiêu đề (`titleColor`), cỡ chữ tiêu đề (`titleSize`), màu chữ ghi chú chân ô (`noteColor`), cỡ chữ ghi chú (`noteSize`), ghi chú tự do xuống dòng (`note`).
+     - **Từng ô Thẻ liên kết Tab (`scheduleLinksSection.links`)**: Canh lề (`textAlign`), màu chữ tiêu đề liên kết (`titleColor`), cỡ chữ liên kết (`titleSize`).
+     - **Từng dòng Lưu ý cho người bệnh (`notesSection.items`)**: Canh lề (`textAlign`), màu chữ (`textColor`), cỡ chữ (`textSize`), hỗ trợ gõ Enter xuống dòng.
+  2. Đảm bảo toàn bộ hệ thống schema tương thích chuẩn PostgreSQL với `dbName` ngắn gọn, không phát sinh lỗi phiên bản hay độ dài định danh.
+
+### Database & Schema Changes:
+- Global `working-hours-settings` ([WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts)):
+  - Mở rộng đầy đủ các trường styling cho `milestones`, `emergencyBanner`, `departments`, `scheduleLinksSection.links`, `notesSection.items`.
+
+### Files Modified:
+- [WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts): Khai báo toàn bộ các trường styling cho từng ô.
+- [lich-lam-viec/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/page.tsx): Áp dụng render các class và style canh lề, màu sắc, cỡ chữ cho từng thành phần.
+- [lich-lam-viec/lich-lam-viec.css](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/lich-lam-viec.css): Khai báo đầy đủ các class màu sắc, cỡ chữ và `white-space: pre-line`.
+- [CHANGELOG.md](file:///i:/bvdkthoilai-main/CHANGELOG.md): Cập nhật nhật ký dự án.
+
+---
+
+## [2026-09-13] - Khắc Phục Lỗi Rớt Chữ Tiêu Đề Hero & Đưa Toàn Bộ Tùy Chỉnh Nền/Ảnh Nền Vào Admin CMS
+
+- **Thời gian thực hiện:** 15:54 (Asia/Saigon)
+- **Yêu cầu:**
+  1. **Khắc phục triệt để lỗi rớt từ mồ côi (chữ "bệnh" rớt một mình một dòng)**:
+     - Tăng chiều rộng vùng hiển thị tiêu đề Hero lên tối đa `960px`.
+     - Chuẩn hóa kích thước tiêu đề linh hoạt với `clamp(26px, 3.4vw, 36px)`, áp dụng `text-wrap: balance` để các dòng tiêu đề tự cân bằng ngắt nghỉ thẩm mỹ, không bao giờ bị rơi 1 từ lẻ loi xuống dòng mới.
+  2. **Đưa toàn bộ tùy biến giao diện Hero đầu trang vào Admin CMS (`/admin/globals/working-hours-settings`)**:
+     - **Tùy chọn kiểu nền Hero (`bgType`)**:
+       - *Dải màu Gradient y tế*: Lựa chọn 5 bộ tông màu sang trọng (Blue - Teal, Deep Ocean Navy, Teal - Emerald, Royal Blue, Slate Blue).
+       - *Hình ảnh nền (`bgImage`)*: Cho phép upload hình ảnh khuôn viên hoặc cơ sở bệnh viện trực tiếp từ thư viện Media.
+       - *Màu đơn sắc (`solid`)*: Xanh y tế nguyên bản.
+     - **Độ tối lớp phủ nền hình ảnh (`overlayOpacity`)**: Tùy chỉnh Light (35%), Medium (55%), Dark (78%) để bảo đảm văn bản luôn rõ nét và nổi bật trên mọi tấm ảnh.
+     - **Cỡ chữ tiêu đề (`titleSize`)**: Chuẩn vừa vặn, Gọn gàng, hoặc Lớn nổi bật.
+     - **Màu chữ tiêu đề (`titleColor`)**: Trắng tinh khiết, Vàng nắng nổi bật, hoặc Xanh ngọc sáng có hiệu ứng đổ bóng.
+     - **Bật/Tắt hiển thị các nút thao tác (`showPrimaryBtn`, `showSecondaryBtn`)**: Có thể bật/tắt từng nút xem giờ hoặc tra cứu lịch.
+     - **Khẩu hiệu Hero (`slogan`)**: Hỗ trợ gõ Enter ngắt dòng trực tiếp.
+
+### Database & Schema Changes:
+- Global `working-hours-settings` ([WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts)):
+  - Bổ sung vào group `hero`: `titleSize`, `titleColor`, `bgType`, `bgGradient`, `bgImage`, `overlayOpacity`, `showPrimaryBtn`, `showSecondaryBtn`.
+
+### Files Modified:
+- [WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts): Mở rộng schema cấu hình Hero.
+- [lich-lam-viec/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/page.tsx): Render động nền ảnh/gradient, overlay và cỡ chữ.
+- [lich-lam-viec/lich-lam-viec.css](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/lich-lam-viec.css): Thêm các class gradient, overlay variants, cân bằng ngắt dòng `text-wrap: balance`.
+- [CHANGELOG.md](file:///i:/bvdkthoilai-main/CHANGELOG.md): Cập nhật nhật ký dự án.
+
+---
+
+## [2026-09-13] - Nâng Cấp Tùy Chỉnh Canh Lề, Xuống Dòng, Cỡ Chữ, Màu Chữ Trong Admin Cho Các Ô Lịch Làm Việc
+
+- **Thời gian thực hiện:** 15:45 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Cho phép người dùng tùy chỉnh định dạng nội dung cho các ô thông tin trên trang Lịch làm việc trực tiếp từ Admin CMS (`/admin/globals/working-hours-settings`):
+     - **Canh lề nội dung ô (`textAlign`)**: Hỗ trợ Canh trái (mặc định), Canh giữa, Canh phải, hoặc Canh đều 2 bên (Justify).
+     - **Tự do xuống dòng (Multiline)**: Áp dụng CSS `white-space: pre-line` cho toàn bộ các trường ghi chú (`note`), danh sách khoa phòng trong mốc giờ (`desc`), tên khoa phòng, và nội dung dòng lưu ý. Người quản trị chỉ cần gõ Enter xuống dòng trong Admin CMS, văn bản ngoài trang web sẽ tự động ngắt dòng y hệt.
+     - **Màu chữ (`titleColor`, `textColor`)**: Tùy chọn đa dạng màu sắc chuẩn y tế: Mặc định (Đen đậm), Xanh dương đậm (Navy), Xanh y tế (Primary Blue), Xanh lá (Green), Đỏ nổi bật (Emergency Red), Xám đậm (Slate).
+     - **Cỡ chữ (`titleSize`, `textSize`)**: Tùy chọn linh hoạt: Tiêu chuẩn, Lớn, Rất lớn hoặc Nhỏ vừa.
+  2. Áp dụng cho cả 3 nhóm ô trên trang:
+     - Các ô Khoa / Phòng / Bộ phận (`departments`).
+     - Các ô Mốc giờ trong khối thông báo (`announcement.milestones`).
+     - Các dòng Lưu ý dành cho người bệnh (`notesSection.items`).
+
+### Database & Schema Changes:
+- Bổ sung các trường tùy chọn định dạng vào Global `working-hours-settings` ([WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts)):
+  - `wh_dept_align`, `wh_dept_tcolor`, `wh_dept_tsize` cho từng ô khoa phòng.
+  - `wh_ms_align`, `wh_ms_tcolor`, `wh_ms_tsize` cho từng ô mốc giờ.
+  - `wh_note_align`, `wh_note_tcolor`, `wh_note_tsize` cho từng dòng lưu ý.
+  - Sử dụng định danh ngắn gọn `dbName` chuẩn PostgreSQL ngăn ngừa lỗi quá độ dài identifier.
+
+### Files Modified:
+- [WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts): Khai báo các field `textAlign`, `titleColor`, `titleSize`, `textColor`, `textSize`.
+- [lich-lam-viec/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/page.tsx): Áp dụng `style={{ textAlign }}`, các class màu chữ và cỡ chữ tương ứng.
+- [lich-lam-viec/lich-lam-viec.css](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/lich-lam-viec.css): Định nghĩa class màu sắc, kích cỡ chữ và thuộc tính `white-space: pre-line` cho các ô nội dung.
+- [CHANGELOG.md](file:///i:/bvdkthoilai-main/CHANGELOG.md): Cập nhật nhật ký dự án.
+
+---
+
+## [2026-09-13] - Bổ Sung Tính Năng Bật/Tắt Tùy Ý Cho Từng Ô Thông Tin Lịch Làm Việc
+
+- **Thời gian thực hiện:** 15:42 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Cho phép người quản trị có thể chủ động **bật/tắt tùy ý từng ô thông tin** trên toàn bộ trang Lịch làm việc (`/lich-lam-viec`) từ Admin CMS:
+     - **Từng mốc giờ khám bệnh trong khối thông báo**: Có trường checkbox `enabled` riêng cho từng mốc (06:00, 06:30, 07:00,...). Nếu tắt mốc nào thì mốc đó tự động ẩn đi.
+     - **Từng ô khoa / bộ phận làm việc**: Mỗi ô khoa phòng đều có checkbox `enabled` riêng (mặc định bật). Khi tắt ô nào thì ô đó không hiển thị ra ngoài giao diện.
+     - **Từng thẻ liên kết tab lịch khám**: Mỗi liên kết tab có checkbox `enabled` riêng biệt.
+     - **Từng dòng lưu ý dành cho người bệnh**: Mỗi dòng lưu ý trong danh sách có checkbox `enabled` riêng biệt.
+     - **Cấp độ khối (Section/Block level)**: Bật/tắt toàn bộ khối thông báo (`announcement.enabled`), khối cấp cứu (`emergencyBanner.enabled`), khối liên kết (`scheduleLinksSection.enabled`), khối lưu ý (`notesSection.enabled`).
+  2. Frontend ([page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/page.tsx)) áp dụng lọc tự động các phần tử có `enabled !== false`, giúp giao diện co giãn hợp lý và đồng bộ mượt mà với cấu hình từ Admin CMS.
+
+### Database & Schema Changes:
+- Cập nhật Global `working-hours-settings` ([WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts)):
+  - Mảng `announcement.milestones`: Thêm field `enabled` (`type: 'checkbox'`, `defaultValue: true`, label: *"Hiển thị mốc thời gian này"*).
+  - Mảng `notesSection.items`: Thêm field `enabled` (`type: 'checkbox'`, `defaultValue: true`, label: *"Hiển thị mục lưu ý này"*).
+  - Giữ nguyên các định danh ngắn gọn `dbName` chuẩn PostgreSQL để ngăn chặn lỗi identifier length.
+
+### Files Modified:
+- [WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts): Bổ sung checkbox `enabled` cho từng item con trong milestones và notes.
+- [lich-lam-viec/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/page.tsx): Lọc `activeMilestones` và `activeNotes` theo `enabled !== false`.
+- [CHANGELOG.md](file:///i:/bvdkthoilai-main/CHANGELOG.md): Ghi chép nhật ký tính năng bật/tắt tùy biến các ô thông tin.
+
+---
+
+## [2026-09-13] - Khôi Phục Bản Điều Chỉnh Lịch Làm Việc Trước Đó Theo Yêu Cầu
+
+- **Thời gian thực hiện:** 15:38 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Hoàn tác trở về bản điều chỉnh trước đó theo yêu cầu của người dùng.
+  2. Khôi phục lại khối thông báo điều chỉnh thời gian tiếp nhận & khám bệnh (áp dụng từ 10/08/2026) với 3 mốc giờ trực quan (06:00, 06:30, 07:00), badge thông báo, lời mở đầu và lời kết.
+  3. Khôi phục nhóm `announcement` trong Admin CMS ([WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts)) với đầy đủ các trường `enabled`, `badge`, `effectiveDate`, `introText`, `milestones`, `closingText`.
+  4. Giữ nguyên tối ưu `dbName` ngắn gọn và loại bỏ `versions` thừa để đảm bảo không bị lỗi treo server do PostgreSQL identifier length limit.
+
+### Files Modified:
+- [WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts): Khôi phục trường `announcement` vào Global schema.
+- [lich-lam-viec/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/page.tsx): Khôi phục giao diện khối AnnouncementCard và các milestone card.
+- [lich-lam-viec/lich-lam-viec.css](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/lich-lam-viec.css): Khôi phục toàn bộ style cho khối thông báo điều chỉnh và các mốc thời gian tiếp nhận.
+
+---
+
+## [2026-09-13] - Nâng Cấp Giao Diện Trang Lịch Làm Việc Chuyên Nghiệp & Loại Bỏ Khối Thông Báo Thô
+
+- **Thời gian thực hiện:** 15:33 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Loại bỏ khối thông báo văn bản thô (announcement) gây rối và nặng nề cho trang.
+  2. Nâng cấp phần giới thiệu đầu trang (Hero) với ngôn phong y tế chuẩn mực: *"Bệnh viện Đa khoa Khu vực Thới Lai công khai minh bạch khung giờ làm việc các khoa phòng, quy trình tiếp đón và khám chữa bệnh nhằm phục vụ người dân nhanh chóng, tận tâm và chu đáo nhất."*
+  3. Bổ sung 3 thẻ chip thông tin trọng tâm (Hero Highlights) trực quan trên Hero:
+     - **06:00**: Bắt đầu tiếp nhận & phát số (hiệu ứng đèn xanh pulse).
+     - **06:30**: Bác sĩ khám sớm các khoa chủ lực.
+     - **24/24**: Cấp cứu thường trực mọi ngày (viền đỏ cấp cứu).
+  4. Cập nhật chi tiết giờ giấc tiếp nhận & khám sớm trực tiếp vào các ô khoa/bộ phận tương ứng bên dưới (Quầy Tiếp đón 06:00, 3 khoa khám sớm 06:30, Các phòng khám còn lại 07:00, Cận lâm sàng 06:00/06:30...).
+  5. Đồng bộ cấu hình trong Admin CMS (`/admin/globals/working-hours-settings`), giữ cho CMS gọn gàng, linh hoạt và không còn trường announcement thừa.
+
+### Files Modified:
+- [WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts):
+  - Lược bỏ group `announcement` trong schema.
+  - Chuẩn hóa mặc định Hero: tiêu đề *"Thời gian Tiếp nhận & Khám bệnh"*, mô tả chuẩn mực y tế, nhãn badge *"THỜI GIAN PHỤC VỤ & KHÁM CHỮA BỆNH"*.
+- [lich-lam-viec/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/page.tsx):
+  - Bỏ hoàn toàn việc render khối thông báo announcement.
+  - Bổ sung 3 thẻ badge điểm nhấn dịch vụ nhanh (`whHeroHighlights` với các mốc 06:00, 06:30, 24/24).
+  - Cập nhật danh sách 7 khoa phòng mặc định chuẩn hóa theo thời gian tiếp nhận sớm.
+- [lich-lam-viec/lich-lam-viec.css](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/lich-lam-viec.css):
+  - Dọn sạch CSS announcement.
+  - Bổ sung styling cho `.whHeroHighlights`, `.whHeroChip`, `.whChipDot` hiệu ứng pulse radar và responsive chuẩn mực.
+
+---
+
+## [2026-09-13] - Cập Nhật Thông Báo Điều Chỉnh Thời Gian Tiếp Nhận & Khám Bệnh Từ 10/08/2026
+
+- **Thời gian thực hiện:** 15:12 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Cập nhật nội dung thông báo điều chỉnh thời gian tiếp nhận và khám bệnh mới nhất chính thức từ ngày 10/08/2026 của Bệnh viện Đa khoa Khu vực Thới Lai:
+     - **06 giờ 00**: Bắt đầu tiếp nhận người bệnh (phát số, đăng ký BHYT & dịch vụ).
+     - **06 giờ 30**: Bác sĩ bắt đầu khám bệnh tại: Khoa Khám liên chuyên khoa; Khoa Ngoại – Phẫu thuật – Gây mê hồi sức; Khoa Sức khỏe sinh sản và Phụ sản.
+     - **07 giờ 00**: Các phòng khám còn lại bắt đầu hoạt động bình thường: Phòng khám Y học cổ truyền; Phòng khám Bác sĩ gia đình; Phòng khám dịch vụ; Các phòng khám khác theo lịch hoạt động của bệnh viện.
+  2. Thiết kế lại khối nội dung cho trang trọng, phù hợp với cơ quan y tế công lập, nổi bật thời điểm khám sớm để giảm ùn ứ và rút ngắn thời gian chờ đợi.
+  3. Cập nhật toàn bộ vào Admin CMS (`working-hours-settings` -> `announcement`) để người quản trị có thể tùy chỉnh mọi thông tin (mốc giờ, tiêu đề, danh sách khoa, ghi chú, bật/tắt hiển thị).
+
+### Database & Schema Changes:
+- Bổ sung trường `announcement` vào Global `working-hours-settings`:
+  - `enabled`: checkbox bật/tắt hiển thị khối thông báo.
+  - `badge`: nhãn thông báo chính thức.
+  - `effectiveDate`: mốc ngày áp dụng (Kể từ ngày 10 tháng 8 năm 2026).
+  - `introText`: lời mở đầu thông báo.
+  - `milestones`: danh sách các mốc thời gian (`time`, `title`, `desc`, `highlight`).
+  - `closingText`: lời kết và kêu gọi chia sẻ thông tin.
+- Cập nhật danh sách mặc định các khoa phòng trong `departments` đồng bộ với mốc giờ mở cửa sớm (Quầy tiếp đón 06:00, 3 khoa khám sớm 06:30, các phòng khám còn lại 07:00, cận lâm sàng 06:00/06:30).
+
+### Files Modified:
+- [WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts): 
+  - Cập nhật schema `announcement` và dữ liệu mặc định chuẩn xác theo thông báo ngày 10/08/2026.
+  - Khắc phục lỗi giới hạn độ dài định danh 63 ký tự của PostgreSQL bằng cách bổ sung `dbName` gọn gàng (`wh_milestones`, `wh_depts`, `wh_dept_rows`, `wh_sched_links`, `wh_notes`, `wh_dept_icon`, `wh_dept_badge_color`, `wh_link_icon`), đồng thời loại bỏ cấu hình versions thừa để ngăn chặn tự động sinh bảng version với index trùng lặp gây treo Next.js dev server.
+- [lich-lam-viec/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/page.tsx): Render khối thông báo điều chỉnh thời gian với các milestone card trực quan, badge động và lời kết.
+- [lich-lam-viec/lich-lam-viec.css](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/lich-lam-viec.css): Thiết kế phong cách card thông báo hiện đại, hiệu ứng pulse badge, thẻ milestone xanh lục nổi bật khung giờ 06:00 và 06:30.
+
+---
+
+## [2026-09-13] - Đưa Trang Lịch Làm Việc Vào Admin CMS (Bật/tắt ô, thêm mới, chỉnh icon, nội dung)
+
+- **Thời gian thực hiện:** 15:10 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Đưa toàn bộ trang "Lịch làm việc" vào Admin CMS để người quản trị có thể tùy chỉnh mọi thông tin.
+  2. Cho phép bật/tắt hiển thị từng ô khung giờ (khoa/phòng nào chưa sử dụng thì tắt ẩn đi, khi nào cần thì bật lên).
+  3. Cho phép thêm mới, xóa bớt hoặc sắp xếp lại các ô khoa/bộ phận.
+  4. Quản trị được toàn bộ icon (hỗ trợ chọn icon SVG chuẩn y tế hoặc tự nhập Emoji tùy ý `customIconText`).
+  5. Quản trị được tiêu đề, slogan, banner cấp cứu 24/7, hotline, danh sách link tab lịch khám và các dòng lưu ý.
+
+### Database & Global Schema Changes:
+- **Global mới thêm**: `working-hours-settings` (slug: `working-hours-settings`, nhóm `Dịch vụ người bệnh` trong Admin).
+  - Khối `hero`: badge, title, slogan, 2 nút hành động kèm liên kết.
+  - Khối `emergencyBanner`: checkbox `enabled`, title, description, hotline, buttonLabel.
+  - Mảng `departments`: từng ô khoa phòng gồm `enabled` (bật/tắt), `title`, `subtitle`, `iconType`, `customIconText`, `badgeColor`, mảng `timeRows` (`label`, `value`, `highlight`), `note`.
+  - Khối `scheduleLinksSection`: checkbox `enabled`, title, description, mảng `links` (`enabled`, `title`, `subtitle`, `url`, `iconType`, `isEmergency`).
+  - Khối `notesSection`: checkbox `enabled`, title, mảng `items` (`boldPrefix`, `content`).
+
+### Files Modified & Created:
+- [WorkingHoursSettings.ts](file:///i:/bvdkthoilai-main/src/globals/WorkingHoursSettings.ts) [NEW]: Khai báo GlobalConfig schema đầy đủ cho Admin.
+- [payload.config.ts](file:///i:/bvdkthoilai-main/payload.config.ts): Đăng ký `WorkingHoursSettings` vào mảng globals của Payload.
+- [lich-lam-viec/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/page.tsx): Cập nhật kết nối và đọc động từ `working-hours-settings`, tự động ẩn các ô có `enabled: false`, render icon linh hoạt theo config.
+
+---
+
+- **Thời gian thực hiện:** 14:55 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Tạo thêm trang mới "Lịch làm việc" (`/lich-lam-viec`) hiển thị đầy đủ thông tin chi tiết về khung giờ khám bệnh (ngoại trú, BHYT, thứ 7, ngoài giờ, tiêm chủng, xét nghiệm, thu viện phí và thường trực cấp cứu 24/24).
+  2. Nâng cấp gắn link chính xác đến mục section lịch khám ở trang chủ và chuyển đổi trực tiếp sang đúng Tab tương ứng (`/#schedules?tab=weekly`, `/#schedules?tab=daily`, `/#schedules?tab=attachments`, `/lich-kham?type=emergency`...).
+  3. Cập nhật menu điều hướng SiteHeader và footer để người dân dễ dàng tra cứu.
+
+### Files Modified & Created:
+- [lich-lam-viec/page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/page.tsx) [NEW]:
+  - Trang thông tin thời gian làm việc chính thức của bệnh viện với giao diện hiện đại, banner cấp cứu 24/24 nổi bật, grid thời gian theo từng khoa phòng chức năng, kèm các lưu ý quan trọng cho người bệnh khi đi khám.
+- [lich-lam-viec/lich-lam-viec.css](file:///i:/bvdkthoilai-main/src/app/(frontend)/lich-lam-viec/lich-lam-viec.css) [NEW]:
+  - Thiết kế CSS thẩm mỹ cao, bảng màu y tế hài hòa, responsive tối ưu trên điện thoại và máy tính.
+- [page.tsx](file:///i:/bvdkthoilai-main/src/app/(frontend)/page.tsx):
+  - Thêm `id="schedules"` cho `homeScheduleSection` để hỗ trợ neo liên kết mượt mà từ bất kỳ trang nào.
+- [ScheduleExplorer.tsx](file:///i:/bvdkthoilai-main/src/components/ScheduleExplorer.tsx):
+  - Nâng cấp bộ nhận diện tham số tab: hỗ trợ đọc cả URL query param `?tab=...` lẫn URL hash `/#schedules?tab=...` và tự động kích hoạt đúng tab (theo tuần, theo ngày, lịch đính kèm).
+- [SiteHeader.tsx](file:///i:/bvdkthoilai-main/src/components/SiteHeader.tsx):
+  - Bổ sung "Giờ làm việc bệnh viện" vào danh mục menu con của "Lịch khám & Trực".
+- [SiteFooter.tsx](file:///i:/bvdkthoilai-main/src/components/SiteFooter.tsx):
+  - Bổ sung liên kết "Giờ làm việc" tại cột "Dành cho người bệnh".
+
+---
+
+- **Thời gian thực hiện:** 14:40 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Làm nổi bật phần CẤP CỨU TỔNG HỢP (Bác sĩ & Điều dưỡng) trên bảng ma trận trực tuần.
+  2. Phần ĐIỆN NƯỚC (và các bộ phận ca kíp tương tự như Tài xế, Viện phí...) nếu các ô ngày thứ trong tuần trống thì không được gộp ô lại, giữ nguyên 7 cột riêng lẻ (ô trống hiển thị gạch ngang `–`).
+  3. Tiêu đề bảng mặc định luôn luôn là "LỊCH PHÂN CÔNG TRỰC TUẦN", không lấy tiêu đề do người dùng tự nhập/thêm.
+
+### Files Modified:
+- [EmergencyMatrixView.tsx](file:///i:/bvdkthoilai-main/src/components/EmergencyMatrixView.tsx):
+  - Cố định tiêu đề `<h2>LỊCH PHÂN CÔNG TRỰC TUẦN</h2>` tại `emergMastheadClassic`.
+  - Bổ sung kiểm tra ngoại lệ trong `getRowMergeMode()`: ĐIỆN NƯỚC, TÀI XẾ, VIỆN PHÍ... luôn trả về chế độ `'daily'` (7 cột T2->CN), không gộp ô ngay cả khi chỉ có dữ liệu ở một vài ngày cuối tuần (T7, CN).
+  - Thêm class `emergEmergencyHighlightRow` cho các hàng CẤP CỨU TỔNG HỢP (Bác sĩ, Điều dưỡng).
+- [daily-schedule.css](file:///i:/bvdkthoilai-main/src/app/styles/daily-schedule.css):
+  - Thêm quy tắc CSS `.emergEmergencyHighlightRow`: viền nổi bật màu xanh thương hiệu y tế (#0284c7), nền gradient sang trọng, icon xe cấp cứu và badge vai trò có nền xanh đậm tương phản cao.
+
+---
+
+- **Thời gian thực hiện:** 14:20 (Asia/Saigon)
+
+### 1. Vấn đề phát hiện:
+- Có 2 hàng "Nội-Nhi" / "Cấp Cứu TH" trong cùng 1 bảng nhưng thuộc 2 nhóm khác nhau.
+- **Nhóm TRÊN** (trực đêm/24h): mỗi ngày một người riêng → day3, day4 đều có dữ liệu.
+- **Nhóm DƯỚI** (lịch khám ngày): gộp T2-T4 và T5-T7 → day3, day4 rỗng (data chỉ ở day2 và day5).
+
+### 2. Giải pháp – Logic phân biệt dựa trên dữ liệu:
+```
+if day3 rỗng AND day4 rỗng → Nhóm DƯỚI:
+  - Nội/Nhi/ĐY/Khám/Cấp Cứu → split3_3 [T2-T4] | [T5-T7] | CN
+  - Sản và các khoa/phòng còn lại → merge_all [T2-T7] | CN
+else → Nhóm TRÊN:
+  - Hiển thị 7 ô ngày riêng lẻ (daily)
+```
+
+### 3. Files Modified:
+- `src/components/EmergencyMatrixView.tsx`: `getRowMergeMode()` dùng `day3Empty && day4Empty` thay vì tên khoa để phân biệt nhóm.
+
+---
+
+
+
+- **Thời gian thực hiện:** 14:12 (Asia/Saigon)
+
+### 1. Bố cục bảng chính xác:
+| Hàng | Chế độ | Mô tả |
+|------|---------|-------|
+| THƯỜNG TRỰC LÃNH ĐẠO (ngày giống nhau / có keyword) | `permanent` | colSpan=7 badge THƯỜNG TRỰC BAN GIÁM ĐỐC (24/7) |
+| IT (ngày giống nhau) | `permanent` | colSpan=7 badge THƯỜNG TRỰC IT |
+| LÃNH ĐẠO (ngày khác nhau) | `daily` | 7 ô riêng lẻ (chip chip-leader màu vàng) |
+| Nội-Nhi-ĐY / Khám / Cấp Cứu TH | `split3_3` | [T2-T4] \| [T5-T7] \| CN |
+| Sản và tất cả khoa/phòng còn lại | `merge_all` | [T2-T7] \| CN |
+
+### 2. Files Modified:
+- `src/components/EmergencyMatrixView.tsx`:
+  - `getRowMergeMode()`: thêm case `'daily'` cho LÃNH ĐẠO/GIÁM ĐỐC không permanent.
+  - Tbody: `permanent` → colSpan=7 badge (khôi phục); `daily` → 7 ô riêng lẻ chip-leader.
+
+---
+
+
+
+- **Thời gian thực hiện:** 14:00 (Asia/Saigon)
+
+### 1. Yêu cầu & Mục tiêu:
+- **IT / Lãnh đạo** (hàng permanent): **KHÔNG gộp** – hiển thị 7 ô ngày riêng lẻ như các khoa bình thường.
+- **Nội-Nhi-ĐY, Khám, Cấp Cứu Tổng Hợp**: gộp T2-T4 | T5-T7 | CN (giữ nguyên).
+- **Sản và các khoa/phòng còn lại**: gộp T2-T7 | CN (giữ nguyên).
+- **Chip tên**: icon sát tên hơn (gap 2px, justify flex-start).
+
+### 2. Files Modified:
+- `src/components/EmergencyMatrixView.tsx`: `mergeMode==='permanent'` chuyển từ colSpan=7 sang map 7 ô riêng lẻ.
+- `src/app/styles/daily-schedule.css`: `.emergDoctorChip` gap 5px→2px, justify center→flex-start.
+
+---
+
+
+
+- **Thời gian thực hiện:** 13:55 (Asia/Saigon)
+
+### 1. Yêu cầu & Mục tiêu:
+- **Nhóm 1 – Nội-Nhi-ĐY, Khám, Cấp Cứu Tổng Hợp**: Gộp T2-T3-T4 thành 1 ô, T5-T6-T7 thành 1 ô, CN riêng.
+- **Nhóm 2 – Sản và các khoa/phòng còn lại**: Gộp T2-T7 thành 1 ô, CN riêng.
+- **Tiêu đề mặc định**: Đổi thành "LỊCH PHÂN CÔNG TRỰC THEO TUẦN".
+- **Header bảng**: Bổ sung hàng nhóm "Thứ Hai – Thứ Tư" / "Thứ Năm – Thứ Bảy" / "Chủ Nhật" phía trên hàng T2-T7-CN.
+
+### 2. Files Modified:
+- `src/components/EmergencyMatrixView.tsx`:
+  - Thêm hàm `getRowMergeMode()` trả về `'split3_3'` hoặc `'merge_all'`.
+  - Cập nhật render tbody: 3 nhánh conditional (`permanent` / `split3_3` / `merge_all`).
+  - Header thead thành 2 hàng (rowSpan cho cột Khoa).
+  - Tiêu đề mặc định đổi thành "LỊCH PHÂN CÔNG TRỰC THEO TUẦN".
+- `src/app/styles/daily-schedule.css`:
+  - Thêm `.emergColGroupHeader`, `.emergCellMerged3`, `.emergCellMerged6`.
+  - `.emergColDeptHeader` thêm `vertical-align: middle`.
+
+---
+
+
+
+- **Thời gian thực hiện:** 13:42 (Asia/Saigon)
+
+### 1. Yêu cầu & Mục tiêu:
+- **Phân biệt hàng gộp Thường Trực IT vs Thường Trực Ban Giám Đốc**:
+  - Đối với hàng **IT** (hoặc các khoa phòng khác khi các ngày có dữ liệu trực giống nhau gộp lại suốt tuần):
+    - Đổi nhãn từ `THƯỜNG TRỰC BAN GIÁM ĐỐC (24/7)` thành **`THƯỜNG TRỰC IT`** (kèm icon màn hình máy tính chuyên dụng).
+    - Chỉ các hàng thuộc Ban Giám đốc / Lãnh đạo mới hiển thị nhãn `THƯỜNG TRỰC BAN GIÁM ĐỐC (24/7)`.
+- **Đồng bộ tất cả các ô bác sĩ / điều dưỡng cùng 1 kích thước bằng nhau 100%**:
+  - Tất cả các thẻ chip hiển thị tên bác sĩ, điều dưỡng trên toàn bộ hệ thống (cả Lịch trực tuần và Lịch khám theo ngày) đều được cố định chuẩn kích thước `width: 105px; min-width: 105px; max-width: 105px; height: 28px`.
+  - Căn giữa cân xứng tuyệt đối, nội dung chữ và icon đều tăm tắp, không co kéo hay lệch hàng.
+- **Tự động ẩn hàng nếu tất cả các ngày / ca đều trống dữ liệu (áp dụng cho tất cả loại lịch)**:
+  - **Lịch trực tuần (`EmergencyMatrixView.tsx`)**: Tự động lọc ẩn các hàng khoa/bộ phận nếu cả 7 ngày (T2 đến CN) đều trống hoặc chỉ chứa dấu gạch ngang (`-`, `–`).
+  - **Lịch khám theo ngày (`src/app/(frontend)/lich-kham/[id]/page.tsx`)**: Tự động lọc ẩn các dòng khoa/phòng nếu cả 4 ca trực (`07:00-10:00`, `10:00-11:00`, `13:00-16:00`, `16:00-17:00`) đều trống hoặc không có nhân sự trực.
+
+### 2. Chi tiết thực hiện:
+- **`src/components/EmergencyMatrixView.tsx`**:
+  - Nâng cấp logic `getPermanentRowInfo` phân biệt nhãn `THƯỜNG TRỰC IT` (icon máy tính, gradient xanh công nghệ) với `THƯỜNG TRỰC BAN GIÁM ĐỐC (24/7)` và các khoa khác.
+  - Thêm bộ lọc `.filter()` trước khi render dòng `tbody`, tự động ẩn dòng nếu tất cả các ngày đều không có dữ liệu.
+- **`src/app/(frontend)/lich-kham/[id]/page.tsx`**:
+  - Thêm bộ lọc `.filter()` cho `dailyAssignments`, ẩn các dòng nếu cả 4 ca khám đều trống.
+  - Cố định kích thước `dailyDoctorChip` đồng bộ `width: 105px`, `minWidth: 105px`, `maxWidth: 105px`.
+- **`src/app/styles/daily-schedule.css`**:
+  - Thêm `.emergMergedTag.emergTagIT` với gradient xanh công nghệ chuyên nghiệp.
+  - Cố định kích thước `.emergDoctorChip` và `.dailyDoctorChip` thành chuẩn `105px × 28px`.
+
+### 3. Thay đổi Database / Schema:
+- Không thay đổi cấu trúc database, tương thích 100% với dữ liệu hiện có.
+
+---
+
+### 1. Yêu cầu & Mục tiêu:
+- **Đồng bộ thiết kế Lịch Khám Theo Ngày giống Lịch Trực Tuần**:
+  - Toàn bộ các chip bác sĩ trong 4 ca khám (`07:00 – 10:00`, `10:00 – 11:00`, `13:00 – 16:00`, `16:00 – 17:00`) đều áp dụng tông màu xanh dương - trắng y tế, kích thước cố định đồng đều bằng nhau (`width: 100%; max-width: 120px; min-width: 96px; height: 28px`), căn giữa cân đối tuyệt đối.
+- **Tạo mẫu Excel có sẵn và cơ chế Import tự động trong Admin CMS**:
+  - Tạo file mẫu Excel chuẩn y tế [`/templates/lich-kham-ngay-mau.xlsx`](file:///I:/bvdkthoilai-main/public/templates/lich-kham-ngay-mau.xlsx) dựng sẵn cấu trúc theo đúng mẫu ảnh thực tế (gồm tiêu đề LỊCH NGÀY, các ca trực và các khoa phòng như KHÁM, CẤP CỨU, NỘI, YHCT, NGOẠI, SKSS, SIÊU ÂM, RA TRỰC, CÔNG TÁC, HỌC, PK BSGĐ, QLCL, HỘI CHẨN...).
+  - Thêm parser Excel chuyên dụng `src/lib/dailyScheduleExcelParser.ts` tự động nhận diện ngày khám từ tiêu đề và bóc tách dữ liệu 4 ca trực của từng khoa.
+  - Tích hợp component công cụ Admin `DailyTemplateDownload.tsx` trực tiếp vào màn hình chỉnh sửa Lịch ngày trong Admin CMS (`Schedules` -> `dailyTemplateHelper`), hỗ trợ nút bấm **"Tải mẫu Excel chuẩn"** và khu vực upload **"Đọc & Import"** tự động điền trọn vẹn vào bảng.
+
+### 2. Chi tiết thực hiện:
+- **`src/lib/dailyScheduleExcelParser.ts`**: Viết bộ bóc tách dữ liệu Excel động cho Lịch khám ngày.
+- **`src/components/admin/DailyTemplateDownload.tsx`**: Giao diện Admin chuyên nghiệp cho phép tải mẫu và import trực tiếp vào form của Payload CMS.
+- **`src/collections/Schedules.ts`**: Bổ sung trường UI `dailyTemplateHelper` kích hoạt khi `mode === 'daily'`.
+- **`src/app/(frontend)/lich-kham/[id]/page.tsx`**: Nâng cấp `renderDoctorChips` của Lịch khám ngày sang cấu trúc `flex-direction: column`, căn giữa, thẻ chip có kích thước cố định đồng bộ.
+- **`src/app/styles/daily-schedule.css`**: Cập nhật CSS cho `.dailyDoctorChipList` và `.dailyDoctorChip` đồng đều kích thước, viền xanh nhạt, nền xanh trắng y tế.
+- **`public/templates/lich-kham-ngay-mau.xlsx`**: File Excel mẫu chuẩn hóa sẵn tải trực tiếp từ Admin.
+
+### 3. Thay đổi Database / Schema:
+- Không thay đổi schema database, giữ nguyên `dailyAssignments` và `date`.
+
+---
+
+## [2026-09-13] - Chuyển Màu Chip Điều Dưỡng Sang Xanh Dương, Chuẩn Hóa Kích Thước Bác Sĩ & Hỗ Trợ Tự Động Thêm Khoa Mới (IT, KSNK...) Trong Admin/Excel
+
+- **Thời gian thực hiện:** 13:08 (Asia/Saigon)
+
+### 1. Yêu cầu & Mục tiêu:
+- **Đổi màu chip điều dưỡng sang màu xanh dương**: Chuyển màu chip điều dưỡng từ xanh lá nhạt sang gam màu xanh dương chuẩn y tế (`background: #f0f9ff`, viền `#7dd3fc`, chữ `#0369a1`, icon `#0284c7` trên nền `#bae6fd`).
+- **Cố định kích thước tất cả các ô bác sĩ**: Đảm bảo toàn bộ thẻ bác sĩ (`.emergDoctorChip`) đều có kích thước cố định đồng bộ, cân đối giữa các hàng và cột.
+- **Tùy biến trong Admin & Mẫu Excel mở rộng (Thêm cột/dòng như IT, KSNK...)**:
+  - Bảng quản trị Admin CMS (`Schedules` -> `weeklyDeptSlots`) đã tích hợp đầy đủ cho phép thêm/sửa/xóa tùy ý bất kỳ Khoa/Bộ phận nào.
+  - Parser Excel (`emergencyExcelParser.ts` và API `/api/emergency-import`) hoạt động linh hoạt động: Bất kể thêm mới bao nhiêu khoa/bộ phận trong file Excel (như CNTT/IT, Kiểm soát nhiễm khuẩn - KSNK, Kế hoạch tổng hợp, Tổ chức cán bộ, v.v.), parser đều tự động nhận diện và bóc tách đầy đủ dữ liệu 7 ngày đưa vào bảng.
+  - Bổ sung icon nhận diện chuyên khoa trực quan cho khoa **IT / CNTT** (màn hình máy tính) và **KSNK / Nhiễm khuẩn** (khiên bảo vệ y tế).
+
+### 2. Chi tiết thực hiện:
+- **`src/app/styles/daily-schedule.css`**: Cập nhật `.emergDoctorChip.chip-nurse` và `.chip-nurse .emergDoctorChipIcon` sang tông xanh dương y tế.
+- **`src/components/EmergencyMatrixView.tsx`**: Thêm icon nhận diện cho khoa IT / CNTT và KSNK / Kiểm soát nhiễm khuẩn trong cả cột tên khoa và chip nhân sự.
+- **`CHANGELOG.md`**: Ghi chép nhật ký theo quy định.
+
+### 3. Thay đổi Database / Schema:
+- Giữ nguyên cấu trúc Schema Payload CMS (collection `schedules`), tương thích hoàn toàn.
+
+---
+
+## [2026-09-13] - Đồng Đều Kích Thước Các Ô Bác Sĩ & Bổ Sung Icon Riêng Từng Khoa Phòng Từ Nội - Nhi Trở Xuống (/lich-kham/13)
+
+- **Thời gian thực hiện:** 13:03 (Asia/Saigon)
+
+### 1. Yêu cầu & Mục tiêu:
+- **Đồng đều kích thước các ô bác sĩ**: Tất cả các thẻ chip bác sĩ/nhân sự (`.emergDoctorChip`) trong cùng cột đều có kích thước cố định bằng nhau (`width: 100%; max-width: 110px; min-width: 96px; height: 28px`), căn giữa tuyệt đối, không bị ô dài ô ngắn so le.
+- **Icon chuyên khoa riêng biệt từ Nội - Nhi trở xuống**: Mỗi khoa phòng có biểu tượng nhận diện y tế trực quan riêng biệt đặt ngay trong chip tên bác sĩ/nhân sự:
+  - *Nội - Nhi*: Biểu tượng giường điều trị bệnh viện.
+  - *Sản*: Biểu tượng mẹ và bé.
+  - *Dược*: Biểu tượng cối và chày thuốc dược liệu.
+  - *Cận lâm sàng / Xét nghiệm*: Biểu tượng cấu trúc phân tử sinh hóa.
+  - *X-quang / Chẩn đoán hình ảnh*: Biểu tượng màn hình phát tia X và nhịp tim.
+  - *Tài xế / Lái xe cấp cứu*: Biểu tượng vô lăng xe vận chuyển cấp cứu.
+  - *Viện phí / Thu ngân*: Biểu tượng hóa đơn / thẻ thanh toán viện phí.
+  - *Điện nước / Hậu cần*: Biểu tượng năng lượng tia sét kỹ thuật.
+  - *Cấp cứu*: Biểu tượng xe cứu thương cấp cứu.
+  - *Lãnh đạo*: Biểu tượng ngôi sao vàng danh dự.
+
+### 2. Chi tiết thực hiện:
+- **`src/components/EmergencyMatrixView.tsx`**:
+  - Viết helper `renderDoctorChipIcon(deptName, subRole, isLeaderRow)` tự động phân loại biểu tượng SVG y khoa chất lượng cao theo đúng khoa phòng tương ứng của dòng đó.
+  - Cập nhật hàm `renderStaffChips` nhận tham số `deptName` để truyền dữ liệu khoa phòng cho từng chip.
+- **`src/app/styles/daily-schedule.css`**:
+  - Thiết lập thuộc tính kích thước chuẩn hóa cho `.emergDoctorChip`: `width: 100% !important; max-width: 110px !important; min-width: 96px !important; height: 28px !important;` với `display: inline-flex` và căn giữa cân đối.
+  - Điều chỉnh font chữ `.emergDoctorChipName` với `flex: 1 1 auto; text-align: center;` bảo đảm hiển thị đẹp mắt, ngay ngắn trên tất cả các cột.
+
+### 3. Thay đổi Database / Schema:
+- Không thay đổi schema database.
+
+---
+
+## [2026-09-13] - Hiển Thị Ngày Thực Tế Từng Thứ Trong Tuần & Đổi Màu Chip Điều Dưỡng Sang Xanh Y Tế (/lich-kham/13)
+
+- **Thời gian thực hiện:** 12:53 (Asia/Saigon)
+
+### 1. Yêu cầu & Mục tiêu:
+- **Hiển thị ngày thực tế dưới từng Thứ trong tuần**: Tự động tính toán ngày/tháng thực tế từ dải tuần trực (ví dụ Thứ Hai 05/08, Thứ Ba 06/08, ..., Chủ Nhật 11/08).
+- **Đổi màu chip điều dưỡng**: Hàng điều dưỡng cấp cứu tổng hợp chuyển từ màu hồng tím sang gam màu xanh y tế thanh lịch (`#f0fdf4`, viền `#bbf7d0`, chữ `#166534`, icon `#15803d`).
+- **Icon chuyên khoa trước tên khoa/phòng**: Đảm bảo hiển thị đầy đủ icon riêng biệt cho tất cả các khoa phòng.
+
+### 2. Chi tiết thực hiện:
+- **`src/components/EmergencyMatrixView.tsx`**:
+  - Thêm `dayDateMap` tính toán ngày thực tế từ `weekStart`.
+  - Hiển thị badge ngày dạng `05/08` dưới mỗi tên thứ.
+- **`src/app/styles/daily-schedule.css`**:
+  - Bổ sung style `.emergDayDateActual` bo tròn viền xanh nhạt.
+  - Cập nhật `.emergDoctorChip.chip-nurse` sang màu xanh y tế.
+
+### 3. Thay đổi Database / Schema:
+- Không thay đổi schema database.
+
+---
+
+## [2026-09-13] - Cập Nhật Giao Diện Lịch Trực Cấp Cứu (/lich-kham/13): Tông Màu Xanh - Trắng, Canh Giữa Banner & Danh Sách Bác Sĩ, Chống Rớt Dòng Thường Trực Lãnh Đạo
+
+- **Thời gian thực hiện:** 12:41 (Asia/Saigon)
+
+### 1. Yêu cầu & Mục tiêu:
+- Tinh chỉnh lại trang chi tiết lịch trực cấp cứu (`/lich-kham/13`):
+  - **Canh giữa banner header**: Tiêu đề ribbon, badge ngày trực được căn giữa hoàn toàn trang trọng và cân đối.
+  - **Giao diện màu xanh - trắng**: Chuyển toàn bộ tông màu đỏ cấp cứu sang hệ màu xanh dương y tế chuẩn của bệnh viện (`#0284c7`, `#0369a1`, `#e0f2fe`, `#f0f9ff`, `#bae6fd`), đồng bộ với phong cách poster Lịch bác sĩ khám ngày.
+  - **Canh giữa tên bác sĩ**: Các chip bác sĩ/điều dưỡng/kỹ thuật viên trong từng ô ngày được căn giữa (`justify-content: center`, `text-align: center`).
+  - **Phần Thường trực Lãnh đạo không cho xuống dòng**: Khóa `white-space: nowrap !important;`, mở rộng độ rộng cột bộ phận lên 22%, giữ thẻ thông tin lãnh đạo và số điện thoại trên một hàng ngang liên tục, không bị ngắt rớt dòng chữ "ĐẠO" hay tên lãnh đạo.
+
+### 2. Chi tiết thực hiện:
+- **`src/app/styles/daily-schedule.css`**:
+  - Đổi màu khung `.emergPosterShell`, header `.emergMastheadClassic`, viền bảng `.emergMatrixTable`, cột bộ phận `.emergColDeptHeader`, và các ô ngày sang gam màu xanh dương và trắng.
+  - Thêm thuộc tính `white-space: nowrap !important;` cho `.emergDeptBox`, `.emergDeptName`, `.emergDeptSubRole`, `.emergMergedLeaderCard`, `.emergMergedTag`, `.emergMergedName` để triệt để chống tình trạng xuống dòng của khối "THƯỜNG TRỰC LÃNH ĐẠO".
+  - Căn giữa toàn diện `.emergMastheadBox`, `.emergDoctorChipList`, `.emergDoctorChip`, `.emergDoctorChipName`.
+  - Tinh chỉnh responsive mobile: căn giữa nội dung header khi xem trên điện thoại.
+- **`src/app/(frontend)/lich-kham/[id]/page.tsx`**:
+  - Chuyển màu nút Hotline Cấp cứu 24/7 ở chân trang sang tông xanh dương sang trọng đồng bộ.
+
+### 3. Thay đổi Database / Schema:
+- Không thay đổi schema database, dữ liệu hoạt động ổn định và tương thích 100%.
+
+---
+
+## [2026-09-13] - Tinh Chỉnh Bảng Lịch Trực Tuần Bệnh Viện: Gộp Ô Thường Trực Lãnh Đạo & Đồng Bộ Thiết Kế Poster Lịch Khám Ngày
+
+- **Thời gian thực hiện:** 11:55 (Asia/Saigon)
+
+### 1. Yêu cầu & Mục tiêu:
+- Bỏ phần văn bản tiêu ngữ chính quy rườm rà (Sở Y tế / Quốc hiệu) phía trên lịch trực tuần.
+- Bỏ thanh thống kê / tab lọc các bộ phận (`[Tất cả 12 bộ phận] [Lãnh đạo trực]...`).
+- Thiết kế bảng nổi bật, trang trọng và chuyên nghiệp chuẩn poster y tế như mẫu lịch của bác sĩ khám ngày.
+- Phần **THƯỜNG TRỰC LÃNH ĐẠO** (Ban Giám đốc trực 24/7): Gộp liền 1 ô duy nhất từ Thứ 2 đến Chủ nhật (`colSpan={7}`), hiển thị 1 lần trang trọng, không bị lặp lại 7 lần tên và SĐT của lãnh đạo.
+
+### 2. Chi tiết thực hiện:
+- **`src/components/EmergencyMatrixView.tsx`**:
+  - Loại bỏ khối khẩu hiệu/tiêu ngữ chính quy `emergTopHospitalInfo`.
+  - Loại bỏ thanh tab lọc `emergGroupFilterNav`.
+  - Tích hợp hàm `isPermanentLeaderRow()` và `parseLeaderMerged()`: tự động phát hiện hàng Thường trực lãnh đạo và gộp 7 cột thành 1 ô duy nhất (`colSpan={7}`) với thẻ lãnh đạo màu vàng kim/hổ phách sang trọng, có biểu tượng huy hiệu và nút gọi SĐT lãnh đạo trực tiếp.
+  - Tích hợp icon SVG chuyên khoa chuẩn y tế qua hàm `renderDeptIcon()`.
+  - Định dạng chip nhân sự trực `emergDoctorChip` theo phong cách poster tinh gọn giống `dailyDoctorChip` của lịch khám ngày.
+  - Thêm nút in nhanh `emergPrintBtnQuick` trên Masthead.
+- **`src/app/styles/daily-schedule.css`**:
+  - Tinh chỉnh CSS cho khung poster `emergPosterShell`, ribbon đỏ y tế `emergRibbon`, date badge `emergDateBadge`, ô gộp lãnh đạo `emergMergedLeaderCell`, `emergMergedLeaderCard`, và tối ưu in ấn khổ giấy A4 ngang.
+
+### 3. Thay đổi Database / Schema:
+- Không thay đổi schema database, dữ liệu tương thích ngược 100%.
+
+---
+
+## [2026-09-13] - Thiết Kế Giao Diện Bảng Lịch Trực Cấp Cứu 12 Bộ Phận & Phân Loại Chuẩn Toàn Hệ Thống
+
+- **Thời gian thực hiện:** 11:43 (Asia/Saigon)
+
+### 1. Yêu cầu & Mục tiêu:
+- Thiết kế giao diện chuyên biệt cho lịch trực cấp cứu / lịch trực bệnh viện theo tuần vừa cập nhật từ Excel (`truc.xlsx`).
+- Phân loại chuẩn xác loại trang:
+  - Trên trang danh sách `/lich-kham`: phân định rạch ròi giữa "Lịch khám bệnh" và "Lịch trực cấp cứu", hiển thị đầy đủ khoảng ngày trực tuần (`emergencyWeekStart – emergencyWeekEnd`), gắn badge nhận diện đỏ y tế nổi bật.
+  - Trên trang chi tiết `/lich-kham/[id]`: loại bỏ giao diện bài viết chung chung, thiết kế Bảng Poster Ma trận Lịch trực Bệnh viện chuẩn y tế Hạng II cho 12 bộ phận.
+  - Tạo route tiện ích `/lich-truc` chuyển hướng trực tiếp đến danh mục Lịch trực cấp cứu.
+
+### 2. Chi tiết thực hiện:
+- **`src/components/EmergencyMatrixView.tsx` (MỚI)**:
+  - Thành phần giao diện chuyên biệt cho Bảng ma trận Lịch trực cấp cứu & bệnh viện:
+    - Header chính quy: Quốc hiệu, tên viện "BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI", tuần trực.
+    - Thanh tiện ích: Nút gọi khẩn cấp Cấp cứu 24/7 (`0292.3686115`) kèm hiệu ứng pulse, nút In bảng trực khổ ngang A4 (`window.print()`), nút tải file Excel gốc.
+    - Bộ lọc tab theo 4 khối chuyên môn: Lãnh đạo trực, Cấp cứu & Lâm sàng, Cận lâm sàng & Dược, Hậu cần & Kỹ thuật.
+    - Bảng ma trận 12 bộ phận × 7 ngày:
+      - Highlight vàng kim / đỏ burgundy cho khối Thường trực Ban Giám đốc 24/24 (Tuân thủ MANDATE 1 của dự án).
+      - Tự động nhận diện cột Hôm nay (`isToday`) để làm nổi bật ca trực hiện tại.
+      - Chip nhân sự bo góc sang trọng, phân biệt bác sĩ/điều dưỡng/dược sĩ/kỹ thuật viên.
+- **`src/app/(frontend)/lich-kham/page.tsx`**:
+  - Nhận diện `mode === 'emergency'` -> gán danh mục chuẩn `'Lịch trực cấp cứu'`, hiển thị dải ngày đầy đủ `emergencyWeekStart – emergencyWeekEnd`.
+  - Cập nhật sort ưu tiên lịch mới nhất (`-createdAt`).
+  - Hỗ trợ `searchParams` (`?type=emergency` hoặc `?category=...`) để tự động chọn tab danh mục tương ứng khi truy cập.
+- **`src/components/SearchFilter.tsx` & `SearchFilter.module.css`**:
+  - Hỗ trợ đồng bộ `initialCategory` từ query URL.
+  - Thêm phong cách hiển thị riêng cho thẻ `cardEmergency` và badge `postCardBadgeEmergency` màu đỏ y tế rực rỡ có icon chữ thập đỏ.
+- **`src/app/(frontend)/lich-kham/[id]/page.tsx`**:
+  - Loại bỏ tiêu đề/ảnh bìa bài viết lặp lại khi `mode === 'emergency'`.
+  - Tích hợp `EmergencyMatrixView` hiển thị toàn diện bảng trực với 100% khả năng tương thích ngược các bản ghi cũ.
+  - Cập nhật nút hành động chân trang: Chuyển thành nút gọi Hotline Cấp cứu 24/7 và Trở lại danh sách lịch trực & khám.
+- **`src/app/styles/daily-schedule.css`**:
+  - Bổ sung toàn bộ style hiện đại cho `.emergMatrixContainer`, `.emergMatrixTable`, `.emergStaffChip` và bộ CSS in ấn `@media print` tối ưu hóa in khổ A4 ngang.
+- **`src/app/(frontend)/lich-truc/page.tsx` (MỚI)**:
+  - Tuyến đường dẫn chuyển hướng nhanh `307` về `/lich-kham?type=emergency`.
+- **`src/components/SiteHeader.tsx`**:
+  - Bổ sung menu con điều hướng: "Tất cả lịch", "Lịch trực cấp cứu 24/24", "Lịch khám bệnh".
+
+### 3. Thay đổi Database / Schema:
+- Không thay đổi schema database, giữ nguyên tính toàn vẹn 100% của collection `schedules`.
+
+---
+
+- **Thời gian thực hiện:** 11:32 (Asia/Saigon)
+
+### 1. Yêu cầu & Phân tích nguyên nhân:
+- **Hiện tượng**: Khi tải file Excel mẫu mới (có hàng "THƯỜNG TRỰC LÃNH ĐẠO", "LÃNH ĐẠO", "CẤP CỨU TỔNG HỢP" với khối TRỰC ở góc trái), hệ thống bị nhận diện sai dòng, dẫn đến bảng preview hiển thị 25 khoa nhưng các khoa lâm sàng (Nội-Nhi, Sản, Dược, X-quang...) đều bị trống dấu `-`.
+- **Nguyên nhân kỹ thuật**:
+  - Trong bố cục Excel mẫu mới, ô cột 0 chứa nhãn khối `TRỰC` (chiếm hàng dọc của Thường trực lãnh đạo và Lãnh đạo), trong khi tên khoa thực sự (`THƯỜNG TRỰC LÃNH ĐẠO` / `LÃNH ĐẠO`) nằm ở cột 1.
+  - Thuật toán cũ trước đó có dòng `if (col0.toUpperCase() === 'TRỰC') continue;` nên đã vô tình loại bỏ luôn hàng Thường trực lãnh đạo, và khiến con trỏ `currentDept` bị lệch sang các hàng phía dưới.
+  - Thư viện `xlsx` và hàm `parseEmergencyWorkbook` trước đó được gọi qua dynamic import trong React component client-side, dẫn đến việc trình duyệt giữ cache chunk cũ nếu chưa hard refresh.
+
+### 2. Chi tiết xử lý:
+- **`src/lib/emergencyExcelParser.ts` & `src/app/(frontend)/api/emergency-import/route.ts`**:
+  - Nhập khẩu trực tiếp `import * as XLSX from 'xlsx'` không qua shim window.
+  - Tối ưu thuật toán nhận diện hàng linh hoạt cho mọi kiểu bố cục:
+    - Nếu `col0 === 'TRỰC'`, tự động trích xuất tên khoa từ `col1` (`col0 = col1`).
+    - Nhận diện chính xác `THƯỜNG TRỰC LÃNH ĐẠO` (dù nằm ở cột 0 hay cột 1) và tự động gộp tên bác sĩ thường trực 24/7 vào tất cả 7 ngày trong tuần.
+    - Nhận diện các vai trò phụ `isRoleKeyword` (BÁC SĨ, ĐIỀU DƯỠNG) để phân định chính xác giữa tên Khoa (`currentDept`) và vai trò (`currentSubRole`), gom trọn vẹn từng ca trực theo ngày mà không bị lệch dữ liệu.
+    - Dừng chính xác ở Bảng 1 (đúng 12 bộ phận của tuần trực), không đọc lẫn vào Bảng 2.
+- **`src/components/admin/EmergencyTemplateDownload.tsx`**:
+  - Chuyển sang import tĩnh trực tiếp `import * as XLSX from 'xlsx'` và `import { parseEmergencyWorkbook } from '@/lib/emergencyExcelParser'` ở đầu component để Webpack Next.js Hot Module Replacement cập nhật ngay lập tức.
+- **Tệp mẫu Excel (`public/templates/lich-truc-cap-cuu-mau.xlsx`)**:
+  - Cập nhật lại tệp mẫu chuẩn 100% khớp với cấu trúc bảng thực tế của bệnh viện (có Thường trực lãnh đạo 24/7, Ban Lãnh đạo, Cấp cứu tổng hợp bác sĩ/điều dưỡng, Sản, Nội-Nhi, Dược, Cận lâm sàng, X-quang, Tài xế, Viện phí, Điện nước).
+- **Database / Schema**: Không thay đổi schema database.
+
+---
+
+- **Thời gian thực hiện:** 11:23 (Asia/Saigon)
+
+### 1. Nguyên nhân lỗi:
+- Khi nhấn nút **"✓ Điền vào bảng bên dưới"**, hàm `handleApply()` trong component `EmergencyTemplateDownload.tsx` trước đây tự gán ID tạm là `id: 'imported-${i}'` cho từng dòng con của mảng `weeklyDeptSlots`.
+- Khi người dùng nhấn nút **"Lưu"**, bộ xác thực (validation) của Payload CMS và Postgres ORM kiểm tra trường `id` của mảng con. Do `id` được truyền vào là chuỗi tùy ý `imported-0` không khớp với định dạng UUID / format ID nội bộ của Payload, hệ thống chặn lại và báo lỗi: `"Lỗi - Field sau không hợp lệ: id"`.
+
+### 2. Chi tiết xử lý:
+- **`src/components/admin/EmergencyTemplateDownload.tsx`**:
+  - Loại bỏ hoàn toàn việc tự gán `id: 'imported-${i}'` trong payload truyền vào `dispatchFields`.
+  - Để Payload Form State tự động tạo ID nội bộ hợp lệ cho từng phần tử khi thêm mới vào bảng `weeklyDeptSlots` và `emergencyContacts`.
+  - Thao tác lưu lịch trực giờ đây diễn ra trơn tru, không còn bị lỗi validation `id`.
+- **Database / Schema**: Không thay đổi schema database.
+
+---
+
+- **Thời gian thực hiện:** 11:15 (Asia/Saigon)
+
+### 1. Yêu cầu:
+- Theo ảnh chụp biểu mẫu chính xác người dùng cung cấp, hệ thống chỉ lấy **duy nhất bảng lịch trực phân công theo ngày (Thứ Hai 14/9 → Chủ Nhật 20/9)** gồm:
+  - THƯỜNG TRỰC LÃNH ĐẠO / LÃNH ĐẠO
+  - CẤP CỨU TỔNG HỢP (BÁC SĨ, ĐIỀU DƯỠNG)
+  - SẢN
+  - NỘI – NHI
+  - DƯỢC
+  - CẬN LÂM SÀNG
+  - X QUANG
+  - TÀI XẾ
+  - VIỆN PHÍ
+  - ĐIỆN NƯỚC
+- Không lấy các bảng phân công nhân sự cố định của các khoa/phòng phía dưới (bảng KHOA / Bác sĩ / Điều dưỡng) hay danh bạ để đảm bảo form gọn gàng, đúng và đủ theo nhu cầu hiển thị.
+
+### 2. Chi tiết xử lý:
+- **`src/lib/emergencyExcelParser.ts` & `src/app/(frontend)/api/emergency-import/route.ts`**:
+  - Giới hạn phạm vi bóc tách: chỉ đọc các dòng thuộc Bảng 1 từ sau header ngày đến khi gặp dòng "KHOA", "Ghi chú:" hoặc danh bạ.
+  - Hỗ trợ thêm hàng "THƯỜNG TRỰC LÃNH ĐẠO" (ô merged 7 ngày như Bs Trần Quốc Luận - Thường trực 24/7).
+  - Tự động bóc tách đầy đủ nhân sự trực từng ngày từ Thứ 2 đến Chủ Nhật cho tất cả các khoa trong khung bảng.
+  - Bỏ qua các hàng của Bảng 2 và danh bạ không cần thiết.
+- **`src/components/admin/EmergencyTemplateDownload.tsx`**:
+  - Chuẩn hóa giao diện Preview: chỉ hiển thị đúng các cột Khoa / Bộ phận, Vai trò, và 7 cột Thứ 2 → Chủ Nhật, khớp 100% với mẫu trong ảnh.
+- **Database / Schema**: Không thay đổi schema database.
+
+---
+
+- **Thời gian thực hiện:** 11:10 (Asia/Saigon)
+
+### 1. Yêu cầu & Nguyên nhân lỗi:
+- **Hiện tượng**: Khi tải file `truc.xlsx` lên form Lịch trực cấp cứu trong Admin CMS, hệ thống chỉ lấy được hàng "LÃNH ĐẠO" có tên trực, còn toàn bộ các khoa, bác sĩ, điều dưỡng ở các dòng phía dưới (Cấp cứu tổng hợp, Nội-Nhi, Sản, Dược, Cận lâm sàng, X-quang, Tài xế, Viện phí, Điện nước...) đều bị trống các ngày T2 → CN.
+- **Nguyên nhân kỹ thuật**:
+  - Trong logic tìm điểm kết thúc bảng 1 (`fixedTableStart`), điều kiện tìm kiếm trước đây là `joined.includes('bác sĩ')`. Tuy nhiên, ngay tại dòng thứ 9 của bảng 1 đã có cột phụ ghi vai trò là "BÁC SĨ" (thuộc Khoa Cấp cứu tổng hợp).
+  - Điều này khiến thuật toán nhận diện nhầm dòng số 9 là bắt đầu của Bảng 2 và cắt đứt vòng lặp đọc Bảng 1 ngay lập tức, dẫn đến việc chỉ đọc được dòng Lãnh đạo (dòng 8) và bỏ sót hoàn toàn toàn bộ các khoa cùng nhân sự trực các ngày T2 - CN ở phía sau.
+
+### 2. Chi tiết xử lý:
+- **`src/lib/emergencyExcelParser.ts` & `src/app/(frontend)/api/emergency-import/route.ts`**:
+  - Chuẩn hóa điều kiện nhận diện Bảng 2 (`fixedTableStart`): Kiểm tra chính xác dòng tiêu đề Bảng 2 chứa cột đầu tiên là `KHOA` cùng cột `BÁC SĨ` / `ĐIỀU DƯỠNG` (thay vì tìm chuỗi "bác sĩ" lỏng lẻo ở bất kỳ ô nào).
+  - Bóc tách đầy đủ dữ liệu 7 ngày (Thứ 2 → Chủ Nhật) cho toàn bộ các khoa: **LÃNH ĐẠO, CẤP CỨU TỔNG HỢP (BÁC SĨ), CẤP CỨU TỔNG HỢP (ĐIỀU DƯỠNG), NỘI – NHI, SẢN, DƯỢC, CẬN LÂM SÀNG, X QUANG, TÀI XẾ, VIỆN PHÍ, ĐIỆN NƯỚC**.
+  - Đọc chính xác Bảng 2 (Nhân sự phân công cố định tuần của 21+ Khoa/Phòng) vào trường `fixedStaff` và ghi chú khoa.
+  - Tách bạch bảng danh bạ điện thoại (`contacts`) và dòng ghi chú điều động công tác tuần (`emergencyGeneralNote`).
+- **`src/components/admin/EmergencyTemplateDownload.tsx`**:
+  - Cập nhật bảng preview hiển thị thêm cột **"Nhân sự phân công tuần"** để người quản trị xem trước trọn vẹn danh sách các bác sĩ, điều dưỡng trước khi bấm "Điền vào bảng bên dưới".
+- **Database / Schema**:
+  - Không thay đổi cấu trúc database (tận dụng trọn vẹn collection `schedules` và các trường `weeklyDeptSlots`, `fixedStaff`, `emergencyGeneralNote`, `emergencyContacts`).
+
+---
 
 - **Thời gian thực hiện:** 00:28 (Asia/Saigon)
 

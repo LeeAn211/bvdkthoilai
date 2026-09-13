@@ -6,7 +6,7 @@ export const Schedules: CollectionConfig = {
   labels: { singular: 'Lịch khám / Lịch trực', plural: 'Lịch khám / Lịch trực' },
   admin: {
     useAsTitle: 'title',
-    group: 'Khám bệnh',
+    group: '🏥 Khám bệnh & Dịch vụ Y tế',
     description: 'Ưu tiên đăng ảnh lịch khám tuần chính thức. Vẫn hỗ trợ nhập theo ngày/tuần/lịch trực cấp cứu để tra cứu chi tiết.',
   },
   access: { read: publicActive, create: moduleAccess('schedules', 'create'), update: moduleAccess('schedules', 'edit'), delete: moduleAccess('schedules', 'delete') },
@@ -25,6 +25,16 @@ export const Schedules: CollectionConfig = {
       ],
     },
     { name: 'date', label: 'Ngày khám', type: 'date', index: true, admin: { condition: (_data, siblingData) => !siblingData?.mode || siblingData?.mode === 'daily', date: { pickerAppearance: 'dayOnly', displayFormat: 'dd/MM/yyyy' } } },
+    {
+      name: 'dailyTemplateHelper',
+      type: 'ui',
+      admin: {
+        condition: (_data, siblingData) => !siblingData?.mode || siblingData?.mode === 'daily',
+        components: {
+          Field: '/src/components/admin/DailyTemplateDownload#default',
+        },
+      },
+    },
     {
       name: 'dailyAssignments',
       label: 'Bảng phân công ca trực / khám theo Khoa/Phòng',
