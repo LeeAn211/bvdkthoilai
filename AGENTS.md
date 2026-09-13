@@ -56,4 +56,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   - Tuyệt đối không tạo các tệp migration thủ công (`migrate:create`) phức tạp gây xung đột hoặc lỗi schema (`relation does not exist`, `column does not exist`) giữa local và VPS/Railway.
   - Cả môi trường Local và Railway VPS đều kết nối chung vào Neon PostgreSQL với biến môi trường `PAYLOAD_DB_PUSH=true`. Khi deploy hoặc khởi động, Payload CMS sẽ tự động khớp cấu trúc bảng, thêm cột, tạo quan hệ an toàn và tức thì.
 
-
+## 7. Git workflow (LOW-TOKEN & SAFETY MANDATE)
+- Khi được yêu cầu commit/push, chỉ kiểm tra `git status` và diff của các file đã thay đổi.
+- Không quét hoặc đọc lại toàn bộ repository nếu không cần thiết.
+- Luôn tôn trọng `.gitignore` hiện có của dự án.
+- Tuyệt đối không commit `.env`, secret, token, password, database dump hoặc file chứa thông tin nhạy cảm.
+- Nếu phát hiện file nhạy cảm đang được Git track, phải dừng thao tác push và báo rõ trước khi tiếp tục.
+- Không tự ý sửa thêm code nếu yêu cầu chỉ là commit/push.
+- Commit message phải ngắn gọn, đúng nội dung thay đổi.
+- Push lên branch hiện tại, trừ khi người dùng yêu cầu branch khác.
