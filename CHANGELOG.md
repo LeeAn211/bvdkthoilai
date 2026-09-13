@@ -1,5 +1,21 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-13] - Hoàn Tất Khởi Tạo Lại Toàn Bộ Database Chuẩn 100% Trên Neon PostgreSQL
+
+- **Thời gian thực hiện:** 20:08 (Asia/Saigon)
+- **Yêu cầu:** Xây dựng lại cơ sở dữ liệu tinh khiết, loại bỏ hoàn toàn dữ liệu demo cũ và snapshot lỗi, thiết lập 100% cấu trúc bảng chuẩn theo mã nguồn hiện tại.
+- **Chi tiết đã thực hiện:**
+  1. Reset hoàn toàn schema `public` trên Neon PostgreSQL thành schema trắng tinh khiết.
+  2. Kích hoạt `PAYLOAD_DB_PUSH=true` qua seed runner: Tự động khởi tạo trọn vẹn **247 bảng** cơ sở dữ liệu (toàn bộ 50 Collections, 21 Globals, bảng liên kết rels, bảng version và audit logs).
+  3. Khởi tạo tài khoản Quản trị cấp cao (Super Admin) mặc định sẵn sàng đăng nhập quản trị hệ thống.
+  4. Cấu hình sẵn dữ liệu nền tảng cho `site-settings`, `navigation` và `homepage`.
+  5. Cập nhật script `package.json` tự động nạp môi trường (`tsx --env-file=.env scripts/seed.ts`).
+- **Tệp tin chỉnh sửa:**
+  - `package.json`
+  - `CHANGELOG.md`
+
+---
+
 ## [2026-09-13] - Dọn Dẹp Toàn Diện Migrations Cũ Để Chuẩn Hóa Database Từ Đầu
 
 - **Thời gian thực hiện:** 20:04 (Asia/Saigon)
