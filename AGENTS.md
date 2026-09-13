@@ -74,3 +74,26 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Khi tác vụ hoàn tất, đánh dấu hoàn thành trong `CURRENT-TASK.md`; không giữ trạng thái cũ gây hiểu nhầm cho phiên sau.
 - Không dùng `CURRENT-TASK.md` hoặc `HANDOFF.md` thay cho `CHANGELOG.md`; `CHANGELOG.md` vẫn là nhật ký thay đổi chính thức.
 - Không đọc toàn bộ `CHANGELOG.md` chỉ để khôi phục ngữ cảnh tác vụ hiện tại.
+
+## 9. Definition of Done
+Một task chỉ được xem là hoàn thành khi:
+- Yêu cầu chính đã hoạt động đúng.
+- Không cố ý làm hỏng hoặc thay đổi hành vi ngoài phạm vi yêu cầu.
+- Đã chạy kiểm tra phù hợp với mức thay đổi.
+- Đã cập nhật `CURRENT-TASK.md` với trạng thái cuối cùng.
+- Đã cập nhật `CHANGELOG.md` nếu có thay đổi code, UI, cấu hình, logic hoặc schema.
+- Nếu dừng giữa chừng hoặc bàn giao, đã cập nhật `HANDOFF.md`.
+- Nếu có quyết định kiến trúc/quy ước dài hạn mới, đã cập nhật `DECISIONS.md`.
+
+## 10. Scope control
+- Không tự thêm tính năng ngoài yêu cầu hiện tại.
+- Nếu phát hiện vấn đề khác không chặn task, ghi ngắn gọn vào `CURRENT-TASK.md` mục `Phát hiện thêm` và không tự sửa.
+- Chỉ mở rộng phạm vi khi vấn đề đó chặn trực tiếp task hiện tại hoặc người dùng yêu cầu.
+- Không refactor diện rộng chỉ để xử lý một lỗi nhỏ.
+- Ưu tiên thay đổi nhỏ, có thể kiểm tra và dễ hoàn nguyên.
+
+## 11. Decision log
+- `DECISIONS.md` lưu các quyết định kiến trúc/quy ước đã chốt và lý do lựa chọn.
+- Chỉ đọc `DECISIONS.md` khi task có khả năng thay đổi kiến trúc, quy ước hoặc quyết định đã tồn tại; không đọc mặc định cho mọi task.
+- Không tự đảo ngược quyết định đã ghi nếu không có lý do kỹ thuật rõ ràng hoặc yêu cầu mới.
+- `DECISIONS.md` không thay thế `CHANGELOG.md`.
