@@ -11,6 +11,7 @@ Before substantial work, follow `AGENTS.md`.
 Load only the relevant shared reference:
 - Detail page UI → `docs/ai/detail-page-ui.md`
 - Payload/Admin/schema → `docs/ai/payload-rules.md`
+- Admin form UX/layout → `docs/ai/admin-form-ui.md`
 - Database/schema → `docs/ai/database.md`
 - Debugging → `docs/ai/debugging.md`
 - Regression checks → `docs/ai/regression-checklist.md`
