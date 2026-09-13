@@ -1,5 +1,22 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-13] - Đồng Bộ Migration Schema Và Đẩy Mã Nguồn Lên GitHub
+
+- **Thời gian thực hiện:** 19:51 (Asia/Saigon)
+- **Yêu cầu:** Tạo migration đồng bộ cơ sở dữ liệu và đẩy toàn bộ mã nguồn lên GitHub.
+- **Chi tiết đã thực hiện:**
+  1. Tạo migration đồng bộ schema mới `20260913_124616.ts` và snapshot `20260913_124616.json`.
+  2. Bổ sung cơ chế an toàn `DROP COLUMN IF EXISTS` và `DROP TYPE IF EXISTS` trong các câu lệnh DDL để tương thích môi trường triển khai.
+  3. Cập nhật `src/migrations/index.ts` đăng ký migration mới.
+  4. Đẩy toàn bộ thay đổi lên nhánh `main` trên GitHub.
+- **Tệp tin chỉnh sửa & tạo mới:**
+  - `src/migrations/20260913_124616.ts`
+  - `src/migrations/20260913_124616.json`
+  - `src/migrations/index.ts`
+  - `CHANGELOG.md`
+
+---
+
 ## [2026-09-13] - Thiết Kế Lại Toàn Diện Tab Phân Hệ Admin, Bổ Sung Biểu Đồ Thống Kê Y Tế & Rà Soát Đồng Bộ Dữ Liệu
 
 - **Thời gian thực hiện:** 18:22 (Asia/Saigon)
