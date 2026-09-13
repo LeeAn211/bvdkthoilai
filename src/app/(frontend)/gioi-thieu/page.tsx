@@ -1,4 +1,4 @@
-﻿import type { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
@@ -146,15 +146,15 @@ export default async function AboutHospitalPage() {
   ]
   const stats = Array.isArray(aboutData?.stats) && aboutData.stats.length > 0 ? aboutData.stats : statsFallback
 
-  // Core Principles
+  // Functions & Duties (Chức năng & Nhiệm vụ trọng tâm - Phân biệt rõ với Lịch sử phát triển)
   const corePrinciples = aboutData?.corePrinciples || {}
-  const coreTitle = corePrinciples.title || 'Giá trị cốt lõi & Văn hóa phục vụ'
-  const coreSubtitle = corePrinciples.subtitle || 'Lấy người bệnh làm trung tâm trong mọi quyết định chuyên môn và quy trình chăm sóc y tế.'
+  const coreTitle = corePrinciples.title || 'Chức năng & Nhiệm vụ trọng tâm'
+  const coreSubtitle = corePrinciples.subtitle || 'Thực hiện chức năng khám chữa bệnh đa khoa, cấp cứu và chăm sóc sức khỏe nhân dân toàn diện theo quy chuẩn của Bộ Y tế và Sở Y tế TP. Cần Thơ.'
   const coreItemsFallback = [
-    { title: 'Y đức & Tận tâm', desc: 'Thực hiện lời dạy Lương y như từ mẫu, lắng nghe, đồng cảm và chia sẻ cùng người bệnh và thân nhân.' },
-    { title: 'Chuyên môn & An toàn', desc: 'Tuân thủ nghiêm ngặt phác đồ điều trị, quy chuẩn kiểm soát nhiễm khuẩn và bảo đảm an toàn người bệnh tuyệt đối.' },
-    { title: 'Chuyên nghiệp & Văn minh', desc: 'Giao tiếp hòa nhã, giải quyết thủ tục nhanh chóng, môi trường bệnh viện xanh – sạch – đẹp – thân thiện.' },
-    { title: 'Đổi mới & Chuyển đổi số', desc: 'Đẩy mạnh ứng dụng công nghệ thông tin, thanh toán không tiền mặt, đặt lịch khám trước và số hóa hồ sơ y tế.' },
+    { title: 'Cấp cứu & Khám chữa bệnh đa khoa', desc: 'Tổ chức tiếp nhận cấp cứu 24/7, khám bệnh ngoại trú, điều trị nội trú đa khoa và phục hồi chức năng cho người dân huyện Thới Lai và khu vực lân cận.' },
+    { title: 'Phát triển kỹ thuật & Phẫu thuật ngoại khoa', desc: 'Ứng dụng phẫu thuật nội soi, chẩn đoán hình ảnh kỹ thuật số, xét nghiệm tự động và từng bước phát triển các kỹ thuật chuyên sâu tuyến khu vực.' },
+    { title: 'Y tế dự phòng & Hỗ trợ chỉ đạo tuyến', desc: 'Chủ động phối hợp phòng chống dịch bệnh, giám sát dịch tễ, truyền thông giáo dục sức khỏe và hỗ trợ chuyên môn kỹ thuật cho y tế cơ sở.' },
+    { title: 'Chuyển đổi số & Bệnh án điện tử', desc: 'Triển khai toàn diện hồ sơ bệnh án điện tử (EMR), lưu trữ hình ảnh PACS không in phim, thanh toán không tiền mặt và đặt lịch khám trực tuyến.' },
   ]
   const coreItems = Array.isArray(corePrinciples.items) && corePrinciples.items.length > 0 ? corePrinciples.items : coreItemsFallback
 
@@ -175,6 +175,18 @@ export default async function AboutHospitalPage() {
   const commitTitle = commitment.title || 'Cam kết chất lượng phục vụ nhân dân'
   const commitQuote = commitment.quote || 'Mỗi cán bộ y tế Bệnh viện Đa khoa Khu vực Thới Lai luôn nêu cao tinh thần trách nhiệm, không ngừng học hỏi nâng cao tay nghề, coi sức khỏe và sự hài lòng của người bệnh là thước đo cao nhất cho hiệu quả công tác.'
   const commitAuthor = commitment.author || 'Ban Giám đốc Bệnh viện Đa khoa Khu vực Thới Lai'
+
+  // Related Topics / Chuyên đề liên kết
+  const relatedLinksData = aboutData?.relatedLinks || {}
+  const relTitle = relatedLinksData.title || 'Thông tin chuyên đề khác'
+  const relSubtitle = relatedLinksData.subtitle || 'Tìm hiểu chi tiết hơn qua các trang chuyên đề của bệnh viện:'
+  const fallbackRelLinks = [
+    { title: 'Lịch sử hình thành & Phát triển', url: '/gioi-thieu/lich-su-phat-trien', desc: 'Hơn hai thập kỷ trưởng thành và các mốc son tiêu biểu' },
+    { title: 'Sơ đồ tổ chức 3 cấp', url: '/so-do-to-chuc', desc: 'Ban Giám đốc và các khối trực thuộc' },
+    { title: 'Danh mục Khoa – Phòng', url: '/khoa-phong', desc: 'Chi tiết các khoa lâm sàng, cận lâm sàng và phòng chức năng' },
+    { title: 'Đội ngũ Bác sĩ chuyên khoa', url: '/bac-si', desc: 'Danh sách các thầy thuốc, bác sĩ uy tín tại bệnh viện' },
+  ]
+  const relLinks = Array.isArray(relatedLinksData.links) && relatedLinksData.links.length > 0 ? relatedLinksData.links : fallbackRelLinks
 
   const cssVars = {
     '--about-primary': appearance.primaryColor || '#0878D1',
@@ -218,10 +230,10 @@ export default async function AboutHospitalPage() {
           </div>
         </nav>
 
-        {/* ── GIÁ TRỊ CỐT LÕI & VĂN HÓA PHỤC VỤ (MODERN ICONS CANH GIỮA) ─────────── */}
+        {/* ── CHỨC NĂNG & NHIỆM VỤ TRỌNG TÂM ─────────── */}
         <section className="container aboutSection">
           <div className="aboutSectionHead">
-            <span className="aboutKicker">NGUYÊN TẮC HOẠT ĐỘNG</span>
+            <span className="aboutKicker">CHỨC NĂNG & NHIỆM VỤ</span>
             <h2>{coreTitle}</h2>
             <p>{coreSubtitle}</p>
           </div>
@@ -244,7 +256,7 @@ export default async function AboutHospitalPage() {
           </div>
         </section>
 
-        {/* ── CƠ SỞ VẬT CHẤT & NĂNG LỰC KỸ THUẬT (MODERN CARDS CANH GIỮA) ───────── */}
+        {/* ── CƠ SỞ VẬT CHẤT & NĂNG LỰC KỸ THUẬT ───────── */}
         <section className="aboutFacSection">
           <div className="container">
             <div className="aboutSectionHead">
@@ -273,7 +285,7 @@ export default async function AboutHospitalPage() {
           </div>
         </section>
 
-        {/* ── CAM KẾT CHẤT LƯỢNG PHỤC VỤ (NỔI BẬT KHÔNG TIỆP VỚI FOOTER) ──────── */}
+        {/* ── CAM KẾT CHẤT LƯỢNG PHỤC VỤ ──────── */}
         <section className="container aboutCommitSection">
           <div className="aboutCommitCard">
             <div className="aboutCommitIconBox">
@@ -285,6 +297,33 @@ export default async function AboutHospitalPage() {
             <h2>{commitTitle}</h2>
             <blockquote>"{commitQuote}"</blockquote>
             <p className="aboutCommitAuthor">— {commitAuthor}</p>
+          </div>
+        </section>
+
+        {/* ── KHỐI LIÊN KẾT CHUYÊN SÂU (ĐIỀU HƯỚNG TỚI LỊCH SỬ, SƠ ĐỒ, KHOA PHÒNG) ─── */}
+        <section className="container aboutRelatedSection">
+          <div className="aboutSectionHead">
+            <span className="aboutKicker">CHUYÊN MỤC LIÊN QUAN</span>
+            <h2>{relTitle}</h2>
+            <p>{relSubtitle}</p>
+          </div>
+
+          <div className="aboutRelatedGrid">
+            {relLinks.map((link: any, idx: number) => (
+              <a href={link.url} className="aboutRelatedCard" key={idx}>
+                <div className="aboutRelatedBadge">0{idx + 1}</div>
+                <div className="aboutRelatedBody">
+                  <h3 className="aboutRelatedTitle">
+                    {link.title}
+                    <svg className="aboutRelatedArrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </h3>
+                  {link.desc && <p className="aboutRelatedDesc">{link.desc}</p>}
+                </div>
+              </a>
+            ))}
           </div>
         </section>
       </main>

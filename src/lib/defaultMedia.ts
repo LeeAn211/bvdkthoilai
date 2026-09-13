@@ -35,3 +35,17 @@ export function categoryName(item: any) {
   if (ref && typeof ref === 'object' && ref.name) return String(ref.name)
   return String(item?.category || item?.type || '').trim()
 }
+
+export function scientificActivityGroupName(item: any) {
+  const group = item?.categoryGroup
+  if (
+    group &&
+    typeof group === 'object' &&
+    group.active !== false &&
+    !group.deletedAt &&
+    group.name
+  ) {
+    return String(group.name).trim()
+  }
+  return ''
+}

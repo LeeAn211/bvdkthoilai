@@ -7,13 +7,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try { seo = await getGlobal('seo-settings') } catch {}
   if (seo?.enableSitemap === false || seo?.allowIndexing === false) return []
 
-  const staticPaths = ['', '/gioi-thieu', '/gioi-thieu/lich-su-phat-trien', '/so-do-to-chuc', '/tin-tuc', '/thong-bao', '/dau-thau-mua-sam', '/lich-kham', '/tiem-chung', '/bang-gia', '/van-ban', '/tuyen-dung', '/khoa-phong', '/chuyen-khoa', '/bac-si', '/lien-he']
+  const staticPaths = ['', '/gioi-thieu', '/gioi-thieu/lich-su-phat-trien', '/so-do-to-chuc', '/tin-tuc', '/thong-bao', '/hoat-dong-khoa-hoc', '/dau-thau-mua-sam', '/lich-kham', '/tiem-chung', '/bang-gia', '/van-ban', '/tuyen-dung', '/khoa-phong', '/chuyen-khoa', '/bac-si', '/lien-he']
   const entries: MetadataRoute.Sitemap = staticPaths.map(path => ({ url: base + path, changeFrequency: path ? 'weekly' : 'daily' }))
   try {
     const payload = await getCMS()
     const configs: Array<{ collection: any; prefix: string; published?: boolean }> = [
       { collection: 'news', prefix: '/tin-tuc', published: true },
       { collection: 'notices', prefix: '/thong-bao', published: true },
+      { collection: 'scientific-activities', prefix: '/hoat-dong-khoa-hoc', published: true },
       { collection: 'procurement', prefix: '/dau-thau-mua-sam', published: true },
       { collection: 'pages', prefix: '/trang', published: true },
       { collection: 'recruitment', prefix: '/tuyen-dung', published: true },

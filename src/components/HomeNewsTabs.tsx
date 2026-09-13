@@ -27,6 +27,7 @@ const defaultTabs: NewsTab[] = [
 function EmptyCard() {
   return (
     <div
+      className="homeEditorialEmptyCard"
       aria-hidden="true"
       style={{
         display: 'flex',

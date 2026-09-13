@@ -15,7 +15,7 @@ export function SearchFilter({ items, kind = 'news', initialCategory = 'all' }: 
     return matchQ && (category === 'all' || c === category)
   }), [items, q, category])
 
-  const label = kind === 'notice' ? 'thông báo' : kind === 'procurement' ? 'nội dung mua sắm' : kind === 'recruitment' ? 'tin tuyển dụng' : kind === 'schedule' ? 'lịch khám' : kind === 'vaccination' ? 'nội dung tiêm chủng' : kind === 'document' ? 'văn bản' : 'tin bài'
+  const label = kind === 'notice' ? 'thông báo' : kind === 'procurement' ? 'nội dung mua sắm' : kind === 'recruitment' ? 'tin tuyển dụng' : kind === 'schedule' ? 'lịch khám' : kind === 'vaccination' ? 'nội dung tiêm chủng' : kind === 'document' ? 'văn bản' : kind === 'science' ? 'hoạt động khoa học' : 'tin bài'
 
   return (
     <section className="contentDirectory" aria-label={`Danh sách ${label}`}>
@@ -42,7 +42,7 @@ export function SearchFilter({ items, kind = 'news', initialCategory = 'all' }: 
       <div className="contentDirectoryHeading">
         <div>
           <span className="contentDirectoryEyebrow">{category === 'all' ? 'TẤT CẢ CHUYÊN MỤC' : 'CHUYÊN MỤC'}</span>
-          <h2>{category === 'all' ? (kind === 'news' ? 'Tin mới cập nhật' : kind === 'notice' ? 'Thông báo mới cập nhật' : kind === 'schedule' ? 'Lịch khám mới cập nhật' : kind === 'vaccination' ? 'Thông tin tiêm chủng mới cập nhật' : kind === 'document' ? 'Văn bản mới cập nhật' : 'Nội dung mới cập nhật') : category}</h2>
+          <h2>{category === 'all' ? (kind === 'news' ? 'Tin mới cập nhật' : kind === 'notice' ? 'Thông báo mới cập nhật' : kind === 'schedule' ? 'Lịch khám mới cập nhật' : kind === 'vaccination' ? 'Thông tin tiêm chủng mới cập nhật' : kind === 'document' ? 'Văn bản mới cập nhật' : kind === 'science' ? 'Hoạt động khoa học mới cập nhật' : 'Nội dung mới cập nhật') : category}</h2>
         </div>
         {category !== 'all' && <button type="button" onClick={() => setCategory('all')}>Xem tất cả chuyên mục</button>}
       </div>
@@ -62,7 +62,7 @@ export function SearchFilter({ items, kind = 'news', initialCategory = 'all' }: 
                   />
                 ) : (
                   <div className={`postCardPlaceholder ${styles.postCardPlaceholder}`}>
-                    <span>{kind === 'notice' ? 'THÔNG BÁO' : kind === 'procurement' ? 'MUA SẮM' : kind === 'recruitment' ? 'TUYỂN DỤNG' : 'TIN BÀI'}</span>
+                    <span>{kind === 'notice' ? 'THÔNG BÁO' : kind === 'procurement' ? 'MUA SẮM' : kind === 'recruitment' ? 'TUYỂN DỤNG' : kind === 'science' ? 'KHOA HỌC' : 'TIN BÀI'}</span>
                   </div>
                 )}
                 {(item.category || item.type) && <span className={`postCardBadge ${styles.postCardBadge}`}>{item.category || item.type}</span>}

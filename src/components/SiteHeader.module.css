@@ -12,32 +12,233 @@
 .root :global(.mainHeader),
 .root :global(.scrollingNotice) { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important; }
 
-.root :global(.mainHeader) { position: relative !important; top: auto !important; z-index: 60; height: 56px; background: #075db8 !important; box-shadow: none !important; }
-.root :global(.headerInner) { display: block !important; min-height: 56px !important; height: 56px; }
-.root :global(.mainMenu) { display: flex !important; align-items: stretch; justify-content: space-between !important; width: 100% !important; min-width: 0; height: 56px !important; gap: 0 !important; overflow: visible !important; }
+.root :global(.mainHeader) {
+  position: relative !important;
+  top: auto !important;
+  z-index: 60;
+  min-height: var(--menu-height, 56px);
+  height: var(--menu-height, 56px);
+  background: var(--menu-background, #075db8) !important;
+  border-radius: var(--menu-border-radius, 0) !important;
+  box-shadow: 0 4px 16px rgba(7, 84, 168, 0.18) !important;
+}
+.root :global(.headerInner) {
+  display: block !important;
+  min-height: var(--menu-height, 56px) !important;
+  height: var(--menu-height, 56px);
+}
+.root :global(.mainMenu) {
+  display: flex !important;
+  align-items: stretch;
+  justify-content: var(--menu-justify, space-between) !important;
+  width: 100% !important;
+  min-width: 0;
+  height: var(--menu-height, 56px) !important;
+  gap: 0 !important;
+  overflow: visible !important;
+}
 .root :global(.mainMenu > .navSimpleLink),
-.root :global(.mainMenu > .navItem) { display: flex !important; flex: 0 0 auto !important; width: auto !important; min-width: max-content !important; height: 56px !important; margin: 0 !important; padding: 0 !important; border: 0 !important; }
+.root :global(.mainMenu > .navItem) {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: max-content !important;
+  height: var(--menu-height, 56px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
 .root :global(.mainMenu .navSimpleLink),
-.root :global(.mainMenu .navMainLink) { display: inline-flex !important; flex: 0 0 auto !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: center !important; width: auto !important; min-width: max-content !important; height: 56px !important; min-height: 56px !important; margin: 0 !important; padding: 0 !important; color: #fff !important; background: transparent !important; font-family: Arial, Helvetica, sans-serif !important; font-size: 12px !important; font-weight: 700 !important; line-height: 56px !important; letter-spacing: 0 !important; text-align: center; text-transform: uppercase; white-space: nowrap !important; word-break: keep-all !important; overflow-wrap: normal !important; }
-.root :global(.mainMenu .navMainLink) { gap: 5px !important; list-style: none; }
-.root :global(.navChevron) { display: block !important; flex: 0 0 9px !important; width: 9px !important; height: 6px !important; margin: 0 !important; stroke: currentColor; fill: none; }
+.root :global(.mainMenu .navMainLink) {
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  min-width: max-content !important;
+  height: var(--menu-height, 56px) !important;
+  min-height: var(--menu-height, 56px) !important;
+  margin: 0 !important;
+  padding: 0 var(--menu-item-spacing, 8px) !important;
+  border-radius: var(--menu-item-radius, 6px) !important;
+  color: var(--menu-text-color, #ffffff) !important;
+  background: transparent !important;
+  font-family: var(--menu-font-family, Arial, Helvetica, sans-serif) !important;
+  font-size: var(--menu-font-size, 14px) !important;
+  font-weight: var(--menu-font-weight, 700) !important;
+  line-height: var(--menu-height, 56px) !important;
+  letter-spacing: var(--menu-letter-spacing, 0) !important;
+  text-align: center;
+  text-transform: var(--menu-text-transform, uppercase) !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  transition: color 0.18s ease, background 0.18s ease;
+}
+.root :global(.mainMenu .navMainLink) {
+  gap: 6px !important;
+  list-style: none;
+}
+.root :global(.navChevron) {
+  display: block !important;
+  flex: 0 0 9px !important;
+  width: 9px !important;
+  height: 6px !important;
+  margin: 0 !important;
+  stroke: currentColor;
+  fill: none;
+  transition: transform 0.2s ease;
+}
+.root :global(.mainMenu .navItem:hover .navChevron) {
+  transform: rotate(180deg);
+}
 .root :global(.mainMenu .navSimpleLink:hover),
 .root :global(.mainMenu .navMainLink:hover),
-.root :global(.mainMenu .navItem:hover > .navMainLink) { color: #ffe37b !important; }
+.root :global(.mainMenu .navItem:hover > .navMainLink) {
+  color: var(--menu-hover-text, #ffe272) !important;
+  background: var(--menu-hover-bg, rgba(255, 255, 255, 0.1)) !important;
+}
 .root :global(.mainMenu .navSimpleLink::after),
-.root :global(.mainMenu .navMainLink::after) { left: 0 !important; right: 0 !important; bottom: 0 !important; height: 3px !important; }
-.root :global(.navItem) { position: relative !important; }
-.root :global(.navDropdown) { top: 100% !important; left: 50% !important; width: 240px !important; }
+.root :global(.mainMenu .navMainLink::after) {
+  left: var(--menu-item-spacing, 8px) !important;
+  right: var(--menu-item-spacing, 8px) !important;
+  bottom: 0 !important;
+  height: 3.5px !important;
+  background: var(--menu-active-indicator, #ffd24d) !important;
+  border-radius: 3px 3px 0 0 !important;
+}
+.root :global(.navItem) {
+  position: relative !important;
+}
+
+/* Dropdown Menu Styles */
+.root :global(.navDropdown) {
+  top: 100% !important;
+  left: 50% !important;
+  width: var(--menu-dropdown-width, 250px) !important;
+  background: var(--menu-dropdown-bg, #ffffff) !important;
+  border: 1px solid var(--menu-dropdown-border, #e2e8f0) !important;
+  border-radius: var(--menu-dropdown-radius, 12px) !important;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(7, 84, 168, 0.08) !important;
+  padding: 8px 6px !important;
+  overflow: hidden;
+  z-index: 100;
+  transition: opacity var(--menu-anim-speed, 0.22s) cubic-bezier(0.16, 1, 0.3, 1),
+              transform var(--menu-anim-speed, 0.22s) cubic-bezier(0.16, 1, 0.3, 1),
+              visibility var(--menu-anim-speed, 0.22s) ease;
+}
+.root :global(.navDropdown a) {
+  font-size: var(--menu-dropdown-font-size, 14px) !important;
+  color: var(--menu-dropdown-text, #1e3a5f) !important;
+  padding: 10px 14px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  transition: all 0.15s ease !important;
+}
+.root :global(.navDropdown a i) {
+  color: var(--menu-dropdown-arrow, #94a3b8) !important;
+  font-style: normal;
+  font-size: 16px;
+  font-weight: 700;
+  transition: transform 0.15s ease;
+}
+.root :global(.navDropdown a:hover) {
+  background: var(--menu-dropdown-hover-bg, #f0f7ff) !important;
+  color: var(--menu-dropdown-hover-text, #075db8) !important;
+}
+.root :global(.navDropdown a:hover i) {
+  transform: translateX(3px);
+  color: var(--menu-dropdown-hover-text, #075db8) !important;
+}
+
+/* Animations: Slide-down */
+.root :global(.anim-slide-down .navDropdown) {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -10px);
+}
+.root :global(.anim-slide-down .navItem:hover .navDropdown),
+.root :global(.anim-slide-down .navItem:focus-within .navDropdown) {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translate(-50%, 0) !important;
+}
+
+/* Animations: Zoom-in */
+.root :global(.anim-zoom-in .navDropdown) {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0) scale(0.88);
+}
+.root :global(.anim-zoom-in .navItem:hover .navDropdown),
+.root :global(.anim-zoom-in .navItem:focus-within .navDropdown) {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translate(-50%, 0) scale(1) !important;
+}
+
+/* Animations: Fade-in */
+.root :global(.anim-fade-in .navDropdown) {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0);
+}
+.root :global(.anim-fade-in .navItem:hover .navDropdown),
+.root :global(.anim-fade-in .navItem:focus-within .navDropdown) {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translate(-50%, 0) !important;
+}
+
+/* Animations: Flip-in */
+.root :global(.anim-flip-in .navDropdown) {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0) perspective(600px) rotateX(-15deg);
+  transform-origin: top center;
+}
+.root :global(.anim-flip-in .navItem:hover .navDropdown),
+.root :global(.anim-flip-in .navItem:focus-within .navDropdown) {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translate(-50%, 0) perspective(600px) rotateX(0deg) !important;
+}
+
+/* Fallback hover */
 .root :global(.navItem:hover .navDropdown),
-.root :global(.navItem:focus-within .navDropdown) { visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; transform: translate(-50%, 0) !important; }
+.root :global(.navItem:focus-within .navDropdown) {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
 
 @media (max-width: 1180px) and (min-width: 901px) {
-  .root :global(.mainMenu .navSimpleLink), .root :global(.mainMenu .navMainLink) { font-size: 11px !important; }
+  .root :global(.mainMenu .navSimpleLink),
+  .root :global(.mainMenu .navMainLink) {
+    font-size: calc(var(--menu-font-size, 14px) - 2px) !important;
+    padding: 0 calc(var(--menu-item-spacing, 8px) * 0.6) !important;
+  }
 }
 @media (max-width: 900px) {
   .root :global(.mainHeader) { overflow-x: auto; }
-  .root :global(.mainMenu) { min-width: max-content; gap: 22px !important; padding-inline: 16px !important; }
-  .root :global(.mainMenu .navSimpleLink), .root :global(.mainMenu .navMainLink) { font-size: 12px !important; }
+  .root :global(.mainMenu) { min-width: max-content; gap: 16px !important; padding-inline: 14px !important; }
+  .root :global(.mainMenu .navSimpleLink),
+  .root :global(.mainMenu .navMainLink) {
+    font-size: var(--menu-font-size, 13px) !important;
+  }
 }
 
 /* Header configurable utility bar / contact cards. */
@@ -106,17 +307,18 @@
   gap: 16px !important;
 }
 .root :global(.mastheadContact) {
-  min-width: 220px;
+  min-width: var(--contact-min-width, 220px);
   min-height: 64px;
   display: flex !important;
   align-items: center !important;
   gap: 14px !important;
   padding: 10px 18px !important;
   border: 1.5px solid var(--contact-border, #e5e7eb) !important;
-  border-radius: 16px !important;
+  border-radius: var(--contact-border-radius, 16px) !important;
   background: var(--contact-background, #ffffff) !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
   text-decoration: none !important;
+  font-family: var(--contact-font-family, inherit);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 .root :global(.mastheadContact:hover) {
@@ -126,9 +328,9 @@
 }
 
 .root :global(.mastheadContactIcon) {
-  width: 46px !important;
-  height: 46px !important;
-  flex: 0 0 46px !important;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
   display: grid !important;
   place-items: center !important;
   border-radius: 50% !important;
@@ -136,8 +338,8 @@
   background: var(--contact-icon-bg, #e0f2fe) !important;
 }
 .root :global(.mastheadContactIcon svg) {
-  width: 24px !important;
-  height: 24px !important;
+  width: 24px;
+  height: 24px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.9;
@@ -145,18 +347,18 @@
   stroke-linejoin: round;
 }
 .root :global(.mastheadContactIcon.emergencyCross) {
-  color: #ef4444 !important;
-  background: #fee2e2 !important;
+  color: var(--contact-icon, #ef4444) !important;
+  background: var(--contact-icon-bg, #fee2e2) !important;
 }
 .root :global(.mastheadContactIcon.emergencyCross svg) {
-  width: 22px !important;
-  height: 22px !important;
-  fill: #ef4444 !important;
+  width: 22px;
+  height: 22px;
+  fill: currentColor !important;
   stroke: none !important;
 }
 .root :global(.mastheadContactIcon.calendarClock) {
-  color: #0284c7 !important;
-  background: #e0f2fe !important;
+  color: var(--contact-icon, #0284c7) !important;
+  background: var(--contact-icon-bg, #e0f2fe) !important;
 }
 .root :global(.mastheadContactIcon.custom img) {
   width: 26px;
@@ -173,7 +375,7 @@
 }
 .root :global(.mastheadContact small) {
   color: var(--contact-title, #374151) !important;
-  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-family: var(--contact-font-family, Arial, "Segoe UI", Helvetica, sans-serif) !important;
   font-size: var(--contact-title-size, 11px) !important;
   font-weight: 700 !important;
   letter-spacing: 0.3px !important;
@@ -187,9 +389,9 @@
   align-items: center !important;
   gap: 8px !important;
   color: var(--contact-text, #0756b4) !important;
-  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-family: var(--contact-font-family, Arial, "Segoe UI", Helvetica, sans-serif) !important;
   font-size: var(--contact-text-size, 18px) !important;
-  font-weight: 900 !important;
+  font-weight: var(--contact-weight, 900) !important;
   letter-spacing: 0.2px !important;
   line-height: 1.15 !important;
   white-space: nowrap !important;

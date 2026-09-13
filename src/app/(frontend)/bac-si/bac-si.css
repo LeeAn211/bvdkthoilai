@@ -1,4 +1,4 @@
-/* ── DOCTOR DIRECTORY PAGE (BACH MAI EXACT STYLE) ───────────── */
+/* ── DOCTOR DIRECTORY PAGE ───────────── */
 .doctorsPage {
   background-color: #ffffff;
   padding-bottom: 80px;
@@ -186,7 +186,7 @@
   color: #0878d1;
 }
 
-/* ── DOCTORS GRID (4 CỘT CHUẨN FORM MINH HỌA BẠCH MAI) ─────── */
+/* ── DOCTORS GRID (4 CỘT) ─────── */
 .doctorsGridSection {
   margin-top: 45px;
 }
@@ -197,7 +197,7 @@
   gap: 32px 28px;
 }
 
-/* Thẻ bác sĩ tối giản, thanh lịch, chuẩn Bạch Mai */
+/* Thẻ bác sĩ tối giản, thanh lịch */
 .doctorCard {
   display: flex;
   flex-direction: column;

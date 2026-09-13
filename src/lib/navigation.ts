@@ -9,6 +9,7 @@ const prefix: Record<string, string> = {
   departments: '/khoa-phong',
   specialties: '/chuyen-khoa',
   doctors: '/bac-si',
+  'scientific-activities': '/hoat-dong-khoa-hoc',
 }
 
 export function resolveMenuUrl(item: MenuItem): string {

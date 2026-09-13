@@ -77,6 +77,7 @@ export interface Config {
     specialties: Specialty;
     doctors: Doctor;
     schedules: Schedule;
+    appointments: Appointment;
     services: Service;
     servicePrices: ServicePrice;
     vaccinations: Vaccination;
@@ -111,6 +112,8 @@ export interface Config {
     'custom-posts': CustomPost;
     'advanced-techniques': AdvancedTechnique;
     'our-experts': OurExpert;
+    'scientific-activity-groups': ScientificActivityGroup;
+    'scientific-activities': ScientificActivity;
     importJobs: ImportJob;
     'audit-logs': AuditLog;
     'payload-kv': PayloadKv;
@@ -130,6 +133,7 @@ export interface Config {
     specialties: SpecialtiesSelect<false> | SpecialtiesSelect<true>;
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
     schedules: SchedulesSelect<false> | SchedulesSelect<true>;
+    appointments: AppointmentsSelect<false> | AppointmentsSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     servicePrices: ServicePricesSelect<false> | ServicePricesSelect<true>;
     vaccinations: VaccinationsSelect<false> | VaccinationsSelect<true>;
@@ -164,6 +168,8 @@ export interface Config {
     'custom-posts': CustomPostsSelect<false> | CustomPostsSelect<true>;
     'advanced-techniques': AdvancedTechniquesSelect<false> | AdvancedTechniquesSelect<true>;
     'our-experts': OurExpertsSelect<false> | OurExpertsSelect<true>;
+    'scientific-activity-groups': ScientificActivityGroupsSelect<false> | ScientificActivityGroupsSelect<true>;
+    'scientific-activities': ScientificActivitiesSelect<false> | ScientificActivitiesSelect<true>;
     importJobs: ImportJobsSelect<false> | ImportJobsSelect<true>;
     'audit-logs': AuditLogsSelect<false> | AuditLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -193,6 +199,7 @@ export interface Config {
     'chatbot-settings': ChatbotSetting;
     'system-settings': SystemSetting;
     'schedule-settings': ScheduleSetting;
+    'appointment-settings': AppointmentSetting;
     'quick-links-settings': QuickLinksSetting;
   };
   globalsSelect: {
@@ -213,6 +220,7 @@ export interface Config {
     'chatbot-settings': ChatbotSettingsSelect<false> | ChatbotSettingsSelect<true>;
     'system-settings': SystemSettingsSelect<false> | SystemSettingsSelect<true>;
     'schedule-settings': ScheduleSettingsSelect<false> | ScheduleSettingsSelect<true>;
+    'appointment-settings': AppointmentSettingsSelect<false> | AppointmentSettingsSelect<true>;
     'quick-links-settings': QuickLinksSettingsSelect<false> | QuickLinksSettingsSelect<true>;
   };
   locale: null;
@@ -942,72 +950,30 @@ export interface Specialty {
 export interface Doctor {
   id: number;
   name: string;
+  degree?: string | null;
   /**
    * Tự động tạo từ Tên khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
   title?: string | null;
-  degree?: string | null;
   professionalTitle?: string | null;
-  /**
-   * 💡 Gợi ý kích thước chuẩn: Tỷ lệ đứng 3:4 (chuẩn nhất: 600×800px hoặc 450×600px). Chụp bán thân/chân dung nền sáng hoặc áo blouse trắng. Hệ thống tự động căn chỉnh vừa vặn khung hình 3:4 và giữ nguyên tỷ lệ, không bị méo/biến dạng ảnh.
-   */
-  avatar?: (number | null) | Media;
   department: number | Department;
   /**
-   * Chỉ chọn khi cần phân loại chuyên môn sâu. Không bắt buộc nếu Khoa/Phòng đã đủ để mô tả đơn vị công tác.
+   * Chọn khi cần phân loại chuyên môn sâu. Không bắt buộc nếu Khoa/Phòng đã đủ.
    */
   specialtyRef?: (number | null) | Specialty;
+  licenseNumber?: string | null;
   /**
-   * Trường chỉ đọc để bảo toàn dữ liệu cũ. Không nhập mới vào trường này.
+   * Bảo toàn dữ liệu cũ.
    */
   specialty?: string | null;
-  licenseNumber?: string | null;
-  bio?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  expertise?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  experience?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  /**
+   * 💡 Tỷ lệ đứng 3:4 chuẩn bệnh viện (600×800px hoặc 450×600px). Chụp bán thân áo blouse trắng nền sáng. Hệ thống tự động căn chỉnh phủ khít khung hình, bảo đảm tuyệt đối không biến dạng, không méo ảnh.
+   */
+  avatar?: (number | null) | Media;
+  /**
+   * Nhập thông tin năm tốt nghiệp Đại học Y, Thạc sĩ, Chuyên khoa, Tiến sĩ, tu nghiệp nước ngoài...
+   */
   education?: {
     root: {
       type: string;
@@ -1023,6 +989,45 @@ export interface Doctor {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Nhập các mốc thời gian công tác, các đơn vị y tế từng đảm nhiệm, quá trình thăng tiến...
+   */
+  experience?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Kỹ thuật chuyên sâu, mũi nhọn điều trị, phẫu thuật, can thiệp hoặc lĩnh vực phụ trách...
+   */
+  expertise?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Giải thưởng y học, sách biên soạn, bài báo quốc tế, đề tài nghiên cứu khoa học các cấp...
+   */
   achievements?: {
     root: {
       type: string;
@@ -1039,7 +1044,41 @@ export interface Doctor {
     [k: string]: unknown;
   } | null;
   /**
-   * Bật để cho phép bác sĩ xuất hiện trong khối Chuyên gia của chúng tôi trên Trang chủ. Tắt nếu chỉ muốn hiển thị tại trang danh sách Bác sĩ (/bac-si).
+   * Mặc định là "Đặt lịch khám". Bạn có thể đổi sang từ ngữ mong muốn.
+   */
+  bookingBtnText?: string | null;
+  /**
+   * Mặc định liên kết đến trang "/dat-lich-kham". Có thể đổi sang bất kỳ link nào tùy ý.
+   */
+  bookingBtnUrl?: string | null;
+  /**
+   * Bật nếu muốn người dùng bấm mở link sang một tab mới.
+   */
+  bookingBtnOpenNewTab?: boolean | null;
+  /**
+   * Nội dung hiển thị trong ô màu xanh bên dưới nút đặt lịch. Để trống nếu muốn ẩn ô này.
+   */
+  bookingNoticeText?: string | null;
+  /**
+   * Lời giới thiệu tâm huyết của bác sĩ hoặc bài viết tổng hợp về thầy thuốc.
+   */
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Bật để bác sĩ xuất hiện trong khối Chuyên gia của chúng tôi trên Trang chủ. Tắt nếu chỉ muốn hiện tại trang Bác sĩ (/bac-si).
    */
   showOnHome?: boolean | null;
   /**
@@ -1070,7 +1109,7 @@ export interface Doctor {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Ưu tiên đăng ảnh lịch khám tuần chính thức. Vẫn hỗ trợ nhập theo ngày/tuần để tra cứu chi tiết.
+ * Ưu tiên đăng ảnh lịch khám tuần chính thức. Vẫn hỗ trợ nhập theo ngày/tuần/lịch trực cấp cứu để tra cứu chi tiết.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "schedules".
@@ -1104,17 +1143,45 @@ export interface Schedule {
     };
     [k: string]: unknown;
   } | null;
-  mode: 'daily' | 'weekly' | 'attachment';
+  mode: 'daily' | 'emergency' | 'weekly' | 'attachment';
+  date?: string | null;
+  /**
+   * Nhập nhanh theo từng Khoa/Phòng. Mỗi ca có thể nhập danh sách bác sĩ ngăn cách bằng dấu phẩy (VD: "BS. Năm, BS. Dương, BS. Linh, BS. Tân..."). Giao diện website sẽ tự động dựng bảng banner y tế chuẩn mẫu.
+   */
+  dailyAssignments?:
+    | {
+        departmentName: string;
+        departmentIcon?:
+          | (
+              | 'stethoscope'
+              | 'ambulance'
+              | 'bed'
+              | 'mortar'
+              | 'scalpel'
+              | 'baby'
+              | 'ultrasound'
+              | 'tooth'
+              | 'virus'
+              | 'clinic'
+            )
+          | null;
+        morningDoctors?: string | null;
+        noonDoctors?: string | null;
+        afternoonDoctors?: string | null;
+        eveningDoctors?: string | null;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   doctor?: (number | null) | Doctor;
   department?: (number | null) | Department;
-  date?: string | null;
   startTime?: string | null;
   endTime?: string | null;
   room?: string | null;
   weekStart?: string | null;
   weekEnd?: string | null;
   /**
-   * Bấm Thêm để chọn sẵn thứ, bác sĩ, khoa và khung giờ.
+   * Thêm ca khám của từng bác sĩ. Bạn có thể thêm nhiều bác sĩ vào cùng 1 ngày (ví dụ: nhiều dòng cùng chọn Thứ Hai) một cách nhanh chóng. Phía ngoài website hệ thống sẽ tự động gộp tất cả bác sĩ cùng thứ vào một hàng ngang chuyên nghiệp duy nhất.
    */
   weeklySlots?:
     | {
@@ -1128,6 +1195,48 @@ export interface Schedule {
         id?: string | null;
       }[]
     | null;
+  emergencyWeekStart?: string | null;
+  emergencyWeekEnd?: string | null;
+  /**
+   * 📋 Mỗi dòng = 1 Khoa/Bộ phận (LÃNH ĐẠO, CẤP CỨU, NỘI-NHI...). 7 ô = nhân sự trực T2→CN. Dùng nút Import Excel bên trên để tự động điền.
+   */
+  weeklyDeptSlots?:
+    | {
+        deptName: string;
+        deptType?: ('clinical' | 'leader' | 'paraclinical' | 'admin') | null;
+        subRole?: string | null;
+        day2?: string | null;
+        day3?: string | null;
+        day4?: string | null;
+        day5?: string | null;
+        day6?: string | null;
+        day7?: string | null;
+        day8?: string | null;
+        fixedStaff?: string | null;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Ghi chú điều động, công tác, học tập của các bác sĩ trong tuần (tự động import từ file Excel).
+   */
+  emergencyGeneralNote?: string | null;
+  /**
+   * Số điện thoại tài xế, điện nước, công an, bảo vệ, viện phí, bệnh viện tuyến trên... (tự động import từ file Excel).
+   */
+  emergencyContacts?:
+    | {
+        name: string;
+        phone: string;
+        type?: ('internal' | 'emergency_unit') | null;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Lưu trữ tệp Excel gốc để tiện tải về xem lại hoặc tra cứu lịch sử khi cần.
+   */
+  emergencyExcelFile?: (number | null) | Media;
   scheduleType?: ('official' | 'adjustment') | null;
   /**
    * Tải ảnh JPG/PNG mới hoặc chọn lại ảnh lịch đã có trong thư viện.
@@ -1148,6 +1257,70 @@ export interface Schedule {
   validTo?: string | null;
   note?: string | null;
   active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Danh sách phiếu đặt lịch khám tại cơ sở từ website. Có bảng thống kê và tính năng xuất dữ liệu Excel màu xanh.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "appointments".
+ */
+export interface Appointment {
+  id: number;
+  /**
+   * Tự động sinh mã duy nhất (VD: LK-2026-XXXX).
+   */
+  code: string;
+  status: 'new' | 'confirmed' | 'examining' | 'completed' | 'cancelled';
+  source?: ('website' | 'phone' | 'counter') | null;
+  fullName: string;
+  phone: string;
+  email?: string | null;
+  dob?: string | null;
+  gender?: ('male' | 'female' | 'other') | null;
+  insuranceNumber?: string | null;
+  address?: string | null;
+  /**
+   * Liên kết tới danh mục Chuyên khoa nếu có.
+   */
+  specialty?: (number | null) | Specialty;
+  /**
+   * Tên chuyên khoa người bệnh nhìn thấy và chọn trên form (kể cả chuyên khoa tự tạo).
+   */
+  specialtyTitle?: string | null;
+  department?: (number | null) | Department;
+  doctor?: (number | null) | Doctor;
+  appointmentDate: string;
+  timeSlot?: ('morning' | 'afternoon' | 'anytime') | null;
+  /**
+   * Tên hiển thị tiếng Việt người bệnh nhìn thấy trên web (VD: Buổi sáng: 07:00 – 10:00).
+   */
+  timeSlotLabel?: string | null;
+  symptoms?: string | null;
+  /**
+   * Ghi chú thông tin khi gọi điện thoại xác nhận với người bệnh hoặc dặn dò khi đến viện.
+   */
+  staffNote?: string | null;
+  confirmedAt?: string | null;
+  /**
+   * Lưu trữ các trường thông tin do quản trị viên tự thêm (CCCD, nghề nghiệp, ghi chú...).
+   */
+  customData?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * Ghi nhận chính xác giờ phút giây khi người bệnh bấm gửi trên trình duyệt.
+   */
+  submittedAt?: string | null;
+  ipAddress?: string | null;
+  userAgent?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2321,6 +2494,119 @@ export interface OurExpert {
   createdAt: string;
 }
 /**
+ * Thêm, sửa, sắp xếp hoặc xóa các nhóm dùng cho bài viết Hoạt động khoa học.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scientific-activity-groups".
+ */
+export interface ScientificActivityGroup {
+  id: number;
+  name: string;
+  /**
+   * Tự động tạo từ Tên khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  description?: string | null;
+  order?: number | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Thêm và quản lý bài viết cho mục Hoạt động khoa học trên trang chủ và trang danh sách riêng.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scientific-activities".
+ */
+export interface ScientificActivity {
+  id: number;
+  title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  excerpt?: string | null;
+  /**
+   * Chọn một nhóm đang sử dụng. Có thể thêm, sửa hoặc xóa nhóm tại mục “Nhóm hoạt động khoa học” trong Admin.
+   */
+  categoryGroup: number | ScientificActivityGroup;
+  category?: ('Đào tạo – Tập huấn' | 'Hội nghị – Hội thảo' | 'Kiến thức y khoa' | 'Thông tin cho người bệnh') | null;
+  /**
+   * Ảnh hiển thị tại mục Hoạt động khoa học và trang danh sách bài viết.
+   */
+  cover?: (number | null) | Media;
+  /**
+   * Nội dung bài viết, hình ảnh, liên kết, bảng và tài liệu liên quan.
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  attachments?:
+    | {
+        /**
+         * Website tự động sử dụng tên và định dạng của tệp đã tải lên.
+         */
+        label?: string | null;
+        /**
+         * Chọn “Tạo mới” để tải tệp lên hoặc “Chọn từ thư viện” để dùng lại tệp đã có.
+         */
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  /**
+   * Nguồn bài viết. Nếu để trống, hệ thống sẽ tự động hiển thị Nguồn mặc định cài trong Mẫu giao diện.
+   */
+  source?: string | null;
+  /**
+   * Chọn mẫu giao diện trang chi tiết cho bài viết này.
+   */
+  layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
+  /**
+   * Nếu ảnh bị cắt mất chi tiết hoặc chữ, chọn “Vừa vặn toàn bộ ảnh” để hiển thị đầy đủ không bị xén.
+   */
+  coverFit?: ('cover' | 'contain') | null;
+  /**
+   * Chỉnh góc lấy nét khi ảnh bị xén mất phần đầu hoặc tiêu đề.
+   */
+  coverPosition?: ('top' | 'center' | 'bottom') | null;
+  /**
+   * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
+   */
+  workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  /**
+   * Có thể tải ảnh mới hoặc chọn lại ảnh đã có trong Thư viện Tệp & Hình ảnh.
+   */
+  seoImage?: (number | null) | Media;
+  /**
+   * Để trống để hệ thống dùng URL hiện tại. Chỉ nhập khi cần khai báo URL chuẩn khác.
+   */
+  canonicalUrl?: string | null;
+  noIndex?: boolean | null;
+  excludeFromSitemap?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "importJobs".
  */
@@ -2447,6 +2733,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'schedules';
         value: number | Schedule;
+      } | null)
+    | ({
+        relationTo: 'appointments';
+        value: number | Appointment;
       } | null)
     | ({
         relationTo: 'services';
@@ -2583,6 +2873,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'our-experts';
         value: number | OurExpert;
+      } | null)
+    | ({
+        relationTo: 'scientific-activity-groups';
+        value: number | ScientificActivityGroup;
+      } | null)
+    | ({
+        relationTo: 'scientific-activities';
+        value: number | ScientificActivity;
       } | null)
     | ({
         relationTo: 'importJobs';
@@ -2922,20 +3220,24 @@ export interface SpecialtiesSelect<T extends boolean = true> {
  */
 export interface DoctorsSelect<T extends boolean = true> {
   name?: T;
+  degree?: T;
   slug?: T;
   title?: T;
-  degree?: T;
   professionalTitle?: T;
-  avatar?: T;
   department?: T;
   specialtyRef?: T;
-  specialty?: T;
   licenseNumber?: T;
-  bio?: T;
-  expertise?: T;
-  experience?: T;
+  specialty?: T;
+  avatar?: T;
   education?: T;
+  experience?: T;
+  expertise?: T;
   achievements?: T;
+  bookingBtnText?: T;
+  bookingBtnUrl?: T;
+  bookingBtnOpenNewTab?: T;
+  bookingNoticeText?: T;
+  bio?: T;
   showOnHome?: T;
   showDepartment?: T;
   customSubtitle?: T;
@@ -2962,9 +3264,21 @@ export interface SchedulesSelect<T extends boolean = true> {
   coverImage?: T;
   detailContent?: T;
   mode?: T;
+  date?: T;
+  dailyAssignments?:
+    | T
+    | {
+        departmentName?: T;
+        departmentIcon?: T;
+        morningDoctors?: T;
+        noonDoctors?: T;
+        afternoonDoctors?: T;
+        eveningDoctors?: T;
+        note?: T;
+        id?: T;
+      };
   doctor?: T;
   department?: T;
-  date?: T;
   startTime?: T;
   endTime?: T;
   room?: T;
@@ -2982,6 +3296,36 @@ export interface SchedulesSelect<T extends boolean = true> {
         note?: T;
         id?: T;
       };
+  emergencyWeekStart?: T;
+  emergencyWeekEnd?: T;
+  weeklyDeptSlots?:
+    | T
+    | {
+        deptName?: T;
+        deptType?: T;
+        subRole?: T;
+        day2?: T;
+        day3?: T;
+        day4?: T;
+        day5?: T;
+        day6?: T;
+        day7?: T;
+        day8?: T;
+        fixedStaff?: T;
+        note?: T;
+        id?: T;
+      };
+  emergencyGeneralNote?: T;
+  emergencyContacts?:
+    | T
+    | {
+        name?: T;
+        phone?: T;
+        type?: T;
+        note?: T;
+        id?: T;
+      };
+  emergencyExcelFile?: T;
   scheduleType?: T;
   scheduleImage?: T;
   scheduleFile?: T;
@@ -2996,6 +3340,38 @@ export interface SchedulesSelect<T extends boolean = true> {
   validTo?: T;
   note?: T;
   active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "appointments_select".
+ */
+export interface AppointmentsSelect<T extends boolean = true> {
+  code?: T;
+  status?: T;
+  source?: T;
+  fullName?: T;
+  phone?: T;
+  email?: T;
+  dob?: T;
+  gender?: T;
+  insuranceNumber?: T;
+  address?: T;
+  specialty?: T;
+  specialtyTitle?: T;
+  department?: T;
+  doctor?: T;
+  appointmentDate?: T;
+  timeSlot?: T;
+  timeSlotLabel?: T;
+  symptoms?: T;
+  staffNote?: T;
+  confirmedAt?: T;
+  customData?: T;
+  submittedAt?: T;
+  ipAddress?: T;
+  userAgent?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -3737,6 +4113,57 @@ export interface OurExpertsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scientific-activity-groups_select".
+ */
+export interface ScientificActivityGroupsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  order?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scientific-activities_select".
+ */
+export interface ScientificActivitiesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  categoryGroup?: T;
+  category?: T;
+  cover?: T;
+  content?: T;
+  attachments?:
+    | T
+    | {
+        label?: T;
+        file?: T;
+        id?: T;
+      };
+  featured?: T;
+  publishedAt?: T;
+  source?: T;
+  layoutTemplate?: T;
+  coverFit?: T;
+  coverPosition?: T;
+  workflowState?: T;
+  seoTitle?: T;
+  seoDescription?: T;
+  seoImage?: T;
+  canonicalUrl?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "importJobs_select".
  */
 export interface ImportJobsSelect<T extends boolean = true> {
@@ -3880,7 +4307,60 @@ export interface SiteSetting {
     minHeight?: number | null;
   };
   /**
-   * Quản lý duy nhất các ô Cấp cứu, Tổng đài hỗ trợ và ô liên hệ nhanh trên Header. Mỗi ô có thể đổi icon mặc định hoặc tải icon riêng.
+   * Tùy chỉnh toàn diện kích thước chữ, khoảng cách, căn lề, màu sắc thanh menu, màu menu con (dropdown), hiệu ứng chuyển động animation và font chữ.
+   */
+  headerMenuAppearance?: {
+    /**
+     * Khuyên dùng 13 - 15px để chữ to, rõ nét và dễ nhìn.
+     */
+    fontSize?: number | null;
+    fontWeight?: ('400' | '600' | '700' | '800' | '900') | null;
+    textTransform?: ('uppercase' | 'none' | 'capitalize') | null;
+    fontFamily?:
+      | (
+          | 'inherit'
+          | 'Arial, Helvetica, sans-serif'
+          | '"Segoe UI", Roboto, sans-serif'
+          | '"Montserrat", sans-serif'
+          | '"Roboto", sans-serif'
+          | '"Be Vietnam Pro", sans-serif'
+        )
+      | null;
+    /**
+     * 0 là chuẩn, 0.5 - 1px tạo độ thoáng
+     */
+    letterSpacing?: number | null;
+    /**
+     * Mặc định 56px
+     */
+    height?: number | null;
+    justifyContent?: ('space-between' | 'center' | 'flex-start' | 'flex-end' | 'space-around') | null;
+    /**
+     * Khoảng trống padding hai bên mỗi mục menu.
+     */
+    itemSpacing?: number | null;
+    borderRadius?: number | null;
+    itemBorderRadius?: number | null;
+    background?: string | null;
+    gradientEnd?: string | null;
+    textColor?: string | null;
+    hoverTextColor?: string | null;
+    hoverBackground?: string | null;
+    activeIndicatorColor?: string | null;
+    dropdownWidth?: number | null;
+    dropdownFontSize?: number | null;
+    dropdownBorderRadius?: number | null;
+    dropdownBackground?: string | null;
+    dropdownTextColor?: string | null;
+    dropdownBorderColor?: string | null;
+    dropdownHoverBackground?: string | null;
+    dropdownHoverTextColor?: string | null;
+    dropdownArrowColor?: string | null;
+    animationStyle?: ('slide-down' | 'zoom-in' | 'fade-in' | 'flip-in') | null;
+    animationSpeed?: ('0.15s' | '0.22s' | '0.35s') | null;
+  };
+  /**
+   * Tùy chỉnh toàn diện 2 ô "CẤP CỨU 24/7" và "ĐẶT LỊCH KHÁM" hoặc thêm các ô mới. Bạn có thể đổi đường link, đổi icon, màu sắc chữ, màu nền, font chữ, kích cỡ chữ và kích thước ô.
    */
   headerContactCards?:
     | {
@@ -3889,24 +4369,35 @@ export interface SiteSetting {
         text: string;
         href?: string | null;
         extraText?: string | null;
+        iconType?: ('emergency' | 'calendar' | 'phone' | 'headset' | 'heart' | 'info' | 'custom') | null;
         /**
-         * phone, emergency, headset, calendar, heart, info hoặc custom
-         */
-        iconType?: string | null;
-        /**
-         * Nếu chọn ảnh tại đây, ảnh này sẽ thay icon mặc định của ô liên hệ.
+         * Tải PNG, SVG hoặc chọn ảnh có sẵn.
          */
         customIcon?: (number | null) | Media;
-        background?: string | null;
-        borderColor?: string | null;
+        hasArrow?: boolean | null;
         titleColor?: string | null;
         textColor?: string | null;
+        extraTextColor?: string | null;
+        background?: string | null;
+        borderColor?: string | null;
         iconColor?: string | null;
         iconBackground?: string | null;
-        extraTextColor?: string | null;
+        fontFamily?:
+          | (
+              | 'inherit'
+              | 'Arial, Helvetica, sans-serif'
+              | '"Segoe UI", Roboto, sans-serif'
+              | '"Montserrat", sans-serif'
+              | '"Roboto", sans-serif'
+              | '"Be Vietnam Pro", sans-serif'
+            )
+          | null;
+        fontWeight?: ('400' | '600' | '700' | '800' | '900') | null;
         titleFontSize?: number | null;
         textFontSize?: number | null;
-        fontWeight?: string | null;
+        iconSize?: number | null;
+        minWidth?: number | null;
+        borderRadius?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -4081,6 +4572,7 @@ export interface Navigation {
               | '/chuyen-khoa'
               | '/bac-si'
               | '/tin-tuc'
+              | '/hoat-dong-khoa-hoc'
               | '/thong-bao'
               | '/lich-kham'
               | '/bang-gia'
@@ -4103,6 +4595,10 @@ export interface Navigation {
           | ({
               relationTo: 'news';
               value: number | News;
+            } | null)
+          | ({
+              relationTo: 'scientific-activities';
+              value: number | ScientificActivity;
             } | null)
           | ({
               relationTo: 'notices';
@@ -4182,6 +4678,7 @@ export interface Navigation {
                     | '/chuyen-khoa'
                     | '/bac-si'
                     | '/tin-tuc'
+                    | '/hoat-dong-khoa-hoc'
                     | '/thong-bao'
                     | '/lich-kham'
                     | '/bang-gia'
@@ -4204,6 +4701,10 @@ export interface Navigation {
                 | ({
                     relationTo: 'news';
                     value: number | News;
+                  } | null)
+                | ({
+                    relationTo: 'scientific-activities';
+                    value: number | ScientificActivity;
                   } | null)
                 | ({
                     relationTo: 'notices';
@@ -5049,13 +5550,16 @@ export interface OrganizationChart {
   createdAt?: string | null;
 }
 /**
- * Quản lý nội dung trang Lịch sử hình thành và phát triển Bệnh viện Đa khoa Khu vực Thới Lai.
+ * Quản lý toàn bộ nội dung, hình ảnh, icon, bố cục, căn lề và bật/tắt các khối trên trang Lịch sử hình thành và phát triển.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "hospital-history".
  */
 export interface HospitalHistory {
   id: number;
+  showHero?: boolean | null;
+  heroMinHeight?: number | null;
+  heroAlign?: ('left' | 'center' | 'right') | null;
   /**
    * Tải ảnh toàn cảnh bệnh viện hoặc chọn từ thư viện. Khuyến nghị ảnh ngang 16:9 hoặc 21:9.
    */
@@ -5063,29 +5567,68 @@ export interface HospitalHistory {
   eyebrow?: string | null;
   pageTitle: string;
   subtitle?: string | null;
+  showQuickStats?: boolean | null;
+  quickStats?:
+    | {
+        number: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  showLead?: boolean | null;
+  leadAlign?: ('left' | 'justify' | 'center') | null;
+  leadFontSize?: number | null;
   leadSummary?: string | null;
+  showTimeline?: boolean | null;
+  timelineKicker?: string | null;
+  timelineTitle?: string | null;
+  timelineDesc?: string | null;
   milestones?:
     | {
         year: string;
         title: string;
         tag?: string | null;
-        description: string;
-        image?: (number | null) | Media;
+        textAlign?: ('left' | 'justify' | 'center') | null;
         highlight?: boolean | null;
+        image?: (number | null) | Media;
+        description: string;
         id?: string | null;
       }[]
     | null;
+  showCoreValues?: boolean | null;
+  coreValuesKicker?: string | null;
+  coreValuesTitle?: string | null;
+  coreValuesDesc?: string | null;
   coreValues?: {
     missionTitle?: string | null;
     visionTitle?: string | null;
     valuesList?:
       | {
+          iconType?: ('heart' | 'star' | 'caduceus' | 'handshake' | 'shield' | 'lightbulb' | 'custom') | null;
+          customIcon?: (number | null) | Media;
           title: string;
           description: string;
           id?: string | null;
         }[]
       | null;
   };
+  showJourney?: boolean | null;
+  journeyKicker?: string | null;
+  journeyTitle?: string | null;
+  journeyDesc?: string | null;
+  journeySteps?:
+    | {
+        stepNumber: string;
+        title: string;
+        isHighlight?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  journeyBottomText?: string | null;
+  showAchievements?: boolean | null;
+  achievementsKicker?: string | null;
+  achievementsTitle?: string | null;
+  achievementsDesc?: string | null;
   achievements?:
     | {
         title: string;
@@ -5094,8 +5637,9 @@ export interface HospitalHistory {
         id?: string | null;
       }[]
     | null;
+  showContent?: boolean | null;
   /**
-   * Soạn thảo văn bản chi tiết về quá trình xây dựng, các thời kỳ lãnh đạo hoặc bài phát biểu lịch sử.
+   * Soạn thảo văn bản chi tiết kèm ảnh, danh sách hoặc bài phát biểu lịch sử.
    */
   content?: {
     root: {
@@ -5112,10 +5656,29 @@ export interface HospitalHistory {
     };
     [k: string]: unknown;
   } | null;
-  appearance?: {
-    primaryColor?: string | null;
-    accentColor?: string | null;
-  };
+  showCta?: boolean | null;
+  ctaTitle?: string | null;
+  ctaDesc?: string | null;
+  ctaBtnPrimaryText?: string | null;
+  ctaBtnPrimaryUrl?: string | null;
+  ctaBtnSecondaryText?: string | null;
+  ctaBtnSecondaryUrl?: string | null;
+  primaryColor?: string | null;
+  accentColor?: string | null;
+  headingColor?: string | null;
+  textColor?: string | null;
+  cardBgColor?: string | null;
+  fontFamily?:
+    | (
+        | 'inherit'
+        | 'Arial, Helvetica, sans-serif'
+        | '"Segoe UI", Roboto, sans-serif'
+        | '"Montserrat", sans-serif'
+        | '"Roboto", sans-serif'
+        | '"Be Vietnam Pro", sans-serif'
+      )
+    | null;
+  cardPadding?: number | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -5358,6 +5921,131 @@ export interface ScheduleSetting {
   createdAt?: string | null;
 }
 /**
+ * Tùy chỉnh toàn diện thiết kế, màu sắc, font chữ, bố cục, tùy chỉnh nội dung/nhãn/khung giờ các trường có sẵn và thêm/bớt trường mới.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "appointment-settings".
+ */
+export interface AppointmentSetting {
+  id: number;
+  enabled?: boolean | null;
+  pageTitle: string;
+  eyebrow?: string | null;
+  pageDescription?: string | null;
+  leftColumnTitle?: string | null;
+  rightColumnTitle?: string | null;
+  submitButtonBg?: string | null;
+  submitButtonHoverBg?: string | null;
+  submitButtonTextColor?: string | null;
+  formBackground?: string | null;
+  inputBorderColor?: string | null;
+  inputFocusBorderColor?: string | null;
+  headingColor?: string | null;
+  labelColor?: string | null;
+  requiredStarColor?: string | null;
+  fontFamily?:
+    | (
+        | 'inherit'
+        | 'Arial, Helvetica, sans-serif'
+        | '"Segoe UI", Roboto, sans-serif'
+        | '"Montserrat", sans-serif'
+        | '"Roboto", sans-serif'
+        | '"Be Vietnam Pro", sans-serif'
+      )
+    | null;
+  submitButtonText?: string | null;
+  inputBorderRadius?: number | null;
+  submitButtonRadius?: number | null;
+  formMaxWidth?: number | null;
+  timeSlots?:
+    | {
+        label: string;
+        value: string;
+        isDefault?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Chọn phương thức cung cấp danh sách chuyên khoa cho người bệnh đăng ký.
+   */
+  specialtySource?: ('auto' | 'selected' | 'custom') | null;
+  /**
+   * Chỉ những chuyên khoa được chọn ở đây mới hiển thị trên form đăng ký.
+   */
+  selectedSpecialties?: (number | Specialty)[] | null;
+  /**
+   * Thêm danh sách các chuyên khoa khám tùy ý (VD: Khám Tổng quát, Tim mạch, Nhi khoa...). Bấm "Add Chuyên khoa" để thêm.
+   */
+  customSpecialties?:
+    | {
+        name: string;
+        code?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  nameFieldLabel?: string | null;
+  nameFieldPlaceholder?: string | null;
+  phoneFieldLabel?: string | null;
+  phoneFieldPlaceholder?: string | null;
+  emailFieldLabel?: string | null;
+  emailFieldPlaceholder?: string | null;
+  addressFieldLabel?: string | null;
+  addressFieldPlaceholder?: string | null;
+  dobFieldLabel?: string | null;
+  genderFieldLabel?: string | null;
+  specialtyFieldLabel?: string | null;
+  specialtyFieldPlaceholder?: string | null;
+  doctorFieldLabel?: string | null;
+  appointmentDateFieldLabel?: string | null;
+  symptomsFieldLabel?: string | null;
+  symptomsFieldPlaceholder?: string | null;
+  timeSlotFieldLabel?: string | null;
+  insuranceFieldLabel?: string | null;
+  showEmail?: boolean | null;
+  showAddress?: boolean | null;
+  showInsurance?: boolean | null;
+  showDoctorSelect?: boolean | null;
+  showDob?: boolean | null;
+  showGender?: boolean | null;
+  showSymptoms?: boolean | null;
+  showTimeSlot?: boolean | null;
+  requireEmail?: boolean | null;
+  requireAddress?: boolean | null;
+  requireDob?: boolean | null;
+  requireSymptoms?: boolean | null;
+  customFields?:
+    | {
+        name: string;
+        label: string;
+        required?: boolean | null;
+        type: 'text' | 'textarea' | 'select' | 'number' | 'date' | 'checkbox';
+        column?: ('left' | 'right') | null;
+        placeholder?: string | null;
+        /**
+         * Chỉ áp dụng khi chọn kiểu Hộp chọn (Select). Mỗi lựa chọn nhập trên 1 dòng riêng biệt.
+         */
+        options?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  hospitalGuidance?: string | null;
+  hotlineSupport?: string | null;
+  /**
+   * Mặc định: 5 lần/15 phút. Nếu vượt quá sẽ bị tạm chặn.
+   */
+  maxSubmissionsPerIp?: number | null;
+  /**
+   * Tránh việc cùng 1 số điện thoại bấm gửi liên tiếp (Mặc định: 60 giây).
+   */
+  minSecondsBetweenSubmissions?: number | null;
+  /**
+   * Nếu người bệnh đã có phiếu hẹn trong ngày cùng chuyên khoa, yêu cầu kiểm tra lại mã phiếu đã cấp.
+   */
+  preventDuplicateBooking?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * Quản lý thanh dịch vụ nhanh dưới banner: thêm, bớt, ẩn/hiện, kéo thả thứ tự và chọn icon hoặc hình riêng cho từng mục.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -5447,6 +6135,37 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         backgroundOverlay?: T;
         minHeight?: T;
       };
+  headerMenuAppearance?:
+    | T
+    | {
+        fontSize?: T;
+        fontWeight?: T;
+        textTransform?: T;
+        fontFamily?: T;
+        letterSpacing?: T;
+        height?: T;
+        justifyContent?: T;
+        itemSpacing?: T;
+        borderRadius?: T;
+        itemBorderRadius?: T;
+        background?: T;
+        gradientEnd?: T;
+        textColor?: T;
+        hoverTextColor?: T;
+        hoverBackground?: T;
+        activeIndicatorColor?: T;
+        dropdownWidth?: T;
+        dropdownFontSize?: T;
+        dropdownBorderRadius?: T;
+        dropdownBackground?: T;
+        dropdownTextColor?: T;
+        dropdownBorderColor?: T;
+        dropdownHoverBackground?: T;
+        dropdownHoverTextColor?: T;
+        dropdownArrowColor?: T;
+        animationStyle?: T;
+        animationSpeed?: T;
+      };
   headerContactCards?:
     | T
     | {
@@ -5457,16 +6176,21 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         extraText?: T;
         iconType?: T;
         customIcon?: T;
-        background?: T;
-        borderColor?: T;
+        hasArrow?: T;
         titleColor?: T;
         textColor?: T;
+        extraTextColor?: T;
+        background?: T;
+        borderColor?: T;
         iconColor?: T;
         iconBackground?: T;
-        extraTextColor?: T;
+        fontFamily?: T;
+        fontWeight?: T;
         titleFontSize?: T;
         textFontSize?: T;
-        fontWeight?: T;
+        iconSize?: T;
+        minWidth?: T;
+        borderRadius?: T;
         id?: T;
       };
   headerSocialLinks?:
@@ -6103,22 +6827,45 @@ export interface OrganizationChartSelect<T extends boolean = true> {
  * via the `definition` "hospital-history_select".
  */
 export interface HospitalHistorySelect<T extends boolean = true> {
+  showHero?: T;
+  heroMinHeight?: T;
+  heroAlign?: T;
   bannerImage?: T;
   eyebrow?: T;
   pageTitle?: T;
   subtitle?: T;
+  showQuickStats?: T;
+  quickStats?:
+    | T
+    | {
+        number?: T;
+        label?: T;
+        id?: T;
+      };
+  showLead?: T;
+  leadAlign?: T;
+  leadFontSize?: T;
   leadSummary?: T;
+  showTimeline?: T;
+  timelineKicker?: T;
+  timelineTitle?: T;
+  timelineDesc?: T;
   milestones?:
     | T
     | {
         year?: T;
         title?: T;
         tag?: T;
-        description?: T;
-        image?: T;
+        textAlign?: T;
         highlight?: T;
+        image?: T;
+        description?: T;
         id?: T;
       };
+  showCoreValues?: T;
+  coreValuesKicker?: T;
+  coreValuesTitle?: T;
+  coreValuesDesc?: T;
   coreValues?:
     | T
     | {
@@ -6127,11 +6874,30 @@ export interface HospitalHistorySelect<T extends boolean = true> {
         valuesList?:
           | T
           | {
+              iconType?: T;
+              customIcon?: T;
               title?: T;
               description?: T;
               id?: T;
             };
       };
+  showJourney?: T;
+  journeyKicker?: T;
+  journeyTitle?: T;
+  journeyDesc?: T;
+  journeySteps?:
+    | T
+    | {
+        stepNumber?: T;
+        title?: T;
+        isHighlight?: T;
+        id?: T;
+      };
+  journeyBottomText?: T;
+  showAchievements?: T;
+  achievementsKicker?: T;
+  achievementsTitle?: T;
+  achievementsDesc?: T;
   achievements?:
     | T
     | {
@@ -6140,13 +6906,22 @@ export interface HospitalHistorySelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  showContent?: T;
   content?: T;
-  appearance?:
-    | T
-    | {
-        primaryColor?: T;
-        accentColor?: T;
-      };
+  showCta?: T;
+  ctaTitle?: T;
+  ctaDesc?: T;
+  ctaBtnPrimaryText?: T;
+  ctaBtnPrimaryUrl?: T;
+  ctaBtnSecondaryText?: T;
+  ctaBtnSecondaryUrl?: T;
+  primaryColor?: T;
+  accentColor?: T;
+  headingColor?: T;
+  textColor?: T;
+  cardBgColor?: T;
+  fontFamily?: T;
+  cardPadding?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -6371,6 +7146,99 @@ export interface ScheduleSettingsSelect<T extends boolean = true> {
   showWeeklyTab?: T;
   showAttachmentTab?: T;
   cacheMinutes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "appointment-settings_select".
+ */
+export interface AppointmentSettingsSelect<T extends boolean = true> {
+  enabled?: T;
+  pageTitle?: T;
+  eyebrow?: T;
+  pageDescription?: T;
+  leftColumnTitle?: T;
+  rightColumnTitle?: T;
+  submitButtonBg?: T;
+  submitButtonHoverBg?: T;
+  submitButtonTextColor?: T;
+  formBackground?: T;
+  inputBorderColor?: T;
+  inputFocusBorderColor?: T;
+  headingColor?: T;
+  labelColor?: T;
+  requiredStarColor?: T;
+  fontFamily?: T;
+  submitButtonText?: T;
+  inputBorderRadius?: T;
+  submitButtonRadius?: T;
+  formMaxWidth?: T;
+  timeSlots?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        isDefault?: T;
+        id?: T;
+      };
+  specialtySource?: T;
+  selectedSpecialties?: T;
+  customSpecialties?:
+    | T
+    | {
+        name?: T;
+        code?: T;
+        id?: T;
+      };
+  nameFieldLabel?: T;
+  nameFieldPlaceholder?: T;
+  phoneFieldLabel?: T;
+  phoneFieldPlaceholder?: T;
+  emailFieldLabel?: T;
+  emailFieldPlaceholder?: T;
+  addressFieldLabel?: T;
+  addressFieldPlaceholder?: T;
+  dobFieldLabel?: T;
+  genderFieldLabel?: T;
+  specialtyFieldLabel?: T;
+  specialtyFieldPlaceholder?: T;
+  doctorFieldLabel?: T;
+  appointmentDateFieldLabel?: T;
+  symptomsFieldLabel?: T;
+  symptomsFieldPlaceholder?: T;
+  timeSlotFieldLabel?: T;
+  insuranceFieldLabel?: T;
+  showEmail?: T;
+  showAddress?: T;
+  showInsurance?: T;
+  showDoctorSelect?: T;
+  showDob?: T;
+  showGender?: T;
+  showSymptoms?: T;
+  showTimeSlot?: T;
+  requireEmail?: T;
+  requireAddress?: T;
+  requireDob?: T;
+  requireSymptoms?: T;
+  customFields?:
+    | T
+    | {
+        name?: T;
+        label?: T;
+        required?: T;
+        type?: T;
+        column?: T;
+        placeholder?: T;
+        options?: T;
+        id?: T;
+      };
+  hospitalGuidance?: T;
+  hotlineSupport?: T;
+  maxSubmissionsPerIp?: T;
+  minSecondsBetweenSubmissions?: T;
+  preventDuplicateBooking?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

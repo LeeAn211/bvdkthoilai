@@ -1,0 +1,649 @@
+.bookingForm {
+  background: var(--form-bg, #ffffff);
+  border-radius: 20px;
+  padding: 36px;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 0 1px 1px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f1f5f9;
+}
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.formColumns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+
+@media (max-width: 820px) {
+  .formColumns {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .bookingForm {
+    padding: 24px 18px;
+  }
+}
+
+.formColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.columnHeading {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--heading-color, #1e293b);
+  margin: 0 0 6px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f4f8;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--label-color, #334155);
+}
+
+.required {
+  color: var(--star-color, #ef4444);
+  font-weight: 700;
+}
+
+/* Các trường input bám sát hình ảnh: nền trắng nhẹ, bo tròn, viền xám nhẹ, focus viền hồng/đỏ */
+.inputControl,
+.selectControl,
+.textareaControl {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: #1e293b;
+  background: #fbfcfe;
+  border: 1.5px solid var(--input-border, #e2e8f0);
+  border-radius: var(--input-radius, 8px);
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: inherit;
+}
+
+.inputControl::placeholder,
+.textareaControl::placeholder {
+  color: #94a3b8;
+  font-size: 14.5px;
+}
+
+.inputControl:focus,
+.selectControl:focus,
+.textareaControl:focus {
+  background: #ffffff;
+  /* Viền hồng nhẹ đúng như hình ảnh người dùng gửi hoặc tùy chỉnh trong Admin */
+  border-color: var(--input-focus-border, #f472b6);
+  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.18);
+}
+
+.selectControl {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.textareaControl {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.genderOptions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-top: 4px;
+}
+
+.radioLabel,
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--label-color, #334155);
+  cursor: pointer;
+}
+
+.radioControl,
+.checkboxControl {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--btn-bg, #0284c7);
+  cursor: pointer;
+}
+
+.timeSlotOptions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.radioCard {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #334155;
+  transition: all 0.2s ease;
+}
+
+.radioCard:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.radioCard input[type='radio']:checked + span {
+  color: var(--btn-bg, #0284c7);
+}
+
+.radioCard input[type='radio'] {
+  accent-color: var(--btn-bg, #0284c7);
+}
+
+.submitSection {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Nút đăng ký bo tròn màu xanh dương nổi bật đúng mẫu ảnh hoặc theo admin tùy chỉnh */
+.submitButton {
+  align-self: flex-end;
+  background: var(--btn-bg, #0ea5e9);
+  color: var(--btn-text, #ffffff);
+  border: none;
+  padding: 14px 46px;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: var(--btn-radius, 9999px);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);
+  transition: all 0.2s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--btn-hover-bg, #0284c7);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .submitButton {
+    width: 100%;
+    align-self: stretch;
+  }
+}
+
+.errorAlert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* SUCCESS BOX */
+.successBox {
+  background: var(--form-bg, #ffffff);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.successIcon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  background: #ecfdf5;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.successTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: #065f46;
+  margin: 0 0 10px 0;
+}
+
+.successDesc {
+  font-size: 15px;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0 0 24px 0;
+}
+
+.ticketCard {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border-radius: 14px;
+  color: #ffffff;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.25);
+  text-align: left;
+}
+
+.ticketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.35);
+  margin-bottom: 16px;
+}
+
+.ticketHospital {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.ticketFlex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.ticketInfoCol {
+  flex: 1;
+}
+
+.ticketQrBox {
+  background: #ffffff;
+  padding: 8px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.ticketQrImg {
+  display: block;
+  border-radius: 4px;
+}
+
+.ticketQrText {
+  font-size: 10px;
+  font-weight: 700;
+  color: #0369a1;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 540px) {
+  .ticketFlex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ticketQrBox {
+    align-self: center;
+    margin-top: 12px;
+  }
+}
+
+.ticketCodeBox {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.ticketCodeLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #e0f2fe;
+}
+
+.ticketCode {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffffff;
+  font-family: monospace, sans-serif;
+}
+
+.ticketMeta {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.ticketMeta div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ticketMeta small {
+  font-size: 11px;
+  color: #e0f2fe;
+  text-transform: uppercase;
+}
+
+.ticketMeta strong {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.guidanceBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 20px;
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.guidanceBox h4 {
+  margin: 0 0 8px 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.guidanceBox p {
+  margin: 0 0 12px 0;
+  font-size: 13.5px;
+  color: #475569;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.hotlineSupport {
+  font-size: 13.5px;
+  color: #0369a1;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 10px;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.printBtn {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 11px 22px;
+  font-size: 14.5px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.printBtn:hover {
+  background: #0369a1;
+}
+
+.newBookingBtn {
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  padding: 11px 22px;
+  font-size: 14.5px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.newBookingBtn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* Modal xem & tải ảnh phiếu khám */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 580px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.modalCloseBtn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.modalCloseBtn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.modalBody {
+  padding: 20px;
+  text-align: center;
+  background: #f1f5f9;
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+.ticketImgPreview {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  display: block;
+  margin: 0 auto;
+}
+
+.modalFooter {
+  padding: 14px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.downloadBtn {
+  background: #059669;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.downloadBtn:hover {
+  background: #047857;
+}
+
+.closeModalBtn {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.closeModalBtn:hover {
+  background: #e2e8f0;
+}
+
+/* KHI IN: CHỈ HIỂN THỊ DUY NHẤT PHIẾU KHÁM / ẢNH PHIẾU KHÁM, ẨN TOÀN BỘ HEADER, FOOTER, FORM WEBSITE */
+@media print {
+  :global(header),
+  :global(footer),
+  :global(nav),
+  :global(.topbar),
+  :global(.header),
+  :global(.footer),
+  :global(.bookingHero),
+  .guidanceBox,
+  .actionButtons,
+  .successTitle,
+  .successDesc,
+  .successIcon,
+  .columnHeading,
+  .fieldGroup,
+  .modalFooter,
+  .modalHeader {
+    display: none !important;
+  }
+
+  :global(body) {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .successBox {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+  }
+
+  .ticketCard {
+    box-shadow: none !important;
+    margin: 20px auto !important;
+    max-width: 600px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    page-break-inside: avoid !important;
+  }
+
+  .ticketImgPreview {
+    box-shadow: none !important;
+    max-width: 100% !important;
+    margin: 20px auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .modalOverlay {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  .modalContent {
+    box-shadow: none !important;
+    border: none !important;
+    max-width: 100% !important;
+  }
+
+  .modalBody {
+    background: transparent !important;
+    padding: 0 !important;
+  }
+}
+
+
+

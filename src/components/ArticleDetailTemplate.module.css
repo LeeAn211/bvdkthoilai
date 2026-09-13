@@ -1,4 +1,4 @@
-/* Bố cục trang chi tiết bài viết chuẩn y tế Bạch Mai (Dùng chung toàn hệ thống) */
+/* Bố cục trang chi tiết bài viết chuẩn y tế (Dùng chung toàn hệ thống) */
 .postDetailContainer {
   padding-top: 32px;
   padding-bottom: 60px;
@@ -128,11 +128,11 @@
 }
 
 .metaIconGold {
-  color: #d97706; /* Màu vàng cam giống hệt icon đồng hồ & con mắt Bạch Mai */
+  color: #d97706; /* Màu vàng cam nhấn icon đồng hồ & con mắt */
 }
 
 .metaCategoryLink {
-  color: #007a8c; /* Màu xanh ngọc thương hiệu y tế Bạch Mai */
+  color: #007a8c; /* Màu xanh ngọc thương hiệu y tế */
   font-weight: 600;
   text-decoration: none;
   transition: color 0.2s;

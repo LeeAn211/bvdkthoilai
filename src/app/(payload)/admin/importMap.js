@@ -24,6 +24,8 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { default as default_2c45d41a3f6b5a09cbd80db681fe5217 } from '../../../../src/components/admin/EmergencyTemplateDownload'
+import { default as default_9637cefafeb6600a998c5ef49603565b } from '../../../../src/components/admin/AppointmentsDashboard'
 import { default as default_5c576dfdc8a9a6c3d967695062ab8dcd } from '../../../../src/components/admin/ServicesExcelImport'
 import { default as default_688d79dcd6a2511ec4d98b30dde78fc0 } from '../../../../src/components/admin/FAQExcelImport'
 import { default as default_8be40d08e9627c0381c099acd3be9964 } from '../../../../src/components/admin/ChatbotIntentExcelImport'
@@ -64,6 +66,8 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/src/components/admin/EmergencyTemplateDownload#default": default_2c45d41a3f6b5a09cbd80db681fe5217,
+  "/src/components/admin/AppointmentsDashboard#default": default_9637cefafeb6600a998c5ef49603565b,
   "/src/components/admin/ServicesExcelImport#default": default_5c576dfdc8a9a6c3d967695062ab8dcd,
   "/src/components/admin/FAQExcelImport#default": default_688d79dcd6a2511ec4d98b30dde78fc0,
   "/src/components/admin/ChatbotIntentExcelImport#default": default_8be40d08e9627c0381c099acd3be9964,

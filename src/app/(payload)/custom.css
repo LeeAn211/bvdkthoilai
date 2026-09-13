@@ -547,3 +547,41 @@ html[data-theme="dark"] .collections__card-list .card {
   .collections__card-list { grid-template-columns: 1fr; }
   .collections__label { font-size: 16px; }
 }
+
+/* ==========================================================================
+   BẢNG NHẬP LIỆU PHÂN CÔNG BÁC SĨ KHÁM THEO NGÀY TRONG ADMIN PAYLOAD
+   Hiển thị trực quan theo dạng thẻ bảng phân ca, dễ nhập liệu nhanh
+   ========================================================================== */
+.field-type.array:has(.field-type[class*="dailyAssignments"]) .array-field__row,
+[class*="dailyAssignments"] .array-field__row {
+  border: 1.5px solid #bce0fd !important;
+  border-radius: 12px !important;
+  background: #f8fcff !important;
+  margin-bottom: 14px !important;
+  padding: 12px !important;
+  box-shadow: 0 3px 12px rgba(8, 120, 209, 0.05) !important;
+}
+
+[class*="dailyAssignments"] .array-field__row:hover {
+  border-color: #0878d1 !important;
+  background: #ffffff !important;
+}
+
+/* Tiêu đề 4 ca trực trong Admin có màu sắc đặc trưng */
+[class*="morningDoctors"] label {
+  color: #854d0e !important;
+  font-weight: 800 !important;
+}
+[class*="noonDoctors"] label {
+  color: #9a3412 !important;
+  font-weight: 800 !important;
+}
+[class*="afternoonDoctors"] label {
+  color: #166534 !important;
+  font-weight: 800 !important;
+}
+[class*="eveningDoctors"] label {
+  color: #5b21b6 !important;
+  font-weight: 800 !important;
+}
+

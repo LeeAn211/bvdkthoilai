@@ -53,6 +53,7 @@ const menuLinkFields = (): Field[] => [
       { label: 'Danh sách Chuyên khoa', value: '/chuyen-khoa' },
       { label: 'Đội ngũ bác sĩ', value: '/bac-si' },
       { label: 'Tin tức – Toàn bộ mục', value: '/tin-tuc' },
+      { label: 'Hoạt động khoa học – Toàn bộ mục', value: '/hoat-dong-khoa-hoc' },
       { label: 'Thông báo – Toàn bộ mục', value: '/thong-bao' },
       { label: 'Lịch khám – Toàn bộ mục', value: '/lich-kham' },
       { label: 'Bảng giá dịch vụ – Toàn bộ mục', value: '/bang-gia' },
@@ -75,6 +76,7 @@ const menuLinkFields = (): Field[] => [
     relationTo: [
       'pages',
       'news',
+      'scientific-activities',
       'notices',
       'procurement',
       'recruitment',

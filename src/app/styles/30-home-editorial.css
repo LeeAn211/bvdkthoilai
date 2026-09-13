@@ -28,7 +28,7 @@
   box-shadow: 0 10px 24px rgba(8, 120, 209, 0.14);
 }
 
-/* 1. Ô CHÍNH (FEATURED HERO CARD BÊN TRÁI) - Form chuẩn editorial: ảnh trên chiếm 50% khung, nội dung dưới 50% */
+/* 1. Ô CHÍNH (FEATURED HERO CARD BÊN TRÁI) - Mẫu chung: 60% ảnh, 40% nội dung */
 .homePortalPage .homeEditorialGrid > a.featured {
   grid-row: 1 / span 2;
   flex-direction: column;
@@ -38,10 +38,10 @@
 .homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage {
   position: relative;
   width: 100%;
-  flex: 1 1 50%;
-  height: 50%;
-  min-height: 0;
-  max-height: 50%;
+  flex: 0 0 60%;
+  height: 60%;
+  min-height: 60%;
+  max-height: 60%;
   overflow: hidden;
   background: linear-gradient(135deg, #f0f7fd 0%, #e2eef7 100%);
   display: flex;
@@ -66,11 +66,11 @@
 }
 
 .homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy {
-  padding: 24px 26px;
-  flex: 1 1 50%;
-  height: 50%;
-  min-height: 0;
-  max-height: 50%;
+  padding: 18px 22px 20px;
+  flex: 0 0 40%;
+  height: 40%;
+  min-height: 40%;
+  max-height: 40%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -97,12 +97,14 @@
 
 .homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy h3 {
   color: #0f2e47;
-  font-size: 21px;
+  font-size: 14.5px;
   font-weight: 800;
   line-height: 1.4;
   margin: 0 0 12px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  max-height: 4.2em;
+  text-overflow: ellipsis;
   -webkit-line-clamp: 3;
   overflow: hidden;
   transition: color .2s ease;
@@ -121,6 +123,15 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   overflow: hidden;
+}
+
+/* Giữ đủ 1 ô chính + 4 ô phụ khi một section có ít bài. */
+.homePortalPage .homeEditorialGrid > .homeEditorialEmptyCard {
+  min-height: 228px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* 2. BỐN Ô PHỤ (4 SUB CARDS BÊN PHẢI) - Ô NỘI DUNG RỘNG RÃI & CHIỀU CAO ẢNH LỚN */
@@ -193,7 +204,9 @@
   margin: 0 0 6px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  max-height: 4.2em;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
   overflow: hidden;
   transition: color .2s ease;
 }
@@ -254,11 +267,55 @@
    Used by Cổng thông tin bệnh viện and Hoạt động nổi bật. */
 .homePortalPage .tabFeatureCard .portalNewsImage,
 .homePortalPage .tabFeatureCard .scienceImage,
-.homePortalPage .featuredCarouselImage,
 .homePortalPage .homeNewsImage {
   background-position: top center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+.homePortalPage .featuredCarouselImage {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: 310px;
+  aspect-ratio: 1 / 1.15;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #f8fbfe;
+}
+.homePortalPage .featuredCarouselImage img {
+  position: static;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+}
+.homePortalPage .featuredCarouselCard {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+}
+.homePortalPage .featuredCarouselCopy {
+  height: auto;
+  min-height: 84px;
+  max-height: none;
+  overflow: hidden;
+}
+.homePortalPage .featuredCarouselCopy h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  max-height: 2.84em;
+  line-height: 1.42;
+  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 .homePortalPage .tabEditorialList .portalNewsCard.tabSideCard > .portalNewsThumb,
 .homePortalPage .tabEditorialList .portalNewsCard.tabSideCard > .portalNewsImage,
@@ -292,6 +349,12 @@
   }
 }
 @media (max-width: 900px) {
+  .homePortalPage .featuredCarouselImage {
+    height: auto;
+    min-height: 0;
+    max-height: 310px;
+    flex-basis: auto;
+  }
   .homePortalPage .homeEditorialGrid {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: auto;
@@ -307,6 +370,21 @@
   .homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy {
     flex: 1 1 auto;
     height: auto;
+    min-height: 180px;
+    max-height: none;
+  }
+}
+@media (max-width: 640px) {
+  .homePortalPage .featuredCarouselImage {
+    height: auto;
+    min-height: 0;
+    max-height: 310px;
+    flex-basis: auto;
+  }
+  .homePortalPage .featuredCarouselCard {
+    height: auto;
+    min-height: 0;
+    max-height: none;
   }
 }
 @media (max-width: 600px) {

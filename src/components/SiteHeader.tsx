@@ -5,13 +5,22 @@ import type { CSSProperties, ReactNode } from 'react'
 import { SocialBrandIcon } from './SocialBrandIcon'
 import { CurrentWeekdayTime } from './CurrentWeekdayTime'
 
-function ContactIcon({ type = 'phone', customUrl }: { type?: string; customUrl?: string }) {
-  if (type === 'custom' && customUrl) return <span className="mastheadContactIcon custom" aria-hidden="true"><img src={customUrl} alt="" /></span>
+function ContactIcon({ type = 'phone', customUrl, iconSize }: { type?: string; customUrl?: string; iconSize?: number }) {
+  const iconPixelSize = iconSize ? `${iconSize}px` : undefined
+  const iconInnerSize = iconSize ? Math.round(iconSize * 0.52) : undefined
+
+  if (type === 'custom' && customUrl) {
+    return (
+      <span className="mastheadContactIcon custom" style={{ width: iconPixelSize, height: iconPixelSize, flexBasis: iconPixelSize }} aria-hidden="true">
+        <img src={customUrl} alt="" style={iconInnerSize ? { width: `${iconInnerSize}px`, height: `${iconInnerSize}px` } : undefined} />
+      </span>
+    )
+  }
   
   if (type === 'emergency' || type === 'cross') {
     return (
-      <span className="mastheadContactIcon emergencyCross" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
+      <span className="mastheadContactIcon emergencyCross" style={{ width: iconPixelSize, height: iconPixelSize, flexBasis: iconPixelSize }} aria-hidden="true">
+        <svg viewBox="0 0 24 24" style={iconInnerSize ? { width: `${iconInnerSize}px`, height: `${iconInnerSize}px` } : undefined}>
           <path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6V3z" fill="currentColor" />
         </svg>
       </span>
@@ -20,8 +29,8 @@ function ContactIcon({ type = 'phone', customUrl }: { type?: string; customUrl?:
 
   if (type === 'calendar' || type === 'calendar-clock') {
     return (
-      <span className="mastheadContactIcon calendarClock" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <span className="mastheadContactIcon calendarClock" style={{ width: iconPixelSize, height: iconPixelSize, flexBasis: iconPixelSize }} aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={iconInnerSize ? { width: `${iconInnerSize}px`, height: `${iconInnerSize}px` } : undefined}>
           {/* Calendar top and body */}
           <rect x="3" y="4" width="18" height="18" rx="3" />
           <path d="M16 2v4" />
@@ -32,7 +41,7 @@ function ContactIcon({ type = 'phone', customUrl }: { type?: string; customUrl?:
           <path d="M7 17h2" />
           <path d="M11 14h2" />
           {/* Clock circle in bottom-right corner */}
-          <circle cx="16.5" cy="16.5" r="4.5" fill="#f0f9ff" stroke="currentColor" strokeWidth="1.8" />
+          <circle cx="16.5" cy="16.5" r="4.5" fill="var(--contact-icon-bg, #f0f9ff)" stroke="currentColor" strokeWidth="1.8" />
           <path d="M16.5 14.5v2l1.3 1.3" />
         </svg>
       </span>
@@ -45,7 +54,13 @@ function ContactIcon({ type = 'phone', customUrl }: { type?: string; customUrl?:
     info: <><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></>,
     phone: <path d="M7.4 3.6 10 7.3 8.3 9.1c1.1 2.3 3.1 4.3 5.4 5.4l1.8-1.7 3.7 2.6-.6 3.4c-.2 1-1.1 1.7-2.1 1.6C9.3 19.5 4.5 14.7 3.6 7.5c-.1-1 .6-1.9 1.6-2.1l2.2-.4Z"/>,
   }
-  return <span className="mastheadContactIcon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">{paths[type] || paths.phone}</svg></span>
+  return (
+    <span className="mastheadContactIcon" style={{ width: iconPixelSize, height: iconPixelSize, flexBasis: iconPixelSize }} aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" style={iconInnerSize ? { width: `${iconInnerSize}px`, height: `${iconInnerSize}px` } : undefined}>
+        {paths[type] || paths.phone}
+      </svg>
+    </span>
+  )
 }
 
 export async function SiteHeader() {
@@ -171,7 +186,7 @@ export async function SiteHeader() {
     {
       title: 'ĐẶT LỊCH KHÁM',
       text: 'ĐẶT LỊCH NGAY',
-      href: '/lich-kham',
+      href: '/dat-lich-kham',
       iconType: 'calendar',
       hasArrow: true,
       background: '#ffffff',
@@ -185,6 +200,44 @@ export async function SiteHeader() {
       fontWeight: '800'
     },
   ]
+
+  // Menu appearance settings
+  const menuApp = settings?.headerMenuAppearance || {}
+  const menuBg = menuApp.background || '#075db8'
+  const menuGradientEnd = menuApp.gradientEnd || '#006bc7'
+  const menuBackground = menuGradientEnd ? `linear-gradient(90deg, ${menuBg} 0%, ${menuGradientEnd} 100%)` : menuBg
+  const menuFontFamily = menuApp.fontFamily && menuApp.fontFamily !== 'inherit' ? menuApp.fontFamily : undefined
+
+  const menuStyle = {
+    '--menu-font-size': `${menuApp.fontSize || 14}px`,
+    '--menu-font-weight': menuApp.fontWeight || '700',
+    '--menu-text-transform': menuApp.textTransform || 'uppercase',
+    '--menu-letter-spacing': `${menuApp.letterSpacing ?? 0}px`,
+    '--menu-font-family': menuFontFamily,
+    '--menu-height': `${menuApp.height || 56}px`,
+    '--menu-justify': menuApp.justifyContent || 'space-between',
+    '--menu-item-spacing': `${menuApp.itemSpacing ?? 8}px`,
+    '--menu-border-radius': `${menuApp.borderRadius || 0}px`,
+    '--menu-item-radius': `${menuApp.itemBorderRadius || 6}px`,
+    '--menu-background': menuBackground,
+    '--menu-text-color': menuApp.textColor || '#ffffff',
+    '--menu-hover-text': menuApp.hoverTextColor || '#ffe272',
+    '--menu-hover-bg': menuApp.hoverBackground || 'rgba(255, 255, 255, 0.1)',
+    '--menu-active-indicator': menuApp.activeIndicatorColor || '#ffd24d',
+    // Dropdown variables
+    '--menu-dropdown-width': `${menuApp.dropdownWidth || 250}px`,
+    '--menu-dropdown-font-size': `${menuApp.dropdownFontSize || 14}px`,
+    '--menu-dropdown-radius': `${menuApp.dropdownBorderRadius || 12}px`,
+    '--menu-dropdown-bg': menuApp.dropdownBackground || '#ffffff',
+    '--menu-dropdown-text': menuApp.dropdownTextColor || '#1e3a5f',
+    '--menu-dropdown-border': menuApp.dropdownBorderColor || '#e2e8f0',
+    '--menu-dropdown-hover-bg': menuApp.dropdownHoverBackground || '#f0f7ff',
+    '--menu-dropdown-hover-text': menuApp.dropdownHoverTextColor || '#075db8',
+    '--menu-dropdown-arrow': menuApp.dropdownArrowColor || '#94a3b8',
+    '--menu-anim-speed': menuApp.animationSpeed || '0.22s',
+  } as CSSProperties
+
+  const animClass = `anim-${menuApp.animationStyle || 'slide-down'}`
 
   return (
     <div className="siteHeaderRoot" style={shellStyle}>
@@ -219,22 +272,27 @@ export async function SiteHeader() {
           {settings?.headerShowContactCards !== false && <div className="mastheadContacts">
             {contactCards.map((card: any, index: number) => {
               const customIconUrl = mediaUrl(card?.customIcon)
+              const fontFamilyVal = card?.fontFamily && card.fontFamily !== 'inherit' ? card.fontFamily : undefined
               const cardStyle = {
                 '--contact-background': card?.background || '#ffffff',
                 '--contact-border': card?.borderColor || '#e1e7ec',
                 '--contact-title': card?.titleColor || '#273b4c',
                 '--contact-text': card?.textColor || '#0756b4',
                 '--contact-extra': card?.extraTextColor || '#557082',
-                '--contact-icon': card?.iconColor || '#075ec2',
-                '--contact-icon-bg': card?.iconBackground || '#eaf5ff',
-                '--contact-title-size': `${card?.titleFontSize || 10}px`,
-                '--contact-text-size': `${card?.textFontSize || 17}px`,
+                '--contact-icon': card?.iconColor || (card?.iconType === 'emergency' ? '#ef4444' : '#075ec2'),
+                '--contact-icon-bg': card?.iconBackground || (card?.iconType === 'emergency' ? '#fee2e2' : '#eaf5ff'),
+                '--contact-title-size': `${card?.titleFontSize || 11}px`,
+                '--contact-text-size': `${card?.textFontSize || 18}px`,
                 '--contact-weight': card?.fontWeight || '800',
+                '--contact-font-family': fontFamilyVal,
+                '--contact-min-width': card?.minWidth ? `${card.minWidth}px` : '220px',
+                '--contact-border-radius': card?.borderRadius !== undefined ? `${card.borderRadius}px` : '16px',
+                fontFamily: fontFamilyVal,
               } as CSSProperties
               const href = card?.href || (card?.text ? (String(card.text).match(/\d{5,}/) ? `tel:${String(card.text).replace(/[^+\d]/g, '')}` : '/lich-kham') : '#')
               const isAction = card?.hasArrow || String(card?.text || '').includes('NGAY') || String(card?.title || '').includes('ĐẶT LỊCH')
               return <a className={`mastheadContact ${card?.iconType === 'emergency' ? 'contactEmergency' : ''} ${isAction ? 'contactAction' : ''}`} href={href} style={cardStyle} key={`${card?.title || 'contact'}-${index}`}>
-                <ContactIcon type={card?.iconType || 'phone'} customUrl={customIconUrl} />
+                <ContactIcon type={card?.iconType || 'phone'} customUrl={customIconUrl} iconSize={card?.iconSize || 46} />
                 <span className="mastheadContactInfo">
                   <small>{card?.title}</small>
                   <strong>
@@ -254,7 +312,7 @@ export async function SiteHeader() {
         </div>
       </div>
 
-      <header className={`mainHeader ${settings?.headerStickyMenu === false ? 'notSticky' : ''}`}>
+      <header className={`mainHeader ${settings?.headerStickyMenu === false ? 'notSticky' : ''} ${animClass}`} style={menuStyle}>
         <div className="container headerInner">
           <nav className="mainMenu" aria-label="Điều hướng chính">
             <a className="navSimpleLink navHomeText" href="/">Trang chủ</a>

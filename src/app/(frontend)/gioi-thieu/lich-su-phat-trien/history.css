@@ -260,10 +260,10 @@
 }
 
 .timelineCard {
-  background: #ffffff;
+  background: var(--hist-card-bg, #ffffff);
   border: 1px solid #dce8f1;
   border-radius: 18px;
-  padding: 24px 28px;
+  padding: var(--hist-card-padding, 24px 28px);
   box-shadow: 0 8px 24px rgba(15, 63, 99, 0.06);
   transition: all 0.25s ease;
   position: relative;
@@ -277,7 +277,7 @@
 
 .timelineItem.highlight .timelineCard {
   border-left: 5px solid var(--hist-accent);
-  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+  background: linear-gradient(135deg, var(--hist-card-bg, #ffffff) 0%, #f0fdf4 100%);
 }
 
 .timelineHeader {
@@ -318,14 +318,14 @@
 .timelineTitle {
   font-size: 18px;
   font-weight: 800;
-  color: #0f273d;
+  color: var(--hist-heading, #0f273d);
   margin: 0 0 10px;
   line-height: 1.35;
 }
 
 .timelineDesc {
   font-size: 13.5px;
-  color: #486581;
+  color: var(--hist-text, #486581);
   line-height: 1.6;
   margin: 0;
 }
@@ -357,10 +357,10 @@
 }
 
 .coreValueCard {
-  background: #ffffff;
+  background: var(--hist-card-bg, #ffffff);
   border: 1px solid #dce8f1;
   border-radius: 16px;
-  padding: 24px;
+  padding: var(--hist-card-padding, 24px);
   box-shadow: 0 8px 20px rgba(15, 63, 99, 0.05);
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
@@ -381,18 +381,26 @@
   font-size: 20px;
   margin-bottom: 14px;
   font-weight: 900;
+  overflow: hidden;
+}
+
+.coreValueCustomIcon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 6px;
 }
 
 .coreValueCard h3 {
   font-size: 17px;
   font-weight: 850;
-  color: #102a43;
+  color: var(--hist-heading, #102a43);
   margin: 0 0 8px;
 }
 
 .coreValueCard p {
   font-size: 13px;
-  color: #627d98;
+  color: var(--hist-text, #627d98);
   line-height: 1.55;
   margin: 0;
 }
@@ -414,12 +422,12 @@
 }
 
 .missionCard {
-  background: linear-gradient(135deg, #075b9e 0%, #0878d1 100%);
+  background: linear-gradient(135deg, #075b9e 0%, var(--hist-primary, #0878d1) 100%);
   box-shadow: 0 12px 28px rgba(7, 91, 158, 0.25);
 }
 
 .visionCard {
-  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+  background: linear-gradient(135deg, #0f766e 0%, var(--hist-accent, #16a36a) 100%);
   box-shadow: 0 12px 28px rgba(15, 118, 110, 0.25);
 }
 
@@ -452,76 +460,82 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
-  margin-top: 30px;
+  margin-top: 32px;
 }
 
 .achievementCard {
-  background: #ffffff;
+  background: var(--hist-card-bg, #ffffff);
   border: 1px solid #dce8f1;
   border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 8px 24px rgba(15, 63, 99, 0.05);
-  display: flex;
-  flex-direction: column;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.achievementCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(15, 63, 99, 0.12);
 }
 
 .achievementImage {
   width: 100%;
   height: 180px;
   object-fit: cover;
-  background: #e2e8f0;
+  display: block;
 }
 
 .achievementBody {
-  padding: 22px;
-  flex: 1;
+  padding: var(--hist-card-padding, 22px);
 }
 
 .achievementBody h3 {
-  font-size: 17px;
-  font-weight: 850;
-  color: #102a43;
-  margin: 0 0 10px;
+  font-size: 16.5px;
+  font-weight: 800;
+  color: var(--hist-heading, #102a43);
+  margin: 0 0 8px;
+  line-height: 1.4;
 }
 
 .achievementBody p {
-  font-size: 13.5px;
-  color: #486581;
-  line-height: 1.55;
+  font-size: 13px;
+  color: var(--hist-text, #627d98);
+  line-height: 1.6;
   margin: 0;
 }
 
-/* CTA Bottom Box */
+/* Bottom CTA */
 .historyCtaBox {
   margin-top: 70px;
-  background: linear-gradient(135deg, #102a43 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, #0b3b60 0%, var(--hist-primary, #0878d1) 100%);
   border-radius: 24px;
-  padding: 40px 48px;
-  color: #fff;
+  padding: 48px 44px;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 30px;
-  flex-wrap: wrap;
-  box-shadow: 0 16px 40px rgba(16, 42, 67, 0.2);
+  gap: 32px;
+  box-shadow: 0 16px 40px rgba(11, 59, 96, 0.22);
 }
 
 .historyCtaCopy h2 {
-  font-size: clamp(20px, 2.5vw, 28px);
-  margin: 0 0 8px;
+  font-size: clamp(22px, 2.5vw, 30px);
+  font-weight: 900;
   color: #ffffff;
+  margin: 0 0 10px;
 }
 
 .historyCtaCopy p {
+  font-size: 14.5px;
+  color: #dbeafe;
   margin: 0;
-  color: #cbd5e1;
-  font-size: 14px;
+  line-height: 1.6;
   max-width: 600px;
 }
 
 .historyCtaActions {
   display: flex;
   gap: 12px;
+  flex-shrink: 0;
   flex-wrap: wrap;
 }
 
@@ -531,16 +545,17 @@
   gap: 8px;
   padding: 12px 24px;
   border-radius: 12px;
-  background: #0878d1;
+  background: var(--hist-accent, #16a36a);
   color: #fff;
   font-weight: 800;
   font-size: 14px;
   text-decoration: none;
-  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 4px 14px rgba(22, 163, 106, 0.4);
+  transition: all 0.2s ease;
 }
 
 .historyBtnPrimary:hover {
-  background: #065b9e;
+  background: #15803d;
   transform: translateY(-2px);
 }
 
@@ -561,6 +576,98 @@
 
 .historyBtnSecondary:hover {
   background: rgba(255, 255, 255, 0.22);
+}
+
+/* Journey Flow Section: HÀNH TRÌNH TIẾP NỐI */
+.historyJourneySection {
+  margin-top: 70px;
+}
+
+.journeyStepsFlow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.journeyStepWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 12px;
+}
+
+.journeyStepCard {
+  flex: 1;
+  min-width: 200px;
+  background: var(--hist-card-bg, #ffffff);
+  border: 1px solid #dce8f1;
+  border-radius: 16px;
+  padding: var(--hist-card-padding, 22px 18px);
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(15, 63, 99, 0.05);
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.journeyStepCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(15, 63, 99, 0.1);
+  border-color: #93c5fd;
+}
+
+.journeyStepNum {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--hist-primary);
+  background: #e0f2fe;
+  padding: 4px 10px;
+  border-radius: 99px;
+  margin-bottom: 10px;
+}
+
+.journeyStepCard h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--hist-heading, #0f273d);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.journeyStepCard.journeyStepActive {
+  background: linear-gradient(135deg, #075b9e 0%, var(--hist-primary, #0878d1) 100%);
+  border-color: #0284c7;
+  box-shadow: 0 10px 24px rgba(8, 120, 209, 0.3);
+}
+
+.journeyStepCard.journeyStepActive .journeyStepNum {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.journeyStepCard.journeyStepActive h4 {
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.journeyArrow {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--hist-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.journeyTextCard {
+  background: var(--hist-card-bg, #ffffff);
+  border-left: 6px solid var(--hist-accent) !important;
 }
 
 /* Responsive adjustments */
@@ -597,4 +704,15 @@
   .historyCtaBox {
     padding: 28px 24px;
   }
+
+  .journeyStepsFlow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .journeyArrow {
+    transform: rotate(90deg);
+    margin: 4px auto;
+  }
 }
+

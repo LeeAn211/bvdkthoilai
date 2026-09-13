@@ -102,7 +102,7 @@ export default async function DoctorsPage({
     <>
       <SiteHeader />
       <main className="doctorsPage">
-        {/* ── BANNER HEADER KIỂU BẠCH MAI ───────────────── */}
+        {/* ── BANNER HEADER ───────────────── */}
         <section className="doctorsHero">
           <div className="container doctorsHeroInner">
             <div className="doctorsBreadcrumb">
@@ -170,7 +170,7 @@ export default async function DoctorsPage({
           </div>
         </section>
 
-        {/* ── DANH SÁCH THẺ BÁC SĨ (CHUẨN FORM MINH HỌA BẠCH MAI) ─── */}
+        {/* ── DANH SÁCH THẺ BÁC SĨ ─── */}
         <section className="container doctorsGridSection">
           {paginatedDoctors.length > 0 ? (
             <div className="doctorsGrid">

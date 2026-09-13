@@ -11,7 +11,7 @@ import { AdvancedTechniquesCarousel } from '@/components/AdvancedTechniquesCarou
 import { OurExpertsCarousel } from '@/components/OurExpertsCarousel'
 import { getCMS, getGlobal, getHomepage } from '@/lib/payload'
 import { mediaFormat, mediaLabel, mediaUrl } from '@/lib/media'
-import { getDefaultContentMedia } from '@/lib/defaultMedia'
+import { getDefaultContentMedia, scientificActivityGroupName } from '@/lib/defaultMedia'
 import type { CSSProperties } from 'react'
 
 export const revalidate = 0
@@ -48,6 +48,8 @@ export default async function HomePage() {
   let customPosts: any[] = []
   let advancedTechniques: any[] = []
   let ourExpertsList: any[] = []
+  let scientificActivities: any[] = []
+  let scientificActivityGroups: any[] = []
   let siteSettings: any = {}
   let quickLinksSettings: any = {}
   let defaultMedia: any = { news: '/default-content/news.svg', notices: '/default-content/notices.svg', procurement: '/default-content/procurement.svg' }
@@ -60,7 +62,7 @@ export default async function HomePage() {
     defaultMedia = contentDefaults
     quickLinksSettings = quickSettings || {}
 
-    const [newsResult, noticeResult, procurementResult, documentResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult] = await Promise.all([
+    const [newsResult, noticeResult, procurementResult, documentResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult, scientificActivitiesResult, scientificActivityGroupsResult] = await Promise.all([
       payload.find({ collection: 'news', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 100, depth: 1 }),
       payload.find({ collection: 'notices', where: { and: [{ _status: { equals: 'published' } }, { showOnHome: { equals: true } }] }, sort: '-startAt', limit: 6, depth: 1 }),
       payload.find({ collection: 'procurement', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 6, depth: 1 }),
@@ -77,6 +79,8 @@ export default async function HomePage() {
       payload.find({ collection: 'custom-posts', where: { _status: { equals: 'published' } }, limit: 300, sort: '-publishedAt', depth: 2 }),
       payload.find({ collection: 'advanced-techniques', where: { active: { equals: true } }, limit: 50, sort: ['order', 'title'], depth: 1 }),
       payload.find({ collection: 'our-experts', where: { active: { equals: true } }, limit: 50, sort: ['order', 'name'], depth: 2 }).catch(() => ({ docs: [] })),
+      payload.find({ collection: 'scientific-activities', where: { _status: { equals: 'published' } }, limit: 100, sort: ['-featured', '-publishedAt'], depth: 1 }).catch(() => ({ docs: [] })),
+      payload.find({ collection: 'scientific-activity-groups', where: { active: { equals: true } }, limit: 100, sort: ['order', 'name'], depth: 0 }).catch(() => ({ docs: [] })),
     ])
     news = newsResult.docs as any[]
     notices = noticeResult.docs as any[]
@@ -94,6 +98,8 @@ export default async function HomePage() {
     customPosts = customPostResult.docs as any[]
     advancedTechniques = advancedTechniquesResult.docs as any[]
     ourExpertsList = (ourExpertsResult?.docs || []) as any[]
+    scientificActivities = (scientificActivitiesResult?.docs || []) as any[]
+    scientificActivityGroups = (scientificActivityGroupsResult?.docs || []) as any[]
     totals = { news: newsResult.totalDocs, notices: noticeResult.totalDocs, doctors: doctorResult.totalDocs, departments: departmentResult.totalDocs, services: serviceResult.totalDocs }
   } catch {}
 
@@ -343,9 +349,11 @@ export default async function HomePage() {
 
     // ── MẪU 1: Editorial Grid (chuẩn thông báo — 1 lớn + nhiều nhỏ) ──
     if (layout === 'editorial-grid') {
+      const editorialSlots = Array.from({ length: 5 }, (_, index) => items[index] || null)
       return (
         <div className="homeEditorialGrid">
-          {items.map((entry: any, idx: number) => {
+          {editorialSlots.map((entry: any, idx: number) => {
+            if (!entry) return <div className="homeEditorialEmptyCard" aria-hidden="true" key={`empty-${idx}`} />
             const isMain = idx === 0
             if (isMain) {
               // Ô lớn: ảnh trên (kèm badge), nội dung dưới (kèm excerpt)
@@ -968,7 +976,7 @@ export default async function HomePage() {
 
           if (type === 'vaccinations') return <section className="sectionPro configurableHomeSection homeVaccinationSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/tiem-chung">Xem tất cả →</a></div><VaccinationTabs announcements={homeVaccinationAnnouncements} campaigns={homeVaccinationCampaigns} vaccines={homeVaccines} medpro={medpro} tabOrder={vaccinationTabOrder.length ? vaccinationTabOrder : undefined} tabs={vaccinationTabs.length ? vaccinationTabs : undefined} compact /></div></section>
 
-          if (type === 'science') return <section className="sectionPro configurableHomeSection homeScienceSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem thêm hoạt động →</a></div><HomeScienceTabs items={news.map((article) => ({ id: article.id, title: article.title, slug: article.slug, category: article.category, excerpt: article.excerpt, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news }))} tabs={contentTabsFor('science')} /></div></section>
+          if (type === 'science') return <section className="sectionPro configurableHomeSection homePortalNewsSection homePortalPage homeScienceSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/hoat-dong-khoa-hoc">Xem toàn bộ bài viết →</a></div><HomeScienceTabs items={scientificActivities.map((article) => ({ id: article.id, title: article.title, slug: article.slug, category: scientificActivityGroupName(article), excerpt: article.excerpt, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news, href: `/hoat-dong-khoa-hoc/${article.slug}` }))} tabs={scientificActivityGroups.map((group) => ({ label: group.name, categories: [group.name] }))} /></div></section>
 
           if (type === 'documents') {
             const docLayout = item.sectionLayout || 'editorial-grid'

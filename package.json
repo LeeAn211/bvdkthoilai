@@ -20,6 +20,7 @@
     "verify:importmap": "node scripts/verify-importmap.mjs",
     "migrate:create": "payload migrate:create",
     "migrate": "payload migrate",
+    "migrate:changelog": "node scripts/apply-changelog-migrations.mjs",
     "backup": "sh scripts/backup.sh",
     "restore": "sh scripts/restore.sh",
     "repair:delete": "node scripts/repair-delete-constraints.mjs",
@@ -55,26 +56,27 @@
     "@payloadcms/next": "3.88.0",
     "@payloadcms/richtext-lexical": "3.88.0",
     "@payloadcms/storage-s3": "3.88.0",
+    "@payloadcms/translations": "3.88.0",
     "@payloadcms/ui": "3.88.0",
+    "exceljs": "^4.4.0",
+    "jszip": "^3.10.1",
     "next": "16.3.2",
     "payload": "3.88.0",
     "pg": "8.20.0",
+    "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sharp": "^0.34.0",
-    "@payloadcms/translations": "3.88.0",
-    "qrcode": "^1.5.4",
-    "exceljs": "^4.4.0",
-    "jszip": "^3.10.1"
+    "sharp": "^0.34.0"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
+    "@types/pg": "^8.15.5",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0",
-    "@types/qrcode": "^1.5.5",
-    "@types/pg": "^8.15.5"
+    "xlsx": "^0.18.5"
   },
   "engines": {
     "node": ">=20.9.0"

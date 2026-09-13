@@ -86,32 +86,32 @@ export default async function Page({ params }: Props) {
 
   if (!section || !item) notFound()
 
-  // Xác định áp dụng mẫu chuẩn Bạch Mai theo mức ưu tiên:
-  // 1. Nếu bài viết hoặc mục nội dung chọn trực tiếp: 'bachmai' -> true, 'classic' -> false
+  // Xác định áp dụng mẫu chuẩn hiện đại theo mức ưu tiên:
+  // 1. Nếu bài viết hoặc mục nội dung chọn trực tiếp: 'modern' / 'bachmai' -> true, 'classic' -> false
   // 2. Nếu nằm trong danh sách customSectionSlugs cấu hình trong Admin Theme
   // 3. Nếu bật applyAllNewSections hoặc applyCustomPosts trong Admin Theme
-  let isBạchMaiLayout = true
+  let isModernLayout = true
   const customSlugsText = String(theme?.detailLayout?.customSlugsText || '')
   const slugList = customSlugsText
     .split(',')
     .map((s: string) => s.trim().toLowerCase())
     .filter(Boolean)
 
-  if (item.layoutTemplate === 'bachmai' || section.layoutTemplate === 'bachmai') {
-    isBạchMaiLayout = true
+  if (item.layoutTemplate === 'bachmai' || section.layoutTemplate === 'bachmai' || item.layoutTemplate === 'modern' || section.layoutTemplate === 'modern') {
+    isModernLayout = true
   } else if (item.layoutTemplate === 'classic' || section.layoutTemplate === 'classic') {
-    isBạchMaiLayout = false
+    isModernLayout = false
   } else if (slugList.includes(sectionSlug?.trim().toLowerCase())) {
-    isBạchMaiLayout = true
+    isModernLayout = true
   } else {
-    isBạchMaiLayout =
+    isModernLayout =
       theme?.detailLayout?.applyAllNewSections !== false &&
       theme?.detailLayout?.applyCustomPosts !== false
   }
 
   const publishedDate = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : ''
 
-  if (isBạchMaiLayout) {
+  if (isModernLayout) {
     const breadcrumbs = [
       { label: 'Trang chủ', href: '/' },
       { label: section.title, href: `/noi-dung/${section.slug}` },

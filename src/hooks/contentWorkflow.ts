@@ -4,6 +4,7 @@ const pathPrefix: Record<string, string> = {
   procurement: '/dau-thau-mua-sam',
   recruitment: '/tuyen-dung',
   pages: '/trang',
+  'scientific-activities': '/hoat-dong-khoa-hoc',
 }
 
 /** Đồng bộ workflowState với Draft/Published thực tế của Payload. */

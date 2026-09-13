@@ -193,10 +193,675 @@ h3 { line-height:1.35; }
 .schedulePostCard b { color: var(--brand); font-size: 11px; }
 .weeklyScheduleList { display: grid; gap: 18px; }
 .weeklyScheduleCard { overflow: hidden; border: 1px solid var(--border); border-radius: 17px; background: #fff; box-shadow: 0 9px 26px rgba(23,69,98,.06); }
-.weeklyScheduleHead { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 20px; color: #fff; background: linear-gradient(115deg,#075d9f,#0c87d5); }
-.weeklyScheduleHead span { color: #bfeaff; font-size: 9px; font-weight: 900; letter-spacing: 1.2px; }
-.weeklyScheduleHead h2 { margin: 4px 0 0; color: #fff; font-size: 20px; }
-.weeklyScheduleHead > strong { font-size: 13px; }
+.weeklyScheduleHead { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 24px; color: #fff; background: linear-gradient(115deg,#075d9f,#0c87d5); }
+.weeklyScheduleHead span { color: #bfeaff; font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; }
+.weeklyScheduleHead h2 { margin: 4px 0 0; color: #fff; font-size: 20px; font-weight: 700; }
+.weeklyScheduleHead > strong { font-size: 13px; font-weight: 600; background: rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 99px; backdrop-filter: blur(4px); }
+
+/* Bảng lịch khám gom nhóm theo từng Thứ (Mỗi thứ 1 hàng trọn vẹn) */
+.weeklyGroupedTable { display: flex; flex-direction: column; background: #fff; }
+.weeklyEmptyState { padding: 48px 20px; text-align: center; color: var(--muted); font-size: 14px; background: #fafbfc; }
+
+.weeklyDayRow {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  border-bottom: 1px solid #e2eaf1;
+  background: #fff;
+  transition: background 0.15s ease;
+}
+.weeklyDayRow:last-child { border-bottom: none; }
+.weeklyDayRow:nth-child(even) { background: #fafcfd; }
+.weeklyDayRow:hover { background: #f4f9fd; }
+
+/* Cột thông tin Thứ */
+.weeklyDayBadgeColumn {
+  padding: 22px 18px;
+  border-right: 1px solid #e2eaf1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(8, 120, 209, 0.03);
+}
+.weeklyDayBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.weeklyDayShort {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--site-primary, #0878D1), #055ba3);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  box-shadow: 0 4px 10px rgba(8, 120, 209, 0.25);
+  margin-bottom: 6px;
+}
+.weeklyDayFull {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e3a56;
+}
+.weeklyDoctorCountBadge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #075d9f;
+  background: #e1f0fc;
+  padding: 2px 10px;
+  border-radius: 99px;
+}
+
+/* Cột danh sách các bác sĩ khám trong ngày */
+.weeklyDayDoctorsColumn {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.weeklyDoctorCardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+/* Thẻ bác sĩ con hiển thị chuẩn y tế */
+.weeklyDoctorItemCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e1e9f0;
+  border-radius: 12px;
+  background: #ffffff;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+.weeklyDoctorItemCard:hover {
+  border-color: #9ecced;
+  box-shadow: 0 6px 16px rgba(8, 120, 209, 0.08);
+  transform: translateY(-1px);
+}
+.weeklyDoctorItemCard.isLeadershipDoctor {
+  border-color: #bedef7;
+  background: linear-gradient(to right, #f7fbff, #ffffff);
+  border-left: 3.5px solid #0878D1;
+}
+
+/* Khung ảnh đại diện bác sĩ tuân thủ tuyệt đối Mandate: không méo, tỷ lệ 3:4 chuẩn */
+.weeklyDoctorItemAvatar {
+  width: 48px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #eef4f8;
+  border: 1px solid #d9e6f0;
+}
+.weeklyDoctorItemAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.weeklyDoctorItemContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.weeklyDoctorHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.weeklyDoctorItemName {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #12283a;
+}
+.weeklyDoctorItemName a {
+  color: inherit;
+  text-decoration: none;
+}
+.weeklyDoctorItemName a:hover {
+  color: var(--site-primary, #0878D1);
+}
+.weeklyLeadershipBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #0754A8;
+  background: #e5f2fd;
+  border: 1px solid #c7e3fa;
+  padding: 1px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.weeklyDoctorDepartment {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #4b667e;
+}
+.weeklyDoctorDepartment svg {
+  color: #0878D1;
+  flex-shrink: 0;
+}
+
+.weeklyDoctorMetaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 4px;
+  padding-top: 5px;
+  border-top: 1px dashed #edf2f7;
+  font-size: 11.5px;
+  color: #5c758a;
+}
+.weeklyDoctorTime, .weeklyDoctorRoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.weeklyDoctorTime svg { color: #e67e22; flex-shrink: 0; }
+.weeklyDoctorRoom svg { color: #16A36A; flex-shrink: 0; }
+
+.weeklyDoctorNote {
+  margin-top: 3px;
+  font-size: 11px;
+  color: #8397a7;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   BẢNG PHÂN CÔNG BÁC SĨ KHÁM BỆNH THEO NGÀY (DAILY SHIFT POSTER & TABLE)
+   Chuẩn mẫu biểu y tế Bệnh viện Đa khoa Khu vực Thới Lai
+   ========================================================================== */
+.dailySchedulePoster {
+  margin: 16px 0 32px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 2px solid #0284c7;
+  box-shadow: 0 12px 36px rgba(2, 132, 199, 0.12);
+  overflow: hidden;
+}
+
+/* 1. Header Masthead Poster Y tế */
+.dailyScheduleMasthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
+  border-bottom: 2.5px solid #0284c7;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.dailyMastheadBrand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 300px;
+}
+.dailyBrandLogo {
+  width: 66px;
+  height: 66px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 4px;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #38bdf8;
+}
+.dailyBrandLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.dailyBrandMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dailyHospitalName {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  color: #0369a1;
+  letter-spacing: -0.2px;
+  text-transform: uppercase;
+}
+.dailyHospitalAddress {
+  margin: 0;
+  font-size: 12px;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.dailyHospitalAddress svg {
+  color: #0284c7;
+  flex-shrink: 0;
+}
+.dailyHospitalSlogan {
+  font-size: 13px;
+  font-style: italic;
+  font-weight: 700;
+  color: #0284c7;
+  margin-top: 1px;
+  font-family: serif, 'Times New Roman', Georgia;
+}
+
+/* Cụm Ribbon Tiêu đề và Khung ngày */
+.dailyMastheadTitleBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  flex: 2 1 360px;
+}
+.dailyTitleRibbon {
+  background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+  color: #ffffff;
+  padding: 8px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.dailyTitleRibbon h2 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.dailyDateBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #ffffff;
+  color: #0369a1;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 5px 18px;
+  border-radius: 99px;
+  border: 2px solid #0284c7;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.15);
+  text-transform: uppercase;
+}
+.dailyDateBadge svg {
+  color: #0284c7;
+}
+
+/* Khối khẩu hiệu bên phải */
+.dailyMastheadRight {
+  flex: 1 1 180px;
+  display: flex;
+  justify-content: flex-end;
+}
+.dailyCommitmentBanner {
+  background: #ffffff;
+  border: 1.5px dashed #0284c7;
+  border-radius: 10px;
+  padding: 8px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.08);
+}
+.dailyCommitmentBanner strong {
+  color: #0369a1;
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+}
+.dailyCommitmentBanner span {
+  color: #0284c7;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* 2. Container cuộn bảng linh hoạt cho màn hình nhỏ */
+.dailyTableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #ffffff;
+}
+
+/* 3. Bảng ma trận phân công ca trực chuẩn y tế */
+.dailyShiftTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 860px;
+  table-layout: fixed;
+  border: 1px solid #cbd5e1;
+}
+
+.dailyShiftTable thead tr {
+  border-bottom: 2px solid #0284c7;
+}
+
+.dailyShiftTable th {
+  padding: 12px 10px;
+  border-right: 1.5px solid #cbd5e1;
+  border-top: 1px solid #cbd5e1;
+  vertical-align: middle;
+  text-align: center;
+}
+.dailyShiftTable th:last-child {
+  border-right: none;
+}
+
+/* Cột Khoa/Phòng */
+.dailyColDept {
+  width: 22%;
+  background: linear-gradient(180deg, #0369a1 0%, #0284c7 100%);
+  color: #ffffff;
+}
+.dailyThDeptContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+.dailyThDeptContent svg {
+  color: #ffffff;
+}
+
+/* Các cột Khung Giờ (Ca trực) */
+.dailyColShift {
+  width: 19.5%;
+}
+.dailyShiftMorningCol {
+  background: linear-gradient(180deg, #fefce8 0%, #fef08a 100%);
+  border-bottom: 2px solid #ca8a04 !important;
+}
+.dailyShiftNoonCol {
+  background: linear-gradient(180deg, #fff7ed 0%, #fed7aa 100%);
+  border-bottom: 2px solid #ea580c !important;
+}
+.dailyShiftAfternoonCol {
+  background: linear-gradient(180deg, #f0fdf4 0%, #bbf7d0 100%);
+  border-bottom: 2px solid #16a34a !important;
+}
+.dailyShiftEveningCol {
+  background: linear-gradient(180deg, #f5f3ff 0%, #ddd6fe 100%);
+  border-bottom: 2px solid #7c3aed !important;
+}
+
+.dailyThShiftContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.dailyShiftSunIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.12));
+}
+.dailyShiftSunIcon.morning svg { stroke: #ca8a04; }
+.dailyShiftSunIcon.afternoon svg { stroke: #15803d; }
+.dailyShiftMoonIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.12));
+}
+
+.dailyShiftTime {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.25;
+}
+.dailyShiftTime strong {
+  font-size: 14px;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: 0.2px;
+}
+
+.dailyShiftTag {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 99px;
+  margin-top: 3px;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.dailyShiftTag.tagMorning {
+  background: #fef08a;
+  color: #854d0e;
+  border: 1px solid #eab308;
+}
+.dailyShiftTag.tagNoon {
+  background: #ffedd5;
+  color: #9a3412;
+  border: 1px solid #f97316;
+}
+.dailyShiftTag.tagAfternoon {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #22c55e;
+}
+.dailyShiftTag.tagEvening {
+  background: #ede9fe;
+  color: #5b21b6;
+  border: 1px solid #8b5cf6;
+}
+
+/* Thân bảng (Tbody) */
+.dailyShiftTable tbody tr {
+  border-bottom: 1.5px solid #cbd5e1;
+  transition: background 0.15s ease;
+}
+.dailyShiftTable tbody tr:last-child {
+  border-bottom: none;
+}
+.dailyRowOdd {
+  background: #ffffff;
+}
+.dailyRowEven {
+  background: #f8fafc;
+}
+.dailyShiftTable tbody tr:hover {
+  background: #f0f9ff !important;
+}
+
+.dailyShiftTable td {
+  padding: 12px 10px;
+  border-right: 1.5px solid #cbd5e1;
+  border-bottom: 1.5px solid #cbd5e1;
+  font-size: 13px;
+  vertical-align: middle;
+}
+.dailyShiftTable td:last-child {
+  border-right: none;
+}
+
+/* Cột ô Khoa/Phòng */
+.dailyCellDept {
+  background: #f1f5f9;
+  border-right: 2px solid #94a3b8 !important;
+}
+.dailyRowEven .dailyCellDept {
+  background: #e2e8f0;
+}
+.dailyDeptLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dailyDeptIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #e0f2fe;
+  color: #0284c7;
+  flex-shrink: 0;
+  border: 1px solid #bae6fd;
+}
+.dailyDeptName {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  line-height: 1.35;
+}
+
+/* Cột ô ca trực chứa thẻ chip bác sĩ */
+.dailyCellShift {
+  padding: 10px;
+  background: transparent;
+}
+.dailyDoctorEmpty {
+  display: block;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* 1 dòng hiển thị 2 tên bác sĩ gọn gàng */
+.dailyDoctorChipList {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+  width: 100% !important;
+}
+
+/* Thẻ bác sĩ con (Doctor Chip) cao cấp nhỏ gọn */
+.dailyDoctorChip {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 6px !important;
+  border-radius: 6px !important;
+  border: 1.5px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.15s ease !important;
+  min-width: 0 !important;
+}
+.dailyDoctorChip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+.dailyDoctorChip.chip-morning {
+  border-color: #fef08a;
+  background: #fffbeb;
+}
+.dailyDoctorChip.chip-noon {
+  border-color: #fed7aa;
+  background: #fff7ed;
+}
+.dailyDoctorChip.chip-afternoon {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+}
+.dailyDoctorChip.chip-evening {
+  border-color: #ddd6fe;
+  background: #faf5ff;
+}
+
+.dailyDoctorChipIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.chip-morning .dailyDoctorChipIcon {
+  background: #fef08a;
+  color: #a16207;
+}
+.chip-noon .dailyDoctorChipIcon {
+  background: #fed7aa;
+  color: #c2410c;
+}
+.chip-afternoon .dailyDoctorChipIcon {
+  background: #bbf7d0;
+  color: #15803d;
+}
+.chip-evening .dailyDoctorChipIcon {
+  background: #ddd6fe;
+  color: #6d28d9;
+}
+
+.dailyDoctorChipName {
+  font-size: 13px;
+  font-weight: 750;
+  color: #0f172a;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+@media (max-width: 900px) {
+  .dailyScheduleMasthead {
+    flex-direction: column;
+    text-align: center;
+    gap: 14px;
+  }
+  .dailyMastheadBrand {
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+  }
+  .dailyMastheadRight {
+    justify-content: center;
+  }
+}
+
+/* Hỗ trợ legacy slots cũ */
 .weeklyScheduleGrid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
 .weeklyScheduleGrid article { min-height: 92px; display: grid; grid-template-columns: 115px 1fr; gap: 14px; align-items: center; padding: 15px 18px; border-right: 1px solid #e4edf3; border-bottom: 1px solid #e4edf3; }
 .weeklyDay { display: grid; gap: 4px; }
@@ -311,6 +976,12 @@ h3 { line-height:1.35; }
 @media (max-width: 720px) {
   .scheduleTabs { display: grid; grid-template-columns: 1fr; }
   .scheduleDateFilter { align-items: stretch; flex-direction: column; }
+  .weeklyDayRow { grid-template-columns: 1fr; }
+  .weeklyDayBadgeColumn { border-right: none; border-bottom: 1px solid #e2eaf1; padding: 14px; flex-direction: row; justify-content: space-between; }
+  .weeklyDayBadge { flex-direction: row; gap: 8px; align-items: center; width: auto; }
+  .weeklyDayShort { width: 32px; height: 32px; font-size: 13px; margin-bottom: 0; }
+  .weeklyDayDoctorsColumn { padding: 12px; }
+  .weeklyDoctorCardGrid { grid-template-columns: 1fr; }
   .weeklyScheduleGrid { grid-template-columns: 1fr; }
   .weeklyScheduleGrid article { grid-template-columns: 95px 1fr; border-right: 0; }
   .weeklyScheduleHead { align-items: flex-start; flex-direction: column; }
@@ -1834,49 +2505,51 @@ html body .mainHeader {
   top: 0;
   z-index: 60;
   border: 0;
-  background-color: #0754a8 !important;
-  background-image: linear-gradient(90deg, #0754a8 0%, #006bc7 100%) !important;
+  background-color: var(--menu-background, #0754a8) !important;
   box-shadow: 0 3px 12px rgba(6, 59, 111, .22);
   backdrop-filter: none;
 }
 html body .mainHeader .headerInner {
-  min-height: 54px;
+  min-height: var(--menu-height, 56px);
   gap: 0;
 }
 html body .mainHeader .mainMenu {
-  height: 54px;
+  height: var(--menu-height, 56px);
   align-self: stretch;
   display: flex;
-  justify-content: center;
+  justify-content: var(--menu-justify, space-between);
   gap: 0;
 }
 html body .mainHeader .mainMenu .navSimpleLink,
-html body .mainHeader .mainMenu .navItem > summary {
+html body .mainHeader .mainMenu .navItem > summary,
+html body .mainHeader .mainMenu .navMainLink {
   width: 100%;
-  min-height: 54px;
+  min-height: var(--menu-height, 56px);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
   position: relative;
   border: 0;
-  padding: 0 11px;
-  color: #fff !important;
+  padding: 0 var(--menu-item-spacing, 8px);
+  color: var(--menu-text-color, #fff) !important;
   background: transparent !important;
-  font-family: "Segoe UI", Arial, Tahoma, sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.25;
+  font-family: var(--menu-font-family, "Segoe UI", Arial, Tahoma, sans-serif);
+  font-size: var(--menu-font-size, 14px) !important;
+  font-weight: var(--menu-font-weight, 700);
+  line-height: var(--menu-height, 56px);
   text-align: center;
-  text-transform: uppercase;
+  text-transform: var(--menu-text-transform, uppercase);
+  letter-spacing: var(--menu-letter-spacing, 0);
   white-space: nowrap;
   cursor: pointer;
 }
 html body .mainHeader .mainMenu .navSimpleLink:hover,
 html body .mainHeader .mainMenu .navItem > summary:hover,
+html body .mainHeader .mainMenu .navMainLink:hover,
 html body .mainHeader .mainMenu .navItem[open] > summary {
-  color: #ffe272 !important;
-  background: rgba(255, 255, 255, .08) !important;
+  color: var(--menu-hover-text, #ffe272) !important;
+  background: var(--menu-hover-bg, rgba(255, 255, 255, .08)) !important;
 }
 html body .mainHeader .navChevron { color: currentColor; }
 html body .mainHeader .navItem[open] .navDropdown,
@@ -2117,33 +2790,36 @@ html body .mainHeader .bookingButton {
   }
 
   html body .mainHeader .mainMenu .navSimpleLink,
-  html body .mainHeader .mainMenu .navItem > summary {
+  html body .mainHeader .mainMenu .navItem > summary,
+  html body .mainHeader .mainMenu .navMainLink {
     width: auto;
     min-width: 0;
-    min-height: 58px;
-    height: 58px;
+    min-height: var(--menu-height, 56px);
+    height: var(--menu-height, 56px);
     justify-content: center;
-    padding: 0 2px;
-    color: #fff !important;
+    padding: 0 var(--menu-item-spacing, 8px);
+    color: var(--menu-text-color, #fff) !important;
     background: transparent !important;
-    font-family: "Segoe UI", Arial, Tahoma, sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: .01em;
+    font-family: var(--menu-font-family, "Segoe UI", Arial, Tahoma, sans-serif);
+    font-size: var(--menu-font-size, 14px) !important;
+    font-weight: var(--menu-font-weight, 700);
+    line-height: var(--menu-height, 56px);
+    letter-spacing: var(--menu-letter-spacing, 0);
     text-align: center;
+    text-transform: var(--menu-text-transform, uppercase);
     white-space: nowrap;
     transform: none;
   }
 
   html body .mainHeader .mainMenu .navSimpleLink::after,
-  html body .mainHeader .mainMenu .navItem > summary::after {
-    left: 0;
-    right: 0;
+  html body .mainHeader .mainMenu .navItem > summary::after,
+  html body .mainHeader .mainMenu .navMainLink::after {
+    left: var(--menu-item-spacing, 8px);
+    right: var(--menu-item-spacing, 8px);
     bottom: 0;
-    height: 3px;
+    height: 3.5px;
     border-radius: 3px 3px 0 0;
-    background: #ffd24d;
+    background: var(--menu-active-indicator, #ffd24d);
   }
 
   html body .mainHeader .mainMenu .navSimpleLink:hover,
@@ -2214,10 +2890,11 @@ html body .mainHeader .bookingButton {
 
 /* Menu V7: mọi nhãn, kể cả nhãn có menu con, luôn nằm trên một dòng. */
 @media (min-width: 901px) {
-  html body .mainHeader .headerInner { display: block; min-height: 58px; }
-  html body .mainHeader .mainMenu { width: 100%; justify-content: space-between; }
+  html body .mainHeader .headerInner { display: block; min-height: var(--menu-height, 56px); height: var(--menu-height, 56px); }
+  html body .mainHeader .mainMenu { width: 100%; height: var(--menu-height, 56px); justify-content: var(--menu-justify, space-between); }
   html body .mainHeader .mainMenu .navSimpleLink,
-  html body .mainHeader .mainMenu .navItem > summary {
+  html body .mainHeader .mainMenu .navItem > summary,
+  html body .mainHeader .mainMenu .navMainLink {
     display: inline-flex;
     flex-wrap: nowrap;
     align-items: center;
@@ -2553,24 +3230,25 @@ body {
 /* v4.4.2 Featured mixed-content carousel + simplified specialties */
 .featuredCarousel { position:relative; }
 .featuredCarouselViewport { overflow:hidden; }
-.featuredCarouselGrid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:13px; animation:featuredSlideIn .45s ease both; }
+.featuredCarouselGrid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); align-items:stretch; gap:13px; animation:featuredSlideIn .45s ease both; }
 @keyframes featuredSlideIn { from { opacity:.45; transform:translateX(18px); } to { opacity:1; transform:none; } }
-.featuredCarouselCard { overflow:hidden; border:1px solid #dfeaf2; border-radius:13px; background:#fff; color:inherit; text-decoration:none; transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease; }
+.featuredCarouselCard { display:flex; flex-direction:column; overflow:hidden; border:1px solid #dfeaf2; border-radius:13px; background:#fff; color:inherit; text-decoration:none; transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease; }
 .featuredCarouselCard:hover { transform:translateY(-3px); border-color:#b9d9ee; box-shadow:0 14px 28px rgba(16,65,98,.11); }
-.featuredCarouselImage { position:relative; aspect-ratio:16/9; background:#eef6fb center/contain no-repeat; }
+.featuredCarouselImage { position:relative; width:100%; height:122px; flex:0 0 122px; display:grid; place-items:center; overflow:hidden; background:#eef6fb; }
+.featuredCarouselImage img { width:100%; height:100%; display:block; object-fit:contain; object-position:center center; }
 .featuredCarouselImage span { position:absolute; left:10px; bottom:9px; padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.94); color:#0876c9; font-size:8px; font-weight:800; }
-.featuredCarouselCopy { padding:12px 13px 15px; }
+.featuredCarouselCopy { min-height:82px; padding:9px 11px 11px; }
 .featuredCarouselCopy small { color:#8195a6; font-size:9px; }
-.featuredCarouselCopy h3 { display:-webkit-box; overflow:hidden; min-height:42px; margin:5px 0 6px; color:#173f5e; font-size:13px; line-height:1.42; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
-.featuredCarouselCopy p { display:-webkit-box; overflow:hidden; margin:0; color:#6d8597; font-size:9.5px; line-height:1.5; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+.featuredCarouselCopy h3 { display:-webkit-box; overflow:hidden; min-height:36px; margin:4px 0 0; color:#173f5e; font-size:12px; line-height:1.42; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+.featuredCarouselCopy p { display:none; }
 .featuredCarouselControls { display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:12px; }
 .featuredCarouselControls button { width:31px; height:31px; border:1px solid #b9d8ed; border-radius:50%; background:#fff; color:#0876c9; font-size:20px; cursor:pointer; }
 .featuredCarouselControls span { min-width:44px; text-align:center; color:#6d8393; font-size:10px; }
 .homeSpecialtyOnlyList { margin-top:0; }
 .homeSpecialtyOnlyList a { min-height:44px; }
 .homeOrganizationSection .homeCarePhoto { background-size:cover; background-position:center; }
-@media (max-width:980px) { .featuredCarouselGrid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media (max-width:640px) { .featuredCarouselGrid { grid-template-columns:1fr; } .featuredCarouselGrid .featuredCarouselCard:not(:first-child) { display:none; } .featuredCarouselCopy h3 { min-height:auto; } }
+@media (max-width:980px) { .featuredCarouselGrid { grid-template-columns:repeat(2,minmax(0,1fr)); } .featuredCarouselImage { height:180px; flex-basis:180px; } }
+@media (max-width:640px) { .featuredCarouselGrid { grid-template-columns:1fr; } .featuredCarouselGrid .featuredCarouselCard:not(:first-child) { display:none; } .featuredCarouselImage { height:190px; flex-basis:190px; } .featuredCarouselCopy h3 { min-height:auto; } }
 
 /* Section Kỹ thuật chuyên sâu & Chuyên gia của chúng tôi */
 .homeAdvancedTechniquesSection,
@@ -2922,17 +3600,18 @@ body {
   gap: 16px !important;
 }
 .siteHeaderRoot .mastheadContact {
-  min-width: 220px;
+  min-width: var(--contact-min-width, 220px);
   min-height: 64px;
   display: flex !important;
   align-items: center !important;
   gap: 14px !important;
   padding: 10px 18px !important;
   border: 1.5px solid var(--contact-border, #e5e7eb) !important;
-  border-radius: 16px !important;
+  border-radius: var(--contact-border-radius, 16px) !important;
   background: var(--contact-background, #ffffff) !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
   text-decoration: none !important;
+  font-family: var(--contact-font-family, inherit);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 .siteHeaderRoot .mastheadContact:hover {
@@ -2942,9 +3621,9 @@ body {
 }
 
 .siteHeaderRoot .mastheadContactIcon {
-  width: 46px !important;
-  height: 46px !important;
-  flex: 0 0 46px !important;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
   display: grid !important;
   place-items: center !important;
   border-radius: 50% !important;
@@ -2952,8 +3631,8 @@ body {
   background: var(--contact-icon-bg, #e0f2fe) !important;
 }
 .siteHeaderRoot .mastheadContactIcon svg {
-  width: 24px !important;
-  height: 24px !important;
+  width: 24px;
+  height: 24px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.9;
@@ -2961,18 +3640,18 @@ body {
   stroke-linejoin: round;
 }
 .siteHeaderRoot .mastheadContactIcon.emergencyCross {
-  color: #ef4444 !important;
-  background: #fee2e2 !important;
+  color: var(--contact-icon, #ef4444) !important;
+  background: var(--contact-icon-bg, #fee2e2) !important;
 }
 .siteHeaderRoot .mastheadContactIcon.emergencyCross svg {
-  width: 22px !important;
-  height: 22px !important;
-  fill: #ef4444 !important;
+  width: 22px;
+  height: 22px;
+  fill: currentColor !important;
   stroke: none !important;
 }
 .siteHeaderRoot .mastheadContactIcon.calendarClock {
-  color: #0284c7 !important;
-  background: #e0f2fe !important;
+  color: var(--contact-icon, #0284c7) !important;
+  background: var(--contact-icon-bg, #e0f2fe) !important;
 }
 .siteHeaderRoot .mastheadContactIcon.custom img {
   width: 26px;
@@ -2989,7 +3668,7 @@ body {
 }
 .siteHeaderRoot .mastheadContact small {
   color: var(--contact-title, #374151) !important;
-  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-family: var(--contact-font-family, Arial, "Segoe UI", Helvetica, sans-serif) !important;
   font-size: var(--contact-title-size, 11px) !important;
   font-weight: 700 !important;
   letter-spacing: 0.3px !important;
@@ -3003,9 +3682,9 @@ body {
   align-items: center !important;
   gap: 8px !important;
   color: var(--contact-text, #0756b4) !important;
-  font-family: Arial, "Segoe UI", Helvetica, sans-serif !important;
+  font-family: var(--contact-font-family, Arial, "Segoe UI", Helvetica, sans-serif) !important;
   font-size: var(--contact-text-size, 18px) !important;
-  font-weight: 900 !important;
+  font-weight: var(--contact-weight, 900) !important;
   letter-spacing: 0.2px !important;
   line-height: 1.15 !important;
   white-space: nowrap !important;
@@ -3163,4 +3842,3 @@ body {
     font-size: 9px !important;
   }
 }
-

@@ -34,6 +34,8 @@ import { ContentSections } from './src/collections/ContentSections'
 import { CustomPosts } from './src/collections/CustomPosts'
 import { AdvancedTechniques } from './src/collections/AdvancedTechniques'
 import { OurExperts } from './src/collections/OurExperts'
+import { ScientificActivities } from './src/collections/ScientificActivities'
+import { ScientificActivityGroups } from './src/collections/ScientificActivityGroups'
 import { FAQs } from './src/collections/FAQs'
 import { Forms } from './src/collections/Forms'
 import { FormSubmissions } from './src/collections/FormSubmissions'
@@ -67,6 +69,8 @@ import { SeoSettings } from './src/globals/SeoSettings'
 import { ChatbotSettings } from './src/globals/ChatbotSettings'
 import { SystemSettings } from './src/globals/SystemSettings'
 import { ScheduleSettings } from './src/globals/ScheduleSettings'
+import { AppointmentSettings } from './src/globals/AppointmentSettings'
+import { Appointments } from './src/collections/Appointments'
 import { QuickLinksSettings } from './src/globals/QuickLinksSettings'
 import { HospitalHistory } from './src/globals/HospitalHistory'
 import { AboutPage } from './src/globals/AboutPage'
@@ -79,7 +83,14 @@ const isProduction = process.env.NODE_ENV === 'production'
 const payloadSecret = process.env.PAYLOAD_SECRET
 const databaseURL = process.env.DATABASE_URL
 const siteURL = process.env.NEXT_PUBLIC_SITE_URL
-const localOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000']
+// Next dev tự chuyển sang cổng kế tiếp khi 3000 đang được dùng. Payload chỉ đọc
+// JWT từ cookie khi Origin nằm trong CSRF allowlist, vì vậy cần khai báo rõ các
+// cổng phát triển local thay vì để form Admin mất phiên đăng nhập ở cổng 3001+.
+const localDevPorts = Array.from({ length: 11 }, (_, index) => 3000 + index)
+const localOrigins = localDevPorts.flatMap((port) => [
+  `http://localhost:${port}`,
+  `http://127.0.0.1:${port}`,
+])
 const allowedOrigins = Array.from(new Set([...(siteURL ? [siteURL] : []), ...(!isProduction ? localOrigins : [])]))
 
 const r2Bucket = process.env.R2_BUCKET || ''
@@ -166,9 +177,9 @@ export default buildConfig({
   collections: [
     Users,
     ...[Media, News, Notices, Procurement, Documents,
-      Departments, Specialties, Doctors, Schedules, Services, ServicePrices, Vaccinations, VaccinationSchedules, Vaccines, VaccinePrices, Recruitment, Pages, Categories, Feedback, Consultations, FeedbackCategories, FeedbackCases, FeedbackActions, FAQs, Forms, FormSubmissions, ChatbotIntents, ChatbotConversations, ChatbotUnanswered, SurveyTemplates, SurveyTemplateVersions, SurveyQuestions, SurveyCampaigns, SurveyCodes, SurveyResponses, SurveyAnswers, SurveyStatistics, Redirects, DynamicModules, ContentSections, CustomPosts, AdvancedTechniques, OurExperts, ImportJobs
+      Departments, Specialties, Doctors, Schedules, Appointments, Services, ServicePrices, Vaccinations, VaccinationSchedules, Vaccines, VaccinePrices, Recruitment, Pages, Categories, Feedback, Consultations, FeedbackCategories, FeedbackCases, FeedbackActions, FAQs, Forms, FormSubmissions, ChatbotIntents, ChatbotConversations, ChatbotUnanswered, SurveyTemplates, SurveyTemplateVersions, SurveyQuestions, SurveyCampaigns, SurveyCodes, SurveyResponses, SurveyAnswers, SurveyStatistics, Redirects, DynamicModules, ContentSections, CustomPosts, AdvancedTechniques, OurExperts, ScientificActivityGroups, ScientificActivities, ImportJobs
     ].map((collection) => withAudit(collection)),
     AuditLogs,
   ],
-  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
+  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
 })

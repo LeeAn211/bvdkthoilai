@@ -29,3 +29,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
   - Các tệp tin code/giao diện đã chỉnh sửa (`Files Modified`).
   - **Thay đổi Database/Collections/Schema (nếu có)**: Các trường mới thêm, thay đổi kiểu dữ liệu, quan hệ bảng, hoặc migration để khi chuyển sang máy khác/server khác có thể đồng bộ trọn vẹn.
 
+## 4. Tuyệt đối không đưa tên đơn vị / bệnh viện khác vào hệ thống (MANDATE BẮT BUỘC):
+- **TUYỆT ĐỐI KHÔNG BAO GIỜ** được điền, hiển thị hoặc gắn tên của bất kỳ đơn vị, bệnh viện hay tổ chức y tế nào khác (như Bạch Mai, Chợ Rẫy, v.v.) vào giao diện website, Admin CMS, label, placeholder hay mô tả trường của Bệnh viện Đa khoa Khu vực Thới Lai.
+- Mọi mẫu thiết kế tham khảo chỉ dùng để áp dụng cấu trúc giao diện y tế hiện đại, văn bản và nhãn hiển thị phải luôn luôn thuộc về và đại diện cho **Bệnh viện Đa khoa Khu vực Thới Lai**.
+

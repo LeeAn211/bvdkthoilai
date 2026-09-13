@@ -1,4 +1,4 @@
-﻿import type { GlobalConfig, Field } from 'payload'
+import type { GlobalConfig, Field } from 'payload'
 import { admins, loggedIn } from '@/access'
 
 const colorField = (name: string, label: string, defaultValue?: string): Field => ({
@@ -78,53 +78,53 @@ export const AboutPage: GlobalConfig = {
       ],
     },
 
-    // ── GIÁ TRỊ CỐT LÕI & NGUYÊN TẮC HOẠT ĐỘNG ──────────────────────
+    // ── CHỨC NĂNG & NHIỆM VỤ TRỌNG TÂM ──────────────────────
     {
       name: 'corePrinciples',
-      label: 'Giá trị cốt lõi & Nguyên tắc hoạt động',
+      label: 'Chức năng & Nhiệm vụ trọng tâm (Tách bạch với Lịch sử phát triển)',
       type: 'group',
       fields: [
         {
           name: 'title',
           label: 'Tiêu đề khối',
           type: 'text',
-          defaultValue: 'Giá trị cốt lõi & Văn hóa phục vụ',
+          defaultValue: 'Chức năng & Nhiệm vụ trọng tâm',
         },
         {
           name: 'subtitle',
           label: 'Mô tả ngắn',
           type: 'textarea',
-          defaultValue: 'Lấy người bệnh làm trung tâm trong mọi quyết định chuyên môn và quy trình chăm sóc y tế.',
+          defaultValue: 'Thực hiện chức năng khám chữa bệnh đa khoa, cấp cứu và chăm sóc sức khỏe nhân dân toàn diện theo quy chuẩn của Bộ Y tế và Sở Y tế TP. Cần Thơ.',
         },
         {
           name: 'items',
-          label: 'Danh sách giá trị cốt lõi',
+          label: 'Danh sách chức năng & nhiệm vụ',
           type: 'array',
           defaultValue: [
             {
-              icon: '❤️',
-              title: 'Y đức & Tận tâm',
-              desc: 'Thực hiện lời dạy Lương y như từ mẫu, lắng nghe, đồng cảm và chia sẻ cùng người bệnh và thân nhân.',
+              icon: '🚑',
+              title: 'Cấp cứu & Khám chữa bệnh đa khoa',
+              desc: 'Tổ chức tiếp nhận cấp cứu 24/7, khám bệnh ngoại trú, điều trị nội trú đa khoa và phục hồi chức năng cho người dân huyện Thới Lai và khu vực lân cận.',
             },
             {
               icon: '🔬',
-              title: 'Chuyên môn & An toàn',
-              desc: 'Tuân thủ nghiêm ngặt phác đồ điều trị, quy chuẩn kiểm soát nhiễm khuẩn và bảo đảm an toàn người bệnh tuyệt đối.',
+              title: 'Phát triển kỹ thuật & Phẫu thuật ngoại khoa',
+              desc: 'Ứng dụng phẫu thuật nội soi, chẩn đoán hình ảnh kỹ thuật số, xét nghiệm tự động và từng bước phát triển các kỹ thuật chuyên sâu tuyến khu vực.',
             },
             {
-              icon: '🤝',
-              title: 'Chuyên nghiệp & Văn minh',
-              desc: 'Giao tiếp hòa nhã, giải quyết thủ tục nhanh chóng, môi trường bệnh viện xanh – sạch – đẹp – thân thiện.',
+              icon: '🛡️',
+              title: 'Y tế dự phòng & Hỗ trợ chỉ đạo tuyến',
+              desc: 'Chủ động phối hợp phòng chống dịch bệnh, giám sát dịch tễ, truyền thông giáo dục sức khỏe và hỗ trợ chuyên môn kỹ thuật cho y tế cơ sở.',
             },
             {
               icon: '💻',
-              title: 'Đổi mới & Chuyển đổi số',
-              desc: 'Đẩy mạnh ứng dụng công nghệ thông tin, thanh toán không tiền mặt, đặt lịch khám trước và số hóa hồ sơ y tế.',
+              title: 'Chuyển đổi số & Bệnh án điện tử',
+              desc: 'Triển khai toàn diện hồ sơ bệnh án điện tử (EMR), lưu trữ hình ảnh PACS không in phim, thanh toán không tiền mặt và đặt lịch khám trực tuyến.',
             },
           ],
           fields: [
             { name: 'icon', label: 'Biểu tượng icon', type: 'text', required: true },
-            { name: 'title', label: 'Tên giá trị', type: 'text', required: true },
+            { name: 'title', label: 'Tên nhiệm vụ', type: 'text', required: true },
             { name: 'desc', label: 'Mô tả chi tiết', type: 'textarea', required: true },
           ],
         },

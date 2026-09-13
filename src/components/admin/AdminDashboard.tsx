@@ -71,10 +71,14 @@ export default async function AdminDashboard() {
   const dynamicSectionStats = await Promise.all(
     dynamicSections.map(async (sec: any) => {
       const postCount = await count(payload, 'custom-posts', { section: { equals: sec.id } })
+      const title = typeof sec.title === 'string' && sec.title.trim()
+        ? sec.title.trim()
+        : 'Chuyên mục chưa đặt tên'
+      const slug = typeof sec.slug === 'string' ? sec.slug.trim() : ''
       return {
         id: sec.id,
-        title: sec.title,
-        slug: sec.slug,
+        title,
+        slug,
         count: postCount,
         active: sec.active !== false,
       }
@@ -220,7 +224,7 @@ export default async function AdminDashboard() {
         value: sec.count,
         badge: sec.active ? 'Đang hoạt động' : 'Tạm ẩn',
         badgeType: 'info' as const,
-        subtext: `${sec.count} bài viết chuyên đề (${sec.slug})`,
+        subtext: `${sec.count} bài viết chuyên đề${sec.slug ? ` (${sec.slug})` : ''}`,
         href: `/admin/collections/custom-posts?where[section][equals]=${sec.id}`,
         icon: (sec.slug.includes('so') || sec.title.toLowerCase().includes('số') ? 'cpu' : 'folder') as GlyphName,
         visible: true,
