@@ -65,3 +65,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Không tự ý sửa thêm code nếu yêu cầu chỉ là commit/push.
 - Commit message phải ngắn gọn, đúng nội dung thay đổi.
 - Push lên branch hiện tại, trừ khi người dùng yêu cầu branch khác.
+
+## 8. Task continuity / bàn giao giữa các AI agent
+- Khi bắt đầu phiên làm việc mới, đọc `CURRENT-TASK.md` nếu file tồn tại và có tác vụ đang mở.
+- Chỉ đọc `HANDOFF.md` khi cần tiếp tục công việc từ agent/phiên trước hoặc khi `CURRENT-TASK.md` yêu cầu.
+- Khi bắt đầu hoặc thay đổi đáng kể một tác vụ, cập nhật `CURRENT-TASK.md` ngắn gọn: mục tiêu, trạng thái, file liên quan, việc còn lại và bước tiếp theo.
+- Khi dừng giữa chừng hoặc chuyển sang agent/công cụ khác, cập nhật `HANDOFF.md` với quyết định đã chốt, phần đã làm, lỗi còn lại và bước tiếp theo.
+- Khi tác vụ hoàn tất, đánh dấu hoàn thành trong `CURRENT-TASK.md`; không giữ trạng thái cũ gây hiểu nhầm cho phiên sau.
+- Không dùng `CURRENT-TASK.md` hoặc `HANDOFF.md` thay cho `CHANGELOG.md`; `CHANGELOG.md` vẫn là nhật ký thay đổi chính thức.
+- Không đọc toàn bộ `CHANGELOG.md` chỉ để khôi phục ngữ cảnh tác vụ hiện tại.
