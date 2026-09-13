@@ -1,5 +1,20 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-13] - Dọn Dẹp Toàn Diện Migrations Cũ Để Chuẩn Hóa Database Từ Đầu
+
+- **Thời gian thực hiện:** 20:04 (Asia/Saigon)
+- **Yêu cầu:** Xóa sạch toàn bộ các tệp migration và snapshot cũ bị lệch pha, reset thư mục migration về trạng thái trắng chuẩn chỉ để chuẩn bị xây dựng lại cơ sở dữ liệu tinh khiết trên Neon Database qua `PAYLOAD_DB_PUSH`.
+- **Chi tiết đã thực hiện:**
+  1. Dọn dẹp toàn bộ các tệp `.ts` và `.json` migration lịch sử cũ trong `src/migrations/`.
+  2. Đặt lại `src/migrations/index.ts` về danh sách trống `export const migrations = [];`.
+  3. Duy trì cấu hình `PAYLOAD_DB_PUSH=true` trong `.env` và `payload.config.ts` để Payload tự động tạo toàn bộ 50 Collections và 21 Globals trực tiếp vào Neon schema mới.
+- **Tệp tin chỉnh sửa:**
+  - `src/migrations/index.ts`
+  - Đã xóa toàn bộ các tệp migration cũ trong `src/migrations/`
+  - `CHANGELOG.md`
+
+---
+
 ## [2026-09-13] - Thiết Lập Nguyên Tắc Cốt Lõi Số 6: Tối Ưu Đồng Bộ Database Qua PAYLOAD_DB_PUSH
 
 - **Thời gian thực hiện:** 19:55 (Asia/Saigon)
