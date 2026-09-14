@@ -1,0 +1,31 @@
+# Sitemap V1
+
+- Trang chủ
+- Giới thiệu
+  - Tổng quan
+  - Lịch sử hình thành
+  - Ban Giám đốc
+  - Sơ đồ tổ chức
+    - Khối khoa
+      - Chi tiết khoa
+      - Bác sĩ thuộc khoa
+    - Khối phòng
+      - Chi tiết phòng
+  - Chức năng – nhiệm vụ
+  - Cơ sở vật chất
+  - Thành tựu
+- Khám & Chữa bệnh
+  - Đặt lịch khám → Medpro
+  - Lịch khám
+  - Quy trình khám
+  - Khám BHYT
+  - Khám dịch vụ
+  - Bảng giá
+  - Hướng dẫn người bệnh
+- Tin tức
+- Thông báo
+- Đấu thầu – Mua sắm
+- Văn bản – Tài liệu
+- Tuyển dụng
+- Liên hệ
+- Góp ý – Phản hồi

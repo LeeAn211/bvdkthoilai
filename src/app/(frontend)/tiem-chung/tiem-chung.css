@@ -1,0 +1,812 @@
+/* =========================================================================
+   TRANG THÔNG TIN TIÊM NGỪA & VẮC XIN - BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI
+   ========================================================================= */
+
+.vaccinePageWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-bottom: 40px;
+}
+
+/* Thanh chuyển Tab Vắc xin & Lịch tiêm */
+.vaccineTabNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.vaccineTabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: 99px;
+  border: 1.5px solid #d0e2f2;
+  background: #ffffff;
+  color: #1e3a5f;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.vaccineTabBtn:hover {
+  border-color: #0878d1;
+  color: #0878d1;
+  background: #f0f7ff;
+}
+
+.vaccineTabBtn.active {
+  background: linear-gradient(135deg, #0754a8 0%, #0878d1 100%);
+  border-color: #0878d1;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(8, 120, 209, 0.25);
+}
+
+.vaccineTabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 800;
+  background: #eef6fc;
+  color: #0878d1;
+}
+
+.vaccineTabBtn.active .vaccineTabCount {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+/* Thanh tìm kiếm & lọc nhóm đối tượng */
+.vaccineFilterBar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #ffffff;
+  padding: 20px 24px;
+  border-radius: 16px;
+  border: 1px solid #e1eaf2;
+  box-shadow: 0 4px 16px rgba(15, 60, 95, 0.04);
+}
+
+.vaccineSearchRow {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.vaccineSearchInputWrap {
+  flex: 1;
+  min-width: 260px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.vaccineSearchIcon {
+  position: absolute;
+  left: 16px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.vaccineSearchInput {
+  width: 100%;
+  height: 46px;
+  padding: 0 16px 0 44px;
+  border-radius: 12px;
+  border: 1.5px solid #cbd5e1;
+  font-size: 15px;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.vaccineSearchInput:focus {
+  border-color: #0878d1;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(8, 120, 209, 0.15);
+}
+
+.vaccineCountBadge {
+  font-size: 14px;
+  color: #475569;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.vaccineCountBadge strong {
+  color: #0878d1;
+  font-size: 16px;
+}
+
+/* Nút lọc nhóm đối tượng */
+.vaccineAgeFilters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vaccineAgeFilterLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  margin-right: 4px;
+}
+
+.vaccineAgePill {
+  padding: 6px 14px;
+  border-radius: 99px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.vaccineAgePill:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+}
+
+.vaccineAgePill.active {
+  background: #e0f2fe;
+  border-color: #38bdf8;
+  color: #0369a1;
+  font-weight: 700;
+}
+
+/* Lưới hiển thị các thẻ Vắc xin */
+.vaccineGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 22px;
+}
+
+.vaccineCard {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e2eaf1;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(10, 50, 85, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.vaccineCard:hover {
+  transform: translateY(-4px);
+  border-color: #93c5fd;
+  box-shadow: 0 14px 32px rgba(8, 120, 209, 0.12);
+}
+
+/* Header Thẻ Vắc xin */
+.vaccineCardHeader {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.vaccineCardBadgeWrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.vaccineStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.vaccineStatusAvailable {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.vaccineStatusComing {
+  background: #fef9c3;
+  color: #a16207;
+  border: 1px solid #fef08a;
+}
+
+.vaccineStatusUnavailable {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.vaccineOriginBadge {
+  background: #f0f9ff;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 99px;
+}
+
+.vaccineCardCode {
+  font-size: 11px;
+  color: #94a3b8;
+  font-family: monospace;
+  font-weight: 600;
+}
+
+/* Body Thẻ Vắc xin */
+.vaccineCardBody {
+  padding: 16px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vaccineCardTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #0f2744;
+}
+
+.vaccineCardTitle a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.vaccineCardTitle a:hover {
+  color: #0878d1;
+}
+
+.vaccineCardSummary {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #475569;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Bảng thông tin vắc xin ngắn gọn */
+.vaccineSpecList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 4px;
+  border: 1px solid #edf2f7;
+}
+
+.vaccineSpecRow {
+  display: flex;
+  font-size: 13px;
+  line-height: 1.4;
+  gap: 6px;
+}
+
+.vaccineSpecKey {
+  color: #64748b;
+  min-width: 90px;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.vaccineSpecVal {
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.vaccineSpecVal.preventVal {
+  color: #0369a1;
+}
+
+/* Giá tiền & Nút tác vụ */
+.vaccineCardFooter {
+  padding: 14px 20px 18px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fdfefe;
+  gap: 10px;
+}
+
+.vaccinePriceWrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.vaccinePriceLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.4px;
+}
+
+.vaccinePriceValue {
+  font-size: 19px;
+  font-weight: 900;
+  color: #e11d48;
+  line-height: 1.2;
+}
+
+.vaccinePriceValue.free {
+  color: #16a34a;
+}
+
+.vaccineCardActions {
+  display: flex;
+  gap: 8px;
+}
+
+.vaccineDetailBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #0878d1;
+  background: #ffffff;
+  color: #0878d1;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.vaccineDetailBtn:hover {
+  background: #f0f7ff;
+  border-color: #0754a8;
+  color: #0754a8;
+}
+
+.vaccineBookBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #0878d1;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border: 1.5px solid #0878d1;
+}
+
+.vaccineBookBtn:hover {
+  background: #065b9e;
+  border-color: #065b9e;
+}
+
+/* Danh sách Lịch tiêm chủng */
+.scheduleListWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.scheduleCardItem {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2eaf1;
+  padding: 20px 24px;
+  box-shadow: 0 4px 16px rgba(10, 50, 85, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.scheduleCardItem:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 8px 24px rgba(8, 120, 209, 0.08);
+}
+
+.scheduleItemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.scheduleBadgeWrap {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.scheduleKindBadge {
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.scheduleKindOfficial {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.scheduleKindAnnouncement {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.scheduleItemTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f2744;
+}
+
+.scheduleItemSummary {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #475569;
+}
+
+.scheduleMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  background: #f8fafc;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #edf2f7;
+}
+
+.scheduleMetaItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #334155;
+}
+
+.scheduleMetaItem svg {
+  color: #0878d1;
+  flex-shrink: 0;
+}
+
+.scheduleMetaItem strong {
+  color: #0f2744;
+}
+
+/* Khối Quy trình tiêm chủng an toàn 4 bước */
+.vaccineWorkflowSection {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2eaf1;
+  padding: 32px 28px;
+  box-shadow: 0 8px 24px rgba(10, 50, 85, 0.05);
+  margin-top: 10px;
+}
+
+.workflowHeader {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.workflowEyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0878d1;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.workflowTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f2744;
+}
+
+.workflowDesc {
+  margin: 8px auto 0;
+  font-size: 14px;
+  color: #64748b;
+  max-width: 680px;
+  line-height: 1.5;
+}
+
+.workflowGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.workflowStepCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 22px 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.workflowStepCard:hover {
+  background: #ffffff;
+  border-color: #93c5fd;
+  box-shadow: 0 8px 20px rgba(8, 120, 209, 0.08);
+  transform: translateY(-2px);
+}
+
+.workflowStepNum {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #0878d1;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(8, 120, 209, 0.3);
+}
+
+.workflowStepTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f2744;
+}
+
+.workflowStepDesc {
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.55;
+}
+
+/* Khối Hotline & Hỗ trợ tư vấn tiêm chủng */
+.vaccineSupportBanner {
+  background: linear-gradient(135deg, #072b4c 0%, #0754a8 60%, #0878d1 100%);
+  border-radius: 20px;
+  padding: 30px 36px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  box-shadow: 0 10px 30px rgba(7, 84, 168, 0.2);
+}
+
+.vaccineSupportContent h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.vaccineSupportContent p {
+  margin: 0;
+  font-size: 14px;
+  color: #e2f1fc;
+  max-width: 620px;
+  line-height: 1.5;
+}
+
+.vaccineSupportActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.vaccineSupportBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #0754a8;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s ease;
+}
+
+.vaccineSupportBtn:hover {
+  background: #f0f7ff;
+  transform: translateY(-1px);
+}
+
+.vaccineHotlineBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: #e11d48;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3);
+  transition: all 0.2s ease;
+}
+
+.vaccineHotlineBtn:hover {
+  background: #be123c;
+  transform: translateY(-1px);
+}
+
+/* =========================================================================
+   CHI TIẾT VẮC XIN (VACCINE DETAIL PAGE)
+   ========================================================================= */
+.vaccineDetailShell {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-bottom: 50px;
+}
+
+.vaccineDetailCard {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2eaf1;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(10, 50, 85, 0.06);
+}
+
+.vaccineDetailHeader {
+  padding: 28px 32px 24px;
+  border-bottom: 1px solid #edf2f7;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.vaccineDetailMeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.vaccineDetailTitle {
+  margin: 0 0 12px;
+  font-size: 26px;
+  font-weight: 900;
+  color: #0f2744;
+  line-height: 1.3;
+}
+
+.vaccineDetailLead {
+  margin: 0;
+  font-size: 15px;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.vaccineDetailGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 24px 32px;
+  background: #f8fafc;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.vaccineDetailFactBox {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vaccineDetailFactLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.vaccineDetailFactValue {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f2744;
+}
+
+.vaccineDetailFactPrice {
+  font-size: 22px;
+  font-weight: 900;
+  color: #e11d48;
+}
+
+.vaccineDetailContent {
+  padding: 28px 32px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #334155;
+}
+
+.vaccineDetailNoteBox {
+  margin: 0 32px 24px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: #fffbeb;
+  border: 1.5px solid #fef3c7;
+  color: #92400e;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.vaccineDetailActionRow {
+  padding: 20px 32px 28px;
+  border-top: 1px solid #edf2f7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .vaccineGrid {
+    grid-template-columns: 1fr;
+  }
+  .vaccineDetailHeader,
+  .vaccineDetailGrid,
+  .vaccineDetailContent,
+  .vaccineDetailActionRow {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .vaccineDetailNoteBox {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+  .vaccineSupportBanner {
+    padding: 22px 20px;
+  }
+}

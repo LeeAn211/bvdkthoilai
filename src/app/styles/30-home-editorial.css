@@ -1,0 +1,506 @@
+/* Canonical homepage editorial cards - Bệnh viện Đa khoa Khu vực Thới Lai
+   Layout: 1 Thẻ chính (Hero Spotlight) + 4 Thẻ phụ dạng tạp chí tin tức cao cấp */
+.homePortalPage .homeEditorialGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 18px;
+}
+
+/* Thẻ chung */
+.homePortalPage .homeEditorialGrid > a {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e2ecf3;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(10, 42, 74, 0.05);
+  transition: transform .25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .25s cubic-bezier(0.16, 1, 0.3, 1), border-color .2s ease;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.homePortalPage .homeEditorialGrid > a:hover {
+  transform: translateY(-4px);
+  border-color: #0878d1;
+  box-shadow: 0 10px 24px rgba(8, 120, 209, 0.14);
+}
+
+/* 1. Ô CHÍNH (FEATURED HERO CARD BÊN TRÁI) - Mẫu chung: 60% ảnh, 40% nội dung */
+.homePortalPage .homeEditorialGrid > a.featured {
+  grid-row: 1 / span 2;
+  flex-direction: column;
+  height: 100%;
+}
+
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage {
+  position: relative;
+  width: 100%;
+  flex: 0 0 60%;
+  height: 60%;
+  min-height: 60%;
+  max-height: 60%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f0f7fd 0%, #e2eef7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #edf4f8;
+}
+
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage .editorialImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform .4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.homePortalPage .homeEditorialGrid > a.featured:hover .homeEditorialImage .editorialImg {
+  transform: scale(1.04);
+}
+
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy {
+  padding: 18px 22px 20px;
+  flex: 0 0 40%;
+  height: 40%;
+  min-height: 40%;
+  max-height: 40%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: #ffffff;
+}
+
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0878d1;
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 9px;
+}
+
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy small::before {
+  content: "•";
+  color: #0878d1;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy h3 {
+  color: #0f2e47;
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1.4;
+  margin: 0 0 12px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  max-height: 4.2em;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  transition: color .2s ease;
+}
+
+.homePortalPage .homeEditorialGrid > a.featured:hover .homeEditorialCopy h3 {
+  color: #0878d1;
+}
+
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy p {
+  color: #526e85;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+/* Giữ đủ 1 ô chính + 4 ô phụ khi một section có ít bài. */
+.homePortalPage .homeEditorialGrid > .homeEditorialEmptyCard {
+  min-height: 228px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 2. BỐN Ô PHỤ (4 SUB CARDS BÊN PHẢI) - Ô NỘI DUNG RỘNG RÃI & CHIỀU CAO ẢNH LỚN */
+.homePortalPage .homeEditorialGrid > a:not(.featured) {
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+}
+
+.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10.5;
+  max-height: 175px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8fbfd 0%, #edf4f9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-bottom: 1px solid #edf4f8;
+  border-right: none;
+}
+
+.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage .editorialImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.homePortalPage .homeEditorialGrid > a:not(.featured):hover .homeEditorialImage .editorialImg {
+  transform: scale(1.05);
+}
+
+.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy {
+  padding: 16px 18px 18px;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: #ffffff;
+}
+
+.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy small {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #7b94a7;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy small::before {
+  content: "•";
+  color: #0878d1;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy h3 {
+  color: #12344d;
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 0 0 6px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  max-height: 4.2em;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  transition: color .2s ease;
+}
+
+.homePortalPage .homeEditorialGrid > a:not(.featured):hover .homeEditorialCopy h3 {
+  color: #0878d1;
+}
+
+.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy p {
+  color: #647f95;
+  font-size: 12.5px;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* BADGE DANH MỤC */
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 48%;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(8, 38, 66, 0.58) 0%, transparent 100%);
+  z-index: 1;
+}
+
+.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage::after,
+.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage span {
+  display: none; /* Ẩn badge ở 4 ô nhỏ để ảnh thông thoáng, hiển thị trọn vẹn đúng mẫu */
+}
+
+.homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage span {
+  position: absolute;
+  z-index: 2;
+  left: 14px;
+  bottom: 12px;
+  max-width: calc(100% - 28px);
+  overflow: hidden;
+  border-radius: 999px;
+  padding: 5px 13px;
+  color: #065ea9;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+  font-weight: 850;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* Canonical homepage tab cards.
+   Used by Cổng thông tin bệnh viện and Hoạt động nổi bật. */
+.homePortalPage .tabFeatureCard .portalNewsImage,
+.homePortalPage .tabFeatureCard .scienceImage,
+.homePortalPage .homeNewsImage {
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.homePortalPage .featuredCarouselImage {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: 310px;
+  aspect-ratio: 1 / 1.15;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #f8fbfe;
+}
+.homePortalPage .featuredCarouselImage img {
+  position: static;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+}
+.homePortalPage .featuredCarouselCard {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+}
+.homePortalPage .featuredCarouselCopy {
+  height: auto;
+  min-height: 84px;
+  max-height: none;
+  overflow: hidden;
+}
+.homePortalPage .featuredCarouselCopy h3 {
+  display: -webkit-box;
+  overflow: hidden;
+  max-height: 2.84em;
+  line-height: 1.42;
+  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.homePortalPage .tabEditorialList .portalNewsCard.tabSideCard > .portalNewsThumb,
+.homePortalPage .tabEditorialList .portalNewsCard.tabSideCard > .portalNewsImage,
+.homePortalPage .tabEditorialList .scienceCard.tabSideCard > .scienceImage {
+  width: 180px;
+  min-width: 180px;
+  height: 100%;
+  min-height: 128px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: #eaf4fc;
+}
+.homePortalPage .tabSideCard .portalNewsImage.fitCover,
+.homePortalPage .tabSideCard .scienceImage.fitCover,
+.homePortalPage .tabFeatureCard .portalNewsImage.fitCover,
+.homePortalPage .tabFeatureCard .scienceImage.fitCover {
+  background-size: cover !important;
+}
+.homePortalPage .tabSideCard .portalNewsImage.fitContain,
+.homePortalPage .tabSideCard .scienceImage.fitContain,
+.homePortalPage .tabFeatureCard .portalNewsImage.fitContain,
+.homePortalPage .tabFeatureCard .scienceImage.fitContain {
+  background-size: contain !important;
+}
+
+@media (max-width: 1180px) {
+  .homePortalPage .homeEditorialGrid {
+    grid-template-columns: minmax(0, 1fr) repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+@media (max-width: 900px) {
+  .homePortalPage .featuredCarouselImage {
+    height: auto;
+    min-height: 0;
+    max-height: 310px;
+    flex-basis: auto;
+  }
+  .homePortalPage .homeEditorialGrid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+  }
+  .homePortalPage .homeEditorialGrid > a.featured {
+    grid-column: 1 / span 2;
+    grid-row: auto;
+  }
+  .homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage {
+    flex: 0 0 auto;
+    height: 300px;
+  }
+  .homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 180px;
+    max-height: none;
+  }
+}
+@media (max-width: 640px) {
+  .homePortalPage .featuredCarouselImage {
+    height: auto;
+    min-height: 0;
+    max-height: 310px;
+    flex-basis: auto;
+  }
+  .homePortalPage .featuredCarouselCard {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+  }
+}
+@media (max-width: 600px) {
+  .homePortalPage .homeEditorialGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .homePortalPage .homeEditorialGrid > a.featured {
+    grid-column: auto;
+  }
+  .homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage {
+    height: 220px;
+  }
+  .homePortalPage .homeEditorialGrid > a:not(.featured) {
+    flex-direction: row;
+    align-items: stretch;
+    height: auto;
+    min-height: 106px;
+  }
+  .homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage {
+    width: 110px;
+    min-width: 110px;
+    max-height: none;
+    height: 100%;
+    aspect-ratio: auto;
+    border-bottom: none;
+    border-right: 1px solid #edf4f8;
+  }
+  .homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy p {
+    display: none;
+  }
+  .homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy p {
+    -webkit-line-clamp: 2;
+    margin-top: 4px;
+  }
+}
+
+/* Đồng bộ Kỹ thuật chuyên sâu màu xanh thương hiệu bệnh viện */
+.homePortalPage .homeAdvancedTechniquesSection {
+  background: var(--section-background, transparent);
+}
+.homePortalPage .techCard {
+  border: 1px solid #dce8f1 !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  box-shadow: 0 8px 24px rgba(15, 63, 99, 0.08) !important;
+}
+.homePortalPage .techCardLink:hover:not(.no-cursor) .techCard {
+  border-color: #0878d1 !important;
+  box-shadow: 0 16px 32px rgba(8, 120, 209, 0.16) !important;
+}
+.homePortalPage .techCardBadge {
+  color: #0878d1 !important;
+  border: 1px solid #bce0f8 !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  box-shadow: 0 2px 6px rgba(8, 120, 209, 0.08) !important;
+}
+.homePortalPage .techCardFooter {
+  background-color: #f0f7fd !important;
+  border-top: 1px solid #dce8f1 !important;
+}
+.homePortalPage .techCardTitle {
+  color: #0754a8 !important;
+}
+.homePortalPage .techNavBtn {
+  border: 1.5px solid #0878d1 !important;
+  background: #ffffff !important;
+  color: #0878d1 !important;
+  box-shadow: 0 3px 10px rgba(8, 120, 209, 0.15) !important;
+}
+.homePortalPage .techNavBtn:hover {
+  background: #0878d1 !important;
+  border-color: #0754a8 !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   HOMEPAGE SPECIALTIES SHOWCASE CAROUSEL SECTION (HỆ THỐNG CHUYÊN KHOA)
+   Thiết kế giao diện Chuyên khoa đẳng cấp y tế hiện đại, làm nổi bật các chuyên khoa
+   ========================================================================== */
+.homePortalPage .homeSpecialtiesShowcaseSection {
+  position: relative;
+}
+
+/* ==========================================================================
+   CSS SECTION SCROLL SNAP (PHƯƠNG ÁN 1)
+   Tự động hít nhẹ và căn chỉnh chuẩn từng Section khi lăn chuột
+   ========================================================================== */
+html.hasSectionScrollSnap {
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+}
+
+.hasSectionScrollSnap .homePortalPage {
+  scroll-snap-type: y proximity;
+}
+
+/* Các section tham gia Scroll Snap */
+.hasSectionScrollSnap .heroCarouselWrap,
+.hasSectionScrollSnap .homeQuickWrap,
+.hasSectionScrollSnap .noticeTicker,
+.hasSectionScrollSnap .homeSections > section,
+.hasSectionScrollSnap .configurableHomeSection {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  /* Trừ khoảng cách menu header cố định phía trên để tiêu đề không bị che lấp */
+  scroll-margin-top: 76px;
+}
+
+@media (max-width: 900px) {
+  .hasSectionScrollSnap .heroCarouselWrap,
+  .hasSectionScrollSnap .homeQuickWrap,
+  .hasSectionScrollSnap .noticeTicker,
+  .hasSectionScrollSnap .homeSections > section,
+  .hasSectionScrollSnap .configurableHomeSection {
+    scroll-margin-top: 64px;
+  }
+}
+

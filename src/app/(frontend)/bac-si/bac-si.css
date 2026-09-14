@@ -1,0 +1,481 @@
+/* ── DOCTOR DIRECTORY PAGE ───────────── */
+.doctorsPage {
+  background-color: #ffffff;
+  padding-bottom: 80px;
+}
+
+/* ── HERO BANNER CHUẨN Y TẾ ĐỒNG BỘ ────────────────────── */
+.doctorsHero {
+  position: relative;
+  background: var(--page-hero-bg, linear-gradient(135deg, #072b4c 0%, #0754a8 55%, #0878d1 100%));
+  color: var(--page-hero-title-color, #ffffff);
+  padding: var(--page-hero-padding, 22px 0 20px);
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.doctorsHero::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -5%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+
+.doctorsHeroInner {
+  position: relative;
+  z-index: 2;
+  max-width: 1180px;
+}
+
+.doctorsHeroTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.doctorsBreadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--page-hero-breadcrumb-color, #bae6fd);
+  font-weight: 600;
+  margin: 0;
+}
+
+.doctorsBreadcrumb a {
+  color: var(--page-hero-breadcrumb-link, #e0f2fe);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.doctorsBreadcrumb a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.doctorsBadgeWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.doctorsBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.doctorsSubBadge {
+  font-size: 12.5px;
+  color: var(--page-hero-breadcrumb-color, #bae6fd);
+  font-weight: 600;
+}
+
+.doctorsHeroTitle {
+  font-size: var(--page-hero-title-size, 26px);
+  font-weight: 800;
+  color: var(--page-hero-title-color, #ffffff);
+  margin: 0 0 4px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+}
+
+.doctorsHeroDesc {
+  font-size: var(--page-hero-desc-size, 14px);
+  color: var(--page-hero-desc-color, #e2f1fc);
+  margin: 0;
+  line-height: 1.5;
+  max-width: 1000px;
+  white-space: normal;
+}
+
+/* ── FILTER & SEARCH TOOLBAR ────────────────────────────── */
+.doctorsFilterSection {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 0;
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  box-shadow: 0 4px 16px rgba(15, 63, 99, 0.04);
+}
+
+.doctorsFilterInner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.doctorsSearchBox {
+  position: relative;
+  flex: 1;
+  min-width: 240px;
+  max-width: 400px;
+}
+
+.doctorsSearchInput {
+  width: 100%;
+  height: 40px;
+  border-radius: 99px;
+  border: 1.5px solid #dce8f1;
+  padding: 0 40px 0 16px;
+  font-size: 13.5px;
+  color: #1e293b;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.doctorsSearchInput:focus {
+  background: #ffffff;
+  border-color: #0878d1;
+  box-shadow: 0 0 0 3px rgba(8, 120, 209, 0.12);
+}
+
+.doctorsSearchIcon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  pointer-events: none;
+}
+
+.doctorsSelectGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.doctorsSelect {
+  height: 40px;
+  border-radius: 99px;
+  border: 1.5px solid #dce8f1;
+  padding: 0 20px 0 14px;
+  font-size: 13px;
+  color: #334155;
+  background: #f8fafc;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.doctorsSelect:focus {
+  background: #ffffff;
+  border-color: #0878d1;
+}
+
+.doctorsSearchBtn {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 99px;
+  border: none;
+  background: #0878d1;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.doctorsSearchBtn:hover {
+  background: #0754a8;
+}
+
+.doctorsResetBtn {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 99px;
+  border: 1px solid #dce8f1;
+  background: #ffffff;
+  color: #475569;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.doctorsResetBtn:hover {
+  background: #f1f5f9;
+  color: #0878d1;
+}
+
+.doctorsCountBadge {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #475569;
+  white-space: nowrap;
+  background: #f1f5f9;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.doctorsCountBadge strong {
+  color: #0878d1;
+}
+
+/* ── DOCTORS GRID (4 CỘT) ─────── */
+.doctorsGridSection {
+  margin-top: 32px;
+}
+
+.doctorsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px 28px;
+}
+
+/* Thẻ bác sĩ tối giản, thanh lịch */
+.doctorCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.25s ease;
+  position: relative;
+}
+
+.doctorCard:hover {
+  transform: translateY(-4px);
+}
+
+/* Khung ảnh bo tròn 4 góc với viền bo nổi bật, ảnh phủ khít 100% vừa khít viền khung không hở viền trắng */
+.doctorCardImageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.25;
+  background: #f1f5f9;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-sizing: border-box;
+  border: 2.5px solid #cbd5e1;
+  box-shadow: 0 6px 20px rgba(15, 63, 99, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.doctorCard:hover .doctorCardImageWrap {
+  border-color: #0878d1;
+  box-shadow: 0 12px 30px rgba(8, 120, 209, 0.22), 0 0 0 3px rgba(8, 120, 209, 0.12);
+  transform: translateY(-2px);
+}
+
+.doctorCardImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.doctorCard:hover .doctorCardImg {
+  transform: scale(1.04);
+}
+
+/* Fallback avatar chữ cái nền dịu mắt */
+.doctorCardAvatarFallback {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #0878d1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 900;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Tag nổi bật */
+.doctorCardFeaturedTag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(220, 38, 38, 0.9);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 99px;
+  z-index: 2;
+}
+
+/* Thân thông tin dưới ảnh (Tên đậm + Chức danh/Đơn vị màu xám) */
+.doctorCardBody {
+  margin-top: 14px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Tên bác sĩ đậm đen chuẩn mẫu */
+.doctorCardName {
+  font-size: 16.5px;
+  font-weight: 850;
+  color: #111827;
+  margin: 0 0 4px;
+  line-height: 1.4;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.doctorCard:hover .doctorCardName {
+  color: #0878d1;
+}
+
+/* Đơn vị công tác / chức danh màu xám nhỏ nhắn phía dưới */
+.doctorCardDept {
+  font-size: 13.5px;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.45;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── PHÂN TRANG (PAGINATION) ────────────────────────────── */
+.doctorsPagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 50px;
+}
+
+.doctorsPageBtn {
+  min-width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1.5px solid #dce8f1;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.doctorsPageBtn:hover:not(.disabled) {
+  background: #f0f7fd;
+  border-color: #0878d1;
+  color: #0878d1;
+}
+
+.doctorsPageBtn.active {
+  background: #0878d1;
+  border-color: #0878d1;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(8, 120, 209, 0.25);
+}
+
+.doctorsPageBtn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── EMPTY STATE ────────────────────────────────────────── */
+.doctorsEmpty {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f8fafc;
+  border-radius: 20px;
+  border: 1px dashed #cbd5e1;
+  margin-top: 30px;
+}
+
+.doctorsEmptyIcon {
+  font-size: 48px;
+  margin-bottom: 14px;
+  display: inline-block;
+}
+
+.doctorsEmpty h3 {
+  font-size: 19px;
+  font-weight: 850;
+  color: #1e293b;
+  margin: 0 0 8px;
+}
+
+.doctorsEmpty p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* ── RESPONSIVE BREAKPOINTS ─────────────────────────────── */
+@media (max-width: 1180px) {
+  .doctorsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 26px 20px;
+  }
+}
+
+@media (max-width: 860px) {
+  .doctorsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 18px;
+  }
+  .doctorsFilterInner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .doctorsSearchBox {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 540px) {
+  .doctorsGrid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

@@ -1,0 +1,574 @@
+/* =========================================================================
+   TRANG LIÊN HỆ HIỆN ĐẠI & CHUYÊN NGHIỆP - BVĐK KHU VỰC THỚI LAI
+   ========================================================================= */
+
+.contactPageWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-bottom: 50px;
+}
+
+/* 1. LƯỚI 4 THẺ THÔNG TIN TIẾP ĐÓN NHANH */
+.contactQuickCardsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.contactQuickCard {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1.5px solid #e2eaf1;
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(10, 50, 85, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.contactQuickCard:hover {
+  transform: translateY(-3px);
+  border-color: #93c5fd;
+  box-shadow: 0 10px 26px rgba(8, 120, 209, 0.12);
+}
+
+.contactQuickCard.emergencyCard {
+  border-color: #fecaca;
+  background: linear-gradient(180deg, #ffffff 0%, #fffbfb 100%);
+}
+
+.contactQuickCard.emergencyCard:hover {
+  border-color: #f87171;
+  box-shadow: 0 10px 26px rgba(225, 29, 72, 0.14);
+}
+
+.contactCardIconWrap {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #f0f7ff;
+  color: #0878d1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contactQuickCard.emergencyCard .contactCardIconWrap {
+  background: #fee2e2;
+  color: #e11d48;
+}
+
+.contactCardLabel {
+  font-size: 12px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.contactQuickCard.emergencyCard .contactCardLabel {
+  color: #e11d48;
+}
+
+.contactCardMainValue {
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f2744;
+  line-height: 1.3;
+}
+
+.contactQuickCard.emergencyCard .contactCardMainValue {
+  color: #be123c;
+  font-size: 22px;
+}
+
+.contactCardMainValue a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.contactCardMainValue a:hover {
+  color: #0878d1;
+}
+
+.contactQuickCard.emergencyCard .contactCardMainValue a:hover {
+  color: #9f1239;
+}
+
+.contactCardSubText {
+  font-size: 13.5px;
+  color: #475569;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.contactCardAction {
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.contactActionLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0878d1;
+  text-decoration: none;
+  transition: gap 0.15s ease;
+}
+
+.contactActionLink:hover {
+  gap: 9px;
+  color: #0754a8;
+}
+
+.contactQuickCard.emergencyCard .contactActionLink {
+  color: #e11d48;
+}
+
+/* 2. KHỐI CHÍNH: 2 CỘT HIỆN ĐẠI (BẢN ĐỒ & THÔNG TIN VIỆN + FORM PHẢN ÁNH) */
+.contactMainLayoutGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+/* Cột trái: Thông tin vị trí, bản đồ và các kênh mạng xã hội */
+.contactLocationColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.contactLocationCard {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1.5px solid #e2eaf1;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(10, 50, 85, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contactLocationHeader h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f2744;
+}
+
+.contactLocationHeader p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.contactDetailList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 18px 20px;
+  border: 1px solid #edf2f7;
+}
+
+.contactDetailItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #334155;
+}
+
+.contactDetailItem svg {
+  color: #0878d1;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.contactDetailItem strong {
+  color: #0f2744;
+  min-width: 100px;
+  flex-shrink: 0;
+}
+
+.contactDetailItem a {
+  color: #0878d1;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.contactDetailItem a:hover {
+  text-decoration: underline;
+}
+
+/* Khung bản đồ Google Maps */
+.contactMapContainer {
+  height: 340px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1.5px solid #cbd5e1;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
+  position: relative;
+  background: #f1f5f9;
+}
+
+.contactMapContainer iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.contactMapActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.contactDirectionsBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background: #0878d1;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(8, 120, 209, 0.25);
+  transition: all 0.2s ease;
+}
+
+.contactDirectionsBtn:hover {
+  background: #065b9e;
+  transform: translateY(-1px);
+}
+
+/* Khối mạng xã hội kết nối */
+.contactSocialCard {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1.5px solid #e2eaf1;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.contactSocialText h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f2744;
+}
+
+.contactSocialText p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.contactSocialLinks {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contactSocialBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.contactSocialBadge.facebook {
+  background: #eef2ff;
+  color: #3b5998;
+  border: 1px solid #c7d2fe;
+}
+
+.contactSocialBadge.facebook:hover {
+  background: #3b5998;
+  color: #ffffff;
+}
+
+.contactSocialBadge.zalo {
+  background: #eff6ff;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+}
+
+.contactSocialBadge.zalo:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+/* Cột phải: Form gửi ý kiến phản ánh / đóng góp */
+.contactFormColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.contactFeedbackCard {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1.5px solid #e2eaf1;
+  padding: 28px 30px;
+  box-shadow: 0 4px 20px rgba(10, 50, 85, 0.05);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.contactFormHeader {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.contactFormEyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0878d1;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.contactFormHeader h3 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f2744;
+}
+
+.contactFormHeader p {
+  margin: 0;
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+/* Nâng cấp form trong FeedbackForm component */
+.contactFeedbackCard .feedback-form {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contactFeedbackCard .feedback-form h2 {
+  display: none;
+}
+
+.contactFeedbackCard .feedback-form label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contactFeedbackCard .feedback-form input,
+.contactFeedbackCard .feedback-form select,
+.contactFeedbackCard .feedback-form textarea {
+  width: 100%;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.contactFeedbackCard .feedback-form input:focus,
+.contactFeedbackCard .feedback-form select:focus,
+.contactFeedbackCard .feedback-form textarea:focus {
+  border-color: #0878d1;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(8, 120, 209, 0.14);
+}
+
+.contactFeedbackCard .feedback-consent {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+}
+
+.contactFeedbackCard .feedback-consent input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: #0878d1;
+}
+
+.contactFeedbackCard .btn-primary {
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0754a8 0%, #0878d1 100%);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 6px 18px rgba(8, 120, 209, 0.25);
+}
+
+.contactFeedbackCard .btn-primary:hover {
+  background: linear-gradient(135deg, #06458b 0%, #0762a8 100%);
+  transform: translateY(-1px);
+}
+
+.contactFeedbackCard .success-message {
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 14px 18px;
+  color: #15803d;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.contactFeedbackCard .success-message a {
+  color: #0878d1;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.contactFeedbackCard .error-message {
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #b91c1c;
+  font-size: 13.5px;
+}
+
+/* 3. KHỐI KHUNG GIỜ HỖ TRỢ CHUYÊN BIỆT */
+.contactSupportHoursSection {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1.5px solid #e2eaf1;
+  padding: 28px 30px;
+  box-shadow: 0 4px 16px rgba(10, 50, 85, 0.04);
+}
+
+.supportHoursHead {
+  margin-bottom: 20px;
+}
+
+.supportHoursEyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  color: #0878d1;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.supportHoursHead h3 {
+  margin: 4px 0 0;
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f2744;
+}
+
+.supportHoursGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.supportHourCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.supportHourCard:hover {
+  background: #ffffff;
+  border-color: #93c5fd;
+  box-shadow: 0 6px 16px rgba(8, 120, 209, 0.08);
+}
+
+.supportHourCard.emergency {
+  border-color: #fecaca;
+  background: #fffafa;
+}
+
+.supportHourTitle {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f2744;
+  margin: 0;
+}
+
+.supportHourCard.emergency .supportHourTitle {
+  color: #e11d48;
+}
+
+.supportHourTime {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0878d1;
+}
+
+.supportHourCard.emergency .supportHourTime {
+  color: #be123c;
+}
+
+.supportHourNote {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .contactMainLayoutGrid {
+    grid-template-columns: 1fr;
+  }
+  .contactLocationCard,
+  .contactFeedbackCard,
+  .contactSupportHoursSection {
+    padding: 20px 18px;
+  }
+}

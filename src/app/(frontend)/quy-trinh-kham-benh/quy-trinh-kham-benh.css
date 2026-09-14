@@ -1,0 +1,502 @@
+/* =========================================================================
+   QUY TRÌNH KHÁM BỆNH - BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI
+   ========================================================================= */
+
+.flowPageWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-bottom: 50px;
+}
+
+/* 1. THANH CHUYỂN ĐỔI TAB QUY TRÌNH CHÍNH */
+.flowTabNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.flowTabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: 99px;
+  border: 1.5px solid #d0e2f2;
+  background: #ffffff;
+  color: #1e3a5f;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.flowTabBtn:hover {
+  border-color: #0878d1;
+  color: #0878d1;
+  background: #f0f7ff;
+}
+
+.flowTabBtn.active {
+  background: linear-gradient(135deg, #0754a8 0%, #0878d1 100%);
+  border-color: #0878d1;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(8, 120, 209, 0.25);
+}
+
+.flowTabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 800;
+  background: #eef6fc;
+  color: #0878d1;
+}
+
+.flowTabBtn.active .flowTabCount {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+
+/* 2. KHỐI TÓM TẮT QUY TRÌNH ĐANG CHỌN (HERO SUMMARY) */
+.flowIntroCard {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1.5px solid #dbeafe;
+  padding: 24px 28px;
+  box-shadow: 0 4px 16px rgba(8, 120, 209, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.flowIntroText h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 900;
+  color: #0f2744;
+}
+
+.flowIntroText p {
+  margin: 0;
+  font-size: 14.5px;
+  color: #475569;
+  line-height: 1.6;
+  max-width: 750px;
+}
+
+.flowIntroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 99px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 13px;
+  font-weight: 800;
+  border: 1px solid #bae6fd;
+}
+
+/* 3. SƠ ĐỒ CÁC BƯỚC QUY TRÌNH KHÁM BỆNH (FLOW TIMELINE) */
+.flowTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+
+.flowStepCard {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #e2eaf1;
+  padding: 22px 24px;
+  box-shadow: 0 4px 16px rgba(10, 50, 85, 0.04);
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.flowStepCard:hover {
+  transform: translateY(-2px);
+  border-color: #93c5fd;
+  box-shadow: 0 10px 24px rgba(8, 120, 209, 0.09);
+}
+
+.flowStepCard.highlightStep {
+  border-left: 5px solid #0878d1;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fcff 100%);
+}
+
+.flowStepCard.emergencyStep {
+  border-left: 5px solid #e11d48;
+  background: linear-gradient(180deg, #ffffff 0%, #fffbfb 100%);
+}
+
+/* Số thứ tự bước */
+.flowStepNumberWrap {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.flowStepNumber {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0754a8 0%, #0878d1 100%);
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(8, 120, 209, 0.3);
+}
+
+.flowStepCard.emergencyStep .flowStepNumber {
+  background: linear-gradient(135deg, #be123c 0%, #e11d48 100%);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+}
+
+.flowStepTimeTag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+/* Nội dung bước */
+.flowStepBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.flowStepHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.flowStepTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f2744;
+}
+
+.flowStepLocationBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0369a1;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.flowStepDesc {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: #334155;
+  white-space: pre-line;
+}
+
+/* Các chi tiết hành động con trong bước */
+.flowSubActionList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 10px;
+  background: #f8fafc;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #edf2f7;
+}
+
+.flowSubActionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13.5px;
+  color: #1e293b;
+  line-height: 1.5;
+}
+
+.flowSubActionItem svg {
+  color: #0878d1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Hộp ghi chú lưu ý quan trọng cho bước */
+.flowStepNote {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.flowStepNote svg {
+  flex-shrink: 0;
+  color: #d97706;
+  margin-top: 2px;
+}
+
+/* 4. KHỐI GIẤY TỜ CẦN CHUẨN BỊ (CHECKLIST) */
+.flowChecklistSection {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2eaf1;
+  padding: 28px 30px;
+  box-shadow: 0 6px 20px rgba(10, 50, 85, 0.04);
+}
+
+.checklistHeader {
+  margin-bottom: 20px;
+}
+
+.checklistEyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0878d1;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.checklistTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f2744;
+}
+
+.checklistGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.checklistItemCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.checklistItemCard:hover {
+  background: #ffffff;
+  border-color: #93c5fd;
+  box-shadow: 0 6px 16px rgba(8, 120, 209, 0.08);
+}
+
+.checklistItemHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkIconWrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #e0f2fe;
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.checklistItemTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f2744;
+}
+
+.checklistItemDesc {
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.55;
+}
+
+/* 5. KHỐI CÁC ĐỐI TƯỢNG ƯU TIÊN TIẾP ĐÓN */
+.flowPrioritySection {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+  border: 1.5px solid #bbf7d0;
+  border-radius: 18px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.priorityHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #166534;
+}
+
+.priorityHeader h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.priorityList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.priorityItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: #14532d;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #dcfce7;
+}
+
+/* 6. BANNER LIÊN KẾT ĐẶT HẸN & HỖ TRỢ */
+.flowSupportBanner {
+  background: linear-gradient(135deg, #072b4c 0%, #0754a8 60%, #0878d1 100%);
+  border-radius: 20px;
+  padding: 30px 36px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  box-shadow: 0 10px 30px rgba(7, 84, 168, 0.2);
+}
+
+.flowSupportContent h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.flowSupportContent p {
+  margin: 0;
+  font-size: 14px;
+  color: #e2f1fc;
+  max-width: 620px;
+  line-height: 1.5;
+}
+
+.flowSupportActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.flowSupportBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #0754a8;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s ease;
+}
+
+.flowSupportBtn:hover {
+  background: #f0f7ff;
+  transform: translateY(-1px);
+}
+
+.flowHotlineBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: #e11d48;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3);
+  transition: all 0.2s ease;
+}
+
+.flowHotlineBtn:hover {
+  background: #be123c;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .flowStepCard {
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 16px;
+  }
+  .flowStepNumberWrap {
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .flowStepNumber {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+  .flowIntroCard,
+  .flowChecklistSection,
+  .flowPrioritySection,
+  .flowSupportBanner {
+    padding: 20px 18px;
+  }
+}

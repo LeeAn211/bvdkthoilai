@@ -1,0 +1,420 @@
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.protectionNotice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: #fff8eb;
+  border: 1px solid #f6d899;
+  border-radius: var(--site-radius-sm, 10px);
+  color: #925400;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  margin-bottom: 24px;
+}
+
+.protectionNotice svg {
+  flex-shrink: 0;
+  color: #d48806;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.badgeGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.docBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #e6f4ff;
+  color: #0958d9;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 6px;
+  border: 1px solid #91caff;
+}
+
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #f6ffed;
+  color: #389e0d;
+  font-weight: 600;
+  font-size: 0.82rem;
+  border-radius: 6px;
+  border: 1px solid #b7eb8f;
+}
+
+.title {
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+  font-weight: 800;
+  color: var(--site-text, #18344e);
+  line-height: 1.38;
+  text-wrap: balance;
+  margin: 0;
+}
+
+/* Alignment Controls */
+.align_left {
+  text-align: left;
+}
+
+.align_center {
+  text-align: center;
+}
+
+.align_right {
+  text-align: right;
+}
+
+.align_justify {
+  text-align: justify;
+}
+
+.justifyCenter {
+  justify-content: center;
+}
+
+.justifyEnd {
+  justify-content: flex-end;
+}
+
+/* Title Color Options */
+.titleColor_default {
+  color: var(--site-text, #18344e);
+}
+
+.titleColor_navy {
+  color: #0d2b45;
+}
+
+.titleColor_blue {
+  color: var(--site-primary, #0878d1);
+}
+
+.titleColor_green {
+  color: #2e7d32;
+}
+
+.titleColor_red {
+  color: #d32f2f;
+}
+
+/* Title Size Options */
+.titleSize_normal {
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
+}
+
+.titleSize_large {
+  font-size: clamp(1.65rem, 2.9vw, 2.15rem);
+}
+
+.titleSize_xlarge {
+  font-size: clamp(1.85rem, 3.4vw, 2.45rem);
+}
+
+/* Summary Color Options */
+.summaryColor_default {
+  color: #1e293b;
+}
+
+.summaryColor_slate {
+  color: #334155;
+}
+
+.summaryColor_dark {
+  color: #0f172a;
+}
+
+/* Summary Size Options */
+.summarySize_normal {
+  font-size: 0.96rem;
+}
+
+.summarySize_large {
+  font-size: 1.05rem;
+}
+
+.summarySize_small {
+  font-size: 0.9rem;
+}
+
+/* Bảng thuộc tính chuẩn */
+.tableWrapper {
+  background: #ffffff;
+  border: 1px solid var(--site-border, #dce8f1);
+  border-radius: var(--site-radius-md, 14px);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(8, 120, 209, 0.05);
+  margin-bottom: 30px;
+}
+
+.propertyTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.96rem;
+}
+
+.propertyTable tr {
+  border-bottom: 1px solid #eef3f7;
+}
+
+.propertyTable tr:last-child {
+  border-bottom: none;
+}
+
+.propertyTable tr:nth-child(even) {
+  background: #fbfdff;
+}
+
+.colLabel {
+  width: 25%;
+  min-width: 180px;
+  padding: 14px 20px;
+  font-weight: 700;
+  color: #334d6e;
+  background: #f4f8fb;
+  border-right: 1px solid #eef3f7;
+  vertical-align: top;
+}
+
+.colValue {
+  padding: 14px 20px;
+  color: #1e293b;
+  vertical-align: middle;
+  line-height: 1.55;
+}
+
+.docNumber {
+  color: var(--site-primary, #0878d1);
+  font-size: 1.05rem;
+}
+
+.summaryText {
+  margin: 0;
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+/* Hàng tệp đính kèm */
+.docAttachmentRow {
+  background: #f8fbff !important;
+}
+
+.attachmentWrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.fileInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fileIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: #ff4d4f;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.75rem;
+  border-radius: 8px;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.25);
+}
+
+.fileName {
+  font-weight: 600;
+  color: #1e293b;
+  word-break: break-word;
+  max-width: 480px;
+}
+
+.actionButtonGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btnView,
+.btnDownload {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btnView {
+  background: #ffffff;
+  color: var(--site-primary, #0878d1);
+  border: 1px solid #91caff;
+}
+
+.btnView:hover {
+  background: #e6f4ff;
+  border-color: var(--site-primary, #0878d1);
+}
+
+.btnDownload {
+  background: var(--site-primary, #0878d1);
+  color: #ffffff;
+  border: 1px solid var(--site-primary, #0878d1);
+  box-shadow: 0 2px 8px rgba(8, 120, 209, 0.25);
+}
+
+.btnDownload:hover {
+  background: #065fa8;
+  border-color: #065fa8;
+}
+
+.downloadLocked {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: #f5f5f5;
+  color: #8c8c8c;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: not-allowed;
+}
+
+.noFileText {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Khung nhúng xem tài liệu */
+.viewerSection {
+  background: #ffffff;
+  border: 1px solid var(--site-border, #dce8f1);
+  border-radius: var(--site-radius-md, 14px);
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(15, 63, 99, 0.08);
+  margin-top: 24px;
+  transition: all 0.3s ease;
+}
+
+.viewerFullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  margin: 0;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewerToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: #1e293b;
+  color: #ffffff;
+}
+
+.viewerTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.toolbarActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toolbarBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.toolbarBtn:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.frameContainer {
+  width: 100%;
+  height: 680px;
+  background: #f1f5f9;
+  position: relative;
+}
+
+.viewerFullscreen .frameContainer {
+  flex: 1;
+  height: 100%;
+}
+
+.iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .colLabel {
+    width: 35%;
+    min-width: 130px;
+    padding: 10px 12px;
+  }
+  .colValue {
+    padding: 10px 12px;
+  }
+  .attachmentWrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .frameContainer {
+    height: 480px;
+  }
+}

@@ -1,0 +1,6 @@
+/* CSS policy for the public website
+   1. globals.css is the legacy compatibility file and should not receive new component rules.
+   2. New or corrected rules must live in src/app/styles/*.css by component area.
+   3. Image frames that represent news/cards use cover; logo/icon/document frames use contain.
+   4. Avoid !important. Use it only while replacing a legacy !important rule that still exists in globals.css.
+   5. When a legacy block is fully migrated, remove the old block from globals.css in the same commit. */

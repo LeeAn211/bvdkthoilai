@@ -1,0 +1,117 @@
+.accountCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 280px;
+  max-width: 380px;
+  padding: 8px 12px;
+  border: 1px solid #ccfbf1;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(13, 148, 136, 0.06);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border: 1px solid #99f6e4;
+  border-radius: 8px;
+  color: #0f766e;
+  background: #f0fdfa;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.identity {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+  flex: 1;
+}
+
+.caption {
+  color: #a1a1aa;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.identity strong {
+  overflow: hidden;
+  color: #09090b;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.identity small {
+  overflow: hidden;
+  color: #71717a;
+  font-size: 10.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.email {
+  overflow: hidden;
+  color: #a1a1aa;
+  font-size: 9.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accountActions {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  color: #166534;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.accountActions a {
+  color: #71717a;
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.accountActions a:hover {
+  color: #09090b;
+  text-decoration: underline;
+}
+
+@media (max-width: 760px) {
+  .accountCard {
+    min-width: 0;
+    width: 100%;
+    max-width: none;
+  }
+  .accountActions {
+    display: none;
+  }
+}
