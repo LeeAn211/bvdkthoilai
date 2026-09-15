@@ -4,6 +4,7 @@ import { isExternalUrl, resolveMenuUrl } from '@/lib/navigation'
 import type { CSSProperties, ReactNode } from 'react'
 import { SocialBrandIcon } from './SocialBrandIcon'
 import { CurrentWeekdayTime } from './CurrentWeekdayTime'
+import { MobileNavHeader } from './MobileNavHeader'
 
 function ContactIcon({ type = 'phone', customUrl, iconSize }: { type?: string; customUrl?: string; iconSize?: number }) {
   const iconPixelSize = iconSize ? `${iconSize}px` : undefined
@@ -445,40 +446,7 @@ export async function SiteHeader() {
 
       <header className={`mainHeader ${settings?.headerStickyMenu === false ? 'notSticky' : ''} ${animClass}`} style={menuStyle}>
         <div className="container headerInner">
-          <nav className="mainMenu" aria-label="Điều hướng chính">
-            <a className="navSimpleLink navHomeText" href="/">Trang chủ</a>
-            {items.map((item: any, index: number) => {
-              const url = resolveMenuUrl(item)
-              const children = item.children?.filter((child: any) => child.visible !== false) || []
-              if (url === '/' && index === 0) return null
-
-              if (children.length === 0) {
-                return <a className="navSimpleLink" href={url} target={item.openInNewTab || isExternalUrl(url) ? '_blank' : undefined} rel={item.openInNewTab || isExternalUrl(url) ? 'noreferrer' : undefined} key={`${item.label}-${index}`}>{item.label}</a>
-              }
-
-              return (
-                <div className="navItem" key={`${item.label}-${index}`}>
-                  <a
-                    className="navMainLink"
-                    href={item.linkType === 'parent' ? undefined : url}
-                    role={item.linkType === 'parent' ? 'button' : undefined}
-                    target={item.openInNewTab || isExternalUrl(url) ? '_blank' : undefined}
-                    rel={item.openInNewTab || isExternalUrl(url) ? 'noreferrer' : undefined}
-                  >
-                    <span>{item.label}</span>
-                    <svg className="navChevron" viewBox="0 0 12 8" aria-hidden="true"><path d="m1 1.5 5 5 5-5" /></svg>
-                  </a>
-                  <div className="navDropdown">
-                    {item.linkType !== 'parent' && <a href={url}><span>Xem tất cả {item.label}</span><i>›</i></a>}
-                    {children.map((child: any, childIndex: number) => {
-                      const childUrl = resolveMenuUrl(child)
-                      return <a key={`${child.label}-${childIndex}`} href={childUrl} target={child.openInNewTab || isExternalUrl(childUrl) ? '_blank' : undefined} rel={child.openInNewTab || isExternalUrl(childUrl) ? 'noreferrer' : undefined}><span>{child.label}</span><i>›</i></a>
-                    })}
-                  </div>
-                </div>
-              )
-            })}
-          </nav>
+          <MobileNavHeader items={items} />
         </div>
       </header>
 

@@ -1,5 +1,52 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Thiết kế lại Logo, Tiêu đề bệnh viện, Menu xổ xuống và Thanh tiện ích trên Điện thoại
+
+- **Thời gian thực hiện:** 16:30 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Thiết kế lại phần logo và tên bệnh viện trên điện thoại cho cân đối, đẹp mắt và chuyên nghiệp.
+  2. Thiết kế lại menu trên điện thoại: menu con (dropdown) xổ xuống dễ thao tác (hỗ trợ click chạm trực quan, không bị nhảy giật hay khó bấm).
+  3. Thanh tiện ích trên cùng (utility bar) trên điện thoại hiển thị đầy đủ ngày giờ thời gian thực, các biểu tượng mạng xã hội (Facebook, Zalo, YouTube,...) và ô tìm kiếm giống như trên desktop.
+- **Nội dung thực hiện:**
+  - **Tạo Client Component `MobileNavHeader.tsx`**:
+    - Quản lý trạng thái mở/đóng menu con (`openDropdown`) bằng thao tác chạm/click trực tiếp trên điện thoại và máy tính bảng.
+    - Hỗ trợ đóng menu tự động khi click ra ngoài màn hình hoặc chọn vào liên kết con.
+    - Xoay biểu tượng mũi tên khi mở menu (`chevronRotated`).
+  - **Cải tiến Header & CSS (`SiteHeader.module.css` & `globals.css`)**:
+    - Tách biệt và tối ưu thanh tiện ích trên mobile: Hiển thị ngày giờ đầy đủ (`utilityCurrentTime`), các icon mạng xã hội tròn (`headerSocial`), và thanh tìm kiếm (`utilitySearch`) gọn gàng với bo góc tròn.
+    - Thiết kế lại khối nhận diện thương hiệu `mastheadBrand`: Logo kích thước 58px có viền bo tròn đổ bóng nổi bật, tên bệnh viện (`mastheadBrandText strong`) và slogan (`mastheadBrandText small`) căn lề trái thẳng hàng, cỡ chữ responsive co giãn hài hòa chống rớt từ mồ côi.
+    - Tinh chỉnh menu navigation: Khung dropdown trên mobile định vị `position: absolute`, ôm sát thẻ cha, đổ bóng sắc nét và có đường phân cách các mục con rõ ràng, dễ bấm bằng ngón tay.
+  - **Kiểm tra**:
+    - Chạy `npm run typecheck`: Kết quả **Code 0 - Pass 100%**.
+- **Files Modified:**
+  - `src/components/MobileNavHeader.tsx` (NEW)
+  - `src/components/SiteHeader.tsx`
+  - `src/components/SiteHeader.module.css`
+  - `src/app/globals.css`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+
+## [2026-09-15] - Tối ưu hiển thị Khối Kỹ thuật chuyên sâu & Chuyên gia trên Điện thoại (Mobile 1 Card View)
+
+- **Thời gian thực hiện:** 15:48 (Asia/Saigon)
+- **Yêu cầu:** Trên điện thoại di động, khối "Kỹ thuật chuyên sâu" và "Chuyên gia của chúng tôi" chỉ hiển thị 1 khối (card) duy nhất tại một thời điểm và có nút bấm chuyển (next / prev) để chuyển qua các khối khác, thay vì hiển thị 3 khối cùng lúc.
+- **Nội dung thực hiện:**
+  - Cập nhật media query mobile (`@media (max-width: 600px)`) cho `AdvancedTechniquesCarousel.module.css`:
+    - Giới hạn track hiển thị đúng 1 cột và căn giữa đẹp mắt (`max-width: 360px`, `margin: 0 auto`).
+    - Ẩn các card từ vị trí thứ 2 trở đi trên mobile (`.techCardLink:nth-child(n+2) { display: none !important; }`).
+  - Cập nhật media query mobile (`@media (max-width: 600px)`) cho `OurExpertsCarousel.module.css`:
+    - Giới hạn track hiển thị đúng 1 cột và căn giữa đẹp mắt (`max-width: 360px`, `margin: 0 auto`).
+    - Ẩn các card từ vị trí thứ 2 trở đi trên mobile (`.expertCardLink:nth-child(n+2) { display: none !important; }`).
+  - Đảm bảo khi người dùng nhấn nút chuyển tiếp (Next / Prev) hoặc vuốt cảm ứng (Swipe touch), card tiếp theo sẽ lập tức được hiển thị mượt mà.
+  - Trên màn hình máy tính / tablet, giữ nguyên bố cục nhiều cột theo chuẩn thiết kế.
+- **Files Modified:**
+  - `src/components/AdvancedTechniquesCarousel.module.css`
+  - `src/components/OurExpertsCarousel.module.css`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+
 ## [2026-09-15] - Đóng gói Migration 010: Đồng bộ triệt để toàn bộ Cột Database cho Collections và Globals
 
 - **Thời gian thực hiện:** 13:18 (Asia/Saigon)

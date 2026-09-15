@@ -2,11 +2,17 @@
 
 ## Mục tiêu
 
-Đóng gói migration 010 và đồng bộ triệt để toàn bộ các cột còn thiếu giữa Payload CMS schema và PostgreSQL (Neon) cho `our_experts`, `advanced_techniques`, `contact_settings`, chấm dứt hoàn toàn tình trạng thiếu cột lẻ tẻ khi chạy trên web.
+Thiết kế lại phần logo, tên bệnh viện, menu xổ xuống và thanh tiện ích trên điện thoại theo yêu cầu thẩm mỹ chuyên nghiệp và dễ thao tác.
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 13:20 ngày 2026-09-15 (Asia/Saigon).
+- **Hoàn thành** lúc 16:31 ngày 2026-09-15 (Asia/Saigon).
+- **Chi tiết các hạng mục đã hoàn tất:**
+  1. **Thanh tiện ích trên cùng (Utility Bar)**: Hiển thị đầy đủ ngày giờ thời gian thực (`CurrentWeekdayTime`), các biểu tượng mạng xã hội (Facebook, Zalo, YouTube...) và ô tìm kiếm toàn diện trên giao diện điện thoại.
+  2. **Logo và Tên Bệnh viện**: Logo kích thước 58px nổi bật với bo góc và viền đổ bóng nhẹ, tên bệnh viện và câu slogan được bố trí cân đối sang trọng, căn chỉnh lề trái đồng nhất, chống rớt từ mồ côi.
+  3. **Menu Navigation xổ xuống**: Tách component client `MobileNavHeader` hỗ trợ chạm/click mở menu con nhẹ nhàng, mũi tên xoay chỉ báo, đóng menu mượt mà khi chạm ra ngoài hoặc click chọn mục con, giao diện dropdown có viền bo tròn đổ bóng nổi bật.
+  4. Đã chạy `npm run typecheck` thành công 100% (code 0).
+
 - **Đã tạo và triển khai migration `20260915_010_sync_all_remaining_collection_and_global_columns`**:
   - Bổ sung các cột `enable_link`, `url`, `open_new_tab` cho `our_experts` và `_our_experts_v`.
   - Bổ sung `enable_link`, `custom_url`, `show_cover_in_detail` cho `advanced_techniques` và `_advanced_techniques_v`.

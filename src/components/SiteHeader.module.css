@@ -217,12 +217,27 @@
   transform: translate(-50%, 0) perspective(600px) rotateX(0deg) !important;
 }
 
-/* Fallback hover */
-.root :global(.navItem:hover .navDropdown),
-.root :global(.navItem:focus-within .navDropdown) {
+/* Fallback hover (chỉ áp dụng trên desktop hover thiết bị có con trỏ) */
+@media (hover: hover) and (pointer: fine) {
+  .root :global(.navItem:hover .navDropdown),
+  .root :global(.navItem:focus-within .navDropdown) {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Cho phép mở menu dropdown khi click (mobile & tablet) */
+.root :global(.navItem.mobileOpen .navDropdown),
+.root :global(.navDropdown.dropdownVisible) {
   visibility: visible !important;
   opacity: 1 !important;
   pointer-events: auto !important;
+  transform: translate(-50%, 0) scale(1) !important;
+}
+
+.root :global(.navChevron.chevronRotated) {
+  transform: rotate(180deg) !important;
 }
 
 @media (max-width: 1180px) and (min-width: 901px) {
@@ -233,11 +248,48 @@
   }
 }
 @media (max-width: 900px) {
-  .root :global(.mainHeader) { overflow-x: auto; }
-  .root :global(.mainMenu) { min-width: max-content; gap: 16px !important; padding-inline: 14px !important; }
+  .root :global(.mainHeader) {
+    overflow-x: auto;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .root :global(.mainHeader::-webkit-scrollbar) {
+    display: none;
+  }
+  .root :global(.mainMenu) {
+    min-width: max-content;
+    gap: 8px !important;
+    padding-inline: 12px !important;
+  }
   .root :global(.mainMenu .navSimpleLink),
   .root :global(.mainMenu .navMainLink) {
-    font-size: var(--menu-font-size, 13px) !important;
+    font-size: 13px !important;
+    padding: 0 10px !important;
+  }
+  /* Căn chỉnh dropdown trên mobile để không bị cắt lệch hoặc khó bấm */
+  .root :global(.navDropdown) {
+    position: absolute !important;
+    top: calc(100% + 2px) !important;
+    left: 0 !important;
+    transform: none !important;
+    min-width: 220px !important;
+    max-width: calc(100vw - 24px) !important;
+    box-shadow: 0 10px 30px rgba(7, 84, 168, 0.22), 0 2px 8px rgba(0,0,0,0.1) !important;
+    border: 1.5px solid #0878d1 !important;
+    border-radius: 12px !important;
+  }
+  .root :global(.navItem.mobileOpen .navDropdown),
+  .root :global(.navDropdown.dropdownVisible) {
+    transform: none !important;
+  }
+  .root :global(.navDropdown a) {
+    padding: 11px 14px !important;
+    font-size: 13.5px !important;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .root :global(.navDropdown a:last-child) {
+    border-bottom: none;
   }
 }
 
@@ -499,56 +551,123 @@
 .root :global(.headerSocial img) { width: 27px; height: 27px; object-fit: contain; border-radius: 50%; display:block; }
 .root :global(.socialCustomText) { display:inline-flex; width:27px; height:27px; border-radius:50%; align-items:center; justify-content:center; background:#fff; color:#0756b4; font-size:8px; font-weight:700; }
 
-/* Responsive: Tên đơn vị và logo trên màn hình nhỏ */
+/* Responsive: Tên đơn vị và logo trên màn hình nhỏ cân đối, chuyên nghiệp */
 @media (max-width: 640px) {
-  .root :global(.hospitalMastheadInner) {
-    min-height: 78px !important;
+  .root :global(.utilityInner) {
+    min-height: 42px !important;
+    padding: 6px 12px !important;
+    flex-wrap: wrap !important;
+    gap: 8px 12px !important;
+    justify-content: space-between !important;
+  }
+  .root :global(.utilityGroup.utilityContact) {
+    flex: 1 1 auto;
+  }
+  .root :global(.utilityGroup.utilityRight) {
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 10px !important;
-    padding: 10px 0 !important;
+    gap: 8px !important;
   }
-  .root :global(.mastheadLogo) {
-    width: min(var(--masthead-logo-size, 52px), 50px) !important;
-    height: min(var(--masthead-logo-size, 52px), 50px) !important;
-    flex-basis: min(var(--masthead-logo-size, 52px), 50px) !important;
-    flex-shrink: 0 !important;
-    margin: 0 !important;
+  .root :global(.utilityCurrentTime) {
+    font-size: 11.5px !important;
+    white-space: nowrap !important;
+  }
+  .root :global(.utilityTimeIcon) {
+    width: 14px !important;
+    height: 14px !important;
+    flex: 0 0 14px !important;
+  }
+  .root :global(.headerSocial) {
+    width: 24px !important;
+    height: 24px !important;
+    flex: 0 0 24px !important;
+  }
+  .root :global(.headerSocial img) {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  .root :global(.utilitySearch) {
+    width: 130px !important;
+    height: 26px !important;
+    border-radius: 999px !important;
+    background: #ffffff !important;
+    padding: 0 8px !important;
+  }
+  .root :global(.utilitySearch input) {
+    font-size: 11px !important;
+  }
+
+  .root :global(.hospitalMastheadInner) {
+    min-height: 84px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    padding: 12px 14px !important;
   }
   .root :global(.mastheadBrand) {
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    justify-content: center !important;
+    gap: 12px !important;
     width: 100% !important;
     min-width: 0 !important;
-    margin: auto 0 !important;
+    margin: 0 auto !important;
+    text-align: left !important;
+  }
+  .root :global(.mastheadLogo) {
+    width: 58px !important;
+    height: 58px !important;
+    flex: 0 0 58px !important;
+    margin: 0 !important;
+    padding: 3px !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: 0 3px 10px rgba(8, 120, 209, 0.14) !important;
   }
   .root :global(.mastheadBrandText) {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     min-width: 0 !important;
+    flex: 1 1 auto !important;
+    text-align: left !important;
   }
   .root :global(.mastheadBrandText strong) {
-    font-size: clamp(11px, 3.8vw, 15px) !important;
-    line-height: 1.25 !important;
+    font-size: clamp(12.5px, 3.8vw, 15.5px) !important;
+    font-weight: 800 !important;
+    line-height: 1.3 !important;
+    color: var(--masthead-title-color, #0754aa) !important;
+    text-align: left !important;
+    letter-spacing: -0.2px !important;
   }
   .root :global(.mastheadBrandText small) {
-    font-size: clamp(9px, 2.5vw, 12px) !important;
+    font-size: clamp(10px, 2.7vw, 12px) !important;
+    font-weight: 600 !important;
     margin-top: 3px !important;
-    line-height: 1.2 !important;
+    line-height: 1.25 !important;
+    color: var(--masthead-subtitle-color, #0a9b50) !important;
+    text-align: left !important;
   }
-  /* Ẩn thẻ liên hệ trên mobile nhỏ */
+  /* Ẩn thẻ liên hệ cồng kềnh trên mobile nhỏ */
   .root :global(.mastheadContacts) { display: none !important; }
 }
 
 @media (max-width: 380px) {
+  .root :global(.mastheadLogo) {
+    width: 50px !important;
+    height: 50px !important;
+    flex: 0 0 50px !important;
+  }
   .root :global(.mastheadBrandText strong) {
-    font-size: 11px !important;
-    line-height: 1.15 !important;
+    font-size: 11.8px !important;
+    line-height: 1.25 !important;
   }
   .root :global(.mastheadBrandText small) {
-    font-size: 9px !important;
+    font-size: 9.5px !important;
+  }
+  .root :global(.utilitySearch) {
+    width: 105px !important;
   }
 }
+

@@ -2369,8 +2369,7 @@ body { background: #fff; color: var(--ink); overflow-x: hidden; }
 }
 @media (max-width: 820px) {
   body { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
-  .utilityRight,.utilityInner .utilityDivider,.utilityInner span:not(.pulseDot) { display:none; }
-  .utilityInner { justify-content:center; }
+  .utilityInner .utilityDivider { display:none; }
   .headerInner { min-height:66px; }
   .brandPro { min-width:0; }
   .brandMark { width:min(var(--header-logo-size,66px),52px); height:min(var(--header-logo-size,66px),52px); }
@@ -3743,7 +3742,7 @@ body {
   .utilitySearch { width:210px; }
 }
 @media (max-width: 680px) {
-  .utilitySearch { display:none; }
+  .utilitySearch { width: 140px; }
   .homeDocumentsFull > a:not(.homePanelMore) { grid-template-columns:34px minmax(0,1fr); }
   .homeDocumentsFull small { display:none; }
 }
@@ -4327,54 +4326,120 @@ body {
 .siteHeaderRoot .socialCustomText { display:inline-flex; width:27px; height:27px; border-radius:50%; align-items:center; justify-content:center; background:#fff; color:#0756b4; font-size:8px; font-weight:700; }
 
 @media (max-width: 640px) {
-  .siteHeaderRoot .hospitalMastheadInner {
-    min-height: 78px !important;
+  .siteHeaderRoot .utilityInner {
+    min-height: 42px !important;
+    padding: 6px 12px !important;
+    flex-wrap: wrap !important;
+    gap: 8px 12px !important;
+    justify-content: space-between !important;
+  }
+  .siteHeaderRoot .utilityGroup.utilityContact {
+    flex: 1 1 auto;
+  }
+  .siteHeaderRoot .utilityGroup.utilityRight {
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 10px !important;
-    padding: 10px 0 !important;
+    gap: 8px !important;
   }
-  .siteHeaderRoot .mastheadLogo {
-    width: min(var(--masthead-logo-size, 52px), 50px) !important;
-    height: min(var(--masthead-logo-size, 52px), 50px) !important;
-    flex-basis: min(var(--masthead-logo-size, 52px), 50px) !important;
-    flex-shrink: 0 !important;
-    margin: 0 !important;
+  .siteHeaderRoot .utilityCurrentTime {
+    font-size: 11.5px !important;
+    white-space: nowrap !important;
+  }
+  .siteHeaderRoot .utilityTimeIcon {
+    width: 14px !important;
+    height: 14px !important;
+    flex: 0 0 14px !important;
+  }
+  .siteHeaderRoot .headerSocial {
+    width: 24px !important;
+    height: 24px !important;
+    flex: 0 0 24px !important;
+  }
+  .siteHeaderRoot .headerSocial img {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  .siteHeaderRoot .utilitySearch {
+    width: 130px !important;
+    height: 26px !important;
+    border-radius: 999px !important;
+    background: #ffffff !important;
+    padding: 0 8px !important;
+  }
+  .siteHeaderRoot .utilitySearch input {
+    font-size: 11px !important;
+  }
+
+  .siteHeaderRoot .hospitalMastheadInner {
+    min-height: 84px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    padding: 12px 14px !important;
   }
   .siteHeaderRoot .mastheadBrand {
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    justify-content: center !important;
+    gap: 12px !important;
     width: 100% !important;
     min-width: 0 !important;
-    margin: auto 0 !important;
+    margin: 0 auto !important;
+    text-align: left !important;
+  }
+  .siteHeaderRoot .mastheadLogo {
+    width: 58px !important;
+    height: 58px !important;
+    flex: 0 0 58px !important;
+    margin: 0 !important;
+    padding: 3px !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: 0 3px 10px rgba(8, 120, 209, 0.14) !important;
   }
   .siteHeaderRoot .mastheadBrandText {
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     min-width: 0 !important;
+    flex: 1 1 auto !important;
+    text-align: left !important;
   }
   .siteHeaderRoot .mastheadBrandText strong {
-    font-size: clamp(11px, 3.8vw, 15px) !important;
-    line-height: 1.25 !important;
+    font-size: clamp(12.5px, 3.8vw, 15.5px) !important;
+    font-weight: 800 !important;
+    line-height: 1.3 !important;
+    color: var(--masthead-title-color, #0754aa) !important;
+    text-align: left !important;
+    letter-spacing: -0.2px !important;
   }
   .siteHeaderRoot .mastheadBrandText small {
-    font-size: clamp(9px, 2.5vw, 12px) !important;
+    font-size: clamp(10px, 2.7vw, 12px) !important;
+    font-weight: 600 !important;
     margin-top: 3px !important;
-    line-height: 1.2 !important;
+    line-height: 1.25 !important;
+    color: var(--masthead-subtitle-color, #0a9b50) !important;
+    text-align: left !important;
   }
   .siteHeaderRoot .mastheadContacts { display: none !important; }
 }
 
 @media (max-width: 380px) {
+  .siteHeaderRoot .mastheadLogo {
+    width: 50px !important;
+    height: 50px !important;
+    flex: 0 0 50px !important;
+  }
   .siteHeaderRoot .mastheadBrandText strong {
-    font-size: 11px !important;
-    line-height: 1.15 !important;
+    font-size: 11.8px !important;
+    line-height: 1.25 !important;
   }
   .siteHeaderRoot .mastheadBrandText small {
-    font-size: 9px !important;
+    font-size: 9.5px !important;
+  }
+  .siteHeaderRoot .utilitySearch {
+    width: 105px !important;
   }
 }
 

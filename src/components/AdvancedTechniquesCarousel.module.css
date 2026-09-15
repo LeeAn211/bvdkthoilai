@@ -203,6 +203,12 @@
 @media (max-width: 600px) {
   .techCarouselTrack {
     grid-template-columns: 1fr;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  /* Trên điện thoại chỉ hiển thị 1 khối duy nhất tại 1 thời điểm */
+  .techCardLink:nth-child(n+2) {
+    display: none !important;
   }
   .techCardTitle {
     font-size: 13.5px;
