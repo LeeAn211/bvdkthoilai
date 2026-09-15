@@ -1,5 +1,33 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Đóng gói Migration 007: Đồng bộ toàn diện Tech Items, Expert Items, Theme Settings và Site Settings Page Configs
+
+- **Thời gian thực hiện:** 09:45 (Asia/Saigon)
+- **Yêu cầu:** Khắc phục triệt để lỗi thiếu cột/bảng trên Neon gây lỗi truy vấn `homepage`, `site-settings`, `theme-settings` khi chạy trên Railway (`column homepage_sections_techniqueItems.enable_link does not exist`, `column site_settings.examination_flow_page_eyebrow does not exist`, `column "page_hero_bg_type" does not exist`).
+- **Nguyên nhân cốt lõi:**
+  1. Các trường Smart Links (`enable_link`, `link_mode`, `linked_page_id`, `new_page_title`, `new_page_slug`, `url`, `open_new_tab`) của `tech_items`, `expert_items`, `_tech_items_v`, `_expert_items_v` chưa có trên cơ sở dữ liệu Neon.
+  2. Bảng cấu hình giao diện `theme_settings` và bảng phiên bản `_theme_settings_v` (cùng các trường `page_hero_*`, `section_global_*`, `detail_layout_*`) chưa được khởi tạo/đồng bộ đầy đủ trên Neon.
+  3. Cấu hình các trang tiện ích người bệnh trong `site_settings` và `_site_settings_v` (`examination_flow_page_*`, `quality_page_*`, `survey_page_*`, `faq_page_*`, `forms_page_*`, `service_price_page_*`, `vaccination_page_*`) chưa có trên database Neon.
+- **Nội dung thực hiện:**
+  - Tạo migration `scripts/db-migrations/20260915_007_sync_all_missing_columns_and_tables.mjs`:
+    - Tạo đầy đủ 26 kiểu Enums liên quan (tech/expert links & image fit, theme fonts, page hero bg, notice alignments).
+    - Thêm toàn bộ các cột liên kết thông minh cho `tech_items`, `expert_items`, `_tech_items_v`, `_expert_items_v`.
+    - Thêm tất cả các cột cấu hình trang cho `site_settings` và `_site_settings_v`.
+    - Tạo bảng `theme_settings` và `_theme_settings_v` kèm toàn bộ 80+ cột tùy biến giao diện, padding, màu sắc, share social và sidebar banners.
+    - Khởi tạo dòng mặc định (`primary_color = #0878D1`) cho `theme_settings` nếu đang trống.
+    - Hàm `verify()` kiểm tra độc lập sự hiện diện của các cột cốt lõi.
+  - Khóa Schema Contract `20260915_007_sync_all_missing_columns_and_tables` và xác minh:
+    - `npm run db:schema:seal -- 20260915_007_sync_all_missing_columns_and_tables`
+    - `npm run db:migrate:deploy` (7 applied, 0 pending).
+    - `npm run validate:all` PASS 100% (57/57 migration tests, 29/29 UAT tests).
+- **Files Modified:**
+  - `scripts/db-migrations/20260915_007_sync_all_missing_columns_and_tables.mjs` (Mới)
+  - `scripts/db-schema-contract.json`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+- **Database / Schema:**
+  - Đồng bộ trọn vẹn `tech_items`, `expert_items`, `_tech_items_v`, `_expert_items_v`, `theme_settings`, `_theme_settings_v`, `site_settings`, `_site_settings_v`.
+
 ## [2026-09-15] - Đóng gói Migration 006: Tự động Seed 12 khối Section chuẩn y tế cho Homepage
 
 - **Thời gian thực hiện:** 09:18 (Asia/Saigon)

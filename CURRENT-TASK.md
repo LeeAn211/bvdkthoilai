@@ -6,10 +6,10 @@ Khép kín luồng GitHub → Railway → Neon để mỗi bản deploy tự áp
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 09:18 ngày 2026-09-15 (Asia/Saigon).
-- Đóng gói Migration `20260915_006_seed_default_homepage_sections` tự động seed 12 khối section chuẩn y tế cho Homepage trên PostgreSQL khi bảng còn trống.
-- Tổng cộng 6/6 migration applied & verified thành công.
-- Schema contract hợp lệ, toàn bộ 53/53 migration tests và 243/243 test suites đều PASS.
+- **Hoàn thành** lúc 09:45 ngày 2026-09-15 (Asia/Saigon).
+- Đóng gói Migration `20260915_007_sync_all_missing_columns_and_tables` đồng bộ toàn diện các cột Smart Links trong `tech_items`, `expert_items`, các bảng cấu hình `theme_settings`, `_theme_settings_v` và các trang `site_settings` còn thiếu.
+- Tổng cộng 7/7 migration applied & verified thành công.
+- Schema contract hợp lệ, toàn bộ 57/57 migration tests và toàn bộ test suites đều PASS 100%.
 
 ## Phạm vi
 
