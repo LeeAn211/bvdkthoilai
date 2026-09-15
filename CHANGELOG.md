@@ -1,28 +1,28 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-15] - Sửa triệt để Menu xổ xuống và Hiển thị Ngày Giờ ở góc phải trên Điện thoại
+## [2026-09-15] - Tối ưu Menu Dropdown như Desktop và Điều chỉnh Vị trí Ngày Giờ trên Điện thoại
 
-- **Thời gian thực hiện:** 18:35 (Asia/Saigon)
+- **Thời gian thực hiện:** 19:35 (Asia/Saigon)
 - **Yêu cầu:**
-  1. Fix menu xổ xuống (dropdown): Khắc phục tình trạng khi mở menu con trên điện thoại vẫn bị kẹt trong thanh cuộn ngang, phải vuốt sang ngang mới xem và bấm được, gây khó thao tác.
-  2. Thanh trên cùng (Utility Bar): Đưa hiển thị Ngày & Giờ thời gian thực sang góc phải của thanh tiện ích giống như giao diện máy tính để bàn (desktop), giữ cụm biểu tượng mạng xã hội và ô tìm kiếm bên trái.
+  1. Thanh trên cùng (Utility Bar) trên điện thoại: Ngày & Giờ chuyển sang nằm bên TRÁI; cụm Mạng xã hội và ô Tìm kiếm chuyển sang góc PHẢI.
+  2. Menu trên điện thoại: Thiết kế kiểu xổ xuống (dropdown) tự nhiên neo ngay dưới từng mục cha như desktop, cố định vị trí khi bấm xổ xuống; nếu vượt quá chiều ngang thì có thanh cuộn ngang để lướt, không làm menu bị nhảy/di chuyển lên xuống toàn màn hình.
 - **Nội dung thực hiện:**
-  - **Khắc phục Menu dropdown trên Điện thoại (`MobileNavHeader.tsx` & `SiteHeader.module.css`)**:
-    - Chuyển dropdown menu con trên mobile sang dạng panel nổi (`position: fixed; left: 8px; right: 8px; top: 56px; max-width: calc(100vw - 16px); z-index: 9999;`).
-    - Bổ sung thanh tiêu đề `navDropdownMobileHeader` kèm nút đóng nhanh (✕) và lớp nền mờ `mobileDropdownBackdrop` che phủ toàn màn hình.
-    - Vùng danh sách các mục con `navDropdownInnerList` hỗ trợ cuộn dọc độc lập, các nút liên kết lớn có chiều cao 44px+ thuận tiện cho ngón tay chạm bấm ngay lập tức mà không bao giờ bị cắt xén hay phải vuốt ngang.
-  - **Tối ưu Thanh tiện ích góc phải (`CurrentWeekdayTime.tsx`, `SiteHeader.module.css`, `globals.css`)**:
-    - Bố cục flex trên mobile: Cụm mạng xã hội và tìm kiếm đặt `order: 1` (bên trái), cụm Ngày & Giờ đặt `order: 2` (bên phải với `text-align: right; justify-content: flex-end;`).
-    - `CurrentWeekdayTime.tsx`: Hỗ trợ chế độ hiển thị linh hoạt với nhãn rút gọn tinh tế trên màn hình nhỏ (`utilityTimeCompact`: ví dụ `T3, 15/09 • 18:35`) và nhãn đầy đủ trên desktop (`utilityTimeFull`), đi kèm icon lịch màu vàng kim `#ffd24d`.
-  - **Khắc phục cú pháp CSS (`globals.css` & `SiteHeader.module.css`)**:
-    - Chuyển khai báo `.utilityTimeFull` / `.utilityTimeCompact` ra ngoài trước khối `@media (max-width: 640px)` và bỏ dấu đóng ngoặc nhọn thừa gây lỗi parse cú pháp CSS khi chạy `npm run build` trên Turbopack / Railway.
-    - Đã xác thực production build nội bộ: Biên dịch hoàn tất thành công 45/45 trang (`npm run build` thành công 100%).
+  - **Menu Dropdown trên Mobile (`MobileNavHeader.tsx` & `SiteHeader.module.css`)**:
+    - Chuyển `navDropdown` trên mobile về định vị neo trực tiếp dưới thẻ mục cha (`position: absolute !important; top: 100% !important; left: 0 !important; width: 250px; z-index: 120`).
+    - Menu chính (`mainHeader`) giữ cuộn ngang mượt mà (`overflow-x: auto; -webkit-overflow-scrolling: touch;`), các thẻ cha (`navItem`) giữ `position: relative` để khi bấm vào mở menu con ngay dưới chân mục đó như trên desktop mà không làm nhảy giao diện.
+    - Loại bỏ header và modal backdrop toàn màn hình, đưa trải nghiệm dropdown về gọn gàng, tự nhiên và chuyên nghiệp.
+  - **Đổi vị trí Thanh tiện ích trên Mobile (`SiteHeader.module.css` & `globals.css`)**:
+    - Cụm Ngày & Giờ (`utilityGroup.utilityContact`): Đặt `order: 1` căn trái (`justify-content: flex-start; text-align: left;`).
+    - Cụm Mạng xã hội & Ô tìm kiếm (`utilityGroup.utilityRight`): Đặt `order: 2` căn phải (`justify-content: flex-end;`).
+  - **Kiểm tra**:
+    - `npm run typecheck`: Pass 100%.
+    - `npm run build`: Thành công 100% (45/45 static pages).
 - **Files Modified:**
   - `src/components/MobileNavHeader.tsx`
-  - `src/components/CurrentWeekdayTime.tsx`
   - `src/components/SiteHeader.module.css`
   - `src/app/globals.css`
   - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
   - `CURRENT-TASK.md`
 
 ## [2026-09-15] - Tinh chỉnh Logo không nền, Tên đơn vị trên 1 dòng và Căn giữa ô trên Điện thoại

@@ -2,23 +2,19 @@
 
 ## Mục tiêu
 
-1. Sửa triệt để menu xổ xuống (dropdown) trên mobile: Tránh kẹt trong thanh cuộn ngang, mở dạng panel phủ toàn chiều ngang màn hình kèm backdrop mờ và nút đóng nhanh, chạm bấm tức thì không cần vuốt.
-2. Đưa ngày giờ thời gian thực lên góc phải thanh tiện ích trên cùng (Utility Bar) trên điện thoại giống như desktop.
+1. Điều chỉnh thanh tiện ích trên cùng (Utility Bar) trên điện thoại: Ngày & Giờ nằm bên TRÁI; cụm Mạng xã hội và ô Tìm kiếm nằm ở góc PHẢI.
+2. Menu trên điện thoại thiết kế kiểu xổ xuống (dropdown) tự nhiên neo ngay dưới từng mục cha như trên Desktop: Cố định vị trí menu khi bấm xổ xuống, nếu nội dung dài thì có thanh cuộn ngang để lướt, không làm menu bị nhảy/di chuyển lên xuống toàn màn hình.
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 18:35 ngày 2026-09-15 (Asia/Saigon).
+- **Hoàn thành** lúc 19:35 ngày 2026-09-15 (Asia/Saigon).
 - **Chi tiết đã xử lý:**
-  - `MobileNavHeader.tsx`:
-    - Thêm header `navDropdownMobileHeader` với tiêu đề mục cha và nút đóng ✕.
-    - Danh sách `navDropdownInnerList` hỗ trợ cuộn dọc độc lập khi danh mục dài.
-    - Thêm lớp phủ nền mờ `mobileDropdownBackdrop` che phủ nền khi mở dropdown và đóng khi chạm ra ngoài.
-  - `CurrentWeekdayTime.tsx`:
-    - Tạo 2 chế độ hiển thị: nhãn đầy đủ `utilityTimeFull` cho màn hình lớn và nhãn rút gọn tinh tế `utilityTimeCompact` (`T3, 15/09 • 18:35`) vừa vặn góc phải mobile.
+  - `MobileNavHeader.tsx`: Loại bỏ header phụ và lớp phủ backdrop, giữ cấu trúc menu dropdown gọn nhẹ, click mở/đóng trực quan.
   - `SiteHeader.module.css` & `globals.css`:
-    - Menu con trên mobile chuyển sang `position: fixed; left: 8px; right: 8px; top: 56px; z-index: 9999;` tránh hoàn toàn việc bị cắt xén hoặc kẹt trong overflow cuộn ngang của thanh menu.
-    - Thanh trên cùng: Đảo vị trí với flexbox, bên trái là icon MXH + tìm kiếm (`order: 1`), bên phải là ngày giờ thời gian thực (`order: 2`).
-  - `npm run typecheck`: Kết quả **Code 0 - Pass 100%**.
+    - Menu dropdown trên mobile định vị `position: absolute !important; top: 100% !important; left: 0 !important; width: 250px;`, neo chuẩn xác bên dưới mục cha đang được chọn, thanh menu cuộn ngang tự nhiên mượt mà (`overflow-x: auto`), không làm dịch chuyển lên xuống khung trang.
+    - Thanh trên cùng: Đổi vị trí flexbox: Ngày & Giờ ở bên TRÁI (`order: 1`), Mạng xã hội & Ô tìm kiếm ở góc PHẢI (`order: 2`).
+  - `npm run typecheck`: Pass 100%.
+  - `npm run build`: Thành công 100% (45/45 static pages).
 
 - **Chi tiết các hạng mục đã hoàn tất:**
   1. **Thanh tiện ích trên cùng (Utility Bar)**: Hiển thị đầy đủ ngày giờ thời gian thực (`CurrentWeekdayTime`), các biểu tượng mạng xã hội (Facebook, Zalo, YouTube...) và ô tìm kiếm toàn diện trên giao diện điện thoại.

@@ -78,62 +78,35 @@ export function MobileNavHeader({ items }: MobileNavProps) {
 
             {/* Dropdown panel */}
             <div className={`navDropdown ${isOpen ? 'dropdownVisible' : ''}`}>
-              {/* Header on mobile dropdown for clarity */}
-              <div className="navDropdownMobileHeader">
-                <span className="navDropdownMobileTitle">{item.label}</span>
-                <button
-                  type="button"
-                  className="navDropdownCloseBtn"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setOpenDropdown(null)
-                  }}
-                  aria-label="Đóng menu"
+              {item.linkType !== 'parent' && (
+                <a
+                  href={url}
+                  className="navDropdownAll"
+                  onClick={() => setOpenDropdown(null)}
                 >
-                  ✕
-                </button>
-              </div>
-
-              <div className="navDropdownInnerList">
-                {item.linkType !== 'parent' && (
+                  <span>Xem tất cả {item.label}</span>
+                  <i>›</i>
+                </a>
+              )}
+              {children.map((child: any, childIndex: number) => {
+                const childUrl = resolveMenuUrl(child)
+                return (
                   <a
-                    href={url}
-                    className="navDropdownAll"
+                    key={`${child.label}-${childIndex}`}
+                    href={childUrl}
+                    target={child.openInNewTab || isExternalUrl(childUrl) ? '_blank' : undefined}
+                    rel={child.openInNewTab || isExternalUrl(childUrl) ? 'noreferrer' : undefined}
                     onClick={() => setOpenDropdown(null)}
                   >
-                    <span>Xem tất cả {item.label}</span>
+                    <span>{child.label}</span>
                     <i>›</i>
                   </a>
-                )}
-                {children.map((child: any, childIndex: number) => {
-                  const childUrl = resolveMenuUrl(child)
-                  return (
-                    <a
-                      key={`${child.label}-${childIndex}`}
-                      href={childUrl}
-                      target={child.openInNewTab || isExternalUrl(childUrl) ? '_blank' : undefined}
-                      rel={child.openInNewTab || isExternalUrl(childUrl) ? 'noreferrer' : undefined}
-                      onClick={() => setOpenDropdown(null)}
-                    >
-                      <span>{child.label}</span>
-                      <i>›</i>
-                    </a>
-                  )
-                })}
-              </div>
+                )
+              })}
             </div>
           </div>
         )
       })}
-
-      {/* Backdrop overlay on mobile when any dropdown is open */}
-      {openDropdown !== null && (
-        <div
-          className="mobileDropdownBackdrop"
-          onClick={() => setOpenDropdown(null)}
-          aria-hidden="true"
-        />
-      )}
     </nav>
   )
 }
