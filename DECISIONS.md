@@ -1,5 +1,29 @@
 # DECISIONS
 
+## 2026-09-15 — Chiến lược triển khai Production lên VPS (DevOps Strategy: Coolify & Docker)
+
+- Quyết định: Chọn giải pháp **Coolify (Self-hosted PaaS trên nền tảng Docker)** làm phương án chính thức để triển khai hệ thống lên máy chủ VPS riêng biệt hoặc máy chủ dùng chung trong tương lai. Chi tiết lưu tại `docs/CHIEN-LUOC-TRIEN-KHAI-VPS.md`.
+- Lý do: Đóng gói Docker container đồng nhất 100% môi trường dev/staging/prod, hỗ trợ cơ chế Rolling Update (Zero Downtime), có giao diện quản trị web trực quan, tích hợp sẵn tính năng tự động sao lưu database hàng ngày và tự động kéo code build/deploy ngay khi `git push origin main`.
+- Không chọn: Chạy trực tiếp Node.js/PM2 thủ công trên VPS vì dễ bị xung đột phiên bản phần mềm hệ thống, dễ gây nghẽn CPU/RAM làm gián đoạn website khi đang build (`npm run build`), và khó theo dõi log giám sát.
+- Tác động: Duy trì chất lượng tệp `Dockerfile` và script tự động migration `db-migrate.mjs` luôn sẵn sàng để triển khai lập tức khi có hạ tầng VPS từ bệnh viện.
+
+## 2026-09-15 — Phòng thủ nhiều lớp cho GitHub → Railway → Neon
+
+- Quyết định: `npm start` phải tự chạy migration idempotent ở `prestart`; Railway Pre-Deploy vẫn được dùng như lớp chạy sớm nhưng không còn là điểm cấu hình duy nhất quyết định database có được đồng bộ hay không.
+- Quyết định: Mỗi Payload DB schema được gắn SHA-256 với migration mới nhất trong `scripts/db-schema-contract.json`; `prebuild` sinh lại schema và từ chối build nếu contract không khớp.
+- Quyết định: Runtime có thể dùng Neon pooled `DATABASE_URL`, nhưng migration/DDL ưu tiên `DATABASE_MIGRATION_URL` hoặc `DATABASE_URL_UNPOOLED` và production từ chối hostname `-pooler`.
+- Lý do: Push Git chỉ chuyển code; ba lớp build contract → migration startup → healthcheck bảo đảm code mới không nhận traffic trên schema Neon cũ, đồng thời Direct connection tránh giới hạn PgBouncer khi chạy DDL/advisory lock.
+- Không chọn: Bật `PAYLOAD_DB_PUSH=true` trên production hoặc tự sao chép toàn bộ dữ liệu local lên Neon, vì hai cách này có thể phá/ghi đè dữ liệu thật.
+- Tác động: Mọi thay đổi field/enum/bảng phải có migration mới, `generate:db-schema`, `db:schema:seal` và validation trước khi push; dữ liệu hệ thống mặc định/backfill phải viết idempotent trong migration.
+
+## 2026-09-14 — Migration PostgreSQL bất biến trước khi triển khai Railway
+
+- Quyết định: Quản lý schema production bằng các migration có phiên bản trong `scripts/db-migrations/`, ghi trạng thái và checksum vào `public.bvdk_schema_migrations`, dùng PostgreSQL advisory lock để chống hai deployment chạy đồng thời, và verify lại schema sau mỗi lần chạy.
+- Quy trình triển khai ban đầu dùng Railway Pre-Deploy và `prestart` verify. Từ quyết định 2026-09-15, `prestart` tự apply + verify để loại bỏ phụ thuộc vào cấu hình Dashboard; luôn giữ `PAYLOAD_DB_PUSH=false` trên production.
+- Lý do: Schema phải được cập nhật trước khi code mới nhận traffic, lỗi migration phải trả exit code khác 0 để Railway giữ deployment cũ, đồng thời checksum ngăn sửa ngược migration đã áp dụng.
+- Không chọn: Tự động bật Payload schema push trên production, chạy SQL thủ công không ghi phiên bản, hoặc migration phá dữ liệu trong cùng lần deploy.
+- Tác động: Mọi thay đổi field/enum/bảng mới phải đi kèm migration additive, id duy nhất và hàm `verify`; thay đổi lớn dùng chiến lược expand → backfill → contract qua nhiều deployment. Không thêm `railway.json` legacy; cấu hình Pre-Deploy trong Railway Dashboard hoặc IaC `.railway/railway.ts` sau khi liên kết dự án.
+
 Ghi lại các quyết định kiến trúc hoặc quy ước đã chốt để agent sau không tự đảo ngược nếu không có lý do rõ ràng.
 
 Mỗi mục nên ngắn gọn theo mẫu:
@@ -46,6 +70,13 @@ Mỗi mục nên ngắn gọn theo mẫu:
 - Lý do: Ngăn chặn lỗi cascade khiến dữ liệu trang chủ bị rơi vào fallback hoặc gián đoạn hiển thị các chuyên mục quan trọng của bệnh viện.
 - Không chọn: Để `Promise.all` gộp chung mà không catch riêng lẻ; đặt `dbName` tùy ý trên các field con của group.
 - Tác động: Ghi thành Mục 14 bắt buộc trong `AGENTS.md`.
+
+## 2026-09-14 — Phân quyền Admin theo ma trận module và thao tác
+
+- Quyết định: Giữ quyền mặc định theo vai trò để tương thích dữ liệu cũ, đồng thời cho phép bật `useCustomPermissions` trên từng tài khoản để chỉ cấp đúng module/thao tác đã tích trong ma trận checkbox. Các vai trò `super-admin`, `system-admin`, `admin` luôn có toàn quyền làm lối khôi phục an toàn.
+- Lý do: Cơ chế quyền bổ sung cũ không thể thu hồi quyền mặc định và trường module nhập tay dễ sai. Ma trận chuẩn hóa giúp phân quyền theo nhu cầu thực tế, đồng thời access server và menu Admin dùng chung một kết quả kiểm tra.
+- Không chọn: Thay toàn bộ quyền cũ bằng cấu trúc bảng mới hoặc cho phép thu hồi quyền của ba vai trò quản trị cấp cao, vì dễ làm mất tương thích dữ liệu và tự khóa hệ thống.
+- Tác động: Thay đổi role/status/phạm vi/ma trận quyền sẽ xóa phiên đăng nhập cũ của tài khoản để JWT và menu nhận quyền mới ngay; khi triển khai database mới phải có cột `users.use_custom_permissions boolean default false`.
 
 Không dùng file này thay cho `CHANGELOG.md`; chỉ ghi các quyết định có tính định hướng lâu dài.
 

@@ -9,6 +9,8 @@
   - Đóng gói file migration `scripts/db-migrations/20260915_004_header_brand_appearance_and_page_configs.mjs` chứa đầy đủ enums và columns mới của `headerBrandAppearance` và 4 page configs.
   - Cập nhật và seal `scripts/db-schema-contract.json`.
   - Chạy apply thành công tại local: `npm run db:migrate:deploy` (100% verified).
+  - Soạn thảo và lưu trữ tài liệu chiến lược triển khai Production VPS tối ưu tại `docs/CHIEN-LUOC-TRIEN-KHAI-VPS.md` (lựa chọn giải pháp Coolify & Docker tự động hóa CI/CD khi push GitHub, Rolling Update Zero-Downtime và Auto-Backup).
+  - Ghi nhận quyết định kiến trúc chính thức vào `DECISIONS.md`.
 
 ## [2026-09-15] - Khép kín đồng bộ GitHub → Railway → Neon
 
