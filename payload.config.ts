@@ -214,7 +214,7 @@ if (isProduction && (!payloadSecret || payloadSecret === 'CHANGE_ME' || payloadS
 if (!databaseURL) throw new Error('Thiếu biến môi trường DATABASE_URL.')
 
 export default buildConfig({
-  ...(isProduction && siteURL ? { serverURL: siteURL } : {}),
+  serverURL: siteURL || 'http://localhost:3000',
   maxDepth: 4,
   upload: { limits: { fileSize: 50 * 1024 * 1024 } },
   graphQL: { disable: true },
