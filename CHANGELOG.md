@@ -1,5 +1,33 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Đóng gói Migration 010: Đồng bộ triệt để toàn bộ Cột Database cho Collections và Globals
+
+- **Thời gian thực hiện:** 13:18 (Asia/Saigon)
+- **Yêu cầu:** Khắc phục triệt để lỗi thiếu cột `column "enable_link" does not exist` khi website truy vấn Collection Chuyên gia của chúng tôi (`our_experts`) và Kỹ thuật chuyên sâu (`advanced_techniques`). Đồng thời rà soát, đối chiếu toàn bộ 250 bảng giữa Payload CMS schema và PostgreSQL thực tế để không còn bất kỳ lỗi thiếu cột/bảng lẻ tẻ nào.
+- **Nội dung thực hiện:**
+  - **Rà soát & Đối chiếu Schema Toàn diện:**
+    - Quét đối chiếu toàn bộ 250 bảng và 3,886 cột trong cơ sở dữ liệu với `src/payload-generated-schema.ts`.
+    - Phát hiện và bổ sung đầy đủ:
+      + `our_experts`: `enable_link`, `url`, `open_new_tab`.
+      + `advanced_techniques`: `enable_link`, `custom_url`, `show_cover_in_detail`.
+      + `contact_settings`: `notice_text_align`, `ct_not_align`.
+      + Các bảng draft version tương ứng: `_our_experts_v`, `_advanced_techniques_v`, `_contact_settings_v`.
+      + Các kiểu ENUM PostgreSQL: `enum_our_experts_image_fit`, `enum_advanced_techniques_image_fit`, `ct_not_align`.
+  - **Tạo Migration `20260915_010_sync_all_remaining_collection_and_global_columns.mjs`**:
+    - Cơ chế an toàn `safeAddColumn` kiểm tra bảng thực tế trước khi thực thi `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`.
+    - Tự động hóa hoàn toàn, đảm bảo khi Deploy Railway/Neon cơ chế `prestart` sẽ tự động thực thi.
+  - **Đóng gói và xác thực Schema Contract**:
+    - Sinh lại Payload Schema: `npm run generate:db-schema`.
+    - Seal contract: `npm run db:schema:seal -- 20260915_010_sync_all_remaining_collection_and_global_columns`.
+    - Kiểm tra contract: `npm run db:schema:check` (Hợp lệ).
+    - Deploy migration: `npm run db:migrate:deploy` (10/10 applied, 0 pending).
+    - Kiểm tra đối chiếu lại: **0 cột thiếu, 0 bảng thiếu**.
+  - **Build thành công:** `npm run build` vượt qua 100% không có cảnh báo hay lỗi.
+- **Files Modified:**
+  - `scripts/db-migrations/20260915_010_sync_all_remaining_collection_and_global_columns.mjs` (NEW)
+  - `scripts/db-schema-contract.json`
+  - `CHANGELOG.md`
+
 ## [2026-09-15] - Đóng gói Migration 009: Tạo bảng Sidebar Banners và Đồng bộ Cột Chuyên khoa
 
 - **Thời gian thực hiện:** 12:47 (Asia/Saigon)

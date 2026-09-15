@@ -2,17 +2,20 @@
 
 ## Mục tiêu
 
-Đóng gói migration và đồng bộ triệt để bảng quan hệ `_specialties_v_version_sidebar_banners` cùng bảng `specialties_sidebar_banners` và các cột cấu hình chi tiết chuyên khoa để giải quyết dứt điểm lỗi query draft version khi deploy/truy cập web.
+Đóng gói migration 010 và đồng bộ triệt để toàn bộ các cột còn thiếu giữa Payload CMS schema và PostgreSQL (Neon) cho `our_experts`, `advanced_techniques`, `contact_settings`, chấm dứt hoàn toàn tình trạng thiếu cột lẻ tẻ khi chạy trên web.
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 12:47 ngày 2026-09-15 (Asia/Saigon).
-- **Đã tạo và triển khai migration `20260915_009_create_specialties_sidebar_banners_tables`**:
-  - Tạo bảng `specialties_sidebar_banners` và `_specialties_v_version_sidebar_banners` với đầy đủ khóa ngoại `CASCADE`, `id`, `_order`, `_parent_id`, `image_id`, `_uuid` và index.
-  - Đồng bộ an toàn 17 cột cấu hình trang chi tiết chuyên khoa trên cả 2 bảng `specialties` và `_specialties_v`.
-  - Đã seal schema contract và deploy migration thành công (9/9 applied, 0 pending).
+- **Hoàn thành** lúc 13:20 ngày 2026-09-15 (Asia/Saigon).
+- **Đã tạo và triển khai migration `20260915_010_sync_all_remaining_collection_and_global_columns`**:
+  - Bổ sung các cột `enable_link`, `url`, `open_new_tab` cho `our_experts` và `_our_experts_v`.
+  - Bổ sung `enable_link`, `custom_url`, `show_cover_in_detail` cho `advanced_techniques` và `_advanced_techniques_v`.
+  - Bổ sung `notice_text_align`, `ct_not_align` cho `contact_settings` và `_contact_settings_v`.
+  - Đảm bảo các kiểu ENUM: `enum_our_experts_image_fit`, `enum_advanced_techniques_image_fit`, `ct_not_align`.
+  - Quét toàn diện 249 bảng và 3,886 cột: **0 cột thiếu, 0 bảng thiếu**.
+  - Đã seal schema contract và deploy migration thành công (10/10 applied, 0 pending).
+  - Đã chạy `npm run build` thành công 100% không có cảnh báo hay lỗi.
   - Tự động chạy an toàn khi Railway deploy lên Neon (`prestart`).
-- Toàn bộ kiểm tra contract và migration đều PASS 100%.
 
 
 
