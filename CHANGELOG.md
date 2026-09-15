@@ -1,5 +1,228 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Tích hợp Rule 15 (Mandatory DB Migration Packaging) & Đóng gói Migration 004
+
+- **Thời gian thực hiện:** 07:36 (Asia/Saigon)
+- **Yêu cầu:** Bắt buộc mọi thay đổi tính năng / thêm trường phải đóng gói migration tự động để deploy Railway/Neon không phải gõ SQL thủ công.
+- **Nội dung thực hiện:**
+  - Bổ sung **Quy tắc 15 (MANDATORY DB MIGRATION PACKAGING)** vào `AGENTS.md`.
+  - Đóng gói file migration `scripts/db-migrations/20260915_004_header_brand_appearance_and_page_configs.mjs` chứa đầy đủ enums và columns mới của `headerBrandAppearance` và 4 page configs.
+  - Cập nhật và seal `scripts/db-schema-contract.json`.
+  - Chạy apply thành công tại local: `npm run db:migrate:deploy` (100% verified).
+
+## [2026-09-15] - Khép kín đồng bộ GitHub → Railway → Neon
+
+- **Thời gian thực hiện:** 06:45–07:12 (Asia/Saigon)
+- **Yêu cầu:** Khi push code/tính năng mới lên GitHub, Railway phải tự đồng bộ cấu trúc Neon trước khi chạy giao diện; không còn tình trạng code mới đọc database cũ bị thiếu bảng/cột/enum.
+
+### Nội dung thay đổi
+
+- Đổi `npm prestart` từ verify-only sang tự chạy migration idempotent. `Dockerfile` dùng `npm start`, vì vậy mọi container Railway đều apply + verify schema trước khi Next.js mở cổng, kể cả khi Dashboard chưa cấu hình Pre-Deploy.
+- Giữ Railway Pre-Deploy là lớp bảo vệ sớm; advisory lock và ledger giúp Pre-Deploy/startup hoặc nhiều replica chạy đồng thời mà không áp dụng migration hai lần.
+- Thêm schema contract SHA-256 gắn `payload-generated-schema.ts` với migration mới nhất. Build bị chặn nếu schema đổi nhưng thiếu migration, thiếu seal, hoặc cố tái sử dụng ID migration cũ.
+- `prebuild` luôn sinh lại DB schema rồi kiểm tra contract, ngăn trường hợp quên chạy generator ở local nhưng vẫn push GitHub.
+- Migration runner ưu tiên `DATABASE_MIGRATION_URL`, sau đó `DATABASE_URL_UNPOOLED`; production từ chối Neon URL có hostname `-pooler` cho thao tác DDL. `DATABASE_URL` pooled vẫn dùng bình thường cho runtime ứng dụng.
+- Bổ sung bài kiểm thử hành vi contract và preflight Neon Direct URL; cập nhật đầy đủ quy trình thêm field/enum/Collection/Global, backfill dữ liệu hệ thống và phân biệt schema với nội dung người dùng.
+- Thêm GitHub Actions quality gate không cần database secret để kiểm tra schema contract, TypeScript và toàn bộ regression trên mỗi push/pull request.
+
+### Files Modified
+
+- `package.json`
+- `scripts/db-migrate.mjs`
+- `scripts/db-schema-contract.mjs`, `scripts/db-schema-contract.json`
+- `scripts/validate-db-schema-contract.mjs`, `scripts/seal-db-schema.mjs`
+- `scripts/test-db-schema-contract.mjs`
+- `scripts/validate-db-migrations.mjs`, `scripts/validate-uat-production.mjs`
+- `scripts/preflight-production.mjs`
+- `scripts/db-migrations/README.md`
+- `.github/workflows/quality-gate.yml`
+- `.env.example`, `.env.production.example`
+- `docs/RAILWAY-DEPLOYMENT.md`, `docs/DEPLOYMENT.md`
+- `DECISIONS.md`, `CURRENT-TASK.md`, `CHANGELOG.md`
+
+### Database / Collections / Schema
+
+- Không thêm/xóa/đổi bảng, cột hoặc enum trong thay đổi này; không sửa dữ liệu nội dung.
+- Database local vẫn có 3 migration applied, 0 pending và verify thành công.
+- Neon production chưa được kết nối hoặc thay đổi từ máy local. Khi Railway chạy code mới, runner sẽ dùng Direct connection string để áp dụng đúng các migration còn thiếu trên Neon.
+- `PAYLOAD_DB_PUSH=false` tiếp tục là bắt buộc trên production.
+
+### Validation
+
+- Schema contract hiện tại: PASS; mô phỏng schema đổi thiếu migration/tái sử dụng ID/migration mới: 4/4 PASS.
+- Neon pooled-only migration bị chặn; pooled runtime + Direct migration vượt production preflight: PASS.
+- `npm prestart`: PASS, tự apply/verify 3 migration, 0 pending.
+- Production build Next.js 16.3.5: PASS, 45 trang; contract được kiểm tra trong `prebuild`.
+- Production smoke: `/api/health` và `/admin` trả HTTP 200.
+- `npm run typecheck`: PASS, 0 lỗi; `npm run validate:all`: PASS 243/243.
+
+## [2026-09-15] - Bổ sung hệ thống migration PostgreSQL an toàn cho Railway
+
+- **Thời gian thực hiện:** 23:10 ngày 14/09 đến 00:05 ngày 15/09 (Asia/Saigon)
+- **Yêu cầu:** Ngăn lỗi không đồng bộ dữ liệu/schema khi bổ sung tính năng rồi cập nhật ứng dụng trên Railway.
+
+### Nội dung thay đổi
+
+- Thêm migration runner có phiên bản, checksum SHA-256, ledger trong database, PostgreSQL advisory lock chống chạy đồng thời, transaction theo từng migration và bước verify schema bắt buộc.
+- Hỗ trợ bốn chế độ: apply, status, dry-run và verify-only; mọi lỗi đều trả exit code khác 0 để Pre-Deploy của Railway chặn bản phát hành lỗi.
+- Chuyển script migration cũ thành wrapper tương thích và tạo ba migration baseline/additive cho các trường hiển thị ảnh, quyền tùy chỉnh người dùng và tên bảng phụ an toàn.
+- `npm start` kiểm tra schema bằng `--verify-only` trước khi mở server; migration thay đổi schema được chạy riêng bằng Railway Pre-Deploy Command `npm run db:migrate:deploy`.
+- Preflight production từ chối `PAYLOAD_DB_PUSH=true`; bổ sung biến timeout mẫu, tài liệu Railway, quy trình backup và chiến lược expand → backfill → contract cho dữ liệu lớn.
+- Không thêm `railway.json` legacy vì Railway đã ngừng khuyến nghị Config as Code kiểu cũ; hướng dẫn cấu hình qua Dashboard hoặc IaC sau khi liên kết dự án.
+
+### Files Modified
+
+- `scripts/db-migrate.mjs`
+- `scripts/db-migrations/20260914_001_content_image_display_fields.mjs`
+- `scripts/db-migrations/20260914_002_user_custom_permissions.mjs`
+- `scripts/db-migrations/20260914_003_shorten_nested_table_names.mjs`
+- `scripts/db-migrations/README.md`
+- `scripts/apply-changelog-migrations.mjs`
+- `scripts/validate-db-migrations.mjs`
+- `scripts/preflight-production.mjs`
+- `scripts/validate-uat-production.mjs`
+- `package.json`
+- `.env.example`, `.env.production.example`
+- `docs/RAILWAY-DEPLOYMENT.md`, `docs/DEPLOYMENT.md`
+- `HUONG-DAN-TAO-DATABASE-MOI.md`
+- `src/globals/SiteSettings.ts`, `src/globals/Homepage.ts`, `src/globals/HospitalHistory.ts`
+- `src/payload-generated-schema.ts`
+- `DECISIONS.md`, `CURRENT-TASK.md`, `CHANGELOG.md`
+
+### Database / Collections / Schema
+
+- Tạo bảng kỹ thuật `public.bvdk_schema_migrations` để lưu `id`, `checksum`, mô tả, thời điểm áp dụng và thời gian chạy; không chứa dữ liệu nghiệp vụ.
+- Ghi nhận ba migration đã áp dụng: `20260914_001_content_image_display_fields`, `20260914_002_user_custom_permissions` và `20260914_003_shorten_nested_table_names`.
+- Migration 001 đảm bảo 12 cột `image_fit`/`image_position` trong `news`, `notices`, `procurement` và ba bảng version tương ứng; dùng `ADD COLUMN IF NOT EXISTS`, không xóa hoặc ghi đè dữ liệu.
+- Migration 002 đảm bảo `users.use_custom_permissions boolean DEFAULT false`; không thay đổi dữ liệu quyền cũ.
+- Migration 003 đổi tên an toàn 8 bảng array phụ và 2 PostgreSQL enum của SiteSettings/Homepage/HospitalHistory, đồng thời chuẩn hóa tên index/constraint. Toàn bộ thao tác nằm trong một transaction và bảo toàn dữ liệu; lần kiểm thử đầu không đạt verify đã rollback toàn bộ trước khi sửa bộ nhận diện catalog rồi chạy lại thành công.
+- Bổ sung `dbName` ngắn: `site_assistant_topics`, `site_assistant_answers`, `homepage_vax_tabs`, `history_core_values`; schema được sinh lại không còn identifier vượt 63 byte.
+- Không dùng `DROP`, `TRUNCATE`, reset database hoặc schema push tự động. Trạng thái cuối: 3 applied, 0 pending, verify đầy đủ thành công.
+
+### Validation
+
+- Dry-run, apply, status, verify-only: PASS; chạy đồng thời hai tiến trình: PASS; lỗi tham số giả trả exit code 1: PASS.
+- `npm run typecheck`: PASS, 0 lỗi.
+- `npm run validate:all`: PASS 227/227, gồm 31/31 kiểm tra riêng cho migration và giới hạn identifier PostgreSQL.
+- Production build Next.js 16.3.5: PASS, 45 trang tĩnh.
+- Production startup: prestart xác nhận 3 applied/0 pending; `/api/health`, `/`, `/admin` và `/gioi-thieu/lich-su-phat-trien` đều trả HTTP 200; database và storage đều `ok`.
+- Dev server khởi động lại thành công trong 429 ms; bốn route kiểm tra đều HTTP 200 và log xác nhận không còn cảnh báo identifier PostgreSQL vượt 63 ký tự.
+- Production preflight local chủ động FAIL vì shell kiểm thử không có bốn secret/URL của Railway; cơ chế chặn cấu hình thiếu hoạt động đúng.
+
+## [2026-09-14] - Thiết kế lại phân quyền Admin theo ma trận checkbox
+
+- **Thời gian thực hiện:** 22:58 (Asia/Saigon)
+- **Yêu cầu:** Cho phép quản trị viên chọn chính xác từng mục trong Admin và từng thao tác mà mỗi tài khoản được phép thực hiện.
+
+### Nội dung thay đổi
+
+- Bổ sung giao diện ma trận quyền responsive, chia nhóm nghiệp vụ; hỗ trợ tích từng thao tác, chọn tất cả/bỏ chọn từng module và hiển thị tổng số quyền đã cấp.
+- Thêm công tắc `useCustomPermissions`:
+  - Tắt: giữ quyền mặc định của vai trò và cộng thêm quyền đã tích, tương thích tài khoản cũ.
+  - Bật: chỉ cấp đúng module/thao tác đã tích; bỏ chọn quyền xem sẽ thu hồi toàn bộ quyền của module.
+- Giữ toàn quyền bắt buộc cho `super-admin`, `system-admin`, `admin` để tránh tự khóa hệ thống.
+- Menu Collections/Globals, thẻ Dashboard và nút tạo mới được lọc theo quyền; dashboard chi tiết hệ thống chỉ hiển thị cho quản trị cấp cao.
+- Access control phía server được áp dụng cho lịch hẹn, kỹ thuật chuyên sâu, chuyên gia, chuyển hướng, phác đồ và các Global cấu hình website; người không có quyền xem chỉ đọc được dữ liệu đã công khai, không đọc được bản nháp qua API.
+- API xuất/thống kê khảo sát chuyển sang dùng cùng ma trận quyền thay cho kiểm tra vai trò hardcode.
+- Khi role, trạng thái, khoa/phòng hoặc ma trận quyền thay đổi, các phiên đăng nhập cũ của tài khoản bị thu hồi để quyền mới có hiệu lực ngay sau lần đăng nhập tiếp theo.
+- Chuẩn hóa script sửa schema Users để `ALTER TYPE ... ADD VALUE` chạy ngoài transaction, tương thích PostgreSQL hiện tại.
+
+### Files Modified
+
+- `payload.config.ts`
+- `src/access/index.ts`, `src/access/permissionCatalog.ts`
+- `src/collections/Users.ts`, `Appointments.ts`, `AdvancedTechniques.ts`, `OurExperts.ts`, `Redirects.ts`, `ClinicalProtocols.ts`
+- Các collection nội dung công khai dùng access theo module: `News.ts`, `Notices.ts`, `Pages.ts`, `Procurement.ts`, `Recruitment.ts`, `CustomPosts.ts`, `ContentSections.ts`, `DynamicModules.ts`, `ScientificActivities.ts`, `Schedules.ts`, `Services.ts`, `ServicePrices.ts`, `Vaccinations.ts`, `VaccinationSchedules.ts`, `Vaccines.ts`, `VaccinePrices.ts`
+- `src/components/admin/PermissionMatrixField.tsx`, `PermissionMatrixField.module.css`, `AdminDashboard.tsx`
+- `src/globals/SiteSettings.ts`, `Navigation.ts`, `Footer.ts`, `ContactSettings.ts`, `ThemeSettings.ts`, `Homepage.ts`, `MedproSettings.ts`, `QuickLinksSettings.ts`, `AppointmentSettings.ts`
+- `src/app/(frontend)/api/surveys/export/route.ts`, `src/app/(frontend)/api/surveys/statistics/route.ts`
+- `scripts/repair-users-schema.mjs`, `scripts/validate-foundation.mjs`
+- `src/payload-types.ts`, `src/app/(payload)/admin/importMap.js`
+- `DECISIONS.md`, `CURRENT-TASK.md`, `CHANGELOG.md`
+
+### Database / Collections / Schema
+
+- Thêm cột an toàn: `ALTER TABLE public.users ADD COLUMN IF NOT EXISTS use_custom_permissions boolean DEFAULT false`.
+- Không thay đổi cấu trúc ba bảng quyền hiện có (`users_permissions`, `users_permissions_actions`, `users_sessions`) và không xóa dữ liệu phân quyền cũ.
+- Users không bật versions nên không có bảng phiên bản cần đồng bộ.
+- Lần chạy đầu gặp giới hạn PostgreSQL với `ALTER TYPE` trong transaction và đã rollback toàn bộ; script được sửa rồi chạy lại thành công.
+- Audit schema sau đồng bộ: 0 vấn đề. Payload Local API truy vấn `users.useCustomPermissions` thành công.
+- `PAYLOAD_DB_PUSH` tiếp tục giữ `false`; VPS có thể chạy `npm run repair:users-schema -- --apply` để đồng bộ cột an toàn.
+
+### Validation
+
+- Logic cấp/thu hồi quyền: 7/7 PASS.
+- Ẩn/hiện menu Collections/Globals: 4/4 PASS.
+- Thu hồi phiên khi thay đổi quyền và không thu hồi khi chỉ sửa hồ sơ: 2/2 PASS.
+- `npm run typecheck`: PASS, 0 lỗi.
+- `npm run validate:all`: PASS 193/193, gồm 26/26 kiểm tra nền tảng và hồi quy phân quyền.
+- Production build Next.js 16.3.5: PASS, 45 trang.
+- Dev server khởi động lại thành công; `GET /admin` trả HTTP 200.
+
+## [2026-09-14] - Khắc phục runtime Sharp sau nâng dependency
+
+- **Thời gian thực hiện:** 22:19 (Asia/Saigon)
+- **Yêu cầu:** Sửa lỗi Turbopack không tải được external module Sharp từ cache dev cũ.
+- **Nguyên nhân:** Dev server Next.js 16.3.2 vẫn giữ cache `.next/dev` tham chiếu entry `sharp/lib/index.js`, trong khi dự án đã nâng lên Next.js 16.3.5 và Sharp 0.35.4 sử dụng entry trong `dist/`.
+- **Xử lý:** Dừng đúng cây tiến trình Next của dự án, xóa riêng cache `.next/dev`, xác nhận Sharp 0.35.4/libvips 8.18.6 tải thành công và khởi động lại dev server.
+- **Files Modified:** `CHANGELOG.md`, `CURRENT-TASK.md`; Payload types được `predev` xác nhận/tái sinh theo cấu hình hiện tại.
+- **Database / Collections / Schema:** Không thay đổi; không chạy migration.
+- **Validation:** Next.js 16.3.5 Ready; `GET /` trả HTTP 200, 197530 bytes; log dev không còn lỗi Sharp.
+
+## [2026-09-14] - Khắc phục lỗi sau audit và cập nhật bảo mật dependency
+
+- **Thời gian thực hiện:** 22:10 (Asia/Saigon)
+- **Yêu cầu:** Sửa các lỗi được phát hiện sau khi kiểm tra toàn dự án; không commit hoặc đưa dự án lên GitHub.
+
+### Nội dung thay đổi
+
+- Loại bỏ credential PostgreSQL hardcode khỏi file mẫu, tài liệu và các script database; các script dùng `process.env.DATABASE_URL`.
+- Bổ sung fallback collection `vaccinations` cho trang `/tiem-chung`; dữ liệu legacy chỉ được dùng khi collection mới tương ứng chưa có dữ liệu.
+- Đồng bộ validator Feedback và UAT/Production với markup, version, cấu hình `PAYLOAD_DB_PUSH` và vị trí tài liệu hiện tại.
+- Bỏ custom `Cache-Control` cho `/_next/static` để Next.js tự quản lý immutable assets.
+- Nâng Next.js `16.3.2` → `16.3.5`, toàn bộ Payload CMS `3.88.0` → `3.89.0`, Sharp → `0.35.4`.
+- Thay thư viện `xlsx` có cảnh báo high bằng `exceljs` cho luồng import lịch ngày/lịch trực; upload chỉ nhận `.xlsx`.
+- Override `uuid` của ExcelJS lên `11.1.1` để loại bỏ cảnh báo bảo mật cũ.
+
+### Files Modified
+
+- `.env.example`
+- `HUONG-DAN-TAO-DATABASE-MOI.md`
+- `migrate-specialty-detail-cms.mjs`
+- `next.config.mjs`
+- `package.json`, `package-lock.json`
+- `scripts/apply-changelog-migrations.mjs`
+- `scripts/create-emergency-template.cjs`
+- `scripts/migrate_menu_appearance.js`
+- `scripts/seed-departments.mjs`
+- `scripts/sync_about_db.js`
+- `scripts/validate-chatbot-forms-feedback.mjs`
+- `scripts/validate-uat-production.mjs`
+- `src/app/(frontend)/api/emergency-import/route.ts`
+- `src/app/(frontend)/tiem-chung/page.tsx`
+- `src/components/admin/DailyTemplateDownload.tsx`
+- `src/components/admin/EmergencyTemplateDownload.tsx`
+- `src/lib/dailyScheduleExcelParser.ts`
+- `src/lib/emergencyExcelParser.ts`
+- `src/lib/excelRows.ts`
+- `CURRENT-TASK.md`
+
+### Database / Collections / Schema
+
+- Không thay đổi schema hoặc dữ liệu PostgreSQL.
+- Không chạy migration và giữ nguyên quy tắc `PAYLOAD_DB_PUSH=false` trên local.
+
+### Validation
+
+- `npm run generate:importmap`: đạt.
+- `npm run generate:types`: đạt.
+- `npm run typecheck`: đạt, 0 lỗi.
+- `npm run validate:all`: đạt 187/187.
+- Production build Next.js 16.3.5: đạt, 45 trang.
+- Kiểm thử ExcelJS với file thật: 35 dòng lịch trực, 22 phân công lịch ngày.
+- `npm audit`: không còn high/critical; còn 5 moderate từ chuỗi Payload/Drizzle/esbuild chưa có bản vá upstream.
+
+
 ## [2026-09-14] - Audit Admin CMS Toàn Diện + Nâng Cấp Nhận Diện Thương Hiệu (headerBrandAppearance)
 
 - **Thời gian thực hiện:** 21:04 (Asia/Saigon)

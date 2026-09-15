@@ -147,5 +147,16 @@ Một task chỉ được xem là hoàn thành khi:
   - Trên Trang chủ (`src/app/(frontend)/page.tsx`), các truy vấn `getHomepage()`, `getGlobal('site-settings')`, các Collection (`news`, `notices`, `specialties`, v.v.) **BẮT BUỘC PHẢI ĐƯỢC CÔ LẬP LỖI ĐỘC LẬP** (dùng `.catch(...)` riêng từng promise thay vì để 1 lỗi nhỏ ở `site-settings` làm đổ vỡ toàn bộ khối `Promise.all` khiến biến `home.sections` bị mất).
   - Không bao giờ để lỗi cấu hình của 1 trang phụ làm biến mất các section trên Trang chủ.
 
-
-
+## 15. Bắt buộc tự động đóng gói Database Migration khi thay đổi tính năng / schema (MANDATORY DB MIGRATION PACKAGING):
+- **15.1. Bắt buộc 100% thay đổi schema phải có file migration đi kèm:**
+  - Mỗi khi thêm tính năng mới, thêm trường (`field`), thêm lựa chọn (`select`/`enum`), thêm `Collection` hoặc `Global`:
+    - **TUYỆT ĐỐI KHÔNG DỪNG LẠI Ở VIỆC CHẠY LỆNH SQL THỦ CÔNG TRÊN DATABASE LOCAL.**
+    - Bắt buộc phải tạo file migration mới theo quy chuẩn trong `scripts/db-migrations/YYYYMMDD_NNN_ten_migration.mjs` chứa đầy đủ hàm `up` (`ADD COLUMN IF NOT EXISTS`, `CREATE TYPE IF NOT EXISTS`,...) và hàm `verify`.
+- **15.2. Quy trình đóng gói và seal schema contract bắt buộc:**
+  1. Sinh lại schema Payload: `npm run generate:db-schema` (tạo `src/payload-generated-schema.ts`).
+  2. Tạo file migration: `scripts/db-migrations/YYYYMMDD_NNN_ten_migration.mjs`.
+  3. Seal schema contract: `npm run db:schema:seal -- YYYYMMDD_NNN_ten_migration`.
+  4. Kiểm tra contract hợp lệ: `npm run db:schema:check`.
+  5. Chạy migration tại local: `npm run db:migrate:deploy` và kiểm tra `npm run db:migrate:status`.
+- **15.3. Mục tiêu tự động hóa khi Deploy Railway / Neon:**
+  - Nhờ cơ chế `prestart: node scripts/db-migrate.mjs` trong `package.json`, khi code được push lên GitHub và deploy sang Railway, Railway sẽ **TỰ ĐỘNG** thực thi migration vào PostgreSQL (Neon) mà **NGƯỜI DÙNG HOÀN TOÀN KHÔNG CẦN PHẢI VÀO NEON GÕ LỆNH THỦ CÔNG NỮA**.
