@@ -1,5 +1,5 @@
 import type { GlobalConfig } from 'payload'
-import { loggedIn } from '@/access'
+import { loggedIn, moduleAccess } from '@/access'
 import { resolveSmartLink } from '@/lib/managedLinks'
 
 const footerLinkFields: any[] = [
@@ -31,7 +31,7 @@ export const Footer: GlobalConfig = {
     group: '🌐 Trang chủ & Giao diện Website',
     description: 'Quản lý toàn bộ nội dung Footer. Có thể ẩn/hiện từng thông tin, thêm/bớt cột và từng liên kết mà không cần sửa code.',
   },
-  access: { read: loggedIn, update: loggedIn },
+  access: { read: loggedIn, update: moduleAccess('site-settings', 'edit') },
   versions: { max: 30 },
   hooks: {
     beforeChange: [async ({ data, req }) => {

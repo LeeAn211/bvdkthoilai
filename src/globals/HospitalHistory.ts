@@ -378,6 +378,7 @@ export const HospitalHistory: GlobalConfig = {
                 },
                 {
                   name: 'valuesList',
+                  dbName: 'history_core_values',
                   label: 'Danh sách các Giá trị cốt lõi',
                   type: 'array',
                   labels: { singular: 'Giá trị cốt lõi', plural: 'Các giá trị cốt lõi' },

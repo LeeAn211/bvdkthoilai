@@ -25,6 +25,19 @@ Internet → Cloudflare → Nginx/Caddy → Next.js/Payload → PostgreSQL
 docker compose up -d --build
 ```
 
+### Railway
+
+Railway bắt buộc chạy migration trước khi kích hoạt deployment mới:
+
+```text
+Pre-Deploy Command: npm run db:migrate:deploy
+Pre-Deploy Timeout: 300 giây
+Healthcheck Path: /api/health
+Healthcheck Timeout: 300 giây
+```
+
+Giữ `PAYLOAD_DB_PUSH=false`. `npm start` tự apply rồi verify migration trước khi mở Next.js, vì vậy vẫn an toàn nếu Pre-Deploy chưa được cấu hình. Với Neon pooler, ứng dụng dùng `DATABASE_URL` còn migration bắt buộc dùng Direct connection string qua `DATABASE_MIGRATION_URL`. Build cũng kiểm tra schema contract để chặn trường hợp thêm field nhưng quên migration. Quy trình đầy đủ: [RAILWAY-DEPLOYMENT.md](./RAILWAY-DEPLOYMENT.md).
+
 ## Health checks nên bổ sung ở hạ tầng
 - HTTP GET `/`
 - PostgreSQL connection

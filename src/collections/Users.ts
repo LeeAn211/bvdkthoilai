@@ -1,21 +1,33 @@
 import type { CollectionConfig } from 'payload'
 import { adminField, admins, ownUserOrAdmins } from '@/access'
+import { PERMISSION_ACTION_LABELS } from '@/access/permissionCatalog'
 
-const permissionActions = [
-  { label: 'Xem', value: 'view' },
-  { label: 'Thêm mới', value: 'create' },
-  { label: 'Chỉnh sửa', value: 'edit' },
-  { label: 'Xóa', value: 'delete' },
-  { label: 'Gửi duyệt', value: 'submit' },
-  { label: 'Duyệt', value: 'approve' },
-  { label: 'Xuất bản', value: 'publish' },
-  { label: 'Ẩn', value: 'hide' },
-  { label: 'Nhập Excel', value: 'import' },
-  { label: 'Xuất Excel', value: 'export' },
-  { label: 'Khôi phục', value: 'restore' },
-]
+const permissionActions = Object.entries(PERMISSION_ACTION_LABELS).map(([value, label]) => ({
+  label,
+  value,
+}))
 
 const isProduction = process.env.NODE_ENV === 'production'
+
+const permissionSnapshot = (user: any) => {
+  const department = typeof user?.department === 'object' ? user.department?.id : user?.department
+  const permissions = Array.isArray(user?.permissions)
+    ? user.permissions
+      .map((row: any) => ({
+        module: row?.module,
+        actions: Array.isArray(row?.actions) ? [...row.actions].sort() : [],
+      }))
+      .sort((left: any, right: any) => String(left.module).localeCompare(String(right.module)))
+    : []
+
+  return JSON.stringify({
+    role: user?.role,
+    department,
+    status: user?.status,
+    useCustomPermissions: user?.useCustomPermissions === true,
+    permissions,
+  })
+}
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -41,6 +53,18 @@ export const Users: CollectionConfig = {
     delete: admins,
   },
   hooks: {
+    beforeChange: [
+      ({ data, operation, originalDoc }) => {
+        if (operation !== 'update' || !originalDoc) return data
+
+        const nextUser = { ...originalDoc, ...data }
+        if (permissionSnapshot(originalDoc) !== permissionSnapshot(nextUser)) {
+          // Thu hồi toàn bộ phiên cũ để quyền mới có hiệu lực ngay ở JWT và menu Admin.
+          data.sessions = []
+        }
+        return data
+      },
+    ],
     beforeLogin: [
       ({ user }) => {
         if (user && (user.status === 'locked' || user.status === 'inactive')) {
@@ -120,12 +144,28 @@ export const Users: CollectionConfig = {
       admin: { description: 'Đã chuẩn hóa trường trạng thái theo baseline. Tài khoản Locked/Inactive bị chặn đăng nhập ngay ở hook xác thực.' },
     },
     {
+      name: 'useCustomPermissions',
+      label: 'Dùng ma trận quyền tùy chỉnh',
+      type: 'checkbox',
+      defaultValue: false,
+      saveToJWT: true,
+      access: { create: adminField, update: adminField },
+      admin: {
+        description: 'Bật: chỉ cho phép đúng các mục và thao tác đã tích bên dưới. Tắt: giữ quyền mặc định theo vai trò và cộng thêm các quyền được tích.',
+      },
+    },
+    {
       name: 'permissions',
-      label: 'Quyền bổ sung theo module',
+      label: 'Ma trận phân quyền theo mục quản trị',
       type: 'array',
       saveToJWT: true,
       access: { create: adminField, update: adminField },
-      admin: { description: 'Chỉ dùng để cấp thêm quyền ngoài vai trò mặc định. Quyền được kiểm tra server-side qua access helper.' },
+      admin: {
+        description: 'Chọn trực quan từng mục và từng thao tác được phép trong Admin.',
+        components: {
+          Field: '/src/components/admin/PermissionMatrixField#default',
+        },
+      },
       fields: [
         { name: 'module', label: 'Module', type: 'text', required: true, admin: { description: 'Ví dụ: news, notices, procurement, schedules, services, quality.' } },
         { name: 'actions', label: 'Thao tác được phép', type: 'select', hasMany: true, required: true, options: permissionActions },

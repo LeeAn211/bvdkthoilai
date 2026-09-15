@@ -17,9 +17,9 @@ import {
   serial,
   timestamp,
   type AnyPgColumn,
+  boolean,
   numeric,
   jsonb,
-  boolean,
   text,
   pgEnum,
 } from "@payloadcms/db-postgres/drizzle/pg-core";
@@ -85,8 +85,12 @@ export const enum_news_layout_template = pgEnum("enum_news_layout_template", [
   "classic",
 ]);
 export const enum_news_cover_fit = pgEnum("enum_news_cover_fit", [
-  "cover",
   "contain",
+  "cover-top",
+  "cover-center",
+  "cover-bottom",
+  "cover",
+  "fill",
 ]);
 export const enum_news_cover_position = pgEnum("enum_news_cover_position", [
   "top",
@@ -110,7 +114,7 @@ export const enum__news_v_version_layout_template = pgEnum(
 );
 export const enum__news_v_version_cover_fit = pgEnum(
   "enum__news_v_version_cover_fit",
-  ["cover", "contain"],
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
 );
 export const enum__news_v_version_cover_position = pgEnum(
   "enum__news_v_version_cover_position",
@@ -134,8 +138,12 @@ export const enum_notices_layout_template = pgEnum(
   ["default", "bachmai", "classic"],
 );
 export const enum_notices_cover_fit = pgEnum("enum_notices_cover_fit", [
-  "cover",
   "contain",
+  "cover-top",
+  "cover-center",
+  "cover-bottom",
+  "cover",
+  "fill",
 ]);
 export const enum_notices_cover_position = pgEnum(
   "enum_notices_cover_position",
@@ -159,7 +167,7 @@ export const enum__notices_v_version_layout_template = pgEnum(
 );
 export const enum__notices_v_version_cover_fit = pgEnum(
   "enum__notices_v_version_cover_fit",
-  ["cover", "contain"],
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
 );
 export const enum__notices_v_version_cover_position = pgEnum(
   "enum__notices_v_version_cover_position",
@@ -240,16 +248,126 @@ export const enum__procurement_v_version_status = pgEnum(
   "enum__procurement_v_version_status",
   ["draft", "published"],
 );
+export const enum_documents_text_align = pgEnum("enum_documents_text_align", [
+  "left",
+  "center",
+  "right",
+  "justify",
+]);
+export const enum_documents_title_color = pgEnum("enum_documents_title_color", [
+  "default",
+  "navy",
+  "blue",
+  "green",
+  "red",
+]);
+export const enum_documents_title_size = pgEnum("enum_documents_title_size", [
+  "normal",
+  "large",
+  "xlarge",
+]);
+export const enum_documents_summary_color = pgEnum(
+  "enum_documents_summary_color",
+  ["default", "slate", "dark"],
+);
+export const enum_documents_summary_size = pgEnum(
+  "enum_documents_summary_size",
+  ["normal", "large", "small"],
+);
+export const enum__documents_v_version_text_align = pgEnum(
+  "enum__documents_v_version_text_align",
+  ["left", "center", "right", "justify"],
+);
+export const enum__documents_v_version_title_color = pgEnum(
+  "enum__documents_v_version_title_color",
+  ["default", "navy", "blue", "green", "red"],
+);
+export const enum__documents_v_version_title_size = pgEnum(
+  "enum__documents_v_version_title_size",
+  ["normal", "large", "xlarge"],
+);
+export const enum__documents_v_version_summary_color = pgEnum(
+  "enum__documents_v_version_summary_color",
+  ["default", "slate", "dark"],
+);
+export const enum__documents_v_version_summary_size = pgEnum(
+  "enum__documents_v_version_summary_size",
+  ["normal", "large", "small"],
+);
+export const enum_clinical_protocols_text_align = pgEnum(
+  "enum_clinical_protocols_text_align",
+  ["left", "center", "right", "justify"],
+);
+export const enum_clinical_protocols_title_color = pgEnum(
+  "enum_clinical_protocols_title_color",
+  ["default", "navy", "blue", "green", "red"],
+);
+export const enum_clinical_protocols_title_size = pgEnum(
+  "enum_clinical_protocols_title_size",
+  ["normal", "large", "xlarge"],
+);
+export const enum_clinical_protocols_summary_color = pgEnum(
+  "enum_clinical_protocols_summary_color",
+  ["default", "slate", "dark"],
+);
+export const enum_clinical_protocols_summary_size = pgEnum(
+  "enum_clinical_protocols_summary_size",
+  ["normal", "large", "small"],
+);
+export const enum__clinical_protocols_v_version_text_align = pgEnum(
+  "enum__clinical_protocols_v_version_text_align",
+  ["left", "center", "right", "justify"],
+);
+export const enum__clinical_protocols_v_version_title_color = pgEnum(
+  "enum__clinical_protocols_v_version_title_color",
+  ["default", "navy", "blue", "green", "red"],
+);
+export const enum__clinical_protocols_v_version_title_size = pgEnum(
+  "enum__clinical_protocols_v_version_title_size",
+  ["normal", "large", "xlarge"],
+);
+export const enum__clinical_protocols_v_version_summary_color = pgEnum(
+  "enum__clinical_protocols_v_version_summary_color",
+  ["default", "slate", "dark"],
+);
+export const enum__clinical_protocols_v_version_summary_size = pgEnum(
+  "enum__clinical_protocols_v_version_summary_size",
+  ["normal", "large", "small"],
+);
 export const enum_departments_unit_type = pgEnum("enum_departments_unit_type", [
   "clinical",
   "paraclinical",
   "office",
   "other",
 ]);
+export const enum_specialties_cover_fit_home = pgEnum(
+  "enum_specialties_cover_fit_home",
+  ["cover-top", "contain", "cover-center", "cover-bottom", "cover", "fill"],
+);
+export const enum_specialties_cover_fit_detail = pgEnum(
+  "enum_specialties_cover_fit_detail",
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
+);
+export const enum_specialties_cover_position = pgEnum(
+  "enum_specialties_cover_position",
+  ["top", "center", "bottom"],
+);
 export const enum_specialties_status = pgEnum("enum_specialties_status", [
   "draft",
   "published",
 ]);
+export const enum__specialties_v_version_cover_fit_home = pgEnum(
+  "enum__specialties_v_version_cover_fit_home",
+  ["cover-top", "contain", "cover-center", "cover-bottom", "cover", "fill"],
+);
+export const enum__specialties_v_version_cover_fit_detail = pgEnum(
+  "enum__specialties_v_version_cover_fit_detail",
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
+);
+export const enum__specialties_v_version_cover_position = pgEnum(
+  "enum__specialties_v_version_cover_position",
+  ["top", "center", "bottom"],
+);
 export const enum__specialties_v_version_status = pgEnum(
   "enum__specialties_v_version_status",
   ["draft", "published"],
@@ -262,18 +380,63 @@ export const enum__doctors_v_version_status = pgEnum(
   "enum__doctors_v_version_status",
   ["draft", "published"],
 );
+export const enum_schedules_daily_assignments_department_icon = pgEnum(
+  "enum_schedules_daily_assignments_department_icon",
+  [
+    "stethoscope",
+    "ambulance",
+    "bed",
+    "mortar",
+    "scalpel",
+    "baby",
+    "ultrasound",
+    "tooth",
+    "virus",
+    "clinic",
+  ],
+);
 export const enum_schedules_weekly_slots_day_of_week = pgEnum(
   "enum_schedules_weekly_slots_day_of_week",
   ["2", "3", "4", "5", "6", "7", "8"],
 );
+export const enum_schedules_weekly_dept_slots_dept_type = pgEnum(
+  "enum_schedules_weekly_dept_slots_dept_type",
+  ["clinical", "leader", "paraclinical", "admin"],
+);
+export const enum_schedules_emergency_contacts_type = pgEnum(
+  "enum_schedules_emergency_contacts_type",
+  ["internal", "emergency_unit"],
+);
 export const enum_schedules_mode = pgEnum("enum_schedules_mode", [
   "daily",
+  "emergency",
   "weekly",
   "attachment",
 ]);
 export const enum_schedules_schedule_type = pgEnum(
   "enum_schedules_schedule_type",
   ["official", "adjustment"],
+);
+export const enum_appointments_status = pgEnum("enum_appointments_status", [
+  "new",
+  "confirmed",
+  "examining",
+  "completed",
+  "cancelled",
+]);
+export const enum_appointments_source = pgEnum("enum_appointments_source", [
+  "website",
+  "phone",
+  "counter",
+]);
+export const enum_appointments_gender = pgEnum("enum_appointments_gender", [
+  "male",
+  "female",
+  "other",
+]);
+export const enum_appointments_time_slot = pgEnum(
+  "enum_appointments_time_slot",
+  ["morning", "afternoon", "anytime"],
 );
 export const enum_vaccinations_entry_type = pgEnum(
   "enum_vaccinations_entry_type",
@@ -320,6 +483,14 @@ export const enum_recruitment_layout_template = pgEnum(
   "enum_recruitment_layout_template",
   ["default", "bachmai", "classic"],
 );
+export const enum_recruitment_cover_fit = pgEnum("enum_recruitment_cover_fit", [
+  "contain",
+  "cover-top",
+  "cover-center",
+  "cover-bottom",
+  "cover",
+  "fill",
+]);
 export const enum_recruitment_workflow_state = pgEnum(
   "enum_recruitment_workflow_state",
   ["draft", "submitted", "approved", "published", "hidden"],
@@ -331,6 +502,10 @@ export const enum_recruitment_status = pgEnum("enum_recruitment_status", [
 export const enum__recruitment_v_version_layout_template = pgEnum(
   "enum__recruitment_v_version_layout_template",
   ["default", "bachmai", "classic"],
+);
+export const enum__recruitment_v_version_cover_fit = pgEnum(
+  "enum__recruitment_v_version_cover_fit",
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
 );
 export const enum__recruitment_v_version_workflow_state = pgEnum(
   "enum__recruitment_v_version_workflow_state",
@@ -373,6 +548,7 @@ export const enum_categories_scope = pgEnum("enum_categories_scope", [
   "procurement",
   "recruitment",
   "documents",
+  "clinical-protocols",
 ]);
 export const enum_feedback_type = pgEnum("enum_feedback_type", [
   "Góp ý",
@@ -506,11 +682,14 @@ export const enum__custom_posts_v_version_status = pgEnum(
 );
 export const enum_advanced_techniques_image_fit = pgEnum(
   "enum_advanced_techniques_image_fit",
-  ["contain", "cover"],
+  ["contain", "cover-top", "cover-center", "cover-bottom", "fill"],
 );
 export const enum_our_experts_image_fit = pgEnum("enum_our_experts_image_fit", [
   "contain",
-  "cover",
+  "cover-top",
+  "cover-center",
+  "cover-bottom",
+  "fill",
 ]);
 export const enum_scientific_activities_category = pgEnum(
   "enum_scientific_activities_category",
@@ -588,20 +767,213 @@ export const enum_audit_logs_action = pgEnum("enum_audit_logs_action", [
   "login",
   "other",
 ]);
+export const enum_site_settings_header_contact_cards_icon_type = pgEnum(
+  "enum_site_settings_header_contact_cards_icon_type",
+  ["emergency", "calendar", "phone", "headset", "heart", "info", "custom"],
+);
+export const enum_site_settings_header_contact_cards_font_family = pgEnum(
+  "enum_site_settings_header_contact_cards_font_family",
+  [
+    "inherit",
+    "Arial, Helvetica, sans-serif",
+    '"Segoe UI", Roboto, sans-serif',
+    '"Montserrat", sans-serif',
+    '"Roboto", sans-serif',
+    '"Be Vietnam Pro", sans-serif',
+  ],
+);
+export const enum_site_settings_header_contact_cards_font_weight = pgEnum(
+  "enum_site_settings_header_contact_cards_font_weight",
+  ["400", "600", "700", "800", "900"],
+);
+export const brand_color_scheme = pgEnum("brand_color_scheme", [
+  "custom",
+  "navy-gold",
+  "green-white",
+  "dark-premium",
+  "red-white",
+  "sky-orange",
+]);
+export const brand_name_font = pgEnum("brand_name_font", [
+  "inherit",
+  '"Be Vietnam Pro", sans-serif',
+  '"Montserrat", sans-serif',
+  '"Roboto", sans-serif',
+  '"Nunito", sans-serif',
+  '"Inter", sans-serif',
+]);
+export const brand_name_weight = pgEnum("brand_name_weight", [
+  "400",
+  "600",
+  "700",
+  "800",
+  "900",
+]);
+export const brand_name_effect = pgEnum("brand_name_effect", [
+  "none",
+  "gradient-text",
+  "shadow",
+  "border-accent",
+  "underline-accent",
+  "highlight-bg",
+]);
 export const header_slogan_align = pgEnum("header_slogan_align", [
   "center",
   "left",
   "right",
 ]);
+export const brand_slogan_weight = pgEnum("brand_slogan_weight", [
+  "400",
+  "500",
+  "600",
+  "700",
+  "800",
+]);
+export const brand_slogan_effect = pgEnum("brand_slogan_effect", [
+  "none",
+  "gradient-text",
+  "shadow",
+  "decorative-underline",
+  "star-wrap",
+]);
+export const menu_font_weight = pgEnum("menu_font_weight", [
+  "400",
+  "600",
+  "700",
+  "800",
+  "900",
+]);
+export const menu_text_transform = pgEnum("menu_text_transform", [
+  "uppercase",
+  "none",
+  "capitalize",
+]);
+export const menu_font_family = pgEnum("menu_font_family", [
+  "inherit",
+  "Arial, Helvetica, sans-serif",
+  '"Segoe UI", Roboto, sans-serif',
+  '"Montserrat", sans-serif',
+  '"Roboto", sans-serif',
+  '"Be Vietnam Pro", sans-serif',
+]);
+export const menu_justify_content = pgEnum("menu_justify_content", [
+  "space-between",
+  "center",
+  "flex-start",
+  "flex-end",
+  "space-around",
+]);
+export const menu_anim_style = pgEnum("menu_anim_style", [
+  "slide-down",
+  "zoom-in",
+  "fade-in",
+  "flip-in",
+]);
+export const menu_anim_speed = pgEnum("menu_anim_speed", [
+  "0.15s",
+  "0.22s",
+  "0.35s",
+]);
+export const sp_not_align = pgEnum("sp_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
 export const enum_site_settings_service_price_page_rows_per_page = pgEnum(
   "enum_site_settings_service_price_page_rows_per_page",
   ["40", "50"],
 );
+export const vc_not_align = pgEnum("vc_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const enum_flow_not_align = pgEnum("enum_flow_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const enum_quality_not_align = pgEnum("enum_quality_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const enum_site_settings_survey_page_notice_align = pgEnum(
+  "enum_site_settings_survey_page_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum_site_settings_faq_page_notice_align = pgEnum(
+  "enum_site_settings_faq_page_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum_site_settings_forms_page_notice_align = pgEnum(
+  "enum_site_settings_forms_page_notice_align",
+  ["left", "center", "justify"],
+);
+export const pp_not_align = pgEnum("pp_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const lt_not_align = pgEnum("lt_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const sa_not_align = pgEnum("sa_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const cp_not_align = pgEnum("cp_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const enum__site_settings_v_version_header_contact_cards_icon_type =
+  pgEnum("enum__site_settings_v_version_header_contact_cards_icon_type", [
+    "emergency",
+    "calendar",
+    "phone",
+    "headset",
+    "heart",
+    "info",
+    "custom",
+  ]);
+export const enum__site_settings_v_version_header_contact_cards_font_family =
+  pgEnum("enum__site_settings_v_version_header_contact_cards_font_family", [
+    "inherit",
+    "Arial, Helvetica, sans-serif",
+    '"Segoe UI", Roboto, sans-serif',
+    '"Montserrat", sans-serif',
+    '"Roboto", sans-serif',
+    '"Be Vietnam Pro", sans-serif',
+  ]);
+export const enum__site_settings_v_version_header_contact_cards_font_weight =
+  pgEnum("enum__site_settings_v_version_header_contact_cards_font_weight", [
+    "400",
+    "600",
+    "700",
+    "800",
+    "900",
+  ]);
 export const enum__site_settings_v_version_service_price_page_rows_per_page =
   pgEnum("enum__site_settings_v_version_service_price_page_rows_per_page", [
     "40",
     "50",
   ]);
+export const enum__site_settings_v_version_survey_page_notice_align = pgEnum(
+  "enum__site_settings_v_version_survey_page_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum__site_settings_v_version_faq_page_notice_align = pgEnum(
+  "enum__site_settings_v_version_faq_page_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum__site_settings_v_version_forms_page_notice_align = pgEnum(
+  "enum__site_settings_v_version_forms_page_notice_align",
+  ["left", "center", "justify"],
+);
 export const enum_navigation_items_children_link_type = pgEnum(
   "enum_navigation_items_children_link_type",
   [
@@ -630,9 +1002,19 @@ export const enum_navigation_items_children_preset = pgEnum(
     "/thong-bao",
     "/lich-kham",
     "/bang-gia",
+    "/chat-luong-benh-vien",
+    "/danh-cho-nguoi-benh",
+    "/quy-trinh-kham-benh",
+    "/lich-lam-viec",
+    "/khao-sat",
+    "/gop-y",
+    "/gop-y/tra-cuu",
+    "/hoi-dap",
+    "/bieu-mau",
     "/tiem-chung",
     "/dau-thau-mua-sam",
     "/van-ban",
+    "/phac-do-dieu-tri",
     "/tuyen-dung",
     "/trang/kham-bhyt",
     "/lien-he",
@@ -666,9 +1048,19 @@ export const enum_navigation_items_preset = pgEnum(
     "/thong-bao",
     "/lich-kham",
     "/bang-gia",
+    "/chat-luong-benh-vien",
+    "/danh-cho-nguoi-benh",
+    "/quy-trinh-kham-benh",
+    "/lich-lam-viec",
+    "/khao-sat",
+    "/gop-y",
+    "/gop-y/tra-cuu",
+    "/hoi-dap",
+    "/bieu-mau",
     "/tiem-chung",
     "/dau-thau-mua-sam",
     "/van-ban",
+    "/phac-do-dieu-tri",
     "/tuyen-dung",
     "/trang/kham-bhyt",
     "/lien-he",
@@ -702,9 +1094,19 @@ export const enum__navigation_v_version_items_children_preset = pgEnum(
     "/thong-bao",
     "/lich-kham",
     "/bang-gia",
+    "/chat-luong-benh-vien",
+    "/danh-cho-nguoi-benh",
+    "/quy-trinh-kham-benh",
+    "/lich-lam-viec",
+    "/khao-sat",
+    "/gop-y",
+    "/gop-y/tra-cuu",
+    "/hoi-dap",
+    "/bieu-mau",
     "/tiem-chung",
     "/dau-thau-mua-sam",
     "/van-ban",
+    "/phac-do-dieu-tri",
     "/tuyen-dung",
     "/trang/kham-bhyt",
     "/lien-he",
@@ -738,9 +1140,19 @@ export const enum__navigation_v_version_items_preset = pgEnum(
     "/thong-bao",
     "/lich-kham",
     "/bang-gia",
+    "/chat-luong-benh-vien",
+    "/danh-cho-nguoi-benh",
+    "/quy-trinh-kham-benh",
+    "/lich-lam-viec",
+    "/khao-sat",
+    "/gop-y",
+    "/gop-y/tra-cuu",
+    "/hoi-dap",
+    "/bieu-mau",
     "/tiem-chung",
     "/dau-thau-mua-sam",
     "/van-ban",
+    "/phac-do-dieu-tri",
     "/tuyen-dung",
     "/trang/kham-bhyt",
     "/lien-he",
@@ -750,13 +1162,23 @@ export const enum_footer_columns_links_link_mode = pgEnum(
   "enum_footer_columns_links_link_mode",
   ["auto-page", "existing-page", "internal", "external"],
 );
+export const ft_col_align = pgEnum("ft_col_align", ["left", "center", "right"]);
 export const enum__footer_v_version_columns_links_link_mode = pgEnum(
   "enum__footer_v_version_columns_links_link_mode",
   ["auto-page", "existing-page", "internal", "external"],
 );
+export const ct_not_align = pgEnum("ct_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
 export const enum_theme_settings_font_family = pgEnum(
   "enum_theme_settings_font_family",
   ["system", "arial", "tahoma"],
+);
+export const enum_theme_settings_page_hero_bg_type = pgEnum(
+  "enum_theme_settings_page_hero_bg_type",
+  ["gradient", "solid"],
 );
 export const share_pos = pgEnum("share_pos", [
   "left",
@@ -768,6 +1190,10 @@ export const banner_pos = pgEnum("banner_pos", ["aboveLatest", "belowLatest"]);
 export const enum__theme_settings_v_version_font_family = pgEnum(
   "enum__theme_settings_v_version_font_family",
   ["system", "arial", "tahoma"],
+);
+export const enum__theme_settings_v_version_page_hero_bg_type = pgEnum(
+  "enum__theme_settings_v_version_page_hero_bg_type",
+  ["gradient", "solid"],
 );
 export const enum_homepage_quick_links_visual_mode = pgEnum(
   "enum_homepage_quick_links_visual_mode",
@@ -792,7 +1218,10 @@ export const enum_homepage_quick_links_image_fit = pgEnum(
 );
 export const enum_tech_items_image_fit = pgEnum("enum_tech_items_image_fit", [
   "contain",
-  "cover",
+  "cover-top",
+  "cover-center",
+  "cover-bottom",
+  "fill",
 ]);
 export const enum_tech_items_link_mode = pgEnum("enum_tech_items_link_mode", [
   "auto-page",
@@ -802,12 +1231,20 @@ export const enum_tech_items_link_mode = pgEnum("enum_tech_items_link_mode", [
 ]);
 export const enum_expert_items_image_fit = pgEnum(
   "enum_expert_items_image_fit",
-  ["contain", "cover"],
+  ["contain", "cover-top", "cover-center", "cover-bottom", "fill"],
 );
 export const enum_expert_items_link_mode = pgEnum(
   "enum_expert_items_link_mode",
   ["auto-page", "existing-page", "internal", "external"],
 );
+export const enum_fn_sources_source = pgEnum("enum_fn_sources_source", [
+  "news",
+  "news-category",
+  "notices",
+  "procurement",
+  "schedules",
+  "documents",
+]);
 export const enum_news_manual_link_mode = pgEnum("enum_news_manual_link_mode", [
   "auto-page",
   "existing-page",
@@ -826,16 +1263,17 @@ export const enum_schedule_manual_link_mode = pgEnum(
 );
 export const enum_homepage_sections_schedule_tab_order_tab = pgEnum(
   "enum_homepage_sections_schedule_tab_order_tab",
-  ["attachments", "daily", "weekly"],
+  ["emergency", "daily", "weekly", "attachments"],
 );
 export const enum_vaccine_manual_link_mode = pgEnum(
   "enum_vaccine_manual_link_mode",
   ["auto-page", "existing-page", "internal", "external"],
 );
-export const enum_homepage_sections_vaccination_tab_order_tab = pgEnum(
-  "enum_homepage_sections_vaccination_tab_order_tab",
-  ["announcements", "campaigns", "vaccines"],
-);
+export const enum_homepage_vax_tabs_tab = pgEnum("enum_homepage_vax_tabs_tab", [
+  "announcements",
+  "campaigns",
+  "vaccines",
+]);
 export const enum_homepage_sections_type = pgEnum(
   "enum_homepage_sections_type",
   [
@@ -855,6 +1293,14 @@ export const enum_homepage_sections_type = pgEnum(
     "custom",
     "dynamic-module",
   ],
+);
+export const enum_homepage_sections_featured_filter_mode = pgEnum(
+  "enum_homepage_sections_featured_filter_mode",
+  ["all", "only-featured"],
+);
+export const enum_homepage_sections_featured_card_fit = pgEnum(
+  "enum_homepage_sections_featured_card_fit",
+  ["cover", "contain"],
 );
 export const enum_homepage_sections_image_position = pgEnum(
   "enum_homepage_sections_image_position",
@@ -909,7 +1355,7 @@ export const enum__homepage_v_version_quick_links_image_fit = pgEnum(
 );
 export const enum__tech_items_v_image_fit = pgEnum(
   "enum__tech_items_v_image_fit",
-  ["contain", "cover"],
+  ["contain", "cover-top", "cover-center", "cover-bottom", "fill"],
 );
 export const enum__tech_items_v_link_mode = pgEnum(
   "enum__tech_items_v_link_mode",
@@ -917,12 +1363,20 @@ export const enum__tech_items_v_link_mode = pgEnum(
 );
 export const enum__expert_items_v_image_fit = pgEnum(
   "enum__expert_items_v_image_fit",
-  ["contain", "cover"],
+  ["contain", "cover-top", "cover-center", "cover-bottom", "fill"],
 );
 export const enum__expert_items_v_link_mode = pgEnum(
   "enum__expert_items_v_link_mode",
   ["auto-page", "existing-page", "internal", "external"],
 );
+export const enum__fn_sources_v_source = pgEnum("enum__fn_sources_v_source", [
+  "news",
+  "news-category",
+  "notices",
+  "procurement",
+  "schedules",
+  "documents",
+]);
 export const enum__news_manual_v_link_mode = pgEnum(
   "enum__news_manual_v_link_mode",
   ["auto-page", "existing-page", "internal", "external"],
@@ -937,18 +1391,16 @@ export const enum__schedule_manual_v_link_mode = pgEnum(
 );
 export const enum__homepage_v_version_sections_schedule_tab_order_tab = pgEnum(
   "enum__homepage_v_version_sections_schedule_tab_order_tab",
-  ["attachments", "daily", "weekly"],
+  ["emergency", "daily", "weekly", "attachments"],
 );
 export const enum__vaccine_manual_v_link_mode = pgEnum(
   "enum__vaccine_manual_v_link_mode",
   ["auto-page", "existing-page", "internal", "external"],
 );
-export const enum__homepage_v_version_sections_vaccination_tab_order_tab =
-  pgEnum("enum__homepage_v_version_sections_vaccination_tab_order_tab", [
-    "announcements",
-    "campaigns",
-    "vaccines",
-  ]);
+export const enum__homepage_vax_tabs_v_tab = pgEnum(
+  "enum__homepage_vax_tabs_v_tab",
+  ["announcements", "campaigns", "vaccines"],
+);
 export const enum__homepage_v_version_sections_type = pgEnum(
   "enum__homepage_v_version_sections_type",
   [
@@ -968,6 +1420,14 @@ export const enum__homepage_v_version_sections_type = pgEnum(
     "custom",
     "dynamic-module",
   ],
+);
+export const enum__homepage_v_version_sections_featured_filter_mode = pgEnum(
+  "enum__homepage_v_version_sections_featured_filter_mode",
+  ["all", "only-featured"],
+);
+export const enum__homepage_v_version_sections_featured_card_fit = pgEnum(
+  "enum__homepage_v_version_sections_featured_card_fit",
+  ["cover", "contain"],
 );
 export const enum__homepage_v_version_sections_image_position = pgEnum(
   "enum__homepage_v_version_sections_image_position",
@@ -999,6 +1459,166 @@ export const enum__homepage_v_version_status = pgEnum(
   "enum__homepage_v_version_status",
   ["draft", "published"],
 );
+export const hist_milestone_align = pgEnum("hist_milestone_align", [
+  "left",
+  "justify",
+  "center",
+]);
+export const hist_icon_type = pgEnum("hist_icon_type", [
+  "heart",
+  "star",
+  "caduceus",
+  "handshake",
+  "shield",
+  "lightbulb",
+  "custom",
+]);
+export const hist_hero_align = pgEnum("hist_hero_align", [
+  "left",
+  "center",
+  "right",
+]);
+export const hist_lead_align = pgEnum("hist_lead_align", [
+  "left",
+  "justify",
+  "center",
+]);
+export const hist_font_family = pgEnum("hist_font_family", [
+  "inherit",
+  "Arial, Helvetica, sans-serif",
+  '"Segoe UI", Roboto, sans-serif',
+  '"Montserrat", sans-serif',
+  '"Roboto", sans-serif',
+  '"Be Vietnam Pro", sans-serif',
+]);
+export const ab_cp_align = pgEnum("ab_cp_align", ["left", "center", "justify"]);
+export const ab_fc_align = pgEnum("ab_fc_align", ["left", "center", "justify"]);
+export const ab_hero_align = pgEnum("ab_hero_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const ab_cm_align = pgEnum("ab_cm_align", ["center", "left", "justify"]);
+export const wh_ms_align = pgEnum("wh_ms_align", [
+  "left",
+  "center",
+  "right",
+  "justify",
+]);
+export const wh_ms_tcolor = pgEnum("wh_ms_tcolor", [
+  "default",
+  "green",
+  "navy",
+  "red",
+]);
+export const wh_ms_tsize = pgEnum("wh_ms_tsize", ["normal", "large", "xlarge"]);
+export const wh_ms_dcolor = pgEnum("wh_ms_dcolor", [
+  "default",
+  "black",
+  "navy",
+]);
+export const wh_ms_dsize = pgEnum("wh_ms_dsize", ["normal", "large"]);
+export const wh_dept_icon = pgEnum("wh_dept_icon", [
+  "stethoscope",
+  "calendar",
+  "syringe",
+  "flask",
+  "card",
+  "building",
+  "heart",
+  "clock",
+  "custom",
+]);
+export const wh_dept_badge_color = pgEnum("wh_dept_badge_color", [
+  "blue",
+  "teal",
+  "amber",
+  "red",
+  "emerald",
+]);
+export const wh_dept_align = pgEnum("wh_dept_align", [
+  "left",
+  "center",
+  "right",
+  "justify",
+]);
+export const wh_dept_tcolor = pgEnum("wh_dept_tcolor", [
+  "default",
+  "navy",
+  "blue",
+  "green",
+  "red",
+  "slate",
+]);
+export const wh_dept_tsize = pgEnum("wh_dept_tsize", [
+  "small",
+  "normal",
+  "large",
+  "xlarge",
+]);
+export const wh_dept_ncolor = pgEnum("wh_dept_ncolor", [
+  "default",
+  "navy",
+  "green",
+  "red",
+]);
+export const wh_dept_nsize = pgEnum("wh_dept_nsize", ["normal", "large"]);
+export const wh_link_icon = pgEnum("wh_link_icon", [
+  "home",
+  "calendar",
+  "clock",
+  "paperclip",
+  "ambulance",
+  "fileText",
+]);
+export const wh_link_align = pgEnum("wh_link_align", ["left", "center"]);
+export const wh_link_tcolor = pgEnum("wh_link_tcolor", [
+  "default",
+  "blue",
+  "navy",
+  "red",
+]);
+export const wh_link_tsize = pgEnum("wh_link_tsize", ["normal", "large"]);
+export const wh_note_align = pgEnum("wh_note_align", ["left", "justify"]);
+export const wh_note_tcolor = pgEnum("wh_note_tcolor", [
+  "default",
+  "black",
+  "navy",
+  "red",
+]);
+export const wh_note_tsize = pgEnum("wh_note_tsize", ["normal", "large"]);
+export const enum_working_hours_settings_hero_title_size = pgEnum(
+  "enum_working_hours_settings_hero_title_size",
+  ["default", "compact", "large"],
+);
+export const enum_working_hours_settings_hero_title_color = pgEnum(
+  "enum_working_hours_settings_hero_title_color",
+  ["white", "yellow", "cyan"],
+);
+export const enum_working_hours_settings_hero_bg_type = pgEnum(
+  "enum_working_hours_settings_hero_bg_type",
+  ["gradient", "image", "solid"],
+);
+export const enum_working_hours_settings_hero_bg_gradient = pgEnum(
+  "enum_working_hours_settings_hero_bg_gradient",
+  ["blue-teal", "ocean-navy", "teal-emerald", "royal-blue", "slate-blue"],
+);
+export const enum_working_hours_settings_hero_overlay_opacity = pgEnum(
+  "enum_working_hours_settings_hero_overlay_opacity",
+  ["medium", "dark", "light"],
+);
+export const enum_working_hours_settings_emergency_banner_text_align = pgEnum(
+  "enum_working_hours_settings_emergency_banner_text_align",
+  ["left", "center", "justify"],
+);
+export const enum_working_hours_settings_emergency_banner_title_size = pgEnum(
+  "enum_working_hours_settings_emergency_banner_title_size",
+  ["normal", "large", "xlarge"],
+);
+export const enum_working_hours_settings_emergency_banner_desc_size = pgEnum(
+  "enum_working_hours_settings_emergency_banner_desc_size",
+  ["normal", "large"],
+);
 export const enum_seo_settings_status = pgEnum("enum_seo_settings_status", [
   "draft",
   "published",
@@ -1006,6 +1626,65 @@ export const enum_seo_settings_status = pgEnum("enum_seo_settings_status", [
 export const enum__seo_settings_v_version_status = pgEnum(
   "enum__seo_settings_v_version_status",
   ["draft", "published"],
+);
+export const sch_n_align = pgEnum("sch_n_align", ["left", "justify"]);
+export const sch_n_tcolor = pgEnum("sch_n_tcolor", [
+  "default",
+  "black",
+  "navy",
+  "red",
+]);
+export const sch_n_tsize = pgEnum("sch_n_tsize", ["normal", "large"]);
+export const enum_schedule_settings_hero_title_size = pgEnum(
+  "enum_schedule_settings_hero_title_size",
+  ["default", "compact", "large"],
+);
+export const enum_schedule_settings_hero_title_color = pgEnum(
+  "enum_schedule_settings_hero_title_color",
+  ["white", "yellow", "cyan"],
+);
+export const enum_schedule_settings_hero_bg_type = pgEnum(
+  "enum_schedule_settings_hero_bg_type",
+  ["gradient", "image", "solid"],
+);
+export const enum_schedule_settings_hero_bg_gradient = pgEnum(
+  "enum_schedule_settings_hero_bg_gradient",
+  ["blue-teal", "ocean-navy", "teal-emerald", "royal-blue"],
+);
+export const enum_schedule_settings_hero_overlay_opacity = pgEnum(
+  "enum_schedule_settings_hero_overlay_opacity",
+  ["medium", "dark", "light"],
+);
+export const enum_schedule_settings_quick_notice_text_align = pgEnum(
+  "enum_schedule_settings_quick_notice_text_align",
+  ["left", "center", "justify"],
+);
+export const enum_schedule_settings_quick_notice_title_color = pgEnum(
+  "enum_schedule_settings_quick_notice_title_color",
+  ["red", "navy", "green"],
+);
+export const enum_appointment_settings_custom_fields_type = pgEnum(
+  "enum_appointment_settings_custom_fields_type",
+  ["text", "textarea", "select", "number", "date", "checkbox"],
+);
+export const enum_appointment_settings_custom_fields_column = pgEnum(
+  "enum_appointment_settings_custom_fields_column",
+  ["left", "right"],
+);
+export const enum_appointment_settings_font_family = pgEnum(
+  "enum_appointment_settings_font_family",
+  [
+    "inherit",
+    "Arial, Helvetica, sans-serif",
+    '"Segoe UI", Roboto, sans-serif',
+    '"Montserrat", sans-serif',
+    '"Roboto", sans-serif',
+    '"Be Vietnam Pro", sans-serif',
+  ],
+);
+export const enum_appointment_settings_specialty_source = pgEnum(
+  "enum_appointment_settings_specialty_source",
+  ["auto", "selected", "custom"],
 );
 export const enum_quick_links_settings_items_link_mode = pgEnum(
   "enum_quick_links_settings_items_link_mode",
@@ -1145,6 +1824,7 @@ export const users = pgTable(
       },
     ),
     status: enum_users_status("status").notNull().default("active"),
+    useCustomPermissions: boolean("use_custom_permissions").default(false),
     lastLoginAt: timestamp("last_login_at", {
       mode: "string",
       withTimezone: true,
@@ -1284,15 +1964,28 @@ export const news = pgTable(
     id: serial("id").primaryKey(),
     title: varchar("title"),
     slug: varchar("slug"),
+    categoryRef: integer("category_ref_id").references(() => categories.id, {
+      onDelete: "set null",
+    }),
+    category: varchar("category"),
     excerpt: varchar("excerpt"),
     cover: integer("cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
     content: jsonb("content"),
-    categoryRef: integer("category_ref_id").references(() => categories.id, {
+    layoutTemplate:
+      enum_news_layout_template("layout_template").default("default"),
+    source: varchar("source"),
+    coverFit: enum_news_cover_fit("cover_fit").default("cover"),
+    coverPosition: enum_news_cover_position("cover_position").default("top"),
+    seoTitle: varchar("seo_title"),
+    canonicalUrl: varchar("canonical_url"),
+    seoDescription: varchar("seo_description"),
+    seoImage: integer("seo_image_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    category: varchar("category"),
+    noIndex: boolean("no_index").default(false),
+    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     featured: boolean("featured").default(false),
     pinned: boolean("pinned").default(false),
     publishedAt: timestamp("published_at", {
@@ -1300,20 +1993,7 @@ export const news = pgTable(
       withTimezone: true,
       precision: 3,
     }),
-    source: varchar("source"),
-    layoutTemplate:
-      enum_news_layout_template("layout_template").default("default"),
-    coverFit: enum_news_cover_fit("cover_fit").default("cover"),
-    coverPosition: enum_news_cover_position("cover_position").default("top"),
     workflowState: enum_news_workflow_state("workflow_state").default("draft"),
-    seoTitle: varchar("seo_title"),
-    seoDescription: varchar("seo_description"),
-    seoImage: integer("seo_image_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    canonicalUrl: varchar("canonical_url"),
-    noIndex: boolean("no_index").default(false),
-    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -1337,8 +2017,8 @@ export const news = pgTable(
   },
   (columns) => [
     uniqueIndex("news_slug_idx").on(columns.slug),
-    index("news_cover_idx").on(columns.cover),
     index("news_category_ref_idx").on(columns.categoryRef),
+    index("news_cover_idx").on(columns.cover),
     index("news_seo_image_idx").on(columns.seoImage),
     index("news_updated_at_idx").on(columns.updatedAt),
     index("news_created_at_idx").on(columns.createdAt),
@@ -1380,11 +2060,6 @@ export const _news_v = pgTable(
     }),
     version_title: varchar("version_title"),
     version_slug: varchar("version_slug"),
-    version_excerpt: varchar("version_excerpt"),
-    version_cover: integer("version_cover_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    version_content: jsonb("version_content"),
     version_categoryRef: integer("version_category_ref_id").references(
       () => categories.id,
       {
@@ -1392,26 +2067,22 @@ export const _news_v = pgTable(
       },
     ),
     version_category: varchar("version_category"),
-    version_featured: boolean("version_featured").default(false),
-    version_pinned: boolean("version_pinned").default(false),
-    version_publishedAt: timestamp("version_published_at", {
-      mode: "string",
-      withTimezone: true,
-      precision: 3,
+    version_excerpt: varchar("version_excerpt"),
+    version_cover: integer("version_cover_id").references(() => media.id, {
+      onDelete: "set null",
     }),
-    version_source: varchar("version_source"),
+    version_content: jsonb("version_content"),
     version_layoutTemplate: enum__news_v_version_layout_template(
       "version_layout_template",
     ).default("default"),
+    version_source: varchar("version_source"),
     version_coverFit:
       enum__news_v_version_cover_fit("version_cover_fit").default("cover"),
     version_coverPosition: enum__news_v_version_cover_position(
       "version_cover_position",
     ).default("top"),
-    version_workflowState: enum__news_v_version_workflow_state(
-      "version_workflow_state",
-    ).default("draft"),
     version_seoTitle: varchar("version_seo_title"),
+    version_canonicalUrl: varchar("version_canonical_url"),
     version_seoDescription: varchar("version_seo_description"),
     version_seoImage: integer("version_seo_image_id").references(
       () => media.id,
@@ -1419,11 +2090,20 @@ export const _news_v = pgTable(
         onDelete: "set null",
       },
     ),
-    version_canonicalUrl: varchar("version_canonical_url"),
     version_noIndex: boolean("version_no_index").default(false),
     version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
       false,
     ),
+    version_featured: boolean("version_featured").default(false),
+    version_pinned: boolean("version_pinned").default(false),
+    version_publishedAt: timestamp("version_published_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_workflowState: enum__news_v_version_workflow_state(
+      "version_workflow_state",
+    ).default("draft"),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,
@@ -1461,10 +2141,10 @@ export const _news_v = pgTable(
   (columns) => [
     index("_news_v_parent_idx").on(columns.parent),
     index("_news_v_version_version_slug_idx").on(columns.version_slug),
-    index("_news_v_version_version_cover_idx").on(columns.version_cover),
     index("_news_v_version_version_category_ref_idx").on(
       columns.version_categoryRef,
     ),
+    index("_news_v_version_version_cover_idx").on(columns.version_cover),
     index("_news_v_version_version_seo_image_idx").on(columns.version_seoImage),
     index("_news_v_version_version_updated_at_idx").on(
       columns.version_updatedAt,
@@ -1512,15 +2192,30 @@ export const notices = pgTable(
     id: serial("id").primaryKey(),
     title: varchar("title"),
     slug: varchar("slug"),
-    cover: integer("cover_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    excerpt: varchar("excerpt"),
-    content: jsonb("content"),
     categoryRef: integer("category_ref_id").references(() => categories.id, {
       onDelete: "set null",
     }),
     level: enum_notices_level("level").default("normal"),
+    excerpt: varchar("excerpt"),
+    cover: integer("cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    content: jsonb("content"),
+    layoutTemplate:
+      enum_notices_layout_template("layout_template").default("default"),
+    source: varchar("source"),
+    coverFit: enum_notices_cover_fit("cover_fit").default("cover"),
+    coverPosition: enum_notices_cover_position("cover_position").default("top"),
+    seoTitle: varchar("seo_title"),
+    canonicalUrl: varchar("canonical_url"),
+    seoDescription: varchar("seo_description"),
+    seoImage: integer("seo_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    noIndex: boolean("no_index").default(false),
+    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
+    pinned: boolean("pinned").default(false),
+    showOnHome: boolean("show_on_home").default(true),
     publishedAt: timestamp("published_at", {
       mode: "string",
       withTimezone: true,
@@ -1536,23 +2231,8 @@ export const notices = pgTable(
       withTimezone: true,
       precision: 3,
     }),
-    pinned: boolean("pinned").default(false),
-    showOnHome: boolean("show_on_home").default(true),
-    source: varchar("source"),
-    layoutTemplate:
-      enum_notices_layout_template("layout_template").default("default"),
-    coverFit: enum_notices_cover_fit("cover_fit").default("cover"),
-    coverPosition: enum_notices_cover_position("cover_position").default("top"),
     workflowState:
       enum_notices_workflow_state("workflow_state").default("draft"),
-    seoTitle: varchar("seo_title"),
-    seoDescription: varchar("seo_description"),
-    seoImage: integer("seo_image_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    canonicalUrl: varchar("canonical_url"),
-    noIndex: boolean("no_index").default(false),
-    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -1576,8 +2256,8 @@ export const notices = pgTable(
   },
   (columns) => [
     uniqueIndex("notices_slug_idx").on(columns.slug),
-    index("notices_cover_idx").on(columns.cover),
     index("notices_category_ref_idx").on(columns.categoryRef),
+    index("notices_cover_idx").on(columns.cover),
     index("notices_seo_image_idx").on(columns.seoImage),
     index("notices_updated_at_idx").on(columns.updatedAt),
     index("notices_created_at_idx").on(columns.createdAt),
@@ -1619,11 +2299,6 @@ export const _notices_v = pgTable(
     }),
     version_title: varchar("version_title"),
     version_slug: varchar("version_slug"),
-    version_cover: integer("version_cover_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    version_excerpt: varchar("version_excerpt"),
-    version_content: jsonb("version_content"),
     version_categoryRef: integer("version_category_ref_id").references(
       () => categories.id,
       {
@@ -1632,6 +2307,35 @@ export const _notices_v = pgTable(
     ),
     version_level:
       enum__notices_v_version_level("version_level").default("normal"),
+    version_excerpt: varchar("version_excerpt"),
+    version_cover: integer("version_cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    version_content: jsonb("version_content"),
+    version_layoutTemplate: enum__notices_v_version_layout_template(
+      "version_layout_template",
+    ).default("default"),
+    version_source: varchar("version_source"),
+    version_coverFit:
+      enum__notices_v_version_cover_fit("version_cover_fit").default("cover"),
+    version_coverPosition: enum__notices_v_version_cover_position(
+      "version_cover_position",
+    ).default("top"),
+    version_seoTitle: varchar("version_seo_title"),
+    version_canonicalUrl: varchar("version_canonical_url"),
+    version_seoDescription: varchar("version_seo_description"),
+    version_seoImage: integer("version_seo_image_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_noIndex: boolean("version_no_index").default(false),
+    version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
+      false,
+    ),
+    version_pinned: boolean("version_pinned").default(false),
+    version_showOnHome: boolean("version_show_on_home").default(true),
     version_publishedAt: timestamp("version_published_at", {
       mode: "string",
       withTimezone: true,
@@ -1647,33 +2351,9 @@ export const _notices_v = pgTable(
       withTimezone: true,
       precision: 3,
     }),
-    version_pinned: boolean("version_pinned").default(false),
-    version_showOnHome: boolean("version_show_on_home").default(true),
-    version_source: varchar("version_source"),
-    version_layoutTemplate: enum__notices_v_version_layout_template(
-      "version_layout_template",
-    ).default("default"),
-    version_coverFit:
-      enum__notices_v_version_cover_fit("version_cover_fit").default("cover"),
-    version_coverPosition: enum__notices_v_version_cover_position(
-      "version_cover_position",
-    ).default("top"),
     version_workflowState: enum__notices_v_version_workflow_state(
       "version_workflow_state",
     ).default("draft"),
-    version_seoTitle: varchar("version_seo_title"),
-    version_seoDescription: varchar("version_seo_description"),
-    version_seoImage: integer("version_seo_image_id").references(
-      () => media.id,
-      {
-        onDelete: "set null",
-      },
-    ),
-    version_canonicalUrl: varchar("version_canonical_url"),
-    version_noIndex: boolean("version_no_index").default(false),
-    version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
-      false,
-    ),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,
@@ -1711,10 +2391,10 @@ export const _notices_v = pgTable(
   (columns) => [
     index("_notices_v_parent_idx").on(columns.parent),
     index("_notices_v_version_version_slug_idx").on(columns.version_slug),
-    index("_notices_v_version_version_cover_idx").on(columns.version_cover),
     index("_notices_v_version_version_category_ref_idx").on(
       columns.version_categoryRef,
     ),
+    index("_notices_v_version_version_cover_idx").on(columns.version_cover),
     index("_notices_v_version_version_seo_image_idx").on(
       columns.version_seoImage,
     ),
@@ -1788,16 +2468,34 @@ export const procurement = pgTable(
     id: serial("id").primaryKey(),
     title: varchar("title"),
     slug: varchar("slug"),
-    cover: integer("cover_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    excerpt: varchar("excerpt"),
     referenceCode: varchar("reference_code"),
     categoryRef: integer("category_ref_id").references(() => categories.id, {
       onDelete: "set null",
     }),
     type: enum_procurement_type("type"),
+    contactUnit: varchar("contact_unit"),
+    procurementStatus:
+      enum_procurement_procurement_status("procurement_status").default("open"),
+    contactInfo: varchar("contact_info"),
+    excerpt: varchar("excerpt"),
+    cover: integer("cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
     content: jsonb("content"),
+    layoutTemplate:
+      enum_procurement_layout_template("layout_template").default("default"),
+    source: varchar("source"),
+    coverFit: enum_procurement_cover_fit("cover_fit").default("cover"),
+    coverPosition:
+      enum_procurement_cover_position("cover_position").default("top"),
+    seoTitle: varchar("seo_title"),
+    canonicalUrl: varchar("canonical_url"),
+    seoDescription: varchar("seo_description"),
+    seoImage: integer("seo_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    noIndex: boolean("no_index").default(false),
+    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     publishedAt: timestamp("published_at", {
       mode: "string",
       withTimezone: true,
@@ -1808,26 +2506,8 @@ export const procurement = pgTable(
       withTimezone: true,
       precision: 3,
     }),
-    procurementStatus:
-      enum_procurement_procurement_status("procurement_status").default("open"),
-    contactUnit: varchar("contact_unit"),
-    contactInfo: varchar("contact_info"),
-    source: varchar("source"),
-    layoutTemplate:
-      enum_procurement_layout_template("layout_template").default("default"),
-    coverFit: enum_procurement_cover_fit("cover_fit").default("cover"),
-    coverPosition:
-      enum_procurement_cover_position("cover_position").default("top"),
     workflowState:
       enum_procurement_workflow_state("workflow_state").default("draft"),
-    seoTitle: varchar("seo_title"),
-    seoDescription: varchar("seo_description"),
-    seoImage: integer("seo_image_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    canonicalUrl: varchar("canonical_url"),
-    noIndex: boolean("no_index").default(false),
-    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -1851,9 +2531,9 @@ export const procurement = pgTable(
   },
   (columns) => [
     uniqueIndex("procurement_slug_idx").on(columns.slug),
-    index("procurement_cover_idx").on(columns.cover),
     index("procurement_reference_code_idx").on(columns.referenceCode),
     index("procurement_category_ref_idx").on(columns.categoryRef),
+    index("procurement_cover_idx").on(columns.cover),
     index("procurement_seo_image_idx").on(columns.seoImage),
     index("procurement_updated_at_idx").on(columns.updatedAt),
     index("procurement_created_at_idx").on(columns.createdAt),
@@ -1924,10 +2604,6 @@ export const _procurement_v = pgTable(
     }),
     version_title: varchar("version_title"),
     version_slug: varchar("version_slug"),
-    version_cover: integer("version_cover_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    version_excerpt: varchar("version_excerpt"),
     version_referenceCode: varchar("version_reference_code"),
     version_categoryRef: integer("version_category_ref_id").references(
       () => categories.id,
@@ -1936,7 +2612,40 @@ export const _procurement_v = pgTable(
       },
     ),
     version_type: enum__procurement_v_version_type("version_type"),
+    version_contactUnit: varchar("version_contact_unit"),
+    version_procurementStatus: enum__procurement_v_version_procurement_status(
+      "version_procurement_status",
+    ).default("open"),
+    version_contactInfo: varchar("version_contact_info"),
+    version_excerpt: varchar("version_excerpt"),
+    version_cover: integer("version_cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
     version_content: jsonb("version_content"),
+    version_layoutTemplate: enum__procurement_v_version_layout_template(
+      "version_layout_template",
+    ).default("default"),
+    version_source: varchar("version_source"),
+    version_coverFit:
+      enum__procurement_v_version_cover_fit("version_cover_fit").default(
+        "cover",
+      ),
+    version_coverPosition: enum__procurement_v_version_cover_position(
+      "version_cover_position",
+    ).default("top"),
+    version_seoTitle: varchar("version_seo_title"),
+    version_canonicalUrl: varchar("version_canonical_url"),
+    version_seoDescription: varchar("version_seo_description"),
+    version_seoImage: integer("version_seo_image_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_noIndex: boolean("version_no_index").default(false),
+    version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
+      false,
+    ),
     version_publishedAt: timestamp("version_published_at", {
       mode: "string",
       withTimezone: true,
@@ -1947,38 +2656,9 @@ export const _procurement_v = pgTable(
       withTimezone: true,
       precision: 3,
     }),
-    version_procurementStatus: enum__procurement_v_version_procurement_status(
-      "version_procurement_status",
-    ).default("open"),
-    version_contactUnit: varchar("version_contact_unit"),
-    version_contactInfo: varchar("version_contact_info"),
-    version_source: varchar("version_source"),
-    version_layoutTemplate: enum__procurement_v_version_layout_template(
-      "version_layout_template",
-    ).default("default"),
-    version_coverFit:
-      enum__procurement_v_version_cover_fit("version_cover_fit").default(
-        "cover",
-      ),
-    version_coverPosition: enum__procurement_v_version_cover_position(
-      "version_cover_position",
-    ).default("top"),
     version_workflowState: enum__procurement_v_version_workflow_state(
       "version_workflow_state",
     ).default("draft"),
-    version_seoTitle: varchar("version_seo_title"),
-    version_seoDescription: varchar("version_seo_description"),
-    version_seoImage: integer("version_seo_image_id").references(
-      () => media.id,
-      {
-        onDelete: "set null",
-      },
-    ),
-    version_canonicalUrl: varchar("version_canonical_url"),
-    version_noIndex: boolean("version_no_index").default(false),
-    version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
-      false,
-    ),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,
@@ -2016,13 +2696,13 @@ export const _procurement_v = pgTable(
   (columns) => [
     index("_procurement_v_parent_idx").on(columns.parent),
     index("_procurement_v_version_version_slug_idx").on(columns.version_slug),
-    index("_procurement_v_version_version_cover_idx").on(columns.version_cover),
     index("_procurement_v_version_version_reference_code_idx").on(
       columns.version_referenceCode,
     ),
     index("_procurement_v_version_version_category_ref_idx").on(
       columns.version_categoryRef,
     ),
+    index("_procurement_v_version_version_cover_idx").on(columns.version_cover),
     index("_procurement_v_version_version_seo_image_idx").on(
       columns.version_seoImage,
     ),
@@ -2055,8 +2735,10 @@ export const documents = pgTable(
     categoryRef: integer("category_ref_id").references(() => categories.id, {
       onDelete: "set null",
     }),
-    category: varchar("category"),
+    year: numeric("year", { mode: "number" }),
     issuer: varchar("issuer"),
+    signer: varchar("signer"),
+    documentType: varchar("document_type"),
     issuedAt: timestamp("issued_at", {
       mode: "string",
       withTimezone: true,
@@ -2067,22 +2749,32 @@ export const documents = pgTable(
       withTimezone: true,
       precision: 3,
     }),
-    year: numeric("year", { mode: "number" }),
+    category: varchar("category"),
     summary: varchar("summary"),
-    cover: integer("cover_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
     file: integer("file_id")
       .notNull()
       .references(() => media.id, {
         onDelete: "set null",
       }),
+    cover: integer("cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    content: jsonb("content"),
+    allowDownload: boolean("allow_download").default(true),
+    preventCopy: boolean("prevent_copy").default(false),
+    showViewer: boolean("show_viewer").default(true),
+    textAlign: enum_documents_text_align("text_align").default("left"),
+    titleColor: enum_documents_title_color("title_color").default("default"),
+    titleSize: enum_documents_title_size("title_size").default("normal"),
+    summaryColor:
+      enum_documents_summary_color("summary_color").default("default"),
+    summarySize: enum_documents_summary_size("summary_size").default("normal"),
     seoTitle: varchar("seo_title"),
+    canonicalUrl: varchar("canonical_url"),
     seoDescription: varchar("seo_description"),
     seoImage: integer("seo_image_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    canonicalUrl: varchar("canonical_url"),
     noIndex: boolean("no_index").default(false),
     excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     updatedAt: timestamp("updated_at", {
@@ -2109,8 +2801,8 @@ export const documents = pgTable(
     uniqueIndex("documents_slug_idx").on(columns.slug),
     index("documents_number_idx").on(columns.number),
     index("documents_category_ref_idx").on(columns.categoryRef),
-    index("documents_cover_idx").on(columns.cover),
     index("documents_file_idx").on(columns.file),
+    index("documents_cover_idx").on(columns.cover),
     index("documents_seo_image_idx").on(columns.seoImage),
     index("documents_updated_at_idx").on(columns.updatedAt),
     index("documents_created_at_idx").on(columns.createdAt),
@@ -2134,8 +2826,10 @@ export const _documents_v = pgTable(
         onDelete: "set null",
       },
     ),
-    version_category: varchar("version_category"),
+    version_year: numeric("version_year", { mode: "number" }),
     version_issuer: varchar("version_issuer"),
+    version_signer: varchar("version_signer"),
+    version_documentType: varchar("version_document_type"),
     version_issuedAt: timestamp("version_issued_at", {
       mode: "string",
       withTimezone: true,
@@ -2146,17 +2840,39 @@ export const _documents_v = pgTable(
       withTimezone: true,
       precision: 3,
     }),
-    version_year: numeric("version_year", { mode: "number" }),
+    version_category: varchar("version_category"),
     version_summary: varchar("version_summary"),
-    version_cover: integer("version_cover_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
     version_file: integer("version_file_id")
       .notNull()
       .references(() => media.id, {
         onDelete: "set null",
       }),
+    version_cover: integer("version_cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    version_content: jsonb("version_content"),
+    version_allowDownload: boolean("version_allow_download").default(true),
+    version_preventCopy: boolean("version_prevent_copy").default(false),
+    version_showViewer: boolean("version_show_viewer").default(true),
+    version_textAlign:
+      enum__documents_v_version_text_align("version_text_align").default(
+        "left",
+      ),
+    version_titleColor: enum__documents_v_version_title_color(
+      "version_title_color",
+    ).default("default"),
+    version_titleSize:
+      enum__documents_v_version_title_size("version_title_size").default(
+        "normal",
+      ),
+    version_summaryColor: enum__documents_v_version_summary_color(
+      "version_summary_color",
+    ).default("default"),
+    version_summarySize: enum__documents_v_version_summary_size(
+      "version_summary_size",
+    ).default("normal"),
     version_seoTitle: varchar("version_seo_title"),
+    version_canonicalUrl: varchar("version_canonical_url"),
     version_seoDescription: varchar("version_seo_description"),
     version_seoImage: integer("version_seo_image_id").references(
       () => media.id,
@@ -2164,7 +2880,6 @@ export const _documents_v = pgTable(
         onDelete: "set null",
       },
     ),
-    version_canonicalUrl: varchar("version_canonical_url"),
     version_noIndex: boolean("version_no_index").default(false),
     version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
       false,
@@ -2206,8 +2921,8 @@ export const _documents_v = pgTable(
     index("_documents_v_version_version_category_ref_idx").on(
       columns.version_categoryRef,
     ),
-    index("_documents_v_version_version_cover_idx").on(columns.version_cover),
     index("_documents_v_version_version_file_idx").on(columns.version_file),
+    index("_documents_v_version_version_cover_idx").on(columns.version_cover),
     index("_documents_v_version_version_seo_image_idx").on(
       columns.version_seoImage,
     ),
@@ -2222,6 +2937,232 @@ export const _documents_v = pgTable(
     ),
     index("_documents_v_created_at_idx").on(columns.createdAt),
     index("_documents_v_updated_at_idx").on(columns.updatedAt),
+  ],
+);
+
+export const clinical_protocols = pgTable(
+  "clinical_protocols",
+  {
+    id: serial("id").primaryKey(),
+    title: varchar("title").notNull(),
+    slug: varchar("slug").notNull(),
+    code: varchar("code"),
+    specialty: integer("specialty_id").references(() => specialties.id, {
+      onDelete: "set null",
+    }),
+    documentType: varchar("document_type").default("Phác đồ điều trị"),
+    issuer: varchar("issuer").default("Bệnh viện Đa khoa Khu vực Thới Lai"),
+    signer: varchar("signer"),
+    issuedAt: timestamp("issued_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    effectiveAt: timestamp("effective_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    summary: varchar("summary"),
+    content: jsonb("content"),
+    allowDownload: boolean("allow_download").default(true),
+    preventCopy: boolean("prevent_copy").default(false),
+    showViewer: boolean("show_viewer").default(true),
+    textAlign: enum_clinical_protocols_text_align("text_align").default("left"),
+    titleColor:
+      enum_clinical_protocols_title_color("title_color").default("default"),
+    titleSize:
+      enum_clinical_protocols_title_size("title_size").default("normal"),
+    summaryColor:
+      enum_clinical_protocols_summary_color("summary_color").default("default"),
+    summarySize:
+      enum_clinical_protocols_summary_size("summary_size").default("normal"),
+    file: integer("file_id")
+      .notNull()
+      .references(() => media.id, {
+        onDelete: "set null",
+      }),
+    cover: integer("cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    seoTitle: varchar("seo_title"),
+    seoDescription: varchar("seo_description"),
+    seoImage: integer("seo_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    canonicalUrl: varchar("canonical_url"),
+    noIndex: boolean("no_index").default(false),
+    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    deletedAt: timestamp("deleted_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+  },
+  (columns) => [
+    uniqueIndex("clinical_protocols_slug_idx").on(columns.slug),
+    index("clinical_protocols_code_idx").on(columns.code),
+    index("clinical_protocols_specialty_idx").on(columns.specialty),
+    index("clinical_protocols_file_idx").on(columns.file),
+    index("clinical_protocols_cover_idx").on(columns.cover),
+    index("clinical_protocols_seo_image_idx").on(columns.seoImage),
+    index("clinical_protocols_updated_at_idx").on(columns.updatedAt),
+    index("clinical_protocols_created_at_idx").on(columns.createdAt),
+    index("clinical_protocols_deleted_at_idx").on(columns.deletedAt),
+  ],
+);
+
+export const _clinical_protocols_v = pgTable(
+  "_clinical_protocols_v",
+  {
+    id: serial("id").primaryKey(),
+    parent: integer("parent_id").references(() => clinical_protocols.id, {
+      onDelete: "set null",
+    }),
+    version_title: varchar("version_title").notNull(),
+    version_slug: varchar("version_slug").notNull(),
+    version_code: varchar("version_code"),
+    version_specialty: integer("version_specialty_id").references(
+      () => specialties.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_documentType: varchar("version_document_type").default(
+      "Phác đồ điều trị",
+    ),
+    version_issuer: varchar("version_issuer").default(
+      "Bệnh viện Đa khoa Khu vực Thới Lai",
+    ),
+    version_signer: varchar("version_signer"),
+    version_issuedAt: timestamp("version_issued_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_effectiveAt: timestamp("version_effective_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_summary: varchar("version_summary"),
+    version_content: jsonb("version_content"),
+    version_allowDownload: boolean("version_allow_download").default(true),
+    version_preventCopy: boolean("version_prevent_copy").default(false),
+    version_showViewer: boolean("version_show_viewer").default(true),
+    version_textAlign:
+      enum__clinical_protocols_v_version_text_align(
+        "version_text_align",
+      ).default("left"),
+    version_titleColor: enum__clinical_protocols_v_version_title_color(
+      "version_title_color",
+    ).default("default"),
+    version_titleSize:
+      enum__clinical_protocols_v_version_title_size(
+        "version_title_size",
+      ).default("normal"),
+    version_summaryColor: enum__clinical_protocols_v_version_summary_color(
+      "version_summary_color",
+    ).default("default"),
+    version_summarySize: enum__clinical_protocols_v_version_summary_size(
+      "version_summary_size",
+    ).default("normal"),
+    version_file: integer("version_file_id")
+      .notNull()
+      .references(() => media.id, {
+        onDelete: "set null",
+      }),
+    version_cover: integer("version_cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    version_seoTitle: varchar("version_seo_title"),
+    version_seoDescription: varchar("version_seo_description"),
+    version_seoImage: integer("version_seo_image_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_canonicalUrl: varchar("version_canonical_url"),
+    version_noIndex: boolean("version_no_index").default(false),
+    version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
+      false,
+    ),
+    version_updatedAt: timestamp("version_updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_createdAt: timestamp("version_created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_deletedAt: timestamp("version_deleted_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+  },
+  (columns) => [
+    index("_clinical_protocols_v_parent_idx").on(columns.parent),
+    index("_clinical_protocols_v_version_version_slug_idx").on(
+      columns.version_slug,
+    ),
+    index("_clinical_protocols_v_version_version_code_idx").on(
+      columns.version_code,
+    ),
+    index("_clinical_protocols_v_version_version_specialty_idx").on(
+      columns.version_specialty,
+    ),
+    index("_clinical_protocols_v_version_version_file_idx").on(
+      columns.version_file,
+    ),
+    index("_clinical_protocols_v_version_version_cover_idx").on(
+      columns.version_cover,
+    ),
+    index("_clinical_protocols_v_version_version_seo_image_idx").on(
+      columns.version_seoImage,
+    ),
+    index("_clinical_protocols_v_version_version_updated_at_idx").on(
+      columns.version_updatedAt,
+    ),
+    index("_clinical_protocols_v_version_version_created_at_idx").on(
+      columns.version_createdAt,
+    ),
+    index("_clinical_protocols_v_version_version_deleted_at_idx").on(
+      columns.version_deletedAt,
+    ),
+    index("_clinical_protocols_v_created_at_idx").on(columns.createdAt),
+    index("_clinical_protocols_v_updated_at_idx").on(columns.updatedAt),
   ],
 );
 
@@ -2324,6 +3265,33 @@ export const departments = pgTable(
   ],
 );
 
+export const specialties_sidebar_banners = pgTable(
+  "specialties_sidebar_banners",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    image: integer("image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    title: varchar("title"),
+    btnText: varchar("btn_text"),
+    link: varchar("link"),
+    openNewTab: boolean("open_new_tab").default(true),
+    desc: varchar("desc"),
+  },
+  (columns) => [
+    index("specialties_sidebar_banners_order_idx").on(columns._order),
+    index("specialties_sidebar_banners_parent_id_idx").on(columns._parentID),
+    index("specialties_sidebar_banners_image_idx").on(columns.image),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [specialties.id],
+      name: "specialties_sidebar_banners_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const specialties = pgTable(
   "specialties",
   {
@@ -2339,7 +3307,30 @@ export const specialties = pgTable(
     cover: integer("cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
+    coverFitHome:
+      enum_specialties_cover_fit_home("cover_fit_home").default("cover-top"),
+    coverFitDetail:
+      enum_specialties_cover_fit_detail("cover_fit_detail").default("contain"),
+    coverPosition:
+      enum_specialties_cover_position("cover_position").default("top"),
     services: jsonb("services"),
+    showDepartmentCard: boolean("show_department_card").default(true),
+    showBookingCard: boolean("show_booking_card").default(true),
+    customBookingTitle: varchar("custom_booking_title"),
+    customBookingButtonLabel: varchar("custom_booking_button_label"),
+    customBookingButtonUrl: varchar("custom_booking_button_url"),
+    customHotline: varchar("custom_hotline"),
+    customBookingDesc: varchar("custom_booking_desc"),
+    showNoticeBox: boolean("show_notice_box").default(true),
+    customNoticeText: varchar("custom_notice_text"),
+    sidebarBannersJson: varchar("sidebar_banners_json"),
+    showCoverImage: boolean("show_cover_image").default(true),
+    showSummaryLead: boolean("show_summary_lead").default(true),
+    showContentSection: boolean("show_content_section").default(true),
+    showServicesSection: boolean("show_services_section").default(true),
+    showDoctorsSection: boolean("show_doctors_section").default(true),
+    showProtocolsSection: boolean("show_protocols_section").default(true),
+    showRelatedSection: boolean("show_related_section").default(true),
     order: numeric("order", { mode: "number" }).default(0),
     active: boolean("active").default(true),
     seoTitle: varchar("seo_title"),
@@ -2377,6 +3368,38 @@ export const specialties = pgTable(
   ],
 );
 
+export const _specialties_v_version_sidebar_banners = pgTable(
+  "_specialties_v_version_sidebar_banners",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    image: integer("image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    title: varchar("title"),
+    btnText: varchar("btn_text"),
+    link: varchar("link"),
+    openNewTab: boolean("open_new_tab").default(true),
+    desc: varchar("desc"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_specialties_v_version_sidebar_banners_order_idx").on(
+      columns._order,
+    ),
+    index("_specialties_v_version_sidebar_banners_parent_id_idx").on(
+      columns._parentID,
+    ),
+    index("_specialties_v_version_sidebar_banners_image_idx").on(columns.image),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_specialties_v.id],
+      name: "_specialties_v_version_sidebar_banners_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const _specialties_v = pgTable(
   "_specialties_v",
   {
@@ -2400,7 +3423,49 @@ export const _specialties_v = pgTable(
     version_cover: integer("version_cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
+    version_coverFitHome: enum__specialties_v_version_cover_fit_home(
+      "version_cover_fit_home",
+    ).default("cover-top"),
+    version_coverFitDetail: enum__specialties_v_version_cover_fit_detail(
+      "version_cover_fit_detail",
+    ).default("contain"),
+    version_coverPosition: enum__specialties_v_version_cover_position(
+      "version_cover_position",
+    ).default("top"),
     version_services: jsonb("version_services"),
+    version_showDepartmentCard: boolean("version_show_department_card").default(
+      true,
+    ),
+    version_showBookingCard: boolean("version_show_booking_card").default(true),
+    version_customBookingTitle: varchar("version_custom_booking_title"),
+    version_customBookingButtonLabel: varchar(
+      "version_custom_booking_button_label",
+    ),
+    version_customBookingButtonUrl: varchar(
+      "version_custom_booking_button_url",
+    ),
+    version_customHotline: varchar("version_custom_hotline"),
+    version_customBookingDesc: varchar("version_custom_booking_desc"),
+    version_showNoticeBox: boolean("version_show_notice_box").default(true),
+    version_customNoticeText: varchar("version_custom_notice_text"),
+    version_sidebarBannersJson: varchar("version_sidebar_banners_json"),
+    version_showCoverImage: boolean("version_show_cover_image").default(true),
+    version_showSummaryLead: boolean("version_show_summary_lead").default(true),
+    version_showContentSection: boolean("version_show_content_section").default(
+      true,
+    ),
+    version_showServicesSection: boolean(
+      "version_show_services_section",
+    ).default(true),
+    version_showDoctorsSection: boolean("version_show_doctors_section").default(
+      true,
+    ),
+    version_showProtocolsSection: boolean(
+      "version_show_protocols_section",
+    ).default(true),
+    version_showRelatedSection: boolean("version_show_related_section").default(
+      true,
+    ),
     version_order: numeric("version_order", { mode: "number" }).default(0),
     version_active: boolean("version_active").default(true),
     version_seoTitle: varchar("version_seo_title"),
@@ -2474,26 +3539,32 @@ export const doctors = pgTable(
   {
     id: serial("id").primaryKey(),
     name: varchar("name"),
+    degree: varchar("degree"),
     slug: varchar("slug"),
     title: varchar("title"),
-    degree: varchar("degree"),
     professionalTitle: varchar("professional_title"),
-    avatar: integer("avatar_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
     department: integer("department_id").references(() => departments.id, {
       onDelete: "set null",
     }),
     specialtyRef: integer("specialty_ref_id").references(() => specialties.id, {
       onDelete: "set null",
     }),
-    specialty: varchar("specialty"),
     licenseNumber: varchar("license_number"),
-    bio: jsonb("bio"),
-    expertise: jsonb("expertise"),
-    experience: jsonb("experience"),
+    specialty: varchar("specialty"),
+    avatar: integer("avatar_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
     education: jsonb("education"),
+    experience: jsonb("experience"),
+    expertise: jsonb("expertise"),
     achievements: jsonb("achievements"),
+    bookingBtnText: varchar("booking_btn_text").default("Đặt lịch khám"),
+    bookingBtnUrl: varchar("booking_btn_url").default("/dat-lich-kham"),
+    bookingBtnOpenNewTab: boolean("booking_btn_open_new_tab").default(false),
+    bookingNoticeText: varchar("booking_notice_text").default(
+      "Đăng ký hẹn khám trực tuyến tiếp đón ưu tiên tại viện.",
+    ),
+    bio: jsonb("bio"),
     showOnHome: boolean("show_on_home").default(true),
     showDepartment: boolean("show_department").default(true),
     customSubtitle: varchar("custom_subtitle"),
@@ -2526,9 +3597,9 @@ export const doctors = pgTable(
   },
   (columns) => [
     uniqueIndex("doctors_slug_idx").on(columns.slug),
-    index("doctors_avatar_idx").on(columns.avatar),
     index("doctors_department_idx").on(columns.department),
     index("doctors_specialty_ref_idx").on(columns.specialtyRef),
+    index("doctors_avatar_idx").on(columns.avatar),
     index("doctors_seo_image_idx").on(columns.seoImage),
     index("doctors_updated_at_idx").on(columns.updatedAt),
     index("doctors_created_at_idx").on(columns.createdAt),
@@ -2544,13 +3615,10 @@ export const _doctors_v = pgTable(
       onDelete: "set null",
     }),
     version_name: varchar("version_name"),
+    version_degree: varchar("version_degree"),
     version_slug: varchar("version_slug"),
     version_title: varchar("version_title"),
-    version_degree: varchar("version_degree"),
     version_professionalTitle: varchar("version_professional_title"),
-    version_avatar: integer("version_avatar_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
     version_department: integer("version_department_id").references(
       () => departments.id,
       {
@@ -2563,13 +3631,28 @@ export const _doctors_v = pgTable(
         onDelete: "set null",
       },
     ),
-    version_specialty: varchar("version_specialty"),
     version_licenseNumber: varchar("version_license_number"),
-    version_bio: jsonb("version_bio"),
-    version_expertise: jsonb("version_expertise"),
-    version_experience: jsonb("version_experience"),
+    version_specialty: varchar("version_specialty"),
+    version_avatar: integer("version_avatar_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
     version_education: jsonb("version_education"),
+    version_experience: jsonb("version_experience"),
+    version_expertise: jsonb("version_expertise"),
     version_achievements: jsonb("version_achievements"),
+    version_bookingBtnText: varchar("version_booking_btn_text").default(
+      "Đặt lịch khám",
+    ),
+    version_bookingBtnUrl: varchar("version_booking_btn_url").default(
+      "/dat-lich-kham",
+    ),
+    version_bookingBtnOpenNewTab: boolean(
+      "version_booking_btn_open_new_tab",
+    ).default(false),
+    version_bookingNoticeText: varchar("version_booking_notice_text").default(
+      "Đăng ký hẹn khám trực tuyến tiếp đón ưu tiên tại viện.",
+    ),
+    version_bio: jsonb("version_bio"),
     version_showOnHome: boolean("version_show_on_home").default(true),
     version_showDepartment: boolean("version_show_department").default(true),
     version_customSubtitle: varchar("version_custom_subtitle"),
@@ -2620,13 +3703,13 @@ export const _doctors_v = pgTable(
   (columns) => [
     index("_doctors_v_parent_idx").on(columns.parent),
     index("_doctors_v_version_version_slug_idx").on(columns.version_slug),
-    index("_doctors_v_version_version_avatar_idx").on(columns.version_avatar),
     index("_doctors_v_version_version_department_idx").on(
       columns.version_department,
     ),
     index("_doctors_v_version_version_specialty_ref_idx").on(
       columns.version_specialtyRef,
     ),
+    index("_doctors_v_version_version_avatar_idx").on(columns.version_avatar),
     index("_doctors_v_version_version_seo_image_idx").on(
       columns.version_seoImage,
     ),
@@ -2640,6 +3723,34 @@ export const _doctors_v = pgTable(
     index("_doctors_v_created_at_idx").on(columns.createdAt),
     index("_doctors_v_updated_at_idx").on(columns.updatedAt),
     index("_doctors_v_latest_idx").on(columns.latest),
+  ],
+);
+
+export const schedules_daily_assignments = pgTable(
+  "schedules_daily_assignments",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    departmentName: varchar("department_name"),
+    departmentIcon:
+      enum_schedules_daily_assignments_department_icon(
+        "department_icon",
+      ).default("stethoscope"),
+    morningDoctors: varchar("morning_doctors"),
+    noonDoctors: varchar("noon_doctors"),
+    afternoonDoctors: varchar("afternoon_doctors"),
+    eveningDoctors: varchar("evening_doctors"),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("schedules_daily_assignments_order_idx").on(columns._order),
+    index("schedules_daily_assignments_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [schedules.id],
+      name: "schedules_daily_assignments_parent_id_fk",
+    }).onDelete("cascade"),
   ],
 );
 
@@ -2670,6 +3781,61 @@ export const schedules_weekly_slots = pgTable(
       columns: [columns["_parentID"]],
       foreignColumns: [schedules.id],
       name: "schedules_weekly_slots_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const schedules_weekly_dept_slots = pgTable(
+  "schedules_weekly_dept_slots",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    deptName: varchar("dept_name"),
+    deptType:
+      enum_schedules_weekly_dept_slots_dept_type("dept_type").default(
+        "clinical",
+      ),
+    subRole: varchar("sub_role"),
+    day2: varchar("day2"),
+    day3: varchar("day3"),
+    day4: varchar("day4"),
+    day5: varchar("day5"),
+    day6: varchar("day6"),
+    day7: varchar("day7"),
+    day8: varchar("day8"),
+    fixedStaff: varchar("fixed_staff"),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("schedules_weekly_dept_slots_order_idx").on(columns._order),
+    index("schedules_weekly_dept_slots_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [schedules.id],
+      name: "schedules_weekly_dept_slots_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const schedules_emergency_contacts = pgTable(
+  "schedules_emergency_contacts",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    name: varchar("name"),
+    phone: varchar("phone"),
+    type: enum_schedules_emergency_contacts_type("type").default("internal"),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("schedules_emergency_contacts_order_idx").on(columns._order),
+    index("schedules_emergency_contacts_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [schedules.id],
+      name: "schedules_emergency_contacts_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -2708,16 +3874,16 @@ export const schedules = pgTable(
     }),
     detailContent: jsonb("detail_content"),
     mode: enum_schedules_mode("mode").notNull().default("attachment"),
+    date: timestamp("date", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
     doctor: integer("doctor_id").references(() => doctors.id, {
       onDelete: "set null",
     }),
     department: integer("department_id").references(() => departments.id, {
       onDelete: "set null",
-    }),
-    date: timestamp("date", {
-      mode: "string",
-      withTimezone: true,
-      precision: 3,
     }),
     startTime: varchar("start_time"),
     endTime: varchar("end_time"),
@@ -2732,6 +3898,23 @@ export const schedules = pgTable(
       withTimezone: true,
       precision: 3,
     }),
+    emergencyWeekStart: timestamp("emergency_week_start", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    emergencyWeekEnd: timestamp("emergency_week_end", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    emergencyGeneralNote: varchar("emergency_general_note"),
+    emergencyExcelFile: integer("emergency_excel_file_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
     scheduleType:
       enum_schedules_schedule_type("schedule_type").default("official"),
     scheduleImage: integer("schedule_image_id").references(() => media.id, {
@@ -2769,13 +3952,92 @@ export const schedules = pgTable(
   },
   (columns) => [
     index("schedules_cover_image_idx").on(columns.coverImage),
+    index("schedules_date_idx").on(columns.date),
     index("schedules_doctor_idx").on(columns.doctor),
     index("schedules_department_idx").on(columns.department),
-    index("schedules_date_idx").on(columns.date),
+    index("schedules_emergency_excel_file_idx").on(columns.emergencyExcelFile),
     index("schedules_schedule_image_idx").on(columns.scheduleImage),
     index("schedules_schedule_file_idx").on(columns.scheduleFile),
     index("schedules_updated_at_idx").on(columns.updatedAt),
     index("schedules_created_at_idx").on(columns.createdAt),
+  ],
+);
+
+export const appointments = pgTable(
+  "appointments",
+  {
+    id: serial("id").primaryKey(),
+    code: varchar("code").notNull(),
+    status: enum_appointments_status("status").notNull().default("new"),
+    source: enum_appointments_source("source").default("website"),
+    fullName: varchar("full_name").notNull(),
+    phone: varchar("phone").notNull(),
+    email: varchar("email"),
+    dob: timestamp("dob", { mode: "string", withTimezone: true, precision: 3 }),
+    gender: enum_appointments_gender("gender").default("male"),
+    insuranceNumber: varchar("insurance_number"),
+    address: varchar("address"),
+    specialty: integer("specialty_id").references(() => specialties.id, {
+      onDelete: "set null",
+    }),
+    specialtyTitle: varchar("specialty_title"),
+    department: integer("department_id").references(() => departments.id, {
+      onDelete: "set null",
+    }),
+    doctor: integer("doctor_id").references(() => doctors.id, {
+      onDelete: "set null",
+    }),
+    appointmentDate: timestamp("appointment_date", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }).notNull(),
+    timeSlot: enum_appointments_time_slot("time_slot").default("morning"),
+    timeSlotLabel: varchar("time_slot_label"),
+    symptoms: varchar("symptoms"),
+    staffNote: varchar("staff_note"),
+    confirmedAt: timestamp("confirmed_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    customData: jsonb("custom_data"),
+    submittedAt: timestamp("submitted_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    ipAddress: varchar("ip_address"),
+    userAgent: varchar("user_agent"),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+  },
+  (columns) => [
+    uniqueIndex("appointments_code_idx").on(columns.code),
+    index("appointments_status_idx").on(columns.status),
+    index("appointments_full_name_idx").on(columns.fullName),
+    index("appointments_phone_idx").on(columns.phone),
+    index("appointments_specialty_idx").on(columns.specialty),
+    index("appointments_specialty_title_idx").on(columns.specialtyTitle),
+    index("appointments_department_idx").on(columns.department),
+    index("appointments_doctor_idx").on(columns.doctor),
+    index("appointments_appointment_date_idx").on(columns.appointmentDate),
+    index("appointments_time_slot_label_idx").on(columns.timeSlotLabel),
+    index("appointments_submitted_at_idx").on(columns.submittedAt),
+    index("appointments_updated_at_idx").on(columns.updatedAt),
+    index("appointments_created_at_idx").on(columns.createdAt),
   ],
 );
 
@@ -3495,10 +4757,6 @@ export const recruitment = pgTable(
     id: serial("id").primaryKey(),
     title: varchar("title"),
     slug: varchar("slug"),
-    cover: integer("cover_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    excerpt: varchar("excerpt"),
     categoryRef: integer("category_ref_id").references(() => categories.id, {
       onDelete: "set null",
     }),
@@ -3506,7 +4764,26 @@ export const recruitment = pgTable(
       onDelete: "set null",
     }),
     quantity: numeric("quantity", { mode: "number" }),
+    excerpt: varchar("excerpt"),
+    cover: integer("cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
     content: jsonb("content"),
+    attachment: integer("attachment_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    layoutTemplate:
+      enum_recruitment_layout_template("layout_template").default("default"),
+    source: varchar("source"),
+    coverFit: enum_recruitment_cover_fit("cover_fit").default("cover"),
+    seoTitle: varchar("seo_title"),
+    canonicalUrl: varchar("canonical_url"),
+    seoDescription: varchar("seo_description"),
+    seoImage: integer("seo_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    noIndex: boolean("no_index").default(false),
+    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     publishedAt: timestamp("published_at", {
       mode: "string",
       withTimezone: true,
@@ -3517,22 +4794,8 @@ export const recruitment = pgTable(
       withTimezone: true,
       precision: 3,
     }),
-    attachment: integer("attachment_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    source: varchar("source"),
-    layoutTemplate:
-      enum_recruitment_layout_template("layout_template").default("default"),
     workflowState:
       enum_recruitment_workflow_state("workflow_state").default("draft"),
-    seoTitle: varchar("seo_title"),
-    seoDescription: varchar("seo_description"),
-    seoImage: integer("seo_image_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    canonicalUrl: varchar("canonical_url"),
-    noIndex: boolean("no_index").default(false),
-    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -3556,9 +4819,9 @@ export const recruitment = pgTable(
   },
   (columns) => [
     uniqueIndex("recruitment_slug_idx").on(columns.slug),
-    index("recruitment_cover_idx").on(columns.cover),
     index("recruitment_category_ref_idx").on(columns.categoryRef),
     index("recruitment_department_idx").on(columns.department),
+    index("recruitment_cover_idx").on(columns.cover),
     index("recruitment_attachment_idx").on(columns.attachment),
     index("recruitment_seo_image_idx").on(columns.seoImage),
     index("recruitment_updated_at_idx").on(columns.updatedAt),
@@ -3603,10 +4866,6 @@ export const _recruitment_v = pgTable(
     }),
     version_title: varchar("version_title"),
     version_slug: varchar("version_slug"),
-    version_cover: integer("version_cover_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    version_excerpt: varchar("version_excerpt"),
     version_categoryRef: integer("version_category_ref_id").references(
       () => categories.id,
       {
@@ -3620,7 +4879,38 @@ export const _recruitment_v = pgTable(
       },
     ),
     version_quantity: numeric("version_quantity", { mode: "number" }),
+    version_excerpt: varchar("version_excerpt"),
+    version_cover: integer("version_cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
     version_content: jsonb("version_content"),
+    version_attachment: integer("version_attachment_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_layoutTemplate: enum__recruitment_v_version_layout_template(
+      "version_layout_template",
+    ).default("default"),
+    version_source: varchar("version_source"),
+    version_coverFit:
+      enum__recruitment_v_version_cover_fit("version_cover_fit").default(
+        "cover",
+      ),
+    version_seoTitle: varchar("version_seo_title"),
+    version_canonicalUrl: varchar("version_canonical_url"),
+    version_seoDescription: varchar("version_seo_description"),
+    version_seoImage: integer("version_seo_image_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_noIndex: boolean("version_no_index").default(false),
+    version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
+      false,
+    ),
     version_publishedAt: timestamp("version_published_at", {
       mode: "string",
       withTimezone: true,
@@ -3631,32 +4921,9 @@ export const _recruitment_v = pgTable(
       withTimezone: true,
       precision: 3,
     }),
-    version_attachment: integer("version_attachment_id").references(
-      () => media.id,
-      {
-        onDelete: "set null",
-      },
-    ),
-    version_source: varchar("version_source"),
-    version_layoutTemplate: enum__recruitment_v_version_layout_template(
-      "version_layout_template",
-    ).default("default"),
     version_workflowState: enum__recruitment_v_version_workflow_state(
       "version_workflow_state",
     ).default("draft"),
-    version_seoTitle: varchar("version_seo_title"),
-    version_seoDescription: varchar("version_seo_description"),
-    version_seoImage: integer("version_seo_image_id").references(
-      () => media.id,
-      {
-        onDelete: "set null",
-      },
-    ),
-    version_canonicalUrl: varchar("version_canonical_url"),
-    version_noIndex: boolean("version_no_index").default(false),
-    version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
-      false,
-    ),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,
@@ -3694,13 +4961,13 @@ export const _recruitment_v = pgTable(
   (columns) => [
     index("_recruitment_v_parent_idx").on(columns.parent),
     index("_recruitment_v_version_version_slug_idx").on(columns.version_slug),
-    index("_recruitment_v_version_version_cover_idx").on(columns.version_cover),
     index("_recruitment_v_version_version_category_ref_idx").on(
       columns.version_categoryRef,
     ),
     index("_recruitment_v_version_version_department_idx").on(
       columns.version_department,
     ),
+    index("_recruitment_v_version_version_cover_idx").on(columns.version_cover),
     index("_recruitment_v_version_version_attachment_idx").on(
       columns.version_attachment,
     ),
@@ -5550,35 +6817,35 @@ export const custom_posts = pgTable(
   "custom_posts",
   {
     id: serial("id").primaryKey(),
+    title: varchar("title"),
+    slug: varchar("slug"),
     section: integer("section_id").references(() => content_sections.id, {
       onDelete: "set null",
     }),
-    title: varchar("title"),
-    slug: varchar("slug"),
+    excerpt: varchar("excerpt"),
     cover: integer("cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    excerpt: varchar("excerpt"),
     content: jsonb("content"),
+    layoutTemplate:
+      enum_custom_posts_layout_template("layout_template").default("default"),
+    source: varchar("source"),
+    seoTitle: varchar("seo_title"),
+    canonicalUrl: varchar("canonical_url"),
+    seoDescription: varchar("seo_description"),
+    seoImage: integer("seo_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    noIndex: boolean("no_index").default(false),
+    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
+    pinned: boolean("pinned").default(false),
     publishedAt: timestamp("published_at", {
       mode: "string",
       withTimezone: true,
       precision: 3,
     }),
-    pinned: boolean("pinned").default(false),
-    source: varchar("source"),
-    layoutTemplate:
-      enum_custom_posts_layout_template("layout_template").default("default"),
     workflowState:
       enum_custom_posts_workflow_state("workflow_state").default("draft"),
-    seoTitle: varchar("seo_title"),
-    seoDescription: varchar("seo_description"),
-    seoImage: integer("seo_image_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    canonicalUrl: varchar("canonical_url"),
-    noIndex: boolean("no_index").default(false),
-    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -5601,8 +6868,8 @@ export const custom_posts = pgTable(
     _status: enum_custom_posts_status("_status").default("draft"),
   },
   (columns) => [
-    index("custom_posts_section_idx").on(columns.section),
     uniqueIndex("custom_posts_slug_idx").on(columns.slug),
+    index("custom_posts_section_idx").on(columns.section),
     index("custom_posts_cover_idx").on(columns.cover),
     index("custom_posts_seo_image_idx").on(columns.seoImage),
     index("custom_posts_updated_at_idx").on(columns.updatedAt),
@@ -5645,33 +6912,25 @@ export const _custom_posts_v = pgTable(
     parent: integer("parent_id").references(() => custom_posts.id, {
       onDelete: "set null",
     }),
+    version_title: varchar("version_title"),
+    version_slug: varchar("version_slug"),
     version_section: integer("version_section_id").references(
       () => content_sections.id,
       {
         onDelete: "set null",
       },
     ),
-    version_title: varchar("version_title"),
-    version_slug: varchar("version_slug"),
+    version_excerpt: varchar("version_excerpt"),
     version_cover: integer("version_cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    version_excerpt: varchar("version_excerpt"),
     version_content: jsonb("version_content"),
-    version_publishedAt: timestamp("version_published_at", {
-      mode: "string",
-      withTimezone: true,
-      precision: 3,
-    }),
-    version_pinned: boolean("version_pinned").default(false),
-    version_source: varchar("version_source"),
     version_layoutTemplate: enum__custom_posts_v_version_layout_template(
       "version_layout_template",
     ).default("default"),
-    version_workflowState: enum__custom_posts_v_version_workflow_state(
-      "version_workflow_state",
-    ).default("draft"),
+    version_source: varchar("version_source"),
     version_seoTitle: varchar("version_seo_title"),
+    version_canonicalUrl: varchar("version_canonical_url"),
     version_seoDescription: varchar("version_seo_description"),
     version_seoImage: integer("version_seo_image_id").references(
       () => media.id,
@@ -5679,11 +6938,19 @@ export const _custom_posts_v = pgTable(
         onDelete: "set null",
       },
     ),
-    version_canonicalUrl: varchar("version_canonical_url"),
     version_noIndex: boolean("version_no_index").default(false),
     version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
       false,
     ),
+    version_pinned: boolean("version_pinned").default(false),
+    version_publishedAt: timestamp("version_published_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_workflowState: enum__custom_posts_v_version_workflow_state(
+      "version_workflow_state",
+    ).default("draft"),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,
@@ -5720,10 +6987,10 @@ export const _custom_posts_v = pgTable(
   },
   (columns) => [
     index("_custom_posts_v_parent_idx").on(columns.parent),
+    index("_custom_posts_v_version_version_slug_idx").on(columns.version_slug),
     index("_custom_posts_v_version_version_section_idx").on(
       columns.version_section,
     ),
-    index("_custom_posts_v_version_version_slug_idx").on(columns.version_slug),
     index("_custom_posts_v_version_version_cover_idx").on(
       columns.version_cover,
     ),
@@ -5810,6 +7077,8 @@ export const advanced_techniques = pgTable(
     }),
     imageFit:
       enum_advanced_techniques_image_fit("image_fit").default("contain"),
+    enableLink: boolean("enable_link").default(true),
+    customUrl: varchar("custom_url"),
     showCoverInDetail: boolean("show_cover_in_detail").default(false),
     summary: varchar("summary"),
     content: jsonb("content").notNull(),
@@ -5867,6 +7136,7 @@ export const our_experts = pgTable(
       onDelete: "set null",
     }),
     imageFit: enum_our_experts_image_fit("image_fit").default("contain"),
+    enableLink: boolean("enable_link").default(true),
     url: varchar("url"),
     openNewTab: boolean("open_new_tab").default(false),
     order: numeric("order", { mode: "number" }).default(0),
@@ -6339,10 +7609,12 @@ export const payload_locked_documents_rels = pgTable(
     noticesID: integer("notices_id"),
     procurementID: integer("procurement_id"),
     documentsID: integer("documents_id"),
+    "clinical-protocolsID": integer("clinical_protocols_id"),
     departmentsID: integer("departments_id"),
     specialtiesID: integer("specialties_id"),
     doctorsID: integer("doctors_id"),
     schedulesID: integer("schedules_id"),
+    appointmentsID: integer("appointments_id"),
     servicesID: integer("services_id"),
     servicePricesID: integer("service_prices_id"),
     vaccinationsID: integer("vaccinations_id"),
@@ -6396,6 +7668,9 @@ export const payload_locked_documents_rels = pgTable(
     index("payload_locked_documents_rels_documents_id_idx").on(
       columns.documentsID,
     ),
+    index("payload_locked_documents_rels_clinical_protocols_id_idx").on(
+      columns["clinical-protocolsID"],
+    ),
     index("payload_locked_documents_rels_departments_id_idx").on(
       columns.departmentsID,
     ),
@@ -6405,6 +7680,9 @@ export const payload_locked_documents_rels = pgTable(
     index("payload_locked_documents_rels_doctors_id_idx").on(columns.doctorsID),
     index("payload_locked_documents_rels_schedules_id_idx").on(
       columns.schedulesID,
+    ),
+    index("payload_locked_documents_rels_appointments_id_idx").on(
+      columns.appointmentsID,
     ),
     index("payload_locked_documents_rels_services_id_idx").on(
       columns.servicesID,
@@ -6550,6 +7828,11 @@ export const payload_locked_documents_rels = pgTable(
       name: "payload_locked_documents_rels_documents_fk",
     }).onDelete("cascade"),
     foreignKey({
+      columns: [columns["clinical-protocolsID"]],
+      foreignColumns: [clinical_protocols.id],
+      name: "payload_locked_documents_rels_clinical_protocols_fk",
+    }).onDelete("cascade"),
+    foreignKey({
       columns: [columns["departmentsID"]],
       foreignColumns: [departments.id],
       name: "payload_locked_documents_rels_departments_fk",
@@ -6568,6 +7851,11 @@ export const payload_locked_documents_rels = pgTable(
       columns: [columns["schedulesID"]],
       foreignColumns: [schedules.id],
       name: "payload_locked_documents_rels_schedules_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["appointmentsID"]],
+      foreignColumns: [appointments.id],
+      name: "payload_locked_documents_rels_appointments_fk",
     }).onDelete("cascade"),
     foreignKey({
       columns: [columns["servicesID"]],
@@ -6855,20 +8143,34 @@ export const site_settings_header_contact_cards = pgTable(
     text: varchar("text").notNull(),
     href: varchar("href"),
     extraText: varchar("extra_text"),
-    iconType: varchar("icon_type").default("phone"),
+    iconType:
+      enum_site_settings_header_contact_cards_icon_type("icon_type").default(
+        "emergency",
+      ),
     customIcon: integer("custom_icon_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    background: varchar("background").default("#FFFFFF"),
-    borderColor: varchar("border_color").default("#E1E7EC"),
+    hasArrow: boolean("has_arrow").default(false),
     titleColor: varchar("title_color").default("#273B4C"),
     textColor: varchar("text_color").default("#0756B4"),
+    extraTextColor: varchar("extra_text_color").default("#557082"),
+    background: varchar("background").default("#FFFFFF"),
+    borderColor: varchar("border_color").default("#E1E7EC"),
     iconColor: varchar("icon_color").default("#075EC2"),
     iconBackground: varchar("icon_background").default("#EAF5FF"),
-    extraTextColor: varchar("extra_text_color").default("#557082"),
-    titleFontSize: numeric("title_font_size", { mode: "number" }).default(10),
+    fontFamily:
+      enum_site_settings_header_contact_cards_font_family(
+        "font_family",
+      ).default("inherit"),
+    fontWeight:
+      enum_site_settings_header_contact_cards_font_weight(
+        "font_weight",
+      ).default("800"),
+    titleFontSize: numeric("title_font_size", { mode: "number" }).default(11),
     textFontSize: numeric("text_font_size", { mode: "number" }).default(17),
-    fontWeight: varchar("font_weight").default("800"),
+    iconSize: numeric("icon_size", { mode: "number" }).default(46),
+    minWidth: numeric("min_width", { mode: "number" }).default(220),
+    borderRadius: numeric("border_radius", { mode: "number" }).default(16),
   },
   (columns) => [
     index("site_settings_header_contact_cards_order_idx").on(columns._order),
@@ -6916,8 +8218,8 @@ export const site_settings_header_social_links = pgTable(
   ],
 );
 
-export const site_settings_website_assistant_quick_topics = pgTable(
-  "site_settings_website_assistant_quick_topics",
+export const site_assistant_topics = pgTable(
+  "site_assistant_topics",
   {
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
@@ -6926,22 +8228,18 @@ export const site_settings_website_assistant_quick_topics = pgTable(
     value: varchar("value").notNull(),
   },
   (columns) => [
-    index("site_settings_website_assistant_quick_topics_order_idx").on(
-      columns._order,
-    ),
-    index("site_settings_website_assistant_quick_topics_parent_id_idx").on(
-      columns._parentID,
-    ),
+    index("site_assistant_topics_order_idx").on(columns._order),
+    index("site_assistant_topics_parent_id_idx").on(columns._parentID),
     foreignKey({
       columns: [columns["_parentID"]],
       foreignColumns: [site_settings.id],
-      name: "site_settings_website_assistant_quick_topics_parent_id_fk",
+      name: "site_assistant_topics_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
 
-export const site_settings_website_assistant_custom_answers = pgTable(
-  "site_settings_website_assistant_custom_answers",
+export const site_assistant_answers = pgTable(
+  "site_assistant_answers",
   {
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
@@ -6954,16 +8252,12 @@ export const site_settings_website_assistant_custom_answers = pgTable(
     openNewTab: boolean("open_new_tab").default(false),
   },
   (columns) => [
-    index("site_settings_website_assistant_custom_answers_order_idx").on(
-      columns._order,
-    ),
-    index("site_settings_website_assistant_custom_answers_parent_id_idx").on(
-      columns._parentID,
-    ),
+    index("site_assistant_answers_order_idx").on(columns._order),
+    index("site_assistant_answers_parent_id_idx").on(columns._parentID),
     foreignKey({
       columns: [columns["_parentID"]],
       foreignColumns: [site_settings.id],
-      name: "site_settings_website_assistant_custom_answers_parent_id_fk",
+      name: "site_assistant_answers_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -7005,6 +8299,9 @@ export const site_settings = pgTable(
     headerUtilityAppearance_timeFontWeight: varchar(
       "header_utility_appearance_time_font_weight",
     ).default("700"),
+    headerBrandAppearance_colorScheme: brand_color_scheme(
+      "header_brand_appearance_color_scheme",
+    ).default("custom"),
     headerBrandAppearance_logoSize: numeric(
       "header_brand_appearance_logo_size",
       { mode: "number" },
@@ -7017,6 +8314,15 @@ export const site_settings = pgTable(
       "header_brand_appearance_subtitle_font_size",
       { mode: "number" },
     ).default(13),
+    headerBrandAppearance_nameFontFamily: brand_name_font(
+      "header_brand_appearance_name_font_family",
+    ).default("inherit"),
+    headerBrandAppearance_nameFontWeight: brand_name_weight(
+      "header_brand_appearance_name_font_weight",
+    ).default("800"),
+    headerBrandAppearance_nameTextEffect: brand_name_effect(
+      "header_brand_appearance_name_text_effect",
+    ).default("none"),
     headerBrandAppearance_headerBackgroundColor: varchar(
       "header_brand_appearance_header_background_color",
     ).default("#FFFFFF"),
@@ -7039,6 +8345,15 @@ export const site_settings = pgTable(
       "header_brand_appearance_slogan_font_size",
       { mode: "number" },
     ).default(13),
+    headerBrandAppearance_sloganFontWeight: brand_slogan_weight(
+      "header_brand_appearance_slogan_font_weight",
+    ).default("500"),
+    headerBrandAppearance_sloganItalic: boolean(
+      "header_brand_appearance_slogan_italic",
+    ).default(false),
+    headerBrandAppearance_sloganTextEffect: brand_slogan_effect(
+      "header_brand_appearance_slogan_text_effect",
+    ).default("none"),
     headerBrandAppearance_showLogo: boolean(
       "header_brand_appearance_show_logo",
     ).default(true),
@@ -7063,6 +8378,94 @@ export const site_settings = pgTable(
       "header_brand_appearance_min_height",
       { mode: "number" },
     ).default(110),
+    headerMenuAppearance_fontSize: numeric("header_menu_appearance_font_size", {
+      mode: "number",
+    }).default(14),
+    headerMenuAppearance_fontWeight: menu_font_weight(
+      "header_menu_appearance_font_weight",
+    ).default("700"),
+    headerMenuAppearance_textTransform: menu_text_transform(
+      "header_menu_appearance_text_transform",
+    ).default("uppercase"),
+    headerMenuAppearance_fontFamily: menu_font_family(
+      "header_menu_appearance_font_family",
+    ).default("inherit"),
+    headerMenuAppearance_letterSpacing: numeric(
+      "header_menu_appearance_letter_spacing",
+      { mode: "number" },
+    ).default(0),
+    headerMenuAppearance_height: numeric("header_menu_appearance_height", {
+      mode: "number",
+    }).default(56),
+    headerMenuAppearance_justifyContent: menu_justify_content(
+      "header_menu_appearance_justify_content",
+    ).default("space-between"),
+    headerMenuAppearance_itemSpacing: numeric(
+      "header_menu_appearance_item_spacing",
+      { mode: "number" },
+    ).default(8),
+    headerMenuAppearance_borderRadius: numeric(
+      "header_menu_appearance_border_radius",
+      { mode: "number" },
+    ).default(0),
+    headerMenuAppearance_itemBorderRadius: numeric(
+      "header_menu_appearance_item_border_radius",
+      { mode: "number" },
+    ).default(6),
+    headerMenuAppearance_background: varchar(
+      "header_menu_appearance_background",
+    ).default("#075db8"),
+    headerMenuAppearance_gradientEnd: varchar(
+      "header_menu_appearance_gradient_end",
+    ).default("#006bc7"),
+    headerMenuAppearance_textColor: varchar(
+      "header_menu_appearance_text_color",
+    ).default("#FFFFFF"),
+    headerMenuAppearance_hoverTextColor: varchar(
+      "header_menu_appearance_hover_text_color",
+    ).default("#FFE272"),
+    headerMenuAppearance_hoverBackground: varchar(
+      "header_menu_appearance_hover_background",
+    ).default("rgba(255,255,255,0.1)"),
+    headerMenuAppearance_activeIndicatorColor: varchar(
+      "header_menu_appearance_active_indicator_color",
+    ).default("#FFD24D"),
+    headerMenuAppearance_dropdownWidth: numeric(
+      "header_menu_appearance_dropdown_width",
+      { mode: "number" },
+    ).default(250),
+    headerMenuAppearance_dropdownFontSize: numeric(
+      "header_menu_appearance_dropdown_font_size",
+      { mode: "number" },
+    ).default(14),
+    headerMenuAppearance_dropdownBorderRadius: numeric(
+      "header_menu_appearance_dropdown_border_radius",
+      { mode: "number" },
+    ).default(12),
+    headerMenuAppearance_dropdownBackground: varchar(
+      "header_menu_appearance_dropdown_background",
+    ).default("#FFFFFF"),
+    headerMenuAppearance_dropdownTextColor: varchar(
+      "header_menu_appearance_dropdown_text_color",
+    ).default("#1e3a5f"),
+    headerMenuAppearance_dropdownBorderColor: varchar(
+      "header_menu_appearance_dropdown_border_color",
+    ).default("#e2e8f0"),
+    headerMenuAppearance_dropdownHoverBackground: varchar(
+      "header_menu_appearance_dropdown_hover_background",
+    ).default("#f0f7ff"),
+    headerMenuAppearance_dropdownHoverTextColor: varchar(
+      "header_menu_appearance_dropdown_hover_text_color",
+    ).default("#075db8"),
+    headerMenuAppearance_dropdownArrowColor: varchar(
+      "header_menu_appearance_dropdown_arrow_color",
+    ).default("#94a3b8"),
+    headerMenuAppearance_animationStyle: menu_anim_style(
+      "header_menu_appearance_animation_style",
+    ).default("slide-down"),
+    headerMenuAppearance_animationSpeed: menu_anim_speed(
+      "header_menu_appearance_animation_speed",
+    ).default("0.22s"),
     tiktokUrl: varchar("tiktok_url"),
     slogan: varchar("slogan"),
     tickerAppearance_enabled: boolean("ticker_appearance_enabled").default(
@@ -7111,6 +8514,20 @@ export const site_settings = pgTable(
     ).default(
       "Tra cứu giá BHYT và giá dịch vụ được cập nhật trực tiếp từ hệ thống quản trị.",
     ),
+    servicePricePage_showNoticeBanner: boolean(
+      "service_price_page_show_notice_banner",
+    ).default(true),
+    servicePricePage_noticeTitle: varchar(
+      "service_price_page_notice_title",
+    ).default("Lưu ý về giá khám chữa bệnh BHYT và Viện phí"),
+    servicePricePage_noticeContent: varchar(
+      "service_price_page_notice_content",
+    ).default(
+      "• Bảng giá dịch vụ khám bệnh, chữa bệnh được thực hiện công khai theo đúng quy định hiện hành của Bộ Y tế.\n• Người bệnh có thẻ BHYT đúng tuyến hoặc thông tuyến được hưởng đầy đủ quyền lợi chi trả theo quy định.\n• Các dịch vụ kỹ thuật cao, dịch vụ theo yêu cầu được tư vấn rõ ràng trước khi thực hiện.",
+    ),
+    servicePricePage_noticeAlign: sp_not_align(
+      "service_price_page_notice_align",
+    ).default("left"),
     servicePricePage_searchPlaceholder: varchar(
       "service_price_page_search_placeholder",
     ).default("Nhập tên, mã dịch vụ, nhóm hoặc ghi chú…"),
@@ -7126,6 +8543,263 @@ export const site_settings = pgTable(
     servicePricePage_emptyText: varchar(
       "service_price_page_empty_text",
     ).default("Không tìm thấy dịch vụ phù hợp."),
+    vaccinationPage_eyebrow: varchar("vaccination_page_eyebrow").default(
+      "TIÊM NGỪA AN TOÀN",
+    ),
+    vaccinationPage_title: varchar("vaccination_page_title").default(
+      "Thông tin tiêm ngừa",
+    ),
+    vaccinationPage_description: varchar(
+      "vaccination_page_description",
+    ).default(
+      "Theo dõi thông báo lịch tiêm, các đợt tiêm và danh mục vắc xin tại bệnh viện.",
+    ),
+    vaccinationPage_showNoticeBanner: boolean(
+      "vaccination_page_show_notice_banner",
+    ).default(true),
+    vaccinationPage_noticeTitle: varchar(
+      "vaccination_page_notice_title",
+    ).default("Quy trình và An toàn Tiêm chủng tại Bệnh viện"),
+    vaccinationPage_noticeContent: varchar(
+      "vaccination_page_notice_content",
+    ).default(
+      "• Người đến tiêm chủng được khám sàng lọc trước tiêm và tư vấn chỉ định vắc xin phù hợp.\n• Theo dõi sức khỏe ít nhất 30 phút sau tiêm tại phòng theo dõi của bệnh viện.\n• Vui lòng mang theo sổ tiêm chủng hoặc ứng dụng tiêm chủng điện tử khi đến tiêm.",
+    ),
+    vaccinationPage_noticeAlign: vc_not_align(
+      "vaccination_page_notice_align",
+    ).default("left"),
+    examinationFlowPage_eyebrow: varchar(
+      "examination_flow_page_eyebrow",
+    ).default("HƯỚNG DẪN DÀNH CHO NGƯỜI BỆNH"),
+    examinationFlowPage_title: varchar("examination_flow_page_title").default(
+      "Quy trình Khám chữa bệnh",
+    ),
+    examinationFlowPage_description: varchar(
+      "examination_flow_page_description",
+    ).default(
+      "Sơ đồ và các bước hướng dẫn người bệnh khi đến thăm khám có thẻ BHYT, khám thu phí dịch vụ hoặc tiếp nhận cấp cứu tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    examinationFlowPage_showNoticeBanner: boolean(
+      "examination_flow_page_show_notice_banner",
+    ).default(false),
+    examinationFlowPage_noticeTitle: varchar(
+      "examination_flow_page_notice_title",
+    ).default("Lưu ý khi đến khám tại Bệnh viện Đa khoa Khu vực Thới Lai"),
+    examinationFlowPage_noticeContent: varchar(
+      "examination_flow_page_notice_content",
+    ).default(
+      "• Người bệnh có thẻ BHYT đúng tuyến hoặc thông tuyến được hưởng đầy đủ quyền lợi chi trả.\n• Bệnh viện tiếp nhận khám sớm từ 06:30 tại các khoa chuyên môn trọng điểm.\n• Người cao tuổi, phụ nữ mang thai và trẻ nhỏ được cấp số ưu tiên tiếp đón.",
+    ),
+    examinationFlowPage_noticeAlign: enum_flow_not_align(
+      "examination_flow_page_notice_align",
+    ).default("left"),
+    examinationFlowPage_showChecklist: boolean(
+      "examination_flow_page_show_checklist",
+    ).default(true),
+    examinationFlowPage_showPriority: boolean(
+      "examination_flow_page_show_priority",
+    ).default(true),
+    examinationFlowPage_showSupportBanner: boolean(
+      "examination_flow_page_show_support_banner",
+    ).default(true),
+    qualityPage_eyebrow: varchar("quality_page_eyebrow").default(
+      "QUẢN LÝ CHẤT LƯỢNG & AN TOÀN NGƯỜI BỆNH",
+    ),
+    qualityPage_title: varchar("quality_page_title").default(
+      "Chất lượng Bệnh viện",
+    ),
+    qualityPage_description: varchar("quality_page_description").default(
+      "Bộ chỉ số đo lường 83 tiêu chí chất lượng, kết quả khảo sát sự hài lòng và các chương trình cải tiến liên tục tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    qualityPage_showNoticeBanner: boolean(
+      "quality_page_show_notice_banner",
+    ).default(false),
+    qualityPage_noticeTitle: varchar("quality_page_notice_title").default(
+      "Cam kết chất lượng phục vụ của Bệnh viện Đa khoa Khu vực Thới Lai",
+    ),
+    qualityPage_noticeContent: varchar("quality_page_notice_content").default(
+      "• Lấy người bệnh làm trung tâm phục vụ, đảm bảo an toàn và quyền lợi người bệnh.\n• Đánh giá chất lượng định kỳ theo Bộ 83 Tiêu chí của Bộ Y tế.\n• Mọi ý kiến đóng góp được Ban Giám đốc tiếp nhận và cải tiến liên tục.",
+    ),
+    qualityPage_noticeAlign: enum_quality_not_align(
+      "quality_page_notice_align",
+    ).default("left"),
+    qualityPage_showQualityCards: boolean(
+      "quality_page_show_quality_cards",
+    ).default(true),
+    qualityPage_showDimensions: boolean("quality_page_show_dimensions").default(
+      true,
+    ),
+    qualityPage_showPrograms: boolean("quality_page_show_programs").default(
+      true,
+    ),
+    qualityPage_showFeedbackBox: boolean(
+      "quality_page_show_feedback_box",
+    ).default(true),
+    surveyPage_eyebrow: varchar("survey_page_eyebrow").default(
+      "CHĂM SÓC NGƯỜI BỆNH & KHẢO SÁT",
+    ),
+    surveyPage_title: varchar("survey_page_title").default(
+      "Khảo sát Ý kiến & Sự hài lòng",
+    ),
+    surveyPage_description: varchar("survey_page_description").default(
+      "Bệnh viện Đa khoa Khu vực Thới Lai trân trọng từng ý kiến đóng góp của người bệnh và thân nhân để không ngừng nâng cao y đức, văn hóa phục vụ và chất lượng điều trị.",
+    ),
+    surveyPage_showNoticeBanner: boolean(
+      "survey_page_show_notice_banner",
+    ).default(false),
+    surveyPage_noticeTitle: varchar("survey_page_notice_title").default(
+      "Quy chế khảo sát ẩn danh",
+    ),
+    surveyPage_noticeContent: varchar("survey_page_notice_content").default(
+      "Mọi câu trả lời của quý người bệnh hoàn toàn bảo mật và không ảnh hưởng đến quá trình điều trị.",
+    ),
+    surveyPage_noticeAlign: enum_site_settings_survey_page_notice_align(
+      "survey_page_notice_align",
+    ).default("left"),
+    faqPage_eyebrow: varchar("faq_page_eyebrow").default(
+      "CHĂM SÓC NGƯỜI BỆNH & GIẢI ĐÁP",
+    ),
+    faqPage_title: varchar("faq_page_title").default(
+      "Hỏi đáp Y tế & Câu hỏi thường gặp",
+    ),
+    faqPage_description: varchar("faq_page_description").default(
+      "Tổng hợp các giải đáp chính xác, nhanh chóng nhất về chính sách khám chữa bệnh, quyền lợi bảo hiểm và hướng dẫn thủ tục tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    faqPage_showNoticeBanner: boolean("faq_page_show_notice_banner").default(
+      false,
+    ),
+    faqPage_noticeTitle: varchar("faq_page_notice_title").default(
+      "Giải đáp thắc mắc người bệnh",
+    ),
+    faqPage_noticeContent: varchar("faq_page_notice_content").default(
+      "Nếu chưa tìm thấy thông tin cần biết, quý vị có thể đặt câu hỏi trực tuyến hoặc gọi hotline 02923686115.",
+    ),
+    faqPage_noticeAlign: enum_site_settings_faq_page_notice_align(
+      "faq_page_notice_align",
+    ).default("left"),
+    formsPage_eyebrow: varchar("forms_page_eyebrow").default(
+      "CHĂM SÓC NGƯỜI BỆNH & THỦ TỤC ĐIỆN TỬ",
+    ),
+    formsPage_title: varchar("forms_page_title").default(
+      "Biểu mẫu Điện tử & Đăng ký",
+    ),
+    formsPage_description: varchar("forms_page_description").default(
+      "Hệ thống biểu mẫu hành chính số hóa giúp người bệnh đăng ký thủ tục nhanh chóng, tiết kiệm thời gian chờ đợi tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    formsPage_showNoticeBanner: boolean(
+      "forms_page_show_notice_banner",
+    ).default(false),
+    formsPage_noticeTitle: varchar("forms_page_notice_title").default(
+      "Lưu ý khi điền biểu mẫu trực tuyến",
+    ),
+    formsPage_noticeContent: varchar("forms_page_notice_content").default(
+      "Vui lòng cung cấp đúng số điện thoại để nhận mã xác nhận tiếp nhận từ bệnh viện.",
+    ),
+    formsPage_noticeAlign: enum_site_settings_forms_page_notice_align(
+      "forms_page_notice_align",
+    ).default("left"),
+    patientPortalPage_eyebrow: varchar("patient_portal_page_eyebrow").default(
+      "CỔNG TIỆN ÍCH NGƯỜI BỆNH",
+    ),
+    patientPortalPage_title: varchar("patient_portal_page_title").default(
+      "Dành cho Người bệnh",
+    ),
+    patientPortalPage_description: varchar(
+      "patient_portal_page_description",
+    ).default(
+      "Tổng hợp đầy đủ các tiện ích, hướng dẫn và dịch vụ hỗ trợ người bệnh tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    patientPortalPage_showNoticeBanner: boolean(
+      "patient_portal_page_show_notice_banner",
+    ).default(false),
+    patientPortalPage_noticeTitle: varchar(
+      "patient_portal_page_notice_title",
+    ).default("Thông báo dành cho người bệnh"),
+    patientPortalPage_noticeContent: varchar(
+      "patient_portal_page_notice_content",
+    ).default(
+      "• Vui lòng mang theo CCCD/CMND và thẻ BHYT khi đến khám.\n• Đặt lịch trực tuyến qua ứng dụng Medpro để được phục vụ ưu tiên.",
+    ),
+    patientPortalPage_noticeAlign: pp_not_align(
+      "patient_portal_page_notice_align",
+    ).default("left"),
+    lichTrucPage_eyebrow: varchar("lich_truc_page_eyebrow").default(
+      "TRỰC 24/7",
+    ),
+    lichTrucPage_title: varchar("lich_truc_page_title").default(
+      "Lịch trực Cấp cứu",
+    ),
+    lichTrucPage_description: varchar("lich_truc_page_description").default(
+      "Danh sách bác sĩ, điều dưỡng trực cấp cứu 24/7 tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    lichTrucPage_showNoticeBanner: boolean(
+      "lich_truc_page_show_notice_banner",
+    ).default(true),
+    lichTrucPage_noticeTitle: varchar("lich_truc_page_notice_title").default(
+      "Đường dây cấp cứu bệnh viện",
+    ),
+    lichTrucPage_noticeContent: varchar(
+      "lich_truc_page_notice_content",
+    ).default(
+      "• Cấp cứu 24/7: Gọi ngay 02923686115.\n• Ekip trực cấp cứu sẵn sàng tiếp nhận tất cả các ngày trong tuần, kể cả ngày lễ, Tết.",
+    ),
+    lichTrucPage_noticeAlign: lt_not_align(
+      "lich_truc_page_notice_align",
+    ).default("left"),
+    scienceActivityPage_eyebrow: varchar(
+      "science_activity_page_eyebrow",
+    ).default("NGHIÊN CỨU & HỌC THUẬT"),
+    scienceActivityPage_title: varchar("science_activity_page_title").default(
+      "Hoạt động Khoa học",
+    ),
+    scienceActivityPage_description: varchar(
+      "science_activity_page_description",
+    ).default(
+      "Tổng hợp các hội nghị khoa học, đề tài nghiên cứu, chương trình đào tạo chuyên môn và hoạt động học thuật tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    scienceActivityPage_showNoticeBanner: boolean(
+      "science_activity_page_show_notice_banner",
+    ).default(false),
+    scienceActivityPage_noticeTitle: varchar(
+      "science_activity_page_notice_title",
+    ).default("Thông báo hoạt động khoa học"),
+    scienceActivityPage_noticeContent: varchar(
+      "science_activity_page_notice_content",
+    ).default(""),
+    scienceActivityPage_noticeAlign: sa_not_align(
+      "science_activity_page_notice_align",
+    ).default("left"),
+    clinicalProtocolPage_eyebrow: varchar(
+      "clinical_protocol_page_eyebrow",
+    ).default("CHUYÊN MÔN LÂM SÀNG"),
+    clinicalProtocolPage_title: varchar("clinical_protocol_page_title").default(
+      "Phác đồ Điều trị",
+    ),
+    clinicalProtocolPage_description: varchar(
+      "clinical_protocol_page_description",
+    ).default(
+      "Hệ thống phác đồ điều trị chuẩn được Ban Giám đốc và Hội đồng Khoa học thông qua, áp dụng thống nhất tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    clinicalProtocolPage_showNoticeBanner: boolean(
+      "clinical_protocol_page_show_notice_banner",
+    ).default(false),
+    clinicalProtocolPage_noticeTitle: varchar(
+      "clinical_protocol_page_notice_title",
+    ).default("Lưu ý về phác đồ điều trị"),
+    clinicalProtocolPage_noticeContent: varchar(
+      "clinical_protocol_page_notice_content",
+    ).default(
+      "• Phác đồ được cập nhật định kỳ theo hướng dẫn của Bộ Y tế và y văn quốc tế.\n• Áp dụng theo chỉ định của bác sĩ điều trị, không tự ý thay đổi.",
+    ),
+    clinicalProtocolPage_noticeAlign: cp_not_align(
+      "clinical_protocol_page_notice_align",
+    ).default("left"),
+    clinicalProtocolPage_showSearchBox: boolean(
+      "clinical_protocol_page_show_search_box",
+    ).default(true),
+    clinicalProtocolPage_showCategoryFilter: boolean(
+      "clinical_protocol_page_show_category_filter",
+    ).default(true),
     websiteAssistant_enabled: boolean("website_assistant_enabled").default(
       true,
     ),
@@ -7205,20 +8879,34 @@ export const _site_settings_v_version_header_contact_cards = pgTable(
     text: varchar("text").notNull(),
     href: varchar("href"),
     extraText: varchar("extra_text"),
-    iconType: varchar("icon_type").default("phone"),
+    iconType:
+      enum__site_settings_v_version_header_contact_cards_icon_type(
+        "icon_type",
+      ).default("emergency"),
     customIcon: integer("custom_icon_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    background: varchar("background").default("#FFFFFF"),
-    borderColor: varchar("border_color").default("#E1E7EC"),
+    hasArrow: boolean("has_arrow").default(false),
     titleColor: varchar("title_color").default("#273B4C"),
     textColor: varchar("text_color").default("#0756B4"),
+    extraTextColor: varchar("extra_text_color").default("#557082"),
+    background: varchar("background").default("#FFFFFF"),
+    borderColor: varchar("border_color").default("#E1E7EC"),
     iconColor: varchar("icon_color").default("#075EC2"),
     iconBackground: varchar("icon_background").default("#EAF5FF"),
-    extraTextColor: varchar("extra_text_color").default("#557082"),
-    titleFontSize: numeric("title_font_size", { mode: "number" }).default(10),
+    fontFamily:
+      enum__site_settings_v_version_header_contact_cards_font_family(
+        "font_family",
+      ).default("inherit"),
+    fontWeight:
+      enum__site_settings_v_version_header_contact_cards_font_weight(
+        "font_weight",
+      ).default("800"),
+    titleFontSize: numeric("title_font_size", { mode: "number" }).default(11),
     textFontSize: numeric("text_font_size", { mode: "number" }).default(17),
-    fontWeight: varchar("font_weight").default("800"),
+    iconSize: numeric("icon_size", { mode: "number" }).default(46),
+    minWidth: numeric("min_width", { mode: "number" }).default(220),
+    borderRadius: numeric("border_radius", { mode: "number" }).default(16),
     _uuid: varchar("_uuid"),
   },
   (columns) => [
@@ -7272,8 +8960,8 @@ export const _site_settings_v_version_header_social_links = pgTable(
   ],
 );
 
-export const _site_settings_v_version_website_assistant_quick_topics = pgTable(
-  "_site_settings_v_version_website_assistant_quick_topics",
+export const _site_assistant_topics_v = pgTable(
+  "_site_assistant_topics_v",
   {
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
@@ -7283,49 +8971,40 @@ export const _site_settings_v_version_website_assistant_quick_topics = pgTable(
     _uuid: varchar("_uuid"),
   },
   (columns) => [
-    index(
-      "_site_settings_v_version_website_assistant_quick_topics_order_idx",
-    ).on(columns._order),
-    index(
-      "_site_settings_v_version_website_assistant_quick_topics_parent_id_idx",
-    ).on(columns._parentID),
+    index("_site_assistant_topics_v_order_idx").on(columns._order),
+    index("_site_assistant_topics_v_parent_id_idx").on(columns._parentID),
     foreignKey({
       columns: [columns["_parentID"]],
       foreignColumns: [_site_settings_v.id],
-      name: "_site_settings_v_version_website_assistant_quick_topics_parent_id_fk",
+      name: "_site_assistant_topics_v_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
 
-export const _site_settings_v_version_website_assistant_custom_answers =
-  pgTable(
-    "_site_settings_v_version_website_assistant_custom_answers",
-    {
-      _order: integer("_order").notNull(),
-      _parentID: integer("_parent_id").notNull(),
-      id: serial("id").primaryKey(),
-      question: varchar("question").notNull(),
-      keywords: varchar("keywords").notNull(),
-      answer: varchar("answer").notNull(),
-      linkLabel: varchar("link_label"),
-      linkUrl: varchar("link_url"),
-      openNewTab: boolean("open_new_tab").default(false),
-      _uuid: varchar("_uuid"),
-    },
-    (columns) => [
-      index(
-        "_site_settings_v_version_website_assistant_custom_answers_order_idx",
-      ).on(columns._order),
-      index(
-        "_site_settings_v_version_website_assistant_custom_answers_parent_id_idx",
-      ).on(columns._parentID),
-      foreignKey({
-        columns: [columns["_parentID"]],
-        foreignColumns: [_site_settings_v.id],
-        name: "_site_settings_v_version_website_assistant_custom_answers_parent_id_fk",
-      }).onDelete("cascade"),
-    ],
-  );
+export const _site_assistant_answers_v = pgTable(
+  "_site_assistant_answers_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    question: varchar("question").notNull(),
+    keywords: varchar("keywords").notNull(),
+    answer: varchar("answer").notNull(),
+    linkLabel: varchar("link_label"),
+    linkUrl: varchar("link_url"),
+    openNewTab: boolean("open_new_tab").default(false),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_site_assistant_answers_v_order_idx").on(columns._order),
+    index("_site_assistant_answers_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_site_assistant_answers_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
 
 export const _site_settings_v = pgTable(
   "_site_settings_v",
@@ -7374,6 +9053,9 @@ export const _site_settings_v = pgTable(
     version_headerUtilityAppearance_timeFontWeight: varchar(
       "version_header_utility_appearance_time_font_weight",
     ).default("700"),
+    version_headerBrandAppearance_colorScheme: brand_color_scheme(
+      "version_header_brand_appearance_color_scheme",
+    ).default("custom"),
     version_headerBrandAppearance_logoSize: numeric(
       "version_header_brand_appearance_logo_size",
       { mode: "number" },
@@ -7386,6 +9068,15 @@ export const _site_settings_v = pgTable(
       "version_header_brand_appearance_subtitle_font_size",
       { mode: "number" },
     ).default(13),
+    version_headerBrandAppearance_nameFontFamily: brand_name_font(
+      "version_header_brand_appearance_name_font_family",
+    ).default("inherit"),
+    version_headerBrandAppearance_nameFontWeight: brand_name_weight(
+      "version_header_brand_appearance_name_font_weight",
+    ).default("800"),
+    version_headerBrandAppearance_nameTextEffect: brand_name_effect(
+      "version_header_brand_appearance_name_text_effect",
+    ).default("none"),
     version_headerBrandAppearance_headerBackgroundColor: varchar(
       "version_header_brand_appearance_header_background_color",
     ).default("#FFFFFF"),
@@ -7408,6 +9099,15 @@ export const _site_settings_v = pgTable(
       "version_header_brand_appearance_slogan_font_size",
       { mode: "number" },
     ).default(13),
+    version_headerBrandAppearance_sloganFontWeight: brand_slogan_weight(
+      "version_header_brand_appearance_slogan_font_weight",
+    ).default("500"),
+    version_headerBrandAppearance_sloganItalic: boolean(
+      "version_header_brand_appearance_slogan_italic",
+    ).default(false),
+    version_headerBrandAppearance_sloganTextEffect: brand_slogan_effect(
+      "version_header_brand_appearance_slogan_text_effect",
+    ).default("none"),
     version_headerBrandAppearance_showLogo: boolean(
       "version_header_brand_appearance_show_logo",
     ).default(true),
@@ -7432,6 +9132,96 @@ export const _site_settings_v = pgTable(
       "version_header_brand_appearance_min_height",
       { mode: "number" },
     ).default(110),
+    version_headerMenuAppearance_fontSize: numeric(
+      "version_header_menu_appearance_font_size",
+      { mode: "number" },
+    ).default(14),
+    version_headerMenuAppearance_fontWeight: menu_font_weight(
+      "version_header_menu_appearance_font_weight",
+    ).default("700"),
+    version_headerMenuAppearance_textTransform: menu_text_transform(
+      "version_header_menu_appearance_text_transform",
+    ).default("uppercase"),
+    version_headerMenuAppearance_fontFamily: menu_font_family(
+      "version_header_menu_appearance_font_family",
+    ).default("inherit"),
+    version_headerMenuAppearance_letterSpacing: numeric(
+      "version_header_menu_appearance_letter_spacing",
+      { mode: "number" },
+    ).default(0),
+    version_headerMenuAppearance_height: numeric(
+      "version_header_menu_appearance_height",
+      { mode: "number" },
+    ).default(56),
+    version_headerMenuAppearance_justifyContent: menu_justify_content(
+      "version_header_menu_appearance_justify_content",
+    ).default("space-between"),
+    version_headerMenuAppearance_itemSpacing: numeric(
+      "version_header_menu_appearance_item_spacing",
+      { mode: "number" },
+    ).default(8),
+    version_headerMenuAppearance_borderRadius: numeric(
+      "version_header_menu_appearance_border_radius",
+      { mode: "number" },
+    ).default(0),
+    version_headerMenuAppearance_itemBorderRadius: numeric(
+      "version_header_menu_appearance_item_border_radius",
+      { mode: "number" },
+    ).default(6),
+    version_headerMenuAppearance_background: varchar(
+      "version_header_menu_appearance_background",
+    ).default("#075db8"),
+    version_headerMenuAppearance_gradientEnd: varchar(
+      "version_header_menu_appearance_gradient_end",
+    ).default("#006bc7"),
+    version_headerMenuAppearance_textColor: varchar(
+      "version_header_menu_appearance_text_color",
+    ).default("#FFFFFF"),
+    version_headerMenuAppearance_hoverTextColor: varchar(
+      "version_header_menu_appearance_hover_text_color",
+    ).default("#FFE272"),
+    version_headerMenuAppearance_hoverBackground: varchar(
+      "version_header_menu_appearance_hover_background",
+    ).default("rgba(255,255,255,0.1)"),
+    version_headerMenuAppearance_activeIndicatorColor: varchar(
+      "version_header_menu_appearance_active_indicator_color",
+    ).default("#FFD24D"),
+    version_headerMenuAppearance_dropdownWidth: numeric(
+      "version_header_menu_appearance_dropdown_width",
+      { mode: "number" },
+    ).default(250),
+    version_headerMenuAppearance_dropdownFontSize: numeric(
+      "version_header_menu_appearance_dropdown_font_size",
+      { mode: "number" },
+    ).default(14),
+    version_headerMenuAppearance_dropdownBorderRadius: numeric(
+      "version_header_menu_appearance_dropdown_border_radius",
+      { mode: "number" },
+    ).default(12),
+    version_headerMenuAppearance_dropdownBackground: varchar(
+      "version_header_menu_appearance_dropdown_background",
+    ).default("#FFFFFF"),
+    version_headerMenuAppearance_dropdownTextColor: varchar(
+      "version_header_menu_appearance_dropdown_text_color",
+    ).default("#1e3a5f"),
+    version_headerMenuAppearance_dropdownBorderColor: varchar(
+      "version_header_menu_appearance_dropdown_border_color",
+    ).default("#e2e8f0"),
+    version_headerMenuAppearance_dropdownHoverBackground: varchar(
+      "version_header_menu_appearance_dropdown_hover_background",
+    ).default("#f0f7ff"),
+    version_headerMenuAppearance_dropdownHoverTextColor: varchar(
+      "version_header_menu_appearance_dropdown_hover_text_color",
+    ).default("#075db8"),
+    version_headerMenuAppearance_dropdownArrowColor: varchar(
+      "version_header_menu_appearance_dropdown_arrow_color",
+    ).default("#94a3b8"),
+    version_headerMenuAppearance_animationStyle: menu_anim_style(
+      "version_header_menu_appearance_animation_style",
+    ).default("slide-down"),
+    version_headerMenuAppearance_animationSpeed: menu_anim_speed(
+      "version_header_menu_appearance_animation_speed",
+    ).default("0.22s"),
     version_tiktokUrl: varchar("version_tiktok_url"),
     version_slogan: varchar("version_slogan"),
     version_tickerAppearance_enabled: boolean(
@@ -7485,6 +9275,20 @@ export const _site_settings_v = pgTable(
     ).default(
       "Tra cứu giá BHYT và giá dịch vụ được cập nhật trực tiếp từ hệ thống quản trị.",
     ),
+    version_servicePricePage_showNoticeBanner: boolean(
+      "version_service_price_page_show_notice_banner",
+    ).default(true),
+    version_servicePricePage_noticeTitle: varchar(
+      "version_service_price_page_notice_title",
+    ).default("Lưu ý về giá khám chữa bệnh BHYT và Viện phí"),
+    version_servicePricePage_noticeContent: varchar(
+      "version_service_price_page_notice_content",
+    ).default(
+      "• Bảng giá dịch vụ khám bệnh, chữa bệnh được thực hiện công khai theo đúng quy định hiện hành của Bộ Y tế.\n• Người bệnh có thẻ BHYT đúng tuyến hoặc thông tuyến được hưởng đầy đủ quyền lợi chi trả theo quy định.\n• Các dịch vụ kỹ thuật cao, dịch vụ theo yêu cầu được tư vấn rõ ràng trước khi thực hiện.",
+    ),
+    version_servicePricePage_noticeAlign: sp_not_align(
+      "version_service_price_page_notice_align",
+    ).default("left"),
     version_servicePricePage_searchPlaceholder: varchar(
       "version_service_price_page_search_placeholder",
     ).default("Nhập tên, mã dịch vụ, nhóm hoặc ghi chú…"),
@@ -7500,6 +9304,286 @@ export const _site_settings_v = pgTable(
     version_servicePricePage_emptyText: varchar(
       "version_service_price_page_empty_text",
     ).default("Không tìm thấy dịch vụ phù hợp."),
+    version_vaccinationPage_eyebrow: varchar(
+      "version_vaccination_page_eyebrow",
+    ).default("TIÊM NGỪA AN TOÀN"),
+    version_vaccinationPage_title: varchar(
+      "version_vaccination_page_title",
+    ).default("Thông tin tiêm ngừa"),
+    version_vaccinationPage_description: varchar(
+      "version_vaccination_page_description",
+    ).default(
+      "Theo dõi thông báo lịch tiêm, các đợt tiêm và danh mục vắc xin tại bệnh viện.",
+    ),
+    version_vaccinationPage_showNoticeBanner: boolean(
+      "version_vaccination_page_show_notice_banner",
+    ).default(true),
+    version_vaccinationPage_noticeTitle: varchar(
+      "version_vaccination_page_notice_title",
+    ).default("Quy trình và An toàn Tiêm chủng tại Bệnh viện"),
+    version_vaccinationPage_noticeContent: varchar(
+      "version_vaccination_page_notice_content",
+    ).default(
+      "• Người đến tiêm chủng được khám sàng lọc trước tiêm và tư vấn chỉ định vắc xin phù hợp.\n• Theo dõi sức khỏe ít nhất 30 phút sau tiêm tại phòng theo dõi của bệnh viện.\n• Vui lòng mang theo sổ tiêm chủng hoặc ứng dụng tiêm chủng điện tử khi đến tiêm.",
+    ),
+    version_vaccinationPage_noticeAlign: vc_not_align(
+      "version_vaccination_page_notice_align",
+    ).default("left"),
+    version_examinationFlowPage_eyebrow: varchar(
+      "version_examination_flow_page_eyebrow",
+    ).default("HƯỚNG DẪN DÀNH CHO NGƯỜI BỆNH"),
+    version_examinationFlowPage_title: varchar(
+      "version_examination_flow_page_title",
+    ).default("Quy trình Khám chữa bệnh"),
+    version_examinationFlowPage_description: varchar(
+      "version_examination_flow_page_description",
+    ).default(
+      "Sơ đồ và các bước hướng dẫn người bệnh khi đến thăm khám có thẻ BHYT, khám thu phí dịch vụ hoặc tiếp nhận cấp cứu tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_examinationFlowPage_showNoticeBanner: boolean(
+      "version_examination_flow_page_show_notice_banner",
+    ).default(false),
+    version_examinationFlowPage_noticeTitle: varchar(
+      "version_examination_flow_page_notice_title",
+    ).default("Lưu ý khi đến khám tại Bệnh viện Đa khoa Khu vực Thới Lai"),
+    version_examinationFlowPage_noticeContent: varchar(
+      "version_examination_flow_page_notice_content",
+    ).default(
+      "• Người bệnh có thẻ BHYT đúng tuyến hoặc thông tuyến được hưởng đầy đủ quyền lợi chi trả.\n• Bệnh viện tiếp nhận khám sớm từ 06:30 tại các khoa chuyên môn trọng điểm.\n• Người cao tuổi, phụ nữ mang thai và trẻ nhỏ được cấp số ưu tiên tiếp đón.",
+    ),
+    version_examinationFlowPage_noticeAlign: enum_flow_not_align(
+      "version_examination_flow_page_notice_align",
+    ).default("left"),
+    version_examinationFlowPage_showChecklist: boolean(
+      "version_examination_flow_page_show_checklist",
+    ).default(true),
+    version_examinationFlowPage_showPriority: boolean(
+      "version_examination_flow_page_show_priority",
+    ).default(true),
+    version_examinationFlowPage_showSupportBanner: boolean(
+      "version_examination_flow_page_show_support_banner",
+    ).default(true),
+    version_qualityPage_eyebrow: varchar(
+      "version_quality_page_eyebrow",
+    ).default("QUẢN LÝ CHẤT LƯỢNG & AN TOÀN NGƯỜI BỆNH"),
+    version_qualityPage_title: varchar("version_quality_page_title").default(
+      "Chất lượng Bệnh viện",
+    ),
+    version_qualityPage_description: varchar(
+      "version_quality_page_description",
+    ).default(
+      "Bộ chỉ số đo lường 83 tiêu chí chất lượng, kết quả khảo sát sự hài lòng và các chương trình cải tiến liên tục tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_qualityPage_showNoticeBanner: boolean(
+      "version_quality_page_show_notice_banner",
+    ).default(false),
+    version_qualityPage_noticeTitle: varchar(
+      "version_quality_page_notice_title",
+    ).default(
+      "Cam kết chất lượng phục vụ của Bệnh viện Đa khoa Khu vực Thới Lai",
+    ),
+    version_qualityPage_noticeContent: varchar(
+      "version_quality_page_notice_content",
+    ).default(
+      "• Lấy người bệnh làm trung tâm phục vụ, đảm bảo an toàn và quyền lợi người bệnh.\n• Đánh giá chất lượng định kỳ theo Bộ 83 Tiêu chí của Bộ Y tế.\n• Mọi ý kiến đóng góp được Ban Giám đốc tiếp nhận và cải tiến liên tục.",
+    ),
+    version_qualityPage_noticeAlign: enum_quality_not_align(
+      "version_quality_page_notice_align",
+    ).default("left"),
+    version_qualityPage_showQualityCards: boolean(
+      "version_quality_page_show_quality_cards",
+    ).default(true),
+    version_qualityPage_showDimensions: boolean(
+      "version_quality_page_show_dimensions",
+    ).default(true),
+    version_qualityPage_showPrograms: boolean(
+      "version_quality_page_show_programs",
+    ).default(true),
+    version_qualityPage_showFeedbackBox: boolean(
+      "version_quality_page_show_feedback_box",
+    ).default(true),
+    version_surveyPage_eyebrow: varchar("version_survey_page_eyebrow").default(
+      "CHĂM SÓC NGƯỜI BỆNH & KHẢO SÁT",
+    ),
+    version_surveyPage_title: varchar("version_survey_page_title").default(
+      "Khảo sát Ý kiến & Sự hài lòng",
+    ),
+    version_surveyPage_description: varchar(
+      "version_survey_page_description",
+    ).default(
+      "Bệnh viện Đa khoa Khu vực Thới Lai trân trọng từng ý kiến đóng góp của người bệnh và thân nhân để không ngừng nâng cao y đức, văn hóa phục vụ và chất lượng điều trị.",
+    ),
+    version_surveyPage_showNoticeBanner: boolean(
+      "version_survey_page_show_notice_banner",
+    ).default(false),
+    version_surveyPage_noticeTitle: varchar(
+      "version_survey_page_notice_title",
+    ).default("Quy chế khảo sát ẩn danh"),
+    version_surveyPage_noticeContent: varchar(
+      "version_survey_page_notice_content",
+    ).default(
+      "Mọi câu trả lời của quý người bệnh hoàn toàn bảo mật và không ảnh hưởng đến quá trình điều trị.",
+    ),
+    version_surveyPage_noticeAlign:
+      enum__site_settings_v_version_survey_page_notice_align(
+        "version_survey_page_notice_align",
+      ).default("left"),
+    version_faqPage_eyebrow: varchar("version_faq_page_eyebrow").default(
+      "CHĂM SÓC NGƯỜI BỆNH & GIẢI ĐÁP",
+    ),
+    version_faqPage_title: varchar("version_faq_page_title").default(
+      "Hỏi đáp Y tế & Câu hỏi thường gặp",
+    ),
+    version_faqPage_description: varchar(
+      "version_faq_page_description",
+    ).default(
+      "Tổng hợp các giải đáp chính xác, nhanh chóng nhất về chính sách khám chữa bệnh, quyền lợi bảo hiểm và hướng dẫn thủ tục tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_faqPage_showNoticeBanner: boolean(
+      "version_faq_page_show_notice_banner",
+    ).default(false),
+    version_faqPage_noticeTitle: varchar(
+      "version_faq_page_notice_title",
+    ).default("Giải đáp thắc mắc người bệnh"),
+    version_faqPage_noticeContent: varchar(
+      "version_faq_page_notice_content",
+    ).default(
+      "Nếu chưa tìm thấy thông tin cần biết, quý vị có thể đặt câu hỏi trực tuyến hoặc gọi hotline 02923686115.",
+    ),
+    version_faqPage_noticeAlign:
+      enum__site_settings_v_version_faq_page_notice_align(
+        "version_faq_page_notice_align",
+      ).default("left"),
+    version_formsPage_eyebrow: varchar("version_forms_page_eyebrow").default(
+      "CHĂM SÓC NGƯỜI BỆNH & THỦ TỤC ĐIỆN TỬ",
+    ),
+    version_formsPage_title: varchar("version_forms_page_title").default(
+      "Biểu mẫu Điện tử & Đăng ký",
+    ),
+    version_formsPage_description: varchar(
+      "version_forms_page_description",
+    ).default(
+      "Hệ thống biểu mẫu hành chính số hóa giúp người bệnh đăng ký thủ tục nhanh chóng, tiết kiệm thời gian chờ đợi tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_formsPage_showNoticeBanner: boolean(
+      "version_forms_page_show_notice_banner",
+    ).default(false),
+    version_formsPage_noticeTitle: varchar(
+      "version_forms_page_notice_title",
+    ).default("Lưu ý khi điền biểu mẫu trực tuyến"),
+    version_formsPage_noticeContent: varchar(
+      "version_forms_page_notice_content",
+    ).default(
+      "Vui lòng cung cấp đúng số điện thoại để nhận mã xác nhận tiếp nhận từ bệnh viện.",
+    ),
+    version_formsPage_noticeAlign:
+      enum__site_settings_v_version_forms_page_notice_align(
+        "version_forms_page_notice_align",
+      ).default("left"),
+    version_patientPortalPage_eyebrow: varchar(
+      "version_patient_portal_page_eyebrow",
+    ).default("CỔNG TIỆN ÍCH NGƯỜI BỆNH"),
+    version_patientPortalPage_title: varchar(
+      "version_patient_portal_page_title",
+    ).default("Dành cho Người bệnh"),
+    version_patientPortalPage_description: varchar(
+      "version_patient_portal_page_description",
+    ).default(
+      "Tổng hợp đầy đủ các tiện ích, hướng dẫn và dịch vụ hỗ trợ người bệnh tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_patientPortalPage_showNoticeBanner: boolean(
+      "version_patient_portal_page_show_notice_banner",
+    ).default(false),
+    version_patientPortalPage_noticeTitle: varchar(
+      "version_patient_portal_page_notice_title",
+    ).default("Thông báo dành cho người bệnh"),
+    version_patientPortalPage_noticeContent: varchar(
+      "version_patient_portal_page_notice_content",
+    ).default(
+      "• Vui lòng mang theo CCCD/CMND và thẻ BHYT khi đến khám.\n• Đặt lịch trực tuyến qua ứng dụng Medpro để được phục vụ ưu tiên.",
+    ),
+    version_patientPortalPage_noticeAlign: pp_not_align(
+      "version_patient_portal_page_notice_align",
+    ).default("left"),
+    version_lichTrucPage_eyebrow: varchar(
+      "version_lich_truc_page_eyebrow",
+    ).default("TRỰC 24/7"),
+    version_lichTrucPage_title: varchar("version_lich_truc_page_title").default(
+      "Lịch trực Cấp cứu",
+    ),
+    version_lichTrucPage_description: varchar(
+      "version_lich_truc_page_description",
+    ).default(
+      "Danh sách bác sĩ, điều dưỡng trực cấp cứu 24/7 tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_lichTrucPage_showNoticeBanner: boolean(
+      "version_lich_truc_page_show_notice_banner",
+    ).default(true),
+    version_lichTrucPage_noticeTitle: varchar(
+      "version_lich_truc_page_notice_title",
+    ).default("Đường dây cấp cứu bệnh viện"),
+    version_lichTrucPage_noticeContent: varchar(
+      "version_lich_truc_page_notice_content",
+    ).default(
+      "• Cấp cứu 24/7: Gọi ngay 02923686115.\n• Ekip trực cấp cứu sẵn sàng tiếp nhận tất cả các ngày trong tuần, kể cả ngày lễ, Tết.",
+    ),
+    version_lichTrucPage_noticeAlign: lt_not_align(
+      "version_lich_truc_page_notice_align",
+    ).default("left"),
+    version_scienceActivityPage_eyebrow: varchar(
+      "version_science_activity_page_eyebrow",
+    ).default("NGHIÊN CỨU & HỌC THUẬT"),
+    version_scienceActivityPage_title: varchar(
+      "version_science_activity_page_title",
+    ).default("Hoạt động Khoa học"),
+    version_scienceActivityPage_description: varchar(
+      "version_science_activity_page_description",
+    ).default(
+      "Tổng hợp các hội nghị khoa học, đề tài nghiên cứu, chương trình đào tạo chuyên môn và hoạt động học thuật tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_scienceActivityPage_showNoticeBanner: boolean(
+      "version_science_activity_page_show_notice_banner",
+    ).default(false),
+    version_scienceActivityPage_noticeTitle: varchar(
+      "version_science_activity_page_notice_title",
+    ).default("Thông báo hoạt động khoa học"),
+    version_scienceActivityPage_noticeContent: varchar(
+      "version_science_activity_page_notice_content",
+    ).default(""),
+    version_scienceActivityPage_noticeAlign: sa_not_align(
+      "version_science_activity_page_notice_align",
+    ).default("left"),
+    version_clinicalProtocolPage_eyebrow: varchar(
+      "version_clinical_protocol_page_eyebrow",
+    ).default("CHUYÊN MÔN LÂM SÀNG"),
+    version_clinicalProtocolPage_title: varchar(
+      "version_clinical_protocol_page_title",
+    ).default("Phác đồ Điều trị"),
+    version_clinicalProtocolPage_description: varchar(
+      "version_clinical_protocol_page_description",
+    ).default(
+      "Hệ thống phác đồ điều trị chuẩn được Ban Giám đốc và Hội đồng Khoa học thông qua, áp dụng thống nhất tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_clinicalProtocolPage_showNoticeBanner: boolean(
+      "version_clinical_protocol_page_show_notice_banner",
+    ).default(false),
+    version_clinicalProtocolPage_noticeTitle: varchar(
+      "version_clinical_protocol_page_notice_title",
+    ).default("Lưu ý về phác đồ điều trị"),
+    version_clinicalProtocolPage_noticeContent: varchar(
+      "version_clinical_protocol_page_notice_content",
+    ).default(
+      "• Phác đồ được cập nhật định kỳ theo hướng dẫn của Bộ Y tế và y văn quốc tế.\n• Áp dụng theo chỉ định của bác sĩ điều trị, không tự ý thay đổi.",
+    ),
+    version_clinicalProtocolPage_noticeAlign: cp_not_align(
+      "version_clinical_protocol_page_notice_align",
+    ).default("left"),
+    version_clinicalProtocolPage_showSearchBox: boolean(
+      "version_clinical_protocol_page_show_search_box",
+    ).default(true),
+    version_clinicalProtocolPage_showCategoryFilter: boolean(
+      "version_clinical_protocol_page_show_category_filter",
+    ).default(true),
     version_websiteAssistant_enabled: boolean(
       "version_website_assistant_enabled",
     ).default(true),
@@ -8035,6 +10119,7 @@ export const footer_columns = pgTable(
     id: varchar("id").primaryKey(),
     visible: boolean("visible").default(true),
     title: varchar("title").notNull(),
+    textAlign: ft_col_align("text_align").default("left"),
   },
   (columns) => [
     index("footer_columns_order_idx").on(columns._order),
@@ -8134,6 +10219,7 @@ export const _footer_v_version_columns = pgTable(
     id: serial("id").primaryKey(),
     visible: boolean("visible").default(true),
     title: varchar("title").notNull(),
+    textAlign: ft_col_align("text_align").default("left"),
     _uuid: varchar("_uuid"),
   },
   (columns) => [
@@ -8224,6 +10310,51 @@ export const _footer_v = pgTable(
 
 export const contact_settings = pgTable("contact_settings", {
   id: serial("id").primaryKey(),
+  hero_eyebrow: varchar("hero_eyebrow").default("KẾT NỐI VỚI CHÚNG TÔI"),
+  hero_title: varchar("hero_title")
+    .notNull()
+    .default("Liên hệ & Tiếp nhận Thông tin"),
+  hero_description: varchar("hero_description").default(
+    "Bệnh viện Đa khoa Khu vực Thới Lai luôn sẵn sàng lắng nghe, tư vấn khám chữa bệnh và tiếp nhận mọi ý kiến đóng góp từ Quý người bệnh và thân nhân.",
+  ),
+  notice_enabled: boolean("notice_enabled").default(false),
+  notice_title: varchar("notice_title").default(
+    "Kênh tiếp nhận cấp cứu và phản ánh 24/7",
+  ),
+  notice_content: varchar("notice_content").default(
+    "• Trường hợp cấp cứu khẩn cấp, vui lòng gọi ngay đường dây nóng Cấp cứu: 0292 3861 115 phục vụ 24/24.\n• Mọi ý kiến phản ánh, đóng góp chất lượng dịch vụ sẽ được Ban Giám đốc tiếp nhận và giải quyết kịp thời.",
+  ),
+  notice_textAlign: ct_not_align("notice_text_align").default("left"),
+  coreInfo_address: varchar("core_info_address").default(
+    "Ấp Thới Phong, Xã Thới Lai, Thành phố Cần Thơ",
+  ),
+  coreInfo_hotline: varchar("core_info_hotline").default("0292 3861 234"),
+  coreInfo_emergencyHotline: varchar("core_info_emergency_hotline").default(
+    "0292 3861 115",
+  ),
+  coreInfo_email: varchar("core_info_email").default(
+    "bvdkthoilai@cantho.gov.vn",
+  ),
+  coreInfo_workingHours: varchar("core_info_working_hours").default(
+    "Thứ 2 – Thứ 7: Sáng 06:30 – 11:30 | Chiều 13:00 – 17:00 (Cấp cứu trực 24/24)",
+  ),
+  coreInfo_googleMapsUrl: varchar("core_info_google_maps_url").default(
+    "https://maps.google.com",
+  ),
+  coreInfo_googleMapsEmbed: varchar("core_info_google_maps_embed"),
+  displayToggles_showContactCards: boolean(
+    "display_toggles_show_contact_cards",
+  ).default(true),
+  displayToggles_showMap: boolean("display_toggles_show_map").default(true),
+  displayToggles_showFeedbackForm: boolean(
+    "display_toggles_show_feedback_form",
+  ).default(true),
+  displayToggles_showSupportHours: boolean(
+    "display_toggles_show_support_hours",
+  ).default(true),
+  displayToggles_showSocialLinks: boolean(
+    "display_toggles_show_social_links",
+  ).default(true),
   address: varchar("address"),
   hotline: varchar("hotline"),
   emergencyHotline: varchar("emergency_hotline"),
@@ -8247,6 +10378,63 @@ export const _contact_settings_v = pgTable(
   "_contact_settings_v",
   {
     id: serial("id").primaryKey(),
+    version_hero_eyebrow: varchar("version_hero_eyebrow").default(
+      "KẾT NỐI VỚI CHÚNG TÔI",
+    ),
+    version_hero_title: varchar("version_hero_title")
+      .notNull()
+      .default("Liên hệ & Tiếp nhận Thông tin"),
+    version_hero_description: varchar("version_hero_description").default(
+      "Bệnh viện Đa khoa Khu vực Thới Lai luôn sẵn sàng lắng nghe, tư vấn khám chữa bệnh và tiếp nhận mọi ý kiến đóng góp từ Quý người bệnh và thân nhân.",
+    ),
+    version_notice_enabled: boolean("version_notice_enabled").default(false),
+    version_notice_title: varchar("version_notice_title").default(
+      "Kênh tiếp nhận cấp cứu và phản ánh 24/7",
+    ),
+    version_notice_content: varchar("version_notice_content").default(
+      "• Trường hợp cấp cứu khẩn cấp, vui lòng gọi ngay đường dây nóng Cấp cứu: 0292 3861 115 phục vụ 24/24.\n• Mọi ý kiến phản ánh, đóng góp chất lượng dịch vụ sẽ được Ban Giám đốc tiếp nhận và giải quyết kịp thời.",
+    ),
+    version_notice_textAlign: ct_not_align("version_notice_text_align").default(
+      "left",
+    ),
+    version_coreInfo_address: varchar("version_core_info_address").default(
+      "Ấp Thới Phong, Xã Thới Lai, Thành phố Cần Thơ",
+    ),
+    version_coreInfo_hotline: varchar("version_core_info_hotline").default(
+      "0292 3861 234",
+    ),
+    version_coreInfo_emergencyHotline: varchar(
+      "version_core_info_emergency_hotline",
+    ).default("0292 3861 115"),
+    version_coreInfo_email: varchar("version_core_info_email").default(
+      "bvdkthoilai@cantho.gov.vn",
+    ),
+    version_coreInfo_workingHours: varchar(
+      "version_core_info_working_hours",
+    ).default(
+      "Thứ 2 – Thứ 7: Sáng 06:30 – 11:30 | Chiều 13:00 – 17:00 (Cấp cứu trực 24/24)",
+    ),
+    version_coreInfo_googleMapsUrl: varchar(
+      "version_core_info_google_maps_url",
+    ).default("https://maps.google.com"),
+    version_coreInfo_googleMapsEmbed: varchar(
+      "version_core_info_google_maps_embed",
+    ),
+    version_displayToggles_showContactCards: boolean(
+      "version_display_toggles_show_contact_cards",
+    ).default(true),
+    version_displayToggles_showMap: boolean(
+      "version_display_toggles_show_map",
+    ).default(true),
+    version_displayToggles_showFeedbackForm: boolean(
+      "version_display_toggles_show_feedback_form",
+    ).default(true),
+    version_displayToggles_showSupportHours: boolean(
+      "version_display_toggles_show_support_hours",
+    ).default(true),
+    version_displayToggles_showSocialLinks: boolean(
+      "version_display_toggles_show_social_links",
+    ).default(true),
     version_address: varchar("version_address"),
     version_hotline: varchar("version_hotline"),
     version_emergencyHotline: varchar("version_emergency_hotline"),
@@ -8413,6 +10601,75 @@ export const theme_settings = pgTable(
     contentMaxWidth: numeric("content_max_width", { mode: "number" }).default(
       1300,
     ),
+    pageHero_bgType:
+      enum_theme_settings_page_hero_bg_type("page_hero_bg_type").default(
+        "gradient",
+      ),
+    pageHero_paddingVertical: numeric("page_hero_padding_vertical", {
+      mode: "number",
+    }).default(22),
+    pageHero_bgGradientStart: varchar("page_hero_bg_gradient_start").default(
+      "#072b4c",
+    ),
+    pageHero_bgGradientMiddle: varchar("page_hero_bg_gradient_middle").default(
+      "#0754a8",
+    ),
+    pageHero_bgGradientEnd: varchar("page_hero_bg_gradient_end").default(
+      "#0878d1",
+    ),
+    pageHero_bgSolidColor: varchar("page_hero_bg_solid_color").default(
+      "#0754a8",
+    ),
+    pageHero_titleColor: varchar("page_hero_title_color").default("#ffffff"),
+    pageHero_titleFontSize: numeric("page_hero_title_font_size", {
+      mode: "number",
+    }).default(26),
+    pageHero_descColor: varchar("page_hero_desc_color").default("#e2f1fc"),
+    pageHero_descFontSize: numeric("page_hero_desc_font_size", {
+      mode: "number",
+    }).default(14),
+    pageHero_breadcrumbColor: varchar("page_hero_breadcrumb_color").default(
+      "#bae6fd",
+    ),
+    pageHero_breadcrumbLinkColor: varchar(
+      "page_hero_breadcrumb_link_color",
+    ).default("#e0f2fe"),
+    sectionGlobal_bgColor: varchar("section_global_bg_color").default(
+      "#ffffff",
+    ),
+    sectionGlobal_borderRadius: numeric("section_global_border_radius", {
+      mode: "number",
+    }).default(18),
+    sectionGlobal_paddingTop: numeric("section_global_padding_top", {
+      mode: "number",
+    }).default(28),
+    sectionGlobal_paddingBottom: numeric("section_global_padding_bottom", {
+      mode: "number",
+    }).default(28),
+    sectionGlobal_contentWidth: numeric("section_global_content_width", {
+      mode: "number",
+    }).default(1180),
+    sectionGlobal_eyebrowColor: varchar("section_global_eyebrow_color").default(
+      "#0878d1",
+    ),
+    sectionGlobal_eyebrowSize: numeric("section_global_eyebrow_size", {
+      mode: "number",
+    }).default(11),
+    sectionGlobal_titleColor: varchar("section_global_title_color").default(
+      "#124064",
+    ),
+    sectionGlobal_titleSize: numeric("section_global_title_size", {
+      mode: "number",
+    }).default(26),
+    sectionGlobal_descColor: varchar("section_global_desc_color").default(
+      "#657f92",
+    ),
+    sectionGlobal_descSize: numeric("section_global_desc_size", {
+      mode: "number",
+    }).default(13),
+    sectionGlobal_headingGap: numeric("section_global_heading_gap", {
+      mode: "number",
+    }).default(18),
     detailLayout_applyNews: boolean("detail_layout_apply_news").default(true),
     detailLayout_applyProcurement: boolean(
       "detail_layout_apply_procurement",
@@ -8631,6 +10888,88 @@ export const _theme_settings_v = pgTable(
     version_contentMaxWidth: numeric("version_content_max_width", {
       mode: "number",
     }).default(1300),
+    version_pageHero_bgType: enum__theme_settings_v_version_page_hero_bg_type(
+      "version_page_hero_bg_type",
+    ).default("gradient"),
+    version_pageHero_paddingVertical: numeric(
+      "version_page_hero_padding_vertical",
+      { mode: "number" },
+    ).default(22),
+    version_pageHero_bgGradientStart: varchar(
+      "version_page_hero_bg_gradient_start",
+    ).default("#072b4c"),
+    version_pageHero_bgGradientMiddle: varchar(
+      "version_page_hero_bg_gradient_middle",
+    ).default("#0754a8"),
+    version_pageHero_bgGradientEnd: varchar(
+      "version_page_hero_bg_gradient_end",
+    ).default("#0878d1"),
+    version_pageHero_bgSolidColor: varchar(
+      "version_page_hero_bg_solid_color",
+    ).default("#0754a8"),
+    version_pageHero_titleColor: varchar(
+      "version_page_hero_title_color",
+    ).default("#ffffff"),
+    version_pageHero_titleFontSize: numeric(
+      "version_page_hero_title_font_size",
+      { mode: "number" },
+    ).default(26),
+    version_pageHero_descColor: varchar("version_page_hero_desc_color").default(
+      "#e2f1fc",
+    ),
+    version_pageHero_descFontSize: numeric("version_page_hero_desc_font_size", {
+      mode: "number",
+    }).default(14),
+    version_pageHero_breadcrumbColor: varchar(
+      "version_page_hero_breadcrumb_color",
+    ).default("#bae6fd"),
+    version_pageHero_breadcrumbLinkColor: varchar(
+      "version_page_hero_breadcrumb_link_color",
+    ).default("#e0f2fe"),
+    version_sectionGlobal_bgColor: varchar(
+      "version_section_global_bg_color",
+    ).default("#ffffff"),
+    version_sectionGlobal_borderRadius: numeric(
+      "version_section_global_border_radius",
+      { mode: "number" },
+    ).default(18),
+    version_sectionGlobal_paddingTop: numeric(
+      "version_section_global_padding_top",
+      { mode: "number" },
+    ).default(28),
+    version_sectionGlobal_paddingBottom: numeric(
+      "version_section_global_padding_bottom",
+      { mode: "number" },
+    ).default(28),
+    version_sectionGlobal_contentWidth: numeric(
+      "version_section_global_content_width",
+      { mode: "number" },
+    ).default(1180),
+    version_sectionGlobal_eyebrowColor: varchar(
+      "version_section_global_eyebrow_color",
+    ).default("#0878d1"),
+    version_sectionGlobal_eyebrowSize: numeric(
+      "version_section_global_eyebrow_size",
+      { mode: "number" },
+    ).default(11),
+    version_sectionGlobal_titleColor: varchar(
+      "version_section_global_title_color",
+    ).default("#124064"),
+    version_sectionGlobal_titleSize: numeric(
+      "version_section_global_title_size",
+      { mode: "number" },
+    ).default(26),
+    version_sectionGlobal_descColor: varchar(
+      "version_section_global_desc_color",
+    ).default("#657f92"),
+    version_sectionGlobal_descSize: numeric(
+      "version_section_global_desc_size",
+      { mode: "number" },
+    ).default(13),
+    version_sectionGlobal_headingGap: numeric(
+      "version_section_global_heading_gap",
+      { mode: "number" },
+    ).default(18),
     version_detailLayout_applyNews: boolean(
       "version_detail_layout_apply_news",
     ).default(true),
@@ -8950,6 +11289,7 @@ export const tech_items = pgTable(
       onDelete: "set null",
     }),
     imageFit: enum_tech_items_image_fit("image_fit").default("contain"),
+    enableLink: boolean("enable_link").default(true),
     linkMode: enum_tech_items_link_mode("link_mode").default("internal"),
     linkedPage: integer("linked_page_id").references(() => pages.id, {
       onDelete: "set null",
@@ -8987,11 +11327,11 @@ export const expert_items = pgTable(
     position: varchar("position"),
     showDepartment: boolean("show_department").default(true),
     customSubtitle: varchar("custom_subtitle"),
-    badge: varchar("badge"),
     image: integer("image_id").references(() => media.id, {
       onDelete: "set null",
     }),
     imageFit: enum_expert_items_image_fit("image_fit").default("contain"),
+    enableLink: boolean("enable_link").default(true),
     linkMode: enum_expert_items_link_mode("link_mode").default("internal"),
     linkedPage: integer("linked_page_id").references(() => pages.id, {
       onDelete: "set null",
@@ -9012,6 +11352,33 @@ export const expert_items = pgTable(
       columns: [columns["_parentID"]],
       foreignColumns: [homepage_sections.id],
       name: "expert_items_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const fn_sources = pgTable(
+  "fn_sources",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    source: enum_fn_sources_source("source"),
+    categoryRef: integer("category_ref_id").references(() => categories.id, {
+      onDelete: "set null",
+    }),
+    categoryName: varchar("category_name"),
+    customBadge: varchar("custom_badge"),
+    limit: numeric("limit", { mode: "number" }).default(6),
+    enabled: boolean("enabled").default(true),
+  },
+  (columns) => [
+    index("fn_sources_order_idx").on(columns._order),
+    index("fn_sources_parent_id_idx").on(columns._parentID),
+    index("fn_sources_category_ref_idx").on(columns.categoryRef),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [homepage_sections.id],
+      name: "fn_sources_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -9233,33 +11600,29 @@ export const vaccine_manual = pgTable(
     index("vaccine_manual_image_idx").on(columns.image),
     foreignKey({
       columns: [columns["_parentID"]],
-      foreignColumns: [homepage_sections_vaccination_tab_order.id],
+      foreignColumns: [homepage_vax_tabs.id],
       name: "vaccine_manual_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
 
-export const homepage_sections_vaccination_tab_order = pgTable(
-  "homepage_sections_vaccination_tab_order",
+export const homepage_vax_tabs = pgTable(
+  "homepage_vax_tabs",
   {
     _order: integer("_order").notNull(),
     _parentID: varchar("_parent_id").notNull(),
     id: varchar("id").primaryKey(),
     label: varchar("label"),
-    tab: enum_homepage_sections_vaccination_tab_order_tab("tab"),
+    tab: enum_homepage_vax_tabs_tab("tab"),
     visible: boolean("visible").default(true),
   },
   (columns) => [
-    index("homepage_sections_vaccination_tab_order_order_idx").on(
-      columns._order,
-    ),
-    index("homepage_sections_vaccination_tab_order_parent_id_idx").on(
-      columns._parentID,
-    ),
+    index("homepage_vax_tabs_order_idx").on(columns._order),
+    index("homepage_vax_tabs_parent_id_idx").on(columns._parentID),
     foreignKey({
       columns: [columns["_parentID"]],
       foreignColumns: [homepage_sections.id],
-      name: "homepage_sections_vaccination_tab_order_parent_id_fk",
+      name: "homepage_vax_tabs_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -9297,6 +11660,14 @@ export const homepage_sections = pgTable(
     featuredItemLimit: numeric("featured_item_limit", {
       mode: "number",
     }).default(16),
+    featuredFilterMode: enum_homepage_sections_featured_filter_mode(
+      "featured_filter_mode",
+    ).default("all"),
+    featuredSeeAllUrl: varchar("featured_see_all_url").default("/tin-tuc"),
+    featuredCardFit:
+      enum_homepage_sections_featured_card_fit("featured_card_fit").default(
+        "cover",
+      ),
     organizationImage: integer("organization_image_id").references(
       () => media.id,
       {
@@ -9443,6 +11814,9 @@ export const homepage = pgTable(
     bannerAutoplaySeconds: numeric("banner_autoplay_seconds", {
       mode: "number",
     }).default(6),
+    enableSectionScrollSnap: boolean("enable_section_scroll_snap").default(
+      true,
+    ),
     intro_eyebrow: varchar("intro_eyebrow").default("VỀ CHÚNG TÔI"),
     intro_title: varchar("intro_title").default(
       "Đồng hành cùng sức khỏe cộng đồng",
@@ -9586,6 +11960,7 @@ export const _tech_items_v = pgTable(
       onDelete: "set null",
     }),
     imageFit: enum__tech_items_v_image_fit("image_fit").default("contain"),
+    enableLink: boolean("enable_link").default(true),
     linkMode: enum__tech_items_v_link_mode("link_mode").default("internal"),
     linkedPage: integer("linked_page_id").references(() => pages.id, {
       onDelete: "set null",
@@ -9624,11 +11999,11 @@ export const _expert_items_v = pgTable(
     position: varchar("position"),
     showDepartment: boolean("show_department").default(true),
     customSubtitle: varchar("custom_subtitle"),
-    badge: varchar("badge"),
     image: integer("image_id").references(() => media.id, {
       onDelete: "set null",
     }),
     imageFit: enum__expert_items_v_image_fit("image_fit").default("contain"),
+    enableLink: boolean("enable_link").default(true),
     linkMode: enum__expert_items_v_link_mode("link_mode").default("internal"),
     linkedPage: integer("linked_page_id").references(() => pages.id, {
       onDelete: "set null",
@@ -9650,6 +12025,34 @@ export const _expert_items_v = pgTable(
       columns: [columns["_parentID"]],
       foreignColumns: [_homepage_v_version_sections.id],
       name: "_expert_items_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _fn_sources_v = pgTable(
+  "_fn_sources_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    source: enum__fn_sources_v_source("source"),
+    categoryRef: integer("category_ref_id").references(() => categories.id, {
+      onDelete: "set null",
+    }),
+    categoryName: varchar("category_name"),
+    customBadge: varchar("custom_badge"),
+    limit: numeric("limit", { mode: "number" }).default(6),
+    enabled: boolean("enabled").default(true),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_fn_sources_v_order_idx").on(columns._order),
+    index("_fn_sources_v_parent_id_idx").on(columns._parentID),
+    index("_fn_sources_v_category_ref_idx").on(columns.categoryRef),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_homepage_v_version_sections.id],
+      name: "_fn_sources_v_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -9883,34 +12286,30 @@ export const _vaccine_manual_v = pgTable(
     index("_vaccine_manual_v_image_idx").on(columns.image),
     foreignKey({
       columns: [columns["_parentID"]],
-      foreignColumns: [_homepage_v_version_sections_vaccination_tab_order.id],
+      foreignColumns: [_homepage_vax_tabs_v.id],
       name: "_vaccine_manual_v_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
 
-export const _homepage_v_version_sections_vaccination_tab_order = pgTable(
-  "_homepage_v_version_sections_vaccination_tab_order",
+export const _homepage_vax_tabs_v = pgTable(
+  "_homepage_vax_tabs_v",
   {
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: serial("id").primaryKey(),
     label: varchar("label"),
-    tab: enum__homepage_v_version_sections_vaccination_tab_order_tab("tab"),
+    tab: enum__homepage_vax_tabs_v_tab("tab"),
     visible: boolean("visible").default(true),
     _uuid: varchar("_uuid"),
   },
   (columns) => [
-    index("_homepage_v_version_sections_vaccination_tab_order_order_idx").on(
-      columns._order,
-    ),
-    index(
-      "_homepage_v_version_sections_vaccination_tab_order_parent_id_idx",
-    ).on(columns._parentID),
+    index("_homepage_vax_tabs_v_order_idx").on(columns._order),
+    index("_homepage_vax_tabs_v_parent_id_idx").on(columns._parentID),
     foreignKey({
       columns: [columns["_parentID"]],
       foreignColumns: [_homepage_v_version_sections.id],
-      name: "_homepage_v_version_sections_vaccination_tab_order_parent_id_fk",
+      name: "_homepage_vax_tabs_v_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -9948,6 +12347,14 @@ export const _homepage_v_version_sections = pgTable(
     featuredItemLimit: numeric("featured_item_limit", {
       mode: "number",
     }).default(16),
+    featuredFilterMode: enum__homepage_v_version_sections_featured_filter_mode(
+      "featured_filter_mode",
+    ).default("all"),
+    featuredSeeAllUrl: varchar("featured_see_all_url").default("/tin-tuc"),
+    featuredCardFit:
+      enum__homepage_v_version_sections_featured_card_fit(
+        "featured_card_fit",
+      ).default("cover"),
     organizationImage: integer("organization_image_id").references(
       () => media.id,
       {
@@ -10101,6 +12508,9 @@ export const _homepage_v = pgTable(
     version_bannerAutoplaySeconds: numeric("version_banner_autoplay_seconds", {
       mode: "number",
     }).default(6),
+    version_enableSectionScrollSnap: boolean(
+      "version_enable_section_scroll_snap",
+    ).default(true),
     version_intro_eyebrow: varchar("version_intro_eyebrow").default(
       "VỀ CHÚNG TÔI",
     ),
@@ -10167,6 +12577,7 @@ export const organization_chart_deputy_directors = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
     doctorRef: integer("doctor_ref_id").references(() => doctors.id, {
       onDelete: "set null",
     }),
@@ -10254,6 +12665,13 @@ export const organization_chart = pgTable(
     description: varchar("description").default(
       "Cơ cấu tổ chức bộ máy và hệ thống các khoa, phòng trực thuộc Bệnh viện Đa khoa Khu vực Thới Lai.",
     ),
+    showLeadershipSection: boolean("show_leadership_section").default(true),
+    leadershipTitle: varchar("leadership_title").default(
+      "Ban Lãnh đạo Bệnh Viện",
+    ),
+    showTreeSection: boolean("show_tree_section").default(true),
+    treeTitle: varchar("tree_title").default("Sơ đồ tổ chức bộ máy"),
+    director_enabled: boolean("director_enabled").default(true),
     director_doctorRef: integer("director_doctor_ref_id").references(
       () => doctors.id,
       {
@@ -10310,6 +12728,7 @@ export const _organization_chart_v_version_deputy_directors = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
     doctorRef: integer("doctor_ref_id").references(() => doctors.id, {
       onDelete: "set null",
     }),
@@ -10412,6 +12831,17 @@ export const _organization_chart_v = pgTable(
     version_description: varchar("version_description").default(
       "Cơ cấu tổ chức bộ máy và hệ thống các khoa, phòng trực thuộc Bệnh viện Đa khoa Khu vực Thới Lai.",
     ),
+    version_showLeadershipSection: boolean(
+      "version_show_leadership_section",
+    ).default(true),
+    version_leadershipTitle: varchar("version_leadership_title").default(
+      "Ban Lãnh đạo Bệnh Viện",
+    ),
+    version_showTreeSection: boolean("version_show_tree_section").default(true),
+    version_treeTitle: varchar("version_tree_title").default(
+      "Sơ đồ tổ chức bộ máy",
+    ),
+    version_director_enabled: boolean("version_director_enabled").default(true),
     version_director_doctorRef: integer(
       "version_director_doctor_ref_id",
     ).references(() => doctors.id, {
@@ -10480,6 +12910,26 @@ export const _organization_chart_v = pgTable(
   ],
 );
 
+export const hospital_history_quick_stats = pgTable(
+  "hospital_history_quick_stats",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    number: varchar("number").notNull(),
+    label: varchar("label").notNull(),
+  },
+  (columns) => [
+    index("hospital_history_quick_stats_order_idx").on(columns._order),
+    index("hospital_history_quick_stats_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [hospital_history.id],
+      name: "hospital_history_quick_stats_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const hospital_history_milestones = pgTable(
   "hospital_history_milestones",
   {
@@ -10489,11 +12939,12 @@ export const hospital_history_milestones = pgTable(
     year: varchar("year").notNull(),
     title: varchar("title").notNull(),
     tag: varchar("tag"),
-    description: varchar("description").notNull(),
+    textAlign: hist_milestone_align("text_align").default("left"),
+    highlight: boolean("highlight").default(false),
     image: integer("image_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    highlight: boolean("highlight").default(false),
+    description: varchar("description").notNull(),
   },
   (columns) => [
     index("hospital_history_milestones_order_idx").on(columns._order),
@@ -10507,26 +12958,48 @@ export const hospital_history_milestones = pgTable(
   ],
 );
 
-export const hospital_history_core_values_values_list = pgTable(
-  "hospital_history_core_values_values_list",
+export const history_core_values = pgTable(
+  "history_core_values",
   {
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: varchar("id").primaryKey(),
+    iconType: hist_icon_type("icon_type").default("heart"),
+    customIcon: integer("custom_icon_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
     title: varchar("title").notNull(),
     description: varchar("description").notNull(),
   },
   (columns) => [
-    index("hospital_history_core_values_values_list_order_idx").on(
-      columns._order,
-    ),
-    index("hospital_history_core_values_values_list_parent_id_idx").on(
-      columns._parentID,
-    ),
+    index("history_core_values_order_idx").on(columns._order),
+    index("history_core_values_parent_id_idx").on(columns._parentID),
+    index("history_core_values_custom_icon_idx").on(columns.customIcon),
     foreignKey({
       columns: [columns["_parentID"]],
       foreignColumns: [hospital_history.id],
-      name: "hospital_history_core_values_values_list_parent_id_fk",
+      name: "history_core_values_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hospital_history_journey_steps = pgTable(
+  "hospital_history_journey_steps",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    stepNumber: varchar("step_number").notNull(),
+    title: varchar("title").notNull(),
+    isHighlight: boolean("is_highlight").default(false),
+  },
+  (columns) => [
+    index("hospital_history_journey_steps_order_idx").on(columns._order),
+    index("hospital_history_journey_steps_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [hospital_history.id],
+      name: "hospital_history_journey_steps_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -10559,10 +13032,13 @@ export const hospital_history = pgTable(
   "hospital_history",
   {
     id: serial("id").primaryKey(),
+    showHero: boolean("show_hero").default(true),
+    heroMinHeight: numeric("hero_min_height", { mode: "number" }).default(380),
+    heroAlign: hist_hero_align("hero_align").default("left"),
     bannerImage: integer("banner_image_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    eyebrow: varchar("eyebrow").default("HÀNH TRÌNH PHÁT TRIỂN"),
+    eyebrow: varchar("eyebrow").default("LỊCH SỬ HÌNH THÀNH VÀ PHÁT TRIỂN"),
     pageTitle: varchar("page_title")
       .notNull()
       .default(
@@ -10571,22 +13047,82 @@ export const hospital_history = pgTable(
     subtitle: varchar("subtitle").default(
       "Hơn hai thập kỷ tận tụy vì sức khỏe nhân dân – Đổi mới, phát triển và vươn tầm chuyên nghiệp",
     ),
+    showQuickStats: boolean("show_quick_stats").default(true),
+    showLead: boolean("show_lead").default(true),
+    leadAlign: hist_lead_align("lead_align").default("left"),
+    leadFontSize: numeric("lead_font_size", { mode: "number" }).default(18),
     leadSummary: varchar("lead_summary").default(
-      "Bệnh viện Đa khoa Khu vực Thới Lai tiền thân từ Trung tâm Y tế huyện, trải qua các giai đoạn chuyển mình mạnh mẽ. Từ những ngày đầu cơ sở vật chất đơn sơ, bệnh viện ngày nay đã vươn lên thành cơ sở y tế đa khoa vững mạnh ở cửa ngõ phía Tây thành phố Cần Thơ, trang bị kỹ thuật tiên tiến và quy tụ đội ngũ thầy thuốc giàu y đức.",
+      "Bệnh viện Đa khoa khu vực Thới Lai có quá trình hình thành và phát triển gắn liền với sự phát triển của huyện Thới Lai trước đây và quá trình kiện toàn hệ thống y tế thành phố Cần Thơ. Từ những ngày đầu còn nhiều khó khăn về cơ sở vật chất, trang thiết bị và nhân lực, qua nhiều giai đoạn tổ chức và phát triển, đơn vị từng bước nâng cao năng lực chuyên môn, đầu tư cơ sở vật chất, ứng dụng công nghệ thông tin và mở rộng các dịch vụ kỹ thuật, đáp ứng ngày càng tốt hơn nhu cầu khám bệnh, chữa bệnh và chăm sóc sức khỏe của Nhân dân.",
+    ),
+    showTimeline: boolean("show_timeline").default(true),
+    timelineKicker: varchar("timeline_kicker").default("DÒNG THỜI GIAN"),
+    timelineTitle: varchar("timeline_title").default(
+      "Những dấu mốc phát triển tiêu biểu",
+    ),
+    timelineDesc: varchar("timeline_desc").default(
+      "Hành trình xây dựng và phát triển của Bệnh viện Đa khoa khu vực Thới Lai qua các thời kỳ.",
+    ),
+    showCoreValues: boolean("show_core_values").default(true),
+    coreValuesKicker: varchar("core_values_kicker").default(
+      "KIM CHỈ NAM HÀNH ĐỘNG",
+    ),
+    coreValuesTitle: varchar("core_values_title").default(
+      "Sứ mệnh – Tầm nhìn – Giá trị cốt lõi",
+    ),
+    coreValuesDesc: varchar("core_values_desc").default(
+      "Những định hướng nền tảng để tập thể viên chức, người lao động Bệnh viện Đa khoa khu vực Thới Lai không ngừng nâng cao chất lượng phục vụ người bệnh.",
     ),
     coreValues_missionTitle: varchar("core_values_mission_title").default(
-      "Chăm sóc sức khỏe nhân dân bằng cả trái tim và trách nhiệm cao nhất.",
+      "Cung cấp dịch vụ khám bệnh, chữa bệnh an toàn, chất lượng và tận tâm; góp phần bảo vệ, chăm sóc và nâng cao sức khỏe Nhân dân.",
     ),
     coreValues_visionTitle: varchar("core_values_vision_title").default(
-      "Xây dựng Bệnh viện Đa khoa Khu vực hiện đại, chuyên sâu, thân thiện và văn minh.",
+      "Xây dựng Bệnh viện Đa khoa khu vực Thới Lai từng bước hiện đại, chuyên nghiệp, thân thiện; phát triển chuyên môn kỹ thuật phù hợp với nhu cầu chăm sóc sức khỏe của người dân trong khu vực.",
     ),
+    showJourney: boolean("show_journey").default(true),
+    journeyKicker: varchar("journey_kicker").default("HÀNH TRÌNH TIẾP NỐI"),
+    journeyTitle: varchar("journey_title").default(
+      "Kế thừa và Vươn tầm phát triển",
+    ),
+    journeyDesc: varchar("journey_desc").default(
+      "Trải qua nhiều giai đoạn tổ chức và phát triển, mỗi giai đoạn đều đánh dấu một bước chuyển quan trọng trong quá trình xây dựng hệ thống y tế phục vụ Nhân dân.",
+    ),
+    journeyBottomText: varchar("journey_bottom_text").default(
+      "Bệnh viện Đa khoa khu vực Thới Lai hôm nay tiếp tục kế thừa những giá trị đã được xây dựng qua nhiều thế hệ cán bộ, viên chức và người lao động; đồng thời không ngừng đổi mới, nâng cao chất lượng chuyên môn, ứng dụng công nghệ và cải tiến phong cách phục vụ, hướng đến mục tiêu chăm sóc sức khỏe người dân ngày càng tốt hơn.",
+    ),
+    showAchievements: boolean("show_achievements").default(true),
+    achievementsKicker: varchar("achievements_kicker").default(
+      "THÀNH QUẢ ĐẠT ĐƯỢC",
+    ),
+    achievementsTitle: varchar("achievements_title").default(
+      "Thành tựu tiêu biểu",
+    ),
+    achievementsDesc: varchar("achievements_desc").default(
+      "Ghi nhận những đóng góp bền bỉ vì sự nghiệp bảo vệ, chăm sóc và nâng cao sức khỏe cộng đồng.",
+    ),
+    showContent: boolean("show_content").default(true),
     content: jsonb("content"),
-    appearance_primaryColor: varchar("appearance_primary_color").default(
-      "#0878D1",
+    showCta: boolean("show_cta").default(true),
+    ctaTitle: varchar("cta_title").default(
+      "Tiếp tục phát triển vì sức khỏe của bạn và gia đình",
     ),
-    appearance_accentColor: varchar("appearance_accent_color").default(
-      "#16A36A",
+    ctaDesc: varchar("cta_desc").default(
+      "Bệnh viện Đa khoa Khu vực Thới Lai luôn sẵn sàng đồng hành, lắng nghe và phục vụ với sự chuyên nghiệp, tận tình nhất.",
     ),
+    ctaBtnPrimaryText: varchar("cta_btn_primary_text").default(
+      "Xem Sơ đồ tổ chức →",
+    ),
+    ctaBtnPrimaryUrl: varchar("cta_btn_primary_url").default("/so-do-to-chuc"),
+    ctaBtnSecondaryText: varchar("cta_btn_secondary_text").default(
+      "Danh sách Khoa – Phòng",
+    ),
+    ctaBtnSecondaryUrl: varchar("cta_btn_secondary_url").default("/khoa-phong"),
+    primaryColor: varchar("primary_color").default("#0878D1"),
+    accentColor: varchar("accent_color").default("#16A36A"),
+    headingColor: varchar("heading_color").default("#102a43"),
+    textColor: varchar("text_color").default("#486581"),
+    cardBgColor: varchar("card_bg_color").default("#ffffff"),
+    fontFamily: hist_font_family("font_family").default("inherit"),
+    cardPadding: numeric("card_padding", { mode: "number" }).default(24),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -10603,6 +13139,31 @@ export const hospital_history = pgTable(
   ],
 );
 
+export const _hospital_history_v_version_quick_stats = pgTable(
+  "_hospital_history_v_version_quick_stats",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    number: varchar("number").notNull(),
+    label: varchar("label").notNull(),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hospital_history_v_version_quick_stats_order_idx").on(
+      columns._order,
+    ),
+    index("_hospital_history_v_version_quick_stats_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_hospital_history_v.id],
+      name: "_hospital_history_v_version_quick_stats_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const _hospital_history_v_version_milestones = pgTable(
   "_hospital_history_v_version_milestones",
   {
@@ -10612,11 +13173,12 @@ export const _hospital_history_v_version_milestones = pgTable(
     year: varchar("year").notNull(),
     title: varchar("title").notNull(),
     tag: varchar("tag"),
-    description: varchar("description").notNull(),
+    textAlign: hist_milestone_align("text_align").default("left"),
+    highlight: boolean("highlight").default(false),
     image: integer("image_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    highlight: boolean("highlight").default(false),
+    description: varchar("description").notNull(),
     _uuid: varchar("_uuid"),
   },
   (columns) => [
@@ -10635,27 +13197,54 @@ export const _hospital_history_v_version_milestones = pgTable(
   ],
 );
 
-export const _hospital_history_v_version_core_values_values_list = pgTable(
-  "_hospital_history_v_version_core_values_values_list",
+export const _history_core_values_v = pgTable(
+  "_history_core_values_v",
   {
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: serial("id").primaryKey(),
+    iconType: hist_icon_type("icon_type").default("heart"),
+    customIcon: integer("custom_icon_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
     title: varchar("title").notNull(),
     description: varchar("description").notNull(),
     _uuid: varchar("_uuid"),
   },
   (columns) => [
-    index("_hospital_history_v_version_core_values_values_list_order_idx").on(
-      columns._order,
-    ),
-    index(
-      "_hospital_history_v_version_core_values_values_list_parent_id_idx",
-    ).on(columns._parentID),
+    index("_history_core_values_v_order_idx").on(columns._order),
+    index("_history_core_values_v_parent_id_idx").on(columns._parentID),
+    index("_history_core_values_v_custom_icon_idx").on(columns.customIcon),
     foreignKey({
       columns: [columns["_parentID"]],
       foreignColumns: [_hospital_history_v.id],
-      name: "_hospital_history_v_version_core_values_values_list_parent_id_fk",
+      name: "_history_core_values_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _hospital_history_v_version_journey_steps = pgTable(
+  "_hospital_history_v_version_journey_steps",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    stepNumber: varchar("step_number").notNull(),
+    title: varchar("title").notNull(),
+    isHighlight: boolean("is_highlight").default(false),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hospital_history_v_version_journey_steps_order_idx").on(
+      columns._order,
+    ),
+    index("_hospital_history_v_version_journey_steps_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_hospital_history_v.id],
+      name: "_hospital_history_v_version_journey_steps_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -10695,6 +13284,11 @@ export const _hospital_history_v = pgTable(
   "_hospital_history_v",
   {
     id: serial("id").primaryKey(),
+    version_showHero: boolean("version_show_hero").default(true),
+    version_heroMinHeight: numeric("version_hero_min_height", {
+      mode: "number",
+    }).default(380),
+    version_heroAlign: hist_hero_align("version_hero_align").default("left"),
     version_bannerImage: integer("version_banner_image_id").references(
       () => media.id,
       {
@@ -10702,7 +13296,7 @@ export const _hospital_history_v = pgTable(
       },
     ),
     version_eyebrow: varchar("version_eyebrow").default(
-      "HÀNH TRÌNH PHÁT TRIỂN",
+      "LỊCH SỬ HÌNH THÀNH VÀ PHÁT TRIỂN",
     ),
     version_pageTitle: varchar("version_page_title")
       .notNull()
@@ -10712,26 +13306,102 @@ export const _hospital_history_v = pgTable(
     version_subtitle: varchar("version_subtitle").default(
       "Hơn hai thập kỷ tận tụy vì sức khỏe nhân dân – Đổi mới, phát triển và vươn tầm chuyên nghiệp",
     ),
+    version_showQuickStats: boolean("version_show_quick_stats").default(true),
+    version_showLead: boolean("version_show_lead").default(true),
+    version_leadAlign: hist_lead_align("version_lead_align").default("left"),
+    version_leadFontSize: numeric("version_lead_font_size", {
+      mode: "number",
+    }).default(18),
     version_leadSummary: varchar("version_lead_summary").default(
-      "Bệnh viện Đa khoa Khu vực Thới Lai tiền thân từ Trung tâm Y tế huyện, trải qua các giai đoạn chuyển mình mạnh mẽ. Từ những ngày đầu cơ sở vật chất đơn sơ, bệnh viện ngày nay đã vươn lên thành cơ sở y tế đa khoa vững mạnh ở cửa ngõ phía Tây thành phố Cần Thơ, trang bị kỹ thuật tiên tiến và quy tụ đội ngũ thầy thuốc giàu y đức.",
+      "Bệnh viện Đa khoa khu vực Thới Lai có quá trình hình thành và phát triển gắn liền với sự phát triển của huyện Thới Lai trước đây và quá trình kiện toàn hệ thống y tế thành phố Cần Thơ. Từ những ngày đầu còn nhiều khó khăn về cơ sở vật chất, trang thiết bị và nhân lực, qua nhiều giai đoạn tổ chức và phát triển, đơn vị từng bước nâng cao năng lực chuyên môn, đầu tư cơ sở vật chất, ứng dụng công nghệ thông tin và mở rộng các dịch vụ kỹ thuật, đáp ứng ngày càng tốt hơn nhu cầu khám bệnh, chữa bệnh và chăm sóc sức khỏe của Nhân dân.",
+    ),
+    version_showTimeline: boolean("version_show_timeline").default(true),
+    version_timelineKicker: varchar("version_timeline_kicker").default(
+      "DÒNG THỜI GIAN",
+    ),
+    version_timelineTitle: varchar("version_timeline_title").default(
+      "Những dấu mốc phát triển tiêu biểu",
+    ),
+    version_timelineDesc: varchar("version_timeline_desc").default(
+      "Hành trình xây dựng và phát triển của Bệnh viện Đa khoa khu vực Thới Lai qua các thời kỳ.",
+    ),
+    version_showCoreValues: boolean("version_show_core_values").default(true),
+    version_coreValuesKicker: varchar("version_core_values_kicker").default(
+      "KIM CHỈ NAM HÀNH ĐỘNG",
+    ),
+    version_coreValuesTitle: varchar("version_core_values_title").default(
+      "Sứ mệnh – Tầm nhìn – Giá trị cốt lõi",
+    ),
+    version_coreValuesDesc: varchar("version_core_values_desc").default(
+      "Những định hướng nền tảng để tập thể viên chức, người lao động Bệnh viện Đa khoa khu vực Thới Lai không ngừng nâng cao chất lượng phục vụ người bệnh.",
     ),
     version_coreValues_missionTitle: varchar(
       "version_core_values_mission_title",
     ).default(
-      "Chăm sóc sức khỏe nhân dân bằng cả trái tim và trách nhiệm cao nhất.",
+      "Cung cấp dịch vụ khám bệnh, chữa bệnh an toàn, chất lượng và tận tâm; góp phần bảo vệ, chăm sóc và nâng cao sức khỏe Nhân dân.",
     ),
     version_coreValues_visionTitle: varchar(
       "version_core_values_vision_title",
     ).default(
-      "Xây dựng Bệnh viện Đa khoa Khu vực hiện đại, chuyên sâu, thân thiện và văn minh.",
+      "Xây dựng Bệnh viện Đa khoa khu vực Thới Lai từng bước hiện đại, chuyên nghiệp, thân thiện; phát triển chuyên môn kỹ thuật phù hợp với nhu cầu chăm sóc sức khỏe của người dân trong khu vực.",
     ),
+    version_showJourney: boolean("version_show_journey").default(true),
+    version_journeyKicker: varchar("version_journey_kicker").default(
+      "HÀNH TRÌNH TIẾP NỐI",
+    ),
+    version_journeyTitle: varchar("version_journey_title").default(
+      "Kế thừa và Vươn tầm phát triển",
+    ),
+    version_journeyDesc: varchar("version_journey_desc").default(
+      "Trải qua nhiều giai đoạn tổ chức và phát triển, mỗi giai đoạn đều đánh dấu một bước chuyển quan trọng trong quá trình xây dựng hệ thống y tế phục vụ Nhân dân.",
+    ),
+    version_journeyBottomText: varchar("version_journey_bottom_text").default(
+      "Bệnh viện Đa khoa khu vực Thới Lai hôm nay tiếp tục kế thừa những giá trị đã được xây dựng qua nhiều thế hệ cán bộ, viên chức và người lao động; đồng thời không ngừng đổi mới, nâng cao chất lượng chuyên môn, ứng dụng công nghệ và cải tiến phong cách phục vụ, hướng đến mục tiêu chăm sóc sức khỏe người dân ngày càng tốt hơn.",
+    ),
+    version_showAchievements: boolean("version_show_achievements").default(
+      true,
+    ),
+    version_achievementsKicker: varchar("version_achievements_kicker").default(
+      "THÀNH QUẢ ĐẠT ĐƯỢC",
+    ),
+    version_achievementsTitle: varchar("version_achievements_title").default(
+      "Thành tựu tiêu biểu",
+    ),
+    version_achievementsDesc: varchar("version_achievements_desc").default(
+      "Ghi nhận những đóng góp bền bỉ vì sự nghiệp bảo vệ, chăm sóc và nâng cao sức khỏe cộng đồng.",
+    ),
+    version_showContent: boolean("version_show_content").default(true),
     version_content: jsonb("version_content"),
-    version_appearance_primaryColor: varchar(
-      "version_appearance_primary_color",
-    ).default("#0878D1"),
-    version_appearance_accentColor: varchar(
-      "version_appearance_accent_color",
-    ).default("#16A36A"),
+    version_showCta: boolean("version_show_cta").default(true),
+    version_ctaTitle: varchar("version_cta_title").default(
+      "Tiếp tục phát triển vì sức khỏe của bạn và gia đình",
+    ),
+    version_ctaDesc: varchar("version_cta_desc").default(
+      "Bệnh viện Đa khoa Khu vực Thới Lai luôn sẵn sàng đồng hành, lắng nghe và phục vụ với sự chuyên nghiệp, tận tình nhất.",
+    ),
+    version_ctaBtnPrimaryText: varchar("version_cta_btn_primary_text").default(
+      "Xem Sơ đồ tổ chức →",
+    ),
+    version_ctaBtnPrimaryUrl: varchar("version_cta_btn_primary_url").default(
+      "/so-do-to-chuc",
+    ),
+    version_ctaBtnSecondaryText: varchar(
+      "version_cta_btn_secondary_text",
+    ).default("Danh sách Khoa – Phòng"),
+    version_ctaBtnSecondaryUrl: varchar(
+      "version_cta_btn_secondary_url",
+    ).default("/khoa-phong"),
+    version_primaryColor: varchar("version_primary_color").default("#0878D1"),
+    version_accentColor: varchar("version_accent_color").default("#16A36A"),
+    version_headingColor: varchar("version_heading_color").default("#102a43"),
+    version_textColor: varchar("version_text_color").default("#486581"),
+    version_cardBgColor: varchar("version_card_bg_color").default("#ffffff"),
+    version_fontFamily: hist_font_family("version_font_family").default(
+      "inherit",
+    ),
+    version_cardPadding: numeric("version_card_padding", {
+      mode: "number",
+    }).default(24),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,
@@ -10772,6 +13442,7 @@ export const about_page_stats = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
     number: varchar("number").notNull(),
     label: varchar("label").notNull(),
     icon: varchar("icon"),
@@ -10793,9 +13464,11 @@ export const about_page_core_principles_items = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
     icon: varchar("icon").notNull(),
     title: varchar("title").notNull(),
     desc: varchar("desc").notNull(),
+    textAlign: ab_cp_align("text_align").default("left"),
   },
   (columns) => [
     index("about_page_core_principles_items_order_idx").on(columns._order),
@@ -10816,8 +13489,10 @@ export const about_page_facilities_items = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
     title: varchar("title").notNull(),
     desc: varchar("desc").notNull(),
+    textAlign: ab_fc_align("text_align").default("left"),
   },
   (columns) => [
     index("about_page_facilities_items_order_idx").on(columns._order),
@@ -10836,6 +13511,7 @@ export const about_page_related_links_links = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
     title: varchar("title").notNull(),
     url: varchar("url").notNull(),
     desc: varchar("desc"),
@@ -10855,6 +13531,7 @@ export const about_page = pgTable(
   "about_page",
   {
     id: serial("id").primaryKey(),
+    hero_enabled: boolean("hero_enabled").default(true),
     hero_bannerImage: integer("hero_banner_image_id").references(
       () => media.id,
       {
@@ -10868,18 +13545,22 @@ export const about_page = pgTable(
     hero_intro: varchar("hero_intro").default(
       "Bệnh viện Đa khoa Khu vực Thới Lai là cơ sở y tế đa khoa công lập trực thuộc Sở Y tế thành phố Cần Thơ, giữ vai trò khám chữa bệnh trọng điểm tại cửa ngõ phía Tây, không ngừng đổi mới chất lượng chuyên môn và phong cách phục vụ.",
     ),
+    hero_textAlign: ab_hero_align("hero_text_align").default("left"),
+    corePrinciples_enabled: boolean("core_principles_enabled").default(true),
     corePrinciples_title: varchar("core_principles_title").default(
-      "Giá trị cốt lõi & Văn hóa phục vụ",
+      "Chức năng & Nhiệm vụ trọng tâm",
     ),
     corePrinciples_subtitle: varchar("core_principles_subtitle").default(
-      "Lấy người bệnh làm trung tâm trong mọi quyết định chuyên môn và quy trình chăm sóc y tế.",
+      "Thực hiện chức năng khám chữa bệnh đa khoa, cấp cứu và chăm sóc sức khỏe nhân dân toàn diện theo quy chuẩn của Bộ Y tế và Sở Y tế TP. Cần Thơ.",
     ),
+    facilities_enabled: boolean("facilities_enabled").default(true),
     facilities_title: varchar("facilities_title").default(
       "Cơ sở hạ tầng & Trang thiết bị y tế",
     ),
     facilities_description: varchar("facilities_description").default(
       "Bệnh viện được đầu tư đồng bộ hệ thống máy móc cận lâm sàng hiện đại, phòng mổ đạt chuẩn vô khuẩn và khu điều trị nội trú khang trang.",
     ),
+    commitment_enabled: boolean("commitment_enabled").default(true),
     commitment_title: varchar("commitment_title").default(
       "Cam kết chất lượng phục vụ nhân dân",
     ),
@@ -10889,6 +13570,10 @@ export const about_page = pgTable(
     commitment_author: varchar("commitment_author").default(
       "Ban Giám đốc Bệnh viện Đa khoa Khu vực Thới Lai",
     ),
+    commitment_textAlign: ab_cm_align("commitment_text_align").default(
+      "center",
+    ),
+    relatedLinks_enabled: boolean("related_links_enabled").default(true),
     relatedLinks_title: varchar("related_links_title").default(
       "Thông tin chuyên đề khác",
     ),
@@ -10929,6 +13614,7 @@ export const _about_page_v_version_stats = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
     number: varchar("number").notNull(),
     label: varchar("label").notNull(),
     icon: varchar("icon"),
@@ -10951,9 +13637,11 @@ export const _about_page_v_version_core_principles_items = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
     icon: varchar("icon").notNull(),
     title: varchar("title").notNull(),
     desc: varchar("desc").notNull(),
+    textAlign: ab_cp_align("text_align").default("left"),
     _uuid: varchar("_uuid"),
   },
   (columns) => [
@@ -10977,8 +13665,10 @@ export const _about_page_v_version_facilities_items = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
     title: varchar("title").notNull(),
     desc: varchar("desc").notNull(),
+    textAlign: ab_fc_align("text_align").default("left"),
     _uuid: varchar("_uuid"),
   },
   (columns) => [
@@ -11002,6 +13692,7 @@ export const _about_page_v_version_related_links_links = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
     title: varchar("title").notNull(),
     url: varchar("url").notNull(),
     desc: varchar("desc"),
@@ -11026,6 +13717,7 @@ export const _about_page_v = pgTable(
   "_about_page_v",
   {
     id: serial("id").primaryKey(),
+    version_hero_enabled: boolean("version_hero_enabled").default(true),
     version_hero_bannerImage: integer(
       "version_hero_banner_image_id",
     ).references(() => media.id, {
@@ -11040,13 +13732,22 @@ export const _about_page_v = pgTable(
     version_hero_intro: varchar("version_hero_intro").default(
       "Bệnh viện Đa khoa Khu vực Thới Lai là cơ sở y tế đa khoa công lập trực thuộc Sở Y tế thành phố Cần Thơ, giữ vai trò khám chữa bệnh trọng điểm tại cửa ngõ phía Tây, không ngừng đổi mới chất lượng chuyên môn và phong cách phục vụ.",
     ),
+    version_hero_textAlign: ab_hero_align("version_hero_text_align").default(
+      "left",
+    ),
+    version_corePrinciples_enabled: boolean(
+      "version_core_principles_enabled",
+    ).default(true),
     version_corePrinciples_title: varchar(
       "version_core_principles_title",
-    ).default("Giá trị cốt lõi & Văn hóa phục vụ"),
+    ).default("Chức năng & Nhiệm vụ trọng tâm"),
     version_corePrinciples_subtitle: varchar(
       "version_core_principles_subtitle",
     ).default(
-      "Lấy người bệnh làm trung tâm trong mọi quyết định chuyên môn và quy trình chăm sóc y tế.",
+      "Thực hiện chức năng khám chữa bệnh đa khoa, cấp cứu và chăm sóc sức khỏe nhân dân toàn diện theo quy chuẩn của Bộ Y tế và Sở Y tế TP. Cần Thơ.",
+    ),
+    version_facilities_enabled: boolean("version_facilities_enabled").default(
+      true,
     ),
     version_facilities_title: varchar("version_facilities_title").default(
       "Cơ sở hạ tầng & Trang thiết bị y tế",
@@ -11055,6 +13756,9 @@ export const _about_page_v = pgTable(
       "version_facilities_description",
     ).default(
       "Bệnh viện được đầu tư đồng bộ hệ thống máy móc cận lâm sàng hiện đại, phòng mổ đạt chuẩn vô khuẩn và khu điều trị nội trú khang trang.",
+    ),
+    version_commitment_enabled: boolean("version_commitment_enabled").default(
+      true,
     ),
     version_commitment_title: varchar("version_commitment_title").default(
       "Cam kết chất lượng phục vụ nhân dân",
@@ -11065,6 +13769,12 @@ export const _about_page_v = pgTable(
     version_commitment_author: varchar("version_commitment_author").default(
       "Ban Giám đốc Bệnh viện Đa khoa Khu vực Thới Lai",
     ),
+    version_commitment_textAlign: ab_cm_align(
+      "version_commitment_text_align",
+    ).default("center"),
+    version_relatedLinks_enabled: boolean(
+      "version_related_links_enabled",
+    ).default(true),
     version_relatedLinks_title: varchar("version_related_links_title").default(
       "Thông tin chuyên đề khác",
     ),
@@ -11114,6 +13824,256 @@ export const _about_page_v = pgTable(
     ),
     index("_about_page_v_created_at_idx").on(columns.createdAt),
     index("_about_page_v_updated_at_idx").on(columns.updatedAt),
+  ],
+);
+
+export const wh_milestones = pgTable(
+  "wh_milestones",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    time: varchar("time").notNull(),
+    title: varchar("title").notNull(),
+    desc: varchar("desc"),
+    highlight: boolean("highlight").default(false),
+    textAlign: wh_ms_align("text_align").default("left"),
+    titleColor: wh_ms_tcolor("title_color").default("default"),
+    titleSize: wh_ms_tsize("title_size").default("normal"),
+    descColor: wh_ms_dcolor("desc_color").default("default"),
+    descSize: wh_ms_dsize("desc_size").default("normal"),
+  },
+  (columns) => [
+    index("wh_milestones_order_idx").on(columns._order),
+    index("wh_milestones_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [working_hours_settings.id],
+      name: "wh_milestones_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const wh_dept_rows = pgTable(
+  "wh_dept_rows",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    label: varchar("label").notNull(),
+    value: varchar("value").notNull(),
+    highlight: boolean("highlight").default(false),
+  },
+  (columns) => [
+    index("wh_dept_rows_order_idx").on(columns._order),
+    index("wh_dept_rows_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [wh_depts.id],
+      name: "wh_dept_rows_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const wh_depts = pgTable(
+  "wh_depts",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    title: varchar("title").notNull(),
+    subtitle: varchar("subtitle"),
+    iconType: wh_dept_icon("icon_type").default("stethoscope"),
+    customIconText: varchar("custom_icon_text"),
+    badgeColor: wh_dept_badge_color("badge_color").default("blue"),
+    textAlign: wh_dept_align("text_align").default("left"),
+    titleColor: wh_dept_tcolor("title_color").default("default"),
+    titleSize: wh_dept_tsize("title_size").default("normal"),
+    note: varchar("note"),
+    noteColor: wh_dept_ncolor("note_color").default("default"),
+    noteSize: wh_dept_nsize("note_size").default("normal"),
+  },
+  (columns) => [
+    index("wh_depts_order_idx").on(columns._order),
+    index("wh_depts_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [working_hours_settings.id],
+      name: "wh_depts_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const wh_sched_links = pgTable(
+  "wh_sched_links",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    title: varchar("title").notNull(),
+    subtitle: varchar("subtitle"),
+    url: varchar("url").notNull(),
+    iconType: wh_link_icon("icon_type").default("calendar"),
+    isEmergency: boolean("is_emergency").default(false),
+    textAlign: wh_link_align("text_align").default("left"),
+    titleColor: wh_link_tcolor("title_color").default("default"),
+    titleSize: wh_link_tsize("title_size").default("normal"),
+  },
+  (columns) => [
+    index("wh_sched_links_order_idx").on(columns._order),
+    index("wh_sched_links_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [working_hours_settings.id],
+      name: "wh_sched_links_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const wh_notes = pgTable(
+  "wh_notes",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    boldPrefix: varchar("bold_prefix"),
+    content: varchar("content").notNull(),
+    textAlign: wh_note_align("text_align").default("left"),
+    textColor: wh_note_tcolor("text_color").default("default"),
+    textSize: wh_note_tsize("text_size").default("normal"),
+  },
+  (columns) => [
+    index("wh_notes_order_idx").on(columns._order),
+    index("wh_notes_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [working_hours_settings.id],
+      name: "wh_notes_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const working_hours_settings = pgTable(
+  "working_hours_settings",
+  {
+    id: serial("id").primaryKey(),
+    hero_badgeText: varchar("hero_badge_text").default(
+      "THÔNG BÁO CHÍNH THỨC TỪ BỆNH VIỆN",
+    ),
+    hero_title: varchar("hero_title")
+      .notNull()
+      .default("Thời gian Tiếp nhận & Khám chữa bệnh"),
+    hero_titleSize:
+      enum_working_hours_settings_hero_title_size("hero_title_size").default(
+        "default",
+      ),
+    hero_titleColor:
+      enum_working_hours_settings_hero_title_color("hero_title_color").default(
+        "white",
+      ),
+    hero_slogan: varchar("hero_slogan").default(
+      "Nhằm nâng cao chất lượng phục vụ, tối ưu quy trình khám bệnh, rút ngắn thời gian chờ đợi và đáp ứng tốt hơn nhu cầu chăm sóc sức khỏe của người dân, Bệnh viện Đa khoa Khu vực Thới Lai điều chỉnh thời gian tiếp nhận từ 06:00 và bắt đầu khám bệnh từ 06:30.",
+    ),
+    hero_bgType:
+      enum_working_hours_settings_hero_bg_type("hero_bg_type").default(
+        "gradient",
+      ),
+    hero_bgGradient:
+      enum_working_hours_settings_hero_bg_gradient("hero_bg_gradient").default(
+        "blue-teal",
+      ),
+    hero_bgImage: integer("hero_bg_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    hero_overlayOpacity: enum_working_hours_settings_hero_overlay_opacity(
+      "hero_overlay_opacity",
+    ).default("medium"),
+    hero_showPrimaryBtn: boolean("hero_show_primary_btn").default(true),
+    hero_primaryBtnText: varchar("hero_primary_btn_text").default(
+      "Xem khung giờ khám mới",
+    ),
+    hero_primaryBtnLink: varchar("hero_primary_btn_link").default("#kham-benh"),
+    hero_showSecondaryBtn: boolean("hero_show_secondary_btn").default(true),
+    hero_secondaryBtnText: varchar("hero_secondary_btn_text").default(
+      "Tra cứu lịch trực tuần & ca kíp",
+    ),
+    hero_secondaryBtnLink: varchar("hero_secondary_btn_link").default(
+      "/lich-kham",
+    ),
+    announcement_enabled: boolean("announcement_enabled").default(true),
+    announcement_badge: varchar("announcement_badge").default(
+      "THÔNG BÁO ĐIỀU CHỈNH THỜI GIAN TIẾP NHẬN & KHÁM BỆNH",
+    ),
+    announcement_effectiveDate: varchar("announcement_effective_date").default(
+      "Kể từ ngày 10 tháng 8 năm 2026",
+    ),
+    announcement_introText: varchar("announcement_intro_text").default(
+      "Nhằm nâng cao chất lượng phục vụ, tối ưu quy trình khám bệnh, rút ngắn thời gian chờ đợi và đáp ứng tốt hơn nhu cầu chăm sóc sức khỏe của người dân, kể từ ngày 10 tháng 8 năm 2026, Bệnh viện Đa khoa Khu vực Thới Lai điều chỉnh thời gian tiếp nhận và khám bệnh như sau:",
+    ),
+    announcement_closingText: varchar("announcement_closing_text").default(
+      "Bệnh viện Đa khoa Khu vực Thới Lai trân trọng thông báo để quý bà con chủ động sắp xếp thời gian đến khám, chữa bệnh. Kính mong quý bà con chia sẻ thông tin để nhiều người cùng biết.",
+    ),
+    emergencyBanner_enabled: boolean("emergency_banner_enabled").default(true),
+    emergencyBanner_textAlign:
+      enum_working_hours_settings_emergency_banner_text_align(
+        "emergency_banner_text_align",
+      ).default("left"),
+    emergencyBanner_title: varchar("emergency_banner_title").default(
+      "KHOA CẤP CỨU HOẠT ĐỘNG 24/24 (24/7)",
+    ),
+    emergencyBanner_titleSize:
+      enum_working_hours_settings_emergency_banner_title_size(
+        "emergency_banner_title_size",
+      ).default("normal"),
+    emergencyBanner_description: varchar(
+      "emergency_banner_description",
+    ).default(
+      "Tiếp nhận, xử trí cấp cứu mọi trường hợp khẩn cấp liên tục tất cả các ngày trong tuần, thứ Bảy, Chủ Nhật và ngày Lễ.",
+    ),
+    emergencyBanner_descSize:
+      enum_working_hours_settings_emergency_banner_desc_size(
+        "emergency_banner_desc_size",
+      ).default("normal"),
+    emergencyBanner_hotline: varchar("emergency_banner_hotline").default(
+      "0292 3686 115",
+    ),
+    emergencyBanner_buttonLabel: varchar(
+      "emergency_banner_button_label",
+    ).default("HOTLINE CẤP CỨU: 0292 3686 115"),
+    scheduleLinksSection_enabled: boolean(
+      "schedule_links_section_enabled",
+    ).default(true),
+    scheduleLinksSection_title: varchar("schedule_links_section_title").default(
+      "Tra cứu Lịch phân công & Trực theo từng chuyên mục",
+    ),
+    scheduleLinksSection_description: varchar(
+      "schedule_links_section_description",
+    ).default(
+      "Chọn ngay liên kết tương ứng bên dưới để chuyển trực tiếp đến đúng Tab hiển thị trên hệ thống lịch của bệnh viện:",
+    ),
+    notesSection_enabled: boolean("notes_section_enabled").default(true),
+    notesSection_title: varchar("notes_section_title").default(
+      "LƯU Ý DÀNH CHO NGƯỜI BỆNH VÀ THÂN NHÂN",
+    ),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+  },
+  (columns) => [
+    index("working_hours_settings_hero_hero_bg_image_idx").on(
+      columns.hero_bgImage,
+    ),
   ],
 );
 
@@ -11503,13 +14463,275 @@ export const system_settings = pgTable("system_settings", {
   }),
 });
 
-export const schedule_settings = pgTable("schedule_settings", {
+export const sch_notes = pgTable(
+  "sch_notes",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    boldPrefix: varchar("bold_prefix"),
+    content: varchar("content").notNull(),
+    textAlign: sch_n_align("text_align").default("left"),
+    textColor: sch_n_tcolor("text_color").default("default"),
+    textSize: sch_n_tsize("text_size").default("normal"),
+  },
+  (columns) => [
+    index("sch_notes_order_idx").on(columns._order),
+    index("sch_notes_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [schedule_settings.id],
+      name: "sch_notes_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const schedule_settings = pgTable(
+  "schedule_settings",
+  {
+    id: serial("id").primaryKey(),
+    hero_eyebrow: varchar("hero_eyebrow").default(
+      "KHÁM CHỮA BỆNH & TRỰC BỆNH VIỆN",
+    ),
+    hero_title: varchar("hero_title")
+      .notNull()
+      .default("Lịch khám & Lịch trực bệnh viện"),
+    hero_titleSize:
+      enum_schedule_settings_hero_title_size("hero_title_size").default(
+        "default",
+      ),
+    hero_titleColor:
+      enum_schedule_settings_hero_title_color("hero_title_color").default(
+        "white",
+      ),
+    hero_description: varchar("hero_description").default(
+      "Tra cứu lịch phân công bác sĩ khám bệnh, lịch trực cấp cứu 24/24 và lịch trực tuần của Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    hero_bgType:
+      enum_schedule_settings_hero_bg_type("hero_bg_type").default("gradient"),
+    hero_bgGradient:
+      enum_schedule_settings_hero_bg_gradient("hero_bg_gradient").default(
+        "blue-teal",
+      ),
+    hero_bgImage: integer("hero_bg_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    hero_overlayOpacity: enum_schedule_settings_hero_overlay_opacity(
+      "hero_overlay_opacity",
+    ).default("medium"),
+    quickNotice_enabled: boolean("quick_notice_enabled").default(true),
+    quickNotice_textAlign: enum_schedule_settings_quick_notice_text_align(
+      "quick_notice_text_align",
+    ).default("left"),
+    quickNotice_title: varchar("quick_notice_title").default(
+      "Khoa Cấp cứu tiếp nhận bệnh nhân 24/24 tất cả các ngày trong tuần",
+    ),
+    quickNotice_titleColor: enum_schedule_settings_quick_notice_title_color(
+      "quick_notice_title_color",
+    ).default("red"),
+    quickNotice_content: varchar("quick_notice_content").default(
+      "Lịch trực cấp cứu và danh sách bác sĩ thường trực 24/7 được cập nhật thường xuyên. Trường hợp khẩn cấp, vui lòng liên hệ ngay đường dây nóng cấp cứu để được hỗ trợ kịp thời.",
+    ),
+    quickNotice_hotline: varchar("quick_notice_hotline").default(
+      "0292 3686 115",
+    ),
+    notesSection_enabled: boolean("notes_section_enabled").default(true),
+    notesSection_title: varchar("notes_section_title").default(
+      "LƯU Ý QUAN TRỌNG KHI ĐẾN KHÁM BỆNH",
+    ),
+    preferWeeklyImage: boolean("prefer_weekly_image").default(true),
+    showDailyTab: boolean("show_daily_tab").default(true),
+    showWeeklyTab: boolean("show_weekly_tab").default(true),
+    showAttachmentTab: boolean("show_attachment_tab").default(true),
+    cacheMinutes: numeric("cache_minutes", { mode: "number" }).default(5),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+  },
+  (columns) => [
+    index("schedule_settings_hero_hero_bg_image_idx").on(columns.hero_bgImage),
+  ],
+);
+
+export const appointment_settings_time_slots = pgTable(
+  "appointment_settings_time_slots",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    label: varchar("label").notNull(),
+    value: varchar("value").notNull(),
+    isDefault: boolean("is_default").default(false),
+  },
+  (columns) => [
+    index("appointment_settings_time_slots_order_idx").on(columns._order),
+    index("appointment_settings_time_slots_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [appointment_settings.id],
+      name: "appointment_settings_time_slots_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const appointment_settings_custom_specialties = pgTable(
+  "appointment_settings_custom_specialties",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    name: varchar("name"),
+    code: varchar("code"),
+  },
+  (columns) => [
+    index("appointment_settings_custom_specialties_order_idx").on(
+      columns._order,
+    ),
+    index("appointment_settings_custom_specialties_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [appointment_settings.id],
+      name: "appointment_settings_custom_specialties_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const appointment_settings_custom_fields = pgTable(
+  "appointment_settings_custom_fields",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    name: varchar("name").notNull(),
+    label: varchar("label").notNull(),
+    required: boolean("required").default(false),
+    type: enum_appointment_settings_custom_fields_type("type")
+      .notNull()
+      .default("text"),
+    column:
+      enum_appointment_settings_custom_fields_column("column").default("left"),
+    placeholder: varchar("placeholder"),
+    options: varchar("options"),
+  },
+  (columns) => [
+    index("appointment_settings_custom_fields_order_idx").on(columns._order),
+    index("appointment_settings_custom_fields_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [appointment_settings.id],
+      name: "appointment_settings_custom_fields_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const appointment_settings = pgTable("appointment_settings", {
   id: serial("id").primaryKey(),
-  preferWeeklyImage: boolean("prefer_weekly_image").default(true),
-  showDailyTab: boolean("show_daily_tab").default(true),
-  showWeeklyTab: boolean("show_weekly_tab").default(true),
-  showAttachmentTab: boolean("show_attachment_tab").default(true),
-  cacheMinutes: numeric("cache_minutes", { mode: "number" }).default(5),
+  enabled: boolean("enabled").default(true),
+  pageTitle: varchar("page_title")
+    .notNull()
+    .default("Đăng ký đặt lịch khám tại cơ sở"),
+  eyebrow: varchar("eyebrow").default("DỊCH VỤ NGƯỜI BỆNH"),
+  pageDescription: varchar("page_description").default(
+    "Chủ động đăng ký khám bệnh tại Bệnh viện Đa khoa Khu vực Thới Lai. Quý khách sẽ nhận được mã phiếu hẹn và được ưu tiên hỗ trợ tiếp đón nhanh tại viện.",
+  ),
+  leftColumnTitle: varchar("left_column_title").default("Thông tin khách hàng"),
+  rightColumnTitle: varchar("right_column_title").default("Chuyên khoa"),
+  submitButtonBg: varchar("submit_button_bg").default("#0ea5e9"),
+  submitButtonHoverBg: varchar("submit_button_hover_bg").default("#0284c7"),
+  submitButtonTextColor: varchar("submit_button_text_color").default("#ffffff"),
+  formBackground: varchar("form_background").default("#ffffff"),
+  inputBorderColor: varchar("input_border_color").default("#e2e8f0"),
+  inputFocusBorderColor: varchar("input_focus_border_color").default("#f472b6"),
+  headingColor: varchar("heading_color").default("#1e293b"),
+  labelColor: varchar("label_color").default("#334155"),
+  requiredStarColor: varchar("required_star_color").default("#ef4444"),
+  fontFamily:
+    enum_appointment_settings_font_family("font_family").default("inherit"),
+  submitButtonText: varchar("submit_button_text").default("Đăng ký"),
+  inputBorderRadius: numeric("input_border_radius", { mode: "number" }).default(
+    8,
+  ),
+  submitButtonRadius: numeric("submit_button_radius", {
+    mode: "number",
+  }).default(9999),
+  formMaxWidth: numeric("form_max_width", { mode: "number" }).default(960),
+  specialtySource:
+    enum_appointment_settings_specialty_source("specialty_source").default(
+      "auto",
+    ),
+  nameFieldLabel: varchar("name_field_label").default("Họ và tên"),
+  nameFieldPlaceholder: varchar("name_field_placeholder").default("Họ và tên"),
+  phoneFieldLabel: varchar("phone_field_label").default("Số điện thoại"),
+  phoneFieldPlaceholder: varchar("phone_field_placeholder").default(
+    "Số điện thoại",
+  ),
+  emailFieldLabel: varchar("email_field_label").default("Email"),
+  emailFieldPlaceholder: varchar("email_field_placeholder").default("Email"),
+  addressFieldLabel: varchar("address_field_label").default("Địa chỉ"),
+  addressFieldPlaceholder: varchar("address_field_placeholder").default(
+    "Địa chỉ",
+  ),
+  dobFieldLabel: varchar("dob_field_label").default("Ngày sinh"),
+  genderFieldLabel: varchar("gender_field_label").default("Giới tính"),
+  specialtyFieldLabel: varchar("specialty_field_label").default("Chuyên khoa"),
+  specialtyFieldPlaceholder: varchar("specialty_field_placeholder").default(
+    "-- Chọn chuyên khoa --",
+  ),
+  doctorFieldLabel: varchar("doctor_field_label").default(
+    "Bác sĩ mong muốn khám (tùy chọn)",
+  ),
+  appointmentDateFieldLabel: varchar("appointment_date_field_label").default(
+    "Ngày khám",
+  ),
+  symptomsFieldLabel: varchar("symptoms_field_label").default(
+    "Thông tin bổ sung",
+  ),
+  symptomsFieldPlaceholder: varchar("symptoms_field_placeholder").default(
+    "Thông tin bổ sung",
+  ),
+  timeSlotFieldLabel: varchar("time_slot_field_label").default(
+    "Khung giờ khám",
+  ),
+  insuranceFieldLabel: varchar("insurance_field_label").default(
+    "Mã số thẻ BHYT (nếu có)",
+  ),
+  showEmail: boolean("show_email").default(true),
+  showAddress: boolean("show_address").default(true),
+  showInsurance: boolean("show_insurance").default(true),
+  showDoctorSelect: boolean("show_doctor_select").default(true),
+  showDob: boolean("show_dob").default(true),
+  showGender: boolean("show_gender").default(true),
+  showSymptoms: boolean("show_symptoms").default(true),
+  showTimeSlot: boolean("show_time_slot").default(true),
+  requireEmail: boolean("require_email").default(false),
+  requireAddress: boolean("require_address").default(false),
+  requireDob: boolean("require_dob").default(false),
+  requireSymptoms: boolean("require_symptoms").default(false),
+  hospitalGuidance: varchar("hospital_guidance").default(
+    "• Vui lòng có mặt tại Quầy Tiếp đón trước giờ hẹn 15 phút.\n• Mang theo Căn cước công dân (hoặc VNeID mức 2) và thẻ BHYT (nếu có).\n• Xuất trình Mã phiếu hẹn hoặc Quét mã QR tại bàn hướng dẫn để nhận số thứ tự ưu tiên.",
+  ),
+  hotlineSupport: varchar("hotline_support").default("02923686115"),
+  maxSubmissionsPerIp: numeric("max_submissions_per_ip", {
+    mode: "number",
+  }).default(5),
+  minSecondsBetweenSubmissions: numeric("min_seconds_between_submissions", {
+    mode: "number",
+  }).default(60),
+  preventDuplicateBooking: boolean("prevent_duplicate_booking").default(true),
   updatedAt: timestamp("updated_at", {
     mode: "string",
     withTimezone: true,
@@ -11521,6 +14743,35 @@ export const schedule_settings = pgTable("schedule_settings", {
     precision: 3,
   }),
 });
+
+export const appointment_settings_rels = pgTable(
+  "appointment_settings_rels",
+  {
+    id: serial("id").primaryKey(),
+    order: integer("order"),
+    parent: integer("parent_id").notNull(),
+    path: varchar("path").notNull(),
+    specialtiesID: integer("specialties_id"),
+  },
+  (columns) => [
+    index("appointment_settings_rels_order_idx").on(columns.order),
+    index("appointment_settings_rels_parent_idx").on(columns.parent),
+    index("appointment_settings_rels_path_idx").on(columns.path),
+    index("appointment_settings_rels_specialties_id_idx").on(
+      columns.specialtiesID,
+    ),
+    foreignKey({
+      columns: [columns["parent"]],
+      foreignColumns: [appointment_settings.id],
+      name: "appointment_settings_rels_parent_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["specialtiesID"]],
+      foreignColumns: [specialties.id],
+      name: "appointment_settings_rels_specialties_fk",
+    }).onDelete("cascade"),
+  ],
+);
 
 export const quick_links_settings_items = pgTable(
   "quick_links_settings_items",
@@ -11758,15 +15009,15 @@ export const relations_news_attachments = relations(
   }),
 );
 export const relations_news = relations(news, ({ one, many }) => ({
-  cover: one(media, {
-    fields: [news.cover],
-    references: [media.id],
-    relationName: "cover",
-  }),
   categoryRef: one(categories, {
     fields: [news.categoryRef],
     references: [categories.id],
     relationName: "categoryRef",
+  }),
+  cover: one(media, {
+    fields: [news.cover],
+    references: [media.id],
+    relationName: "cover",
   }),
   attachments: many(news_attachments, {
     relationName: "attachments",
@@ -11798,15 +15049,15 @@ export const relations__news_v = relations(_news_v, ({ one, many }) => ({
     references: [news.id],
     relationName: "parent",
   }),
-  version_cover: one(media, {
-    fields: [_news_v.version_cover],
-    references: [media.id],
-    relationName: "version_cover",
-  }),
   version_categoryRef: one(categories, {
     fields: [_news_v.version_categoryRef],
     references: [categories.id],
     relationName: "version_categoryRef",
+  }),
+  version_cover: one(media, {
+    fields: [_news_v.version_cover],
+    references: [media.id],
+    relationName: "version_cover",
   }),
   version_attachments: many(_news_v_version_attachments, {
     relationName: "version_attachments",
@@ -11833,15 +15084,15 @@ export const relations_notices_attachments = relations(
   }),
 );
 export const relations_notices = relations(notices, ({ one, many }) => ({
-  cover: one(media, {
-    fields: [notices.cover],
-    references: [media.id],
-    relationName: "cover",
-  }),
   categoryRef: one(categories, {
     fields: [notices.categoryRef],
     references: [categories.id],
     relationName: "categoryRef",
+  }),
+  cover: one(media, {
+    fields: [notices.cover],
+    references: [media.id],
+    relationName: "cover",
   }),
   attachments: many(notices_attachments, {
     relationName: "attachments",
@@ -11873,15 +15124,15 @@ export const relations__notices_v = relations(_notices_v, ({ one, many }) => ({
     references: [notices.id],
     relationName: "parent",
   }),
-  version_cover: one(media, {
-    fields: [_notices_v.version_cover],
-    references: [media.id],
-    relationName: "version_cover",
-  }),
   version_categoryRef: one(categories, {
     fields: [_notices_v.version_categoryRef],
     references: [categories.id],
     relationName: "version_categoryRef",
+  }),
+  version_cover: one(media, {
+    fields: [_notices_v.version_cover],
+    references: [media.id],
+    relationName: "version_cover",
   }),
   version_attachments: many(_notices_v_version_attachments, {
     relationName: "version_attachments",
@@ -11920,15 +15171,15 @@ export const relations_procurement_change_log = relations(
 export const relations_procurement = relations(
   procurement,
   ({ one, many }) => ({
-    cover: one(media, {
-      fields: [procurement.cover],
-      references: [media.id],
-      relationName: "cover",
-    }),
     categoryRef: one(categories, {
       fields: [procurement.categoryRef],
       references: [categories.id],
       relationName: "categoryRef",
+    }),
+    cover: one(media, {
+      fields: [procurement.cover],
+      references: [media.id],
+      relationName: "cover",
     }),
     attachments: many(procurement_attachments, {
       relationName: "attachments",
@@ -11976,15 +15227,15 @@ export const relations__procurement_v = relations(
       references: [procurement.id],
       relationName: "parent",
     }),
-    version_cover: one(media, {
-      fields: [_procurement_v.version_cover],
-      references: [media.id],
-      relationName: "version_cover",
-    }),
     version_categoryRef: one(categories, {
       fields: [_procurement_v.version_categoryRef],
       references: [categories.id],
       relationName: "version_categoryRef",
+    }),
+    version_cover: one(media, {
+      fields: [_procurement_v.version_cover],
+      references: [media.id],
+      relationName: "version_cover",
     }),
     version_attachments: many(_procurement_v_version_attachments, {
       relationName: "version_attachments",
@@ -12005,15 +15256,15 @@ export const relations_documents = relations(documents, ({ one }) => ({
     references: [categories.id],
     relationName: "categoryRef",
   }),
-  cover: one(media, {
-    fields: [documents.cover],
-    references: [media.id],
-    relationName: "cover",
-  }),
   file: one(media, {
     fields: [documents.file],
     references: [media.id],
     relationName: "file",
+  }),
+  cover: one(media, {
+    fields: [documents.cover],
+    references: [media.id],
+    relationName: "cover",
   }),
   seoImage: one(media, {
     fields: [documents.seoImage],
@@ -12032,15 +15283,15 @@ export const relations__documents_v = relations(_documents_v, ({ one }) => ({
     references: [categories.id],
     relationName: "version_categoryRef",
   }),
-  version_cover: one(media, {
-    fields: [_documents_v.version_cover],
-    references: [media.id],
-    relationName: "version_cover",
-  }),
   version_file: one(media, {
     fields: [_documents_v.version_file],
     references: [media.id],
     relationName: "version_file",
+  }),
+  version_cover: one(media, {
+    fields: [_documents_v.version_cover],
+    references: [media.id],
+    relationName: "version_cover",
   }),
   version_seoImage: one(media, {
     fields: [_documents_v.version_seoImage],
@@ -12048,6 +15299,61 @@ export const relations__documents_v = relations(_documents_v, ({ one }) => ({
     relationName: "version_seoImage",
   }),
 }));
+export const relations_clinical_protocols = relations(
+  clinical_protocols,
+  ({ one }) => ({
+    specialty: one(specialties, {
+      fields: [clinical_protocols.specialty],
+      references: [specialties.id],
+      relationName: "specialty",
+    }),
+    file: one(media, {
+      fields: [clinical_protocols.file],
+      references: [media.id],
+      relationName: "file",
+    }),
+    cover: one(media, {
+      fields: [clinical_protocols.cover],
+      references: [media.id],
+      relationName: "cover",
+    }),
+    seoImage: one(media, {
+      fields: [clinical_protocols.seoImage],
+      references: [media.id],
+      relationName: "seoImage",
+    }),
+  }),
+);
+export const relations__clinical_protocols_v = relations(
+  _clinical_protocols_v,
+  ({ one }) => ({
+    parent: one(clinical_protocols, {
+      fields: [_clinical_protocols_v.parent],
+      references: [clinical_protocols.id],
+      relationName: "parent",
+    }),
+    version_specialty: one(specialties, {
+      fields: [_clinical_protocols_v.version_specialty],
+      references: [specialties.id],
+      relationName: "version_specialty",
+    }),
+    version_file: one(media, {
+      fields: [_clinical_protocols_v.version_file],
+      references: [media.id],
+      relationName: "version_file",
+    }),
+    version_cover: one(media, {
+      fields: [_clinical_protocols_v.version_cover],
+      references: [media.id],
+      relationName: "version_cover",
+    }),
+    version_seoImage: one(media, {
+      fields: [_clinical_protocols_v.version_seoImage],
+      references: [media.id],
+      relationName: "version_seoImage",
+    }),
+  }),
+);
 export const relations_departments_deputy_leaders = relations(
   departments_deputy_leaders,
   ({ one }) => ({
@@ -12094,26 +15400,62 @@ export const relations_departments = relations(
     }),
   }),
 );
-export const relations_specialties = relations(specialties, ({ one }) => ({
-  department: one(departments, {
-    fields: [specialties.department],
-    references: [departments.id],
-    relationName: "department",
+export const relations_specialties_sidebar_banners = relations(
+  specialties_sidebar_banners,
+  ({ one }) => ({
+    _parentID: one(specialties, {
+      fields: [specialties_sidebar_banners._parentID],
+      references: [specialties.id],
+      relationName: "sidebarBanners",
+    }),
+    image: one(media, {
+      fields: [specialties_sidebar_banners.image],
+      references: [media.id],
+      relationName: "image",
+    }),
   }),
-  cover: one(media, {
-    fields: [specialties.cover],
-    references: [media.id],
-    relationName: "cover",
+);
+export const relations_specialties = relations(
+  specialties,
+  ({ one, many }) => ({
+    department: one(departments, {
+      fields: [specialties.department],
+      references: [departments.id],
+      relationName: "department",
+    }),
+    cover: one(media, {
+      fields: [specialties.cover],
+      references: [media.id],
+      relationName: "cover",
+    }),
+    sidebarBanners: many(specialties_sidebar_banners, {
+      relationName: "sidebarBanners",
+    }),
+    seoImage: one(media, {
+      fields: [specialties.seoImage],
+      references: [media.id],
+      relationName: "seoImage",
+    }),
   }),
-  seoImage: one(media, {
-    fields: [specialties.seoImage],
-    references: [media.id],
-    relationName: "seoImage",
+);
+export const relations__specialties_v_version_sidebar_banners = relations(
+  _specialties_v_version_sidebar_banners,
+  ({ one }) => ({
+    _parentID: one(_specialties_v, {
+      fields: [_specialties_v_version_sidebar_banners._parentID],
+      references: [_specialties_v.id],
+      relationName: "version_sidebarBanners",
+    }),
+    image: one(media, {
+      fields: [_specialties_v_version_sidebar_banners.image],
+      references: [media.id],
+      relationName: "image",
+    }),
   }),
-}));
+);
 export const relations__specialties_v = relations(
   _specialties_v,
-  ({ one }) => ({
+  ({ one, many }) => ({
     parent: one(specialties, {
       fields: [_specialties_v.parent],
       references: [specialties.id],
@@ -12129,6 +15471,9 @@ export const relations__specialties_v = relations(
       references: [media.id],
       relationName: "version_cover",
     }),
+    version_sidebarBanners: many(_specialties_v_version_sidebar_banners, {
+      relationName: "version_sidebarBanners",
+    }),
     version_seoImage: one(media, {
       fields: [_specialties_v.version_seoImage],
       references: [media.id],
@@ -12137,11 +15482,6 @@ export const relations__specialties_v = relations(
   }),
 );
 export const relations_doctors = relations(doctors, ({ one }) => ({
-  avatar: one(media, {
-    fields: [doctors.avatar],
-    references: [media.id],
-    relationName: "avatar",
-  }),
   department: one(departments, {
     fields: [doctors.department],
     references: [departments.id],
@@ -12151,6 +15491,11 @@ export const relations_doctors = relations(doctors, ({ one }) => ({
     fields: [doctors.specialtyRef],
     references: [specialties.id],
     relationName: "specialtyRef",
+  }),
+  avatar: one(media, {
+    fields: [doctors.avatar],
+    references: [media.id],
+    relationName: "avatar",
   }),
   seoImage: one(media, {
     fields: [doctors.seoImage],
@@ -12164,11 +15509,6 @@ export const relations__doctors_v = relations(_doctors_v, ({ one }) => ({
     references: [doctors.id],
     relationName: "parent",
   }),
-  version_avatar: one(media, {
-    fields: [_doctors_v.version_avatar],
-    references: [media.id],
-    relationName: "version_avatar",
-  }),
   version_department: one(departments, {
     fields: [_doctors_v.version_department],
     references: [departments.id],
@@ -12179,12 +15519,27 @@ export const relations__doctors_v = relations(_doctors_v, ({ one }) => ({
     references: [specialties.id],
     relationName: "version_specialtyRef",
   }),
+  version_avatar: one(media, {
+    fields: [_doctors_v.version_avatar],
+    references: [media.id],
+    relationName: "version_avatar",
+  }),
   version_seoImage: one(media, {
     fields: [_doctors_v.version_seoImage],
     references: [media.id],
     relationName: "version_seoImage",
   }),
 }));
+export const relations_schedules_daily_assignments = relations(
+  schedules_daily_assignments,
+  ({ one }) => ({
+    _parentID: one(schedules, {
+      fields: [schedules_daily_assignments._parentID],
+      references: [schedules.id],
+      relationName: "dailyAssignments",
+    }),
+  }),
+);
 export const relations_schedules_weekly_slots = relations(
   schedules_weekly_slots,
   ({ one }) => ({
@@ -12202,6 +15557,26 @@ export const relations_schedules_weekly_slots = relations(
       fields: [schedules_weekly_slots.department],
       references: [departments.id],
       relationName: "department",
+    }),
+  }),
+);
+export const relations_schedules_weekly_dept_slots = relations(
+  schedules_weekly_dept_slots,
+  ({ one }) => ({
+    _parentID: one(schedules, {
+      fields: [schedules_weekly_dept_slots._parentID],
+      references: [schedules.id],
+      relationName: "weeklyDeptSlots",
+    }),
+  }),
+);
+export const relations_schedules_emergency_contacts = relations(
+  schedules_emergency_contacts,
+  ({ one }) => ({
+    _parentID: one(schedules, {
+      fields: [schedules_emergency_contacts._parentID],
+      references: [schedules.id],
+      relationName: "emergencyContacts",
     }),
   }),
 );
@@ -12226,6 +15601,9 @@ export const relations_schedules = relations(schedules, ({ one, many }) => ({
     references: [media.id],
     relationName: "coverImage",
   }),
+  dailyAssignments: many(schedules_daily_assignments, {
+    relationName: "dailyAssignments",
+  }),
   doctor: one(doctors, {
     fields: [schedules.doctor],
     references: [doctors.id],
@@ -12239,6 +15617,17 @@ export const relations_schedules = relations(schedules, ({ one, many }) => ({
   weeklySlots: many(schedules_weekly_slots, {
     relationName: "weeklySlots",
   }),
+  weeklyDeptSlots: many(schedules_weekly_dept_slots, {
+    relationName: "weeklyDeptSlots",
+  }),
+  emergencyContacts: many(schedules_emergency_contacts, {
+    relationName: "emergencyContacts",
+  }),
+  emergencyExcelFile: one(media, {
+    fields: [schedules.emergencyExcelFile],
+    references: [media.id],
+    relationName: "emergencyExcelFile",
+  }),
   scheduleImage: one(media, {
     fields: [schedules.scheduleImage],
     references: [media.id],
@@ -12251,6 +15640,23 @@ export const relations_schedules = relations(schedules, ({ one, many }) => ({
   }),
   attachmentFiles: many(schedules_attachment_files, {
     relationName: "attachmentFiles",
+  }),
+}));
+export const relations_appointments = relations(appointments, ({ one }) => ({
+  specialty: one(specialties, {
+    fields: [appointments.specialty],
+    references: [specialties.id],
+    relationName: "specialty",
+  }),
+  department: one(departments, {
+    fields: [appointments.department],
+    references: [departments.id],
+    relationName: "department",
+  }),
+  doctor: one(doctors, {
+    fields: [appointments.doctor],
+    references: [doctors.id],
+    relationName: "doctor",
   }),
 }));
 export const relations_services = relations(services, () => ({}));
@@ -12398,11 +15804,6 @@ export const relations_recruitment_attachments = relations(
 export const relations_recruitment = relations(
   recruitment,
   ({ one, many }) => ({
-    cover: one(media, {
-      fields: [recruitment.cover],
-      references: [media.id],
-      relationName: "cover",
-    }),
     categoryRef: one(categories, {
       fields: [recruitment.categoryRef],
       references: [categories.id],
@@ -12413,13 +15814,18 @@ export const relations_recruitment = relations(
       references: [departments.id],
       relationName: "department",
     }),
+    cover: one(media, {
+      fields: [recruitment.cover],
+      references: [media.id],
+      relationName: "cover",
+    }),
+    attachments: many(recruitment_attachments, {
+      relationName: "attachments",
+    }),
     attachment: one(media, {
       fields: [recruitment.attachment],
       references: [media.id],
       relationName: "attachment",
-    }),
-    attachments: many(recruitment_attachments, {
-      relationName: "attachments",
     }),
     seoImage: one(media, {
       fields: [recruitment.seoImage],
@@ -12451,11 +15857,6 @@ export const relations__recruitment_v = relations(
       references: [recruitment.id],
       relationName: "parent",
     }),
-    version_cover: one(media, {
-      fields: [_recruitment_v.version_cover],
-      references: [media.id],
-      relationName: "version_cover",
-    }),
     version_categoryRef: one(categories, {
       fields: [_recruitment_v.version_categoryRef],
       references: [categories.id],
@@ -12466,13 +15867,18 @@ export const relations__recruitment_v = relations(
       references: [departments.id],
       relationName: "version_department",
     }),
+    version_cover: one(media, {
+      fields: [_recruitment_v.version_cover],
+      references: [media.id],
+      relationName: "version_cover",
+    }),
+    version_attachments: many(_recruitment_v_version_attachments, {
+      relationName: "version_attachments",
+    }),
     version_attachment: one(media, {
       fields: [_recruitment_v.version_attachment],
       references: [media.id],
       relationName: "version_attachment",
-    }),
-    version_attachments: many(_recruitment_v_version_attachments, {
-      relationName: "version_attachments",
     }),
     version_seoImage: one(media, {
       fields: [_recruitment_v.version_seoImage],
@@ -13387,6 +16793,11 @@ export const relations_payload_locked_documents_rels = relations(
       references: [documents.id],
       relationName: "documents",
     }),
+    "clinical-protocolsID": one(clinical_protocols, {
+      fields: [payload_locked_documents_rels["clinical-protocolsID"]],
+      references: [clinical_protocols.id],
+      relationName: "clinical-protocols",
+    }),
     departmentsID: one(departments, {
       fields: [payload_locked_documents_rels.departmentsID],
       references: [departments.id],
@@ -13406,6 +16817,11 @@ export const relations_payload_locked_documents_rels = relations(
       fields: [payload_locked_documents_rels.schedulesID],
       references: [schedules.id],
       relationName: "schedules",
+    }),
+    appointmentsID: one(appointments, {
+      fields: [payload_locked_documents_rels.appointmentsID],
+      references: [appointments.id],
+      relationName: "appointments",
     }),
     servicesID: one(services, {
       fields: [payload_locked_documents_rels.servicesID],
@@ -13664,24 +17080,26 @@ export const relations_site_settings_header_social_links = relations(
     }),
   }),
 );
-export const relations_site_settings_website_assistant_quick_topics = relations(
-  site_settings_website_assistant_quick_topics,
+export const relations_site_assistant_topics = relations(
+  site_assistant_topics,
   ({ one }) => ({
     _parentID: one(site_settings, {
-      fields: [site_settings_website_assistant_quick_topics._parentID],
+      fields: [site_assistant_topics._parentID],
       references: [site_settings.id],
       relationName: "websiteAssistant_quickTopics",
     }),
   }),
 );
-export const relations_site_settings_website_assistant_custom_answers =
-  relations(site_settings_website_assistant_custom_answers, ({ one }) => ({
+export const relations_site_assistant_answers = relations(
+  site_assistant_answers,
+  ({ one }) => ({
     _parentID: one(site_settings, {
-      fields: [site_settings_website_assistant_custom_answers._parentID],
+      fields: [site_assistant_answers._parentID],
       references: [site_settings.id],
       relationName: "websiteAssistant_customAnswers",
     }),
-  }));
+  }),
+);
 export const relations_site_settings = relations(
   site_settings,
   ({ one, many }) => ({
@@ -13716,18 +17134,12 @@ export const relations_site_settings = relations(
       references: [media.id],
       relationName: "websiteAssistant_assistantLogo",
     }),
-    websiteAssistant_quickTopics: many(
-      site_settings_website_assistant_quick_topics,
-      {
-        relationName: "websiteAssistant_quickTopics",
-      },
-    ),
-    websiteAssistant_customAnswers: many(
-      site_settings_website_assistant_custom_answers,
-      {
-        relationName: "websiteAssistant_customAnswers",
-      },
-    ),
+    websiteAssistant_quickTopics: many(site_assistant_topics, {
+      relationName: "websiteAssistant_quickTopics",
+    }),
+    websiteAssistant_customAnswers: many(site_assistant_answers, {
+      relationName: "websiteAssistant_customAnswers",
+    }),
   }),
 );
 export const relations__site_settings_v_version_header_contact_cards =
@@ -13758,32 +17170,26 @@ export const relations__site_settings_v_version_header_social_links = relations(
     }),
   }),
 );
-export const relations__site_settings_v_version_website_assistant_quick_topics =
-  relations(
-    _site_settings_v_version_website_assistant_quick_topics,
-    ({ one }) => ({
-      _parentID: one(_site_settings_v, {
-        fields: [
-          _site_settings_v_version_website_assistant_quick_topics._parentID,
-        ],
-        references: [_site_settings_v.id],
-        relationName: "version_websiteAssistant_quickTopics",
-      }),
+export const relations__site_assistant_topics_v = relations(
+  _site_assistant_topics_v,
+  ({ one }) => ({
+    _parentID: one(_site_settings_v, {
+      fields: [_site_assistant_topics_v._parentID],
+      references: [_site_settings_v.id],
+      relationName: "version_websiteAssistant_quickTopics",
     }),
-  );
-export const relations__site_settings_v_version_website_assistant_custom_answers =
-  relations(
-    _site_settings_v_version_website_assistant_custom_answers,
-    ({ one }) => ({
-      _parentID: one(_site_settings_v, {
-        fields: [
-          _site_settings_v_version_website_assistant_custom_answers._parentID,
-        ],
-        references: [_site_settings_v.id],
-        relationName: "version_websiteAssistant_customAnswers",
-      }),
+  }),
+);
+export const relations__site_assistant_answers_v = relations(
+  _site_assistant_answers_v,
+  ({ one }) => ({
+    _parentID: one(_site_settings_v, {
+      fields: [_site_assistant_answers_v._parentID],
+      references: [_site_settings_v.id],
+      relationName: "version_websiteAssistant_customAnswers",
     }),
-  );
+  }),
+);
 export const relations__site_settings_v = relations(
   _site_settings_v,
   ({ one, many }) => ({
@@ -13824,18 +17230,12 @@ export const relations__site_settings_v = relations(
       references: [media.id],
       relationName: "version_websiteAssistant_assistantLogo",
     }),
-    version_websiteAssistant_quickTopics: many(
-      _site_settings_v_version_website_assistant_quick_topics,
-      {
-        relationName: "version_websiteAssistant_quickTopics",
-      },
-    ),
-    version_websiteAssistant_customAnswers: many(
-      _site_settings_v_version_website_assistant_custom_answers,
-      {
-        relationName: "version_websiteAssistant_customAnswers",
-      },
-    ),
+    version_websiteAssistant_quickTopics: many(_site_assistant_topics_v, {
+      relationName: "version_websiteAssistant_quickTopics",
+    }),
+    version_websiteAssistant_customAnswers: many(_site_assistant_answers_v, {
+      relationName: "version_websiteAssistant_customAnswers",
+    }),
   }),
 );
 export const relations_navigation_items_children = relations(
@@ -14307,6 +17707,18 @@ export const relations_expert_items = relations(expert_items, ({ one }) => ({
     relationName: "linkedPage",
   }),
 }));
+export const relations_fn_sources = relations(fn_sources, ({ one }) => ({
+  _parentID: one(homepage_sections, {
+    fields: [fn_sources._parentID],
+    references: [homepage_sections.id],
+    relationName: "featuredSources",
+  }),
+  categoryRef: one(categories, {
+    fields: [fn_sources.categoryRef],
+    references: [categories.id],
+    relationName: "categoryRef",
+  }),
+}));
 export const relations_content_values = relations(
   content_values,
   ({ one }) => ({
@@ -14418,9 +17830,9 @@ export const relations_homepage_sections_schedule_tab_order = relations(
 export const relations_vaccine_manual = relations(
   vaccine_manual,
   ({ one }) => ({
-    _parentID: one(homepage_sections_vaccination_tab_order, {
+    _parentID: one(homepage_vax_tabs, {
       fields: [vaccine_manual._parentID],
-      references: [homepage_sections_vaccination_tab_order.id],
+      references: [homepage_vax_tabs.id],
       relationName: "manualItems",
     }),
     linkedPage: one(pages, {
@@ -14435,11 +17847,11 @@ export const relations_vaccine_manual = relations(
     }),
   }),
 );
-export const relations_homepage_sections_vaccination_tab_order = relations(
-  homepage_sections_vaccination_tab_order,
+export const relations_homepage_vax_tabs = relations(
+  homepage_vax_tabs,
   ({ one, many }) => ({
     _parentID: one(homepage_sections, {
-      fields: [homepage_sections_vaccination_tab_order._parentID],
+      fields: [homepage_vax_tabs._parentID],
       references: [homepage_sections.id],
       relationName: "vaccinationTabOrder",
     }),
@@ -14462,6 +17874,9 @@ export const relations_homepage_sections = relations(
     expertItems: many(expert_items, {
       relationName: "expertItems",
     }),
+    featuredSources: many(fn_sources, {
+      relationName: "featuredSources",
+    }),
     organizationImage: one(media, {
       fields: [homepage_sections.organizationImage],
       references: [media.id],
@@ -14476,7 +17891,7 @@ export const relations_homepage_sections = relations(
     scheduleTabOrder: many(homepage_sections_schedule_tab_order, {
       relationName: "scheduleTabOrder",
     }),
-    vaccinationTabOrder: many(homepage_sections_vaccination_tab_order, {
+    vaccinationTabOrder: many(homepage_vax_tabs, {
       relationName: "vaccinationTabOrder",
     }),
     linkedContentSection: one(content_sections, {
@@ -14622,6 +18037,18 @@ export const relations__expert_items_v = relations(
     }),
   }),
 );
+export const relations__fn_sources_v = relations(_fn_sources_v, ({ one }) => ({
+  _parentID: one(_homepage_v_version_sections, {
+    fields: [_fn_sources_v._parentID],
+    references: [_homepage_v_version_sections.id],
+    relationName: "featuredSources",
+  }),
+  categoryRef: one(categories, {
+    fields: [_fn_sources_v.categoryRef],
+    references: [categories.id],
+    relationName: "categoryRef",
+  }),
+}));
 export const relations__content_values_v = relations(
   _content_values_v,
   ({ one }) => ({
@@ -14746,9 +18173,9 @@ export const relations__homepage_v_version_sections_schedule_tab_order =
 export const relations__vaccine_manual_v = relations(
   _vaccine_manual_v,
   ({ one }) => ({
-    _parentID: one(_homepage_v_version_sections_vaccination_tab_order, {
+    _parentID: one(_homepage_vax_tabs_v, {
       fields: [_vaccine_manual_v._parentID],
-      references: [_homepage_v_version_sections_vaccination_tab_order.id],
+      references: [_homepage_vax_tabs_v.id],
       relationName: "manualItems",
     }),
     linkedPage: one(pages, {
@@ -14763,20 +18190,19 @@ export const relations__vaccine_manual_v = relations(
     }),
   }),
 );
-export const relations__homepage_v_version_sections_vaccination_tab_order =
-  relations(
-    _homepage_v_version_sections_vaccination_tab_order,
-    ({ one, many }) => ({
-      _parentID: one(_homepage_v_version_sections, {
-        fields: [_homepage_v_version_sections_vaccination_tab_order._parentID],
-        references: [_homepage_v_version_sections.id],
-        relationName: "vaccinationTabOrder",
-      }),
-      manualItems: many(_vaccine_manual_v, {
-        relationName: "manualItems",
-      }),
+export const relations__homepage_vax_tabs_v = relations(
+  _homepage_vax_tabs_v,
+  ({ one, many }) => ({
+    _parentID: one(_homepage_v_version_sections, {
+      fields: [_homepage_vax_tabs_v._parentID],
+      references: [_homepage_v_version_sections.id],
+      relationName: "vaccinationTabOrder",
     }),
-  );
+    manualItems: many(_vaccine_manual_v, {
+      relationName: "manualItems",
+    }),
+  }),
+);
 export const relations__homepage_v_version_sections = relations(
   _homepage_v_version_sections,
   ({ one, many }) => ({
@@ -14790,6 +18216,9 @@ export const relations__homepage_v_version_sections = relations(
     }),
     expertItems: many(_expert_items_v, {
       relationName: "expertItems",
+    }),
+    featuredSources: many(_fn_sources_v, {
+      relationName: "featuredSources",
     }),
     organizationImage: one(media, {
       fields: [_homepage_v_version_sections.organizationImage],
@@ -14805,12 +18234,9 @@ export const relations__homepage_v_version_sections = relations(
     scheduleTabOrder: many(_homepage_v_version_sections_schedule_tab_order, {
       relationName: "scheduleTabOrder",
     }),
-    vaccinationTabOrder: many(
-      _homepage_v_version_sections_vaccination_tab_order,
-      {
-        relationName: "vaccinationTabOrder",
-      },
-    ),
+    vaccinationTabOrder: many(_homepage_vax_tabs_v, {
+      relationName: "vaccinationTabOrder",
+    }),
     linkedContentSection: one(content_sections, {
       fields: [_homepage_v_version_sections.linkedContentSection],
       references: [content_sections.id],
@@ -15014,6 +18440,16 @@ export const relations__organization_chart_v = relations(
     }),
   }),
 );
+export const relations_hospital_history_quick_stats = relations(
+  hospital_history_quick_stats,
+  ({ one }) => ({
+    _parentID: one(hospital_history, {
+      fields: [hospital_history_quick_stats._parentID],
+      references: [hospital_history.id],
+      relationName: "quickStats",
+    }),
+  }),
+);
 export const relations_hospital_history_milestones = relations(
   hospital_history_milestones,
   ({ one }) => ({
@@ -15029,13 +18465,28 @@ export const relations_hospital_history_milestones = relations(
     }),
   }),
 );
-export const relations_hospital_history_core_values_values_list = relations(
-  hospital_history_core_values_values_list,
+export const relations_history_core_values = relations(
+  history_core_values,
   ({ one }) => ({
     _parentID: one(hospital_history, {
-      fields: [hospital_history_core_values_values_list._parentID],
+      fields: [history_core_values._parentID],
       references: [hospital_history.id],
       relationName: "coreValues_valuesList",
+    }),
+    customIcon: one(media, {
+      fields: [history_core_values.customIcon],
+      references: [media.id],
+      relationName: "customIcon",
+    }),
+  }),
+);
+export const relations_hospital_history_journey_steps = relations(
+  hospital_history_journey_steps,
+  ({ one }) => ({
+    _parentID: one(hospital_history, {
+      fields: [hospital_history_journey_steps._parentID],
+      references: [hospital_history.id],
+      relationName: "journeySteps",
     }),
   }),
 );
@@ -15062,14 +18513,30 @@ export const relations_hospital_history = relations(
       references: [media.id],
       relationName: "bannerImage",
     }),
+    quickStats: many(hospital_history_quick_stats, {
+      relationName: "quickStats",
+    }),
     milestones: many(hospital_history_milestones, {
       relationName: "milestones",
     }),
-    coreValues_valuesList: many(hospital_history_core_values_values_list, {
+    coreValues_valuesList: many(history_core_values, {
       relationName: "coreValues_valuesList",
+    }),
+    journeySteps: many(hospital_history_journey_steps, {
+      relationName: "journeySteps",
     }),
     achievements: many(hospital_history_achievements, {
       relationName: "achievements",
+    }),
+  }),
+);
+export const relations__hospital_history_v_version_quick_stats = relations(
+  _hospital_history_v_version_quick_stats,
+  ({ one }) => ({
+    _parentID: one(_hospital_history_v, {
+      fields: [_hospital_history_v_version_quick_stats._parentID],
+      references: [_hospital_history_v.id],
+      relationName: "version_quickStats",
     }),
   }),
 );
@@ -15088,14 +18555,31 @@ export const relations__hospital_history_v_version_milestones = relations(
     }),
   }),
 );
-export const relations__hospital_history_v_version_core_values_values_list =
-  relations(_hospital_history_v_version_core_values_values_list, ({ one }) => ({
+export const relations__history_core_values_v = relations(
+  _history_core_values_v,
+  ({ one }) => ({
     _parentID: one(_hospital_history_v, {
-      fields: [_hospital_history_v_version_core_values_values_list._parentID],
+      fields: [_history_core_values_v._parentID],
       references: [_hospital_history_v.id],
       relationName: "version_coreValues_valuesList",
     }),
-  }));
+    customIcon: one(media, {
+      fields: [_history_core_values_v.customIcon],
+      references: [media.id],
+      relationName: "customIcon",
+    }),
+  }),
+);
+export const relations__hospital_history_v_version_journey_steps = relations(
+  _hospital_history_v_version_journey_steps,
+  ({ one }) => ({
+    _parentID: one(_hospital_history_v, {
+      fields: [_hospital_history_v_version_journey_steps._parentID],
+      references: [_hospital_history_v.id],
+      relationName: "version_journeySteps",
+    }),
+  }),
+);
 export const relations__hospital_history_v_version_achievements = relations(
   _hospital_history_v_version_achievements,
   ({ one }) => ({
@@ -15119,15 +18603,18 @@ export const relations__hospital_history_v = relations(
       references: [media.id],
       relationName: "version_bannerImage",
     }),
+    version_quickStats: many(_hospital_history_v_version_quick_stats, {
+      relationName: "version_quickStats",
+    }),
     version_milestones: many(_hospital_history_v_version_milestones, {
       relationName: "version_milestones",
     }),
-    version_coreValues_valuesList: many(
-      _hospital_history_v_version_core_values_values_list,
-      {
-        relationName: "version_coreValues_valuesList",
-      },
-    ),
+    version_coreValues_valuesList: many(_history_core_values_v, {
+      relationName: "version_coreValues_valuesList",
+    }),
+    version_journeySteps: many(_hospital_history_v_version_journey_steps, {
+      relationName: "version_journeySteps",
+    }),
     version_achievements: many(_hospital_history_v_version_achievements, {
       relationName: "version_achievements",
     }),
@@ -15260,6 +18747,69 @@ export const relations__about_page_v = relations(
     ),
   }),
 );
+export const relations_wh_milestones = relations(wh_milestones, ({ one }) => ({
+  _parentID: one(working_hours_settings, {
+    fields: [wh_milestones._parentID],
+    references: [working_hours_settings.id],
+    relationName: "announcement_milestones",
+  }),
+}));
+export const relations_wh_dept_rows = relations(wh_dept_rows, ({ one }) => ({
+  _parentID: one(wh_depts, {
+    fields: [wh_dept_rows._parentID],
+    references: [wh_depts.id],
+    relationName: "timeRows",
+  }),
+}));
+export const relations_wh_depts = relations(wh_depts, ({ one, many }) => ({
+  _parentID: one(working_hours_settings, {
+    fields: [wh_depts._parentID],
+    references: [working_hours_settings.id],
+    relationName: "departments",
+  }),
+  timeRows: many(wh_dept_rows, {
+    relationName: "timeRows",
+  }),
+}));
+export const relations_wh_sched_links = relations(
+  wh_sched_links,
+  ({ one }) => ({
+    _parentID: one(working_hours_settings, {
+      fields: [wh_sched_links._parentID],
+      references: [working_hours_settings.id],
+      relationName: "scheduleLinksSection_links",
+    }),
+  }),
+);
+export const relations_wh_notes = relations(wh_notes, ({ one }) => ({
+  _parentID: one(working_hours_settings, {
+    fields: [wh_notes._parentID],
+    references: [working_hours_settings.id],
+    relationName: "notesSection_items",
+  }),
+}));
+export const relations_working_hours_settings = relations(
+  working_hours_settings,
+  ({ one, many }) => ({
+    hero_bgImage: one(media, {
+      fields: [working_hours_settings.hero_bgImage],
+      references: [media.id],
+      relationName: "hero_bgImage",
+    }),
+    announcement_milestones: many(wh_milestones, {
+      relationName: "announcement_milestones",
+    }),
+    departments: many(wh_depts, {
+      relationName: "departments",
+    }),
+    scheduleLinksSection_links: many(wh_sched_links, {
+      relationName: "scheduleLinksSection_links",
+    }),
+    notesSection_items: many(wh_notes, {
+      relationName: "notesSection_items",
+    }),
+  }),
+);
 export const relations_upload_settings = relations(upload_settings, () => ({}));
 export const relations_default_media_settings_custom_defaults = relations(
   default_media_settings_custom_defaults,
@@ -15384,9 +18934,87 @@ export const relations_chatbot_settings = relations(
   }),
 );
 export const relations_system_settings = relations(system_settings, () => ({}));
+export const relations_sch_notes = relations(sch_notes, ({ one }) => ({
+  _parentID: one(schedule_settings, {
+    fields: [sch_notes._parentID],
+    references: [schedule_settings.id],
+    relationName: "notesSection_items",
+  }),
+}));
 export const relations_schedule_settings = relations(
   schedule_settings,
-  () => ({}),
+  ({ one, many }) => ({
+    hero_bgImage: one(media, {
+      fields: [schedule_settings.hero_bgImage],
+      references: [media.id],
+      relationName: "hero_bgImage",
+    }),
+    notesSection_items: many(sch_notes, {
+      relationName: "notesSection_items",
+    }),
+  }),
+);
+export const relations_appointment_settings_time_slots = relations(
+  appointment_settings_time_slots,
+  ({ one }) => ({
+    _parentID: one(appointment_settings, {
+      fields: [appointment_settings_time_slots._parentID],
+      references: [appointment_settings.id],
+      relationName: "timeSlots",
+    }),
+  }),
+);
+export const relations_appointment_settings_custom_specialties = relations(
+  appointment_settings_custom_specialties,
+  ({ one }) => ({
+    _parentID: one(appointment_settings, {
+      fields: [appointment_settings_custom_specialties._parentID],
+      references: [appointment_settings.id],
+      relationName: "customSpecialties",
+    }),
+  }),
+);
+export const relations_appointment_settings_custom_fields = relations(
+  appointment_settings_custom_fields,
+  ({ one }) => ({
+    _parentID: one(appointment_settings, {
+      fields: [appointment_settings_custom_fields._parentID],
+      references: [appointment_settings.id],
+      relationName: "customFields",
+    }),
+  }),
+);
+export const relations_appointment_settings_rels = relations(
+  appointment_settings_rels,
+  ({ one }) => ({
+    parent: one(appointment_settings, {
+      fields: [appointment_settings_rels.parent],
+      references: [appointment_settings.id],
+      relationName: "_rels",
+    }),
+    specialtiesID: one(specialties, {
+      fields: [appointment_settings_rels.specialtiesID],
+      references: [specialties.id],
+      relationName: "specialties",
+    }),
+  }),
+);
+export const relations_appointment_settings = relations(
+  appointment_settings,
+  ({ many }) => ({
+    timeSlots: many(appointment_settings_time_slots, {
+      relationName: "timeSlots",
+    }),
+    customSpecialties: many(appointment_settings_custom_specialties, {
+      relationName: "customSpecialties",
+    }),
+    customFields: many(appointment_settings_custom_fields, {
+      relationName: "customFields",
+    }),
+    _rels: many(appointment_settings_rels, {
+      relationName: "_rels",
+    }),
+  }),
 );
 export const relations_quick_links_settings_items = relations(
   quick_links_settings_items,
@@ -15487,14 +19115,47 @@ type DatabaseSchema = {
   enum__procurement_v_version_cover_position: typeof enum__procurement_v_version_cover_position;
   enum__procurement_v_version_workflow_state: typeof enum__procurement_v_version_workflow_state;
   enum__procurement_v_version_status: typeof enum__procurement_v_version_status;
+  enum_documents_text_align: typeof enum_documents_text_align;
+  enum_documents_title_color: typeof enum_documents_title_color;
+  enum_documents_title_size: typeof enum_documents_title_size;
+  enum_documents_summary_color: typeof enum_documents_summary_color;
+  enum_documents_summary_size: typeof enum_documents_summary_size;
+  enum__documents_v_version_text_align: typeof enum__documents_v_version_text_align;
+  enum__documents_v_version_title_color: typeof enum__documents_v_version_title_color;
+  enum__documents_v_version_title_size: typeof enum__documents_v_version_title_size;
+  enum__documents_v_version_summary_color: typeof enum__documents_v_version_summary_color;
+  enum__documents_v_version_summary_size: typeof enum__documents_v_version_summary_size;
+  enum_clinical_protocols_text_align: typeof enum_clinical_protocols_text_align;
+  enum_clinical_protocols_title_color: typeof enum_clinical_protocols_title_color;
+  enum_clinical_protocols_title_size: typeof enum_clinical_protocols_title_size;
+  enum_clinical_protocols_summary_color: typeof enum_clinical_protocols_summary_color;
+  enum_clinical_protocols_summary_size: typeof enum_clinical_protocols_summary_size;
+  enum__clinical_protocols_v_version_text_align: typeof enum__clinical_protocols_v_version_text_align;
+  enum__clinical_protocols_v_version_title_color: typeof enum__clinical_protocols_v_version_title_color;
+  enum__clinical_protocols_v_version_title_size: typeof enum__clinical_protocols_v_version_title_size;
+  enum__clinical_protocols_v_version_summary_color: typeof enum__clinical_protocols_v_version_summary_color;
+  enum__clinical_protocols_v_version_summary_size: typeof enum__clinical_protocols_v_version_summary_size;
   enum_departments_unit_type: typeof enum_departments_unit_type;
+  enum_specialties_cover_fit_home: typeof enum_specialties_cover_fit_home;
+  enum_specialties_cover_fit_detail: typeof enum_specialties_cover_fit_detail;
+  enum_specialties_cover_position: typeof enum_specialties_cover_position;
   enum_specialties_status: typeof enum_specialties_status;
+  enum__specialties_v_version_cover_fit_home: typeof enum__specialties_v_version_cover_fit_home;
+  enum__specialties_v_version_cover_fit_detail: typeof enum__specialties_v_version_cover_fit_detail;
+  enum__specialties_v_version_cover_position: typeof enum__specialties_v_version_cover_position;
   enum__specialties_v_version_status: typeof enum__specialties_v_version_status;
   enum_doctors_status: typeof enum_doctors_status;
   enum__doctors_v_version_status: typeof enum__doctors_v_version_status;
+  enum_schedules_daily_assignments_department_icon: typeof enum_schedules_daily_assignments_department_icon;
   enum_schedules_weekly_slots_day_of_week: typeof enum_schedules_weekly_slots_day_of_week;
+  enum_schedules_weekly_dept_slots_dept_type: typeof enum_schedules_weekly_dept_slots_dept_type;
+  enum_schedules_emergency_contacts_type: typeof enum_schedules_emergency_contacts_type;
   enum_schedules_mode: typeof enum_schedules_mode;
   enum_schedules_schedule_type: typeof enum_schedules_schedule_type;
+  enum_appointments_status: typeof enum_appointments_status;
+  enum_appointments_source: typeof enum_appointments_source;
+  enum_appointments_gender: typeof enum_appointments_gender;
+  enum_appointments_time_slot: typeof enum_appointments_time_slot;
   enum_vaccinations_entry_type: typeof enum_vaccinations_entry_type;
   enum_vaccinations_availability: typeof enum_vaccinations_availability;
   enum_vaccination_schedules_schedule_kind: typeof enum_vaccination_schedules_schedule_kind;
@@ -15506,9 +19167,11 @@ type DatabaseSchema = {
   enum__vaccines_v_version_availability: typeof enum__vaccines_v_version_availability;
   enum__vaccines_v_version_status: typeof enum__vaccines_v_version_status;
   enum_recruitment_layout_template: typeof enum_recruitment_layout_template;
+  enum_recruitment_cover_fit: typeof enum_recruitment_cover_fit;
   enum_recruitment_workflow_state: typeof enum_recruitment_workflow_state;
   enum_recruitment_status: typeof enum_recruitment_status;
   enum__recruitment_v_version_layout_template: typeof enum__recruitment_v_version_layout_template;
+  enum__recruitment_v_version_cover_fit: typeof enum__recruitment_v_version_cover_fit;
   enum__recruitment_v_version_workflow_state: typeof enum__recruitment_v_version_workflow_state;
   enum__recruitment_v_version_status: typeof enum__recruitment_v_version_status;
   enum_pages_blocks_image_text_image_position: typeof enum_pages_blocks_image_text_image_position;
@@ -15563,9 +19226,41 @@ type DatabaseSchema = {
   enum_import_jobs_module: typeof enum_import_jobs_module;
   enum_import_jobs_status: typeof enum_import_jobs_status;
   enum_audit_logs_action: typeof enum_audit_logs_action;
+  enum_site_settings_header_contact_cards_icon_type: typeof enum_site_settings_header_contact_cards_icon_type;
+  enum_site_settings_header_contact_cards_font_family: typeof enum_site_settings_header_contact_cards_font_family;
+  enum_site_settings_header_contact_cards_font_weight: typeof enum_site_settings_header_contact_cards_font_weight;
+  brand_color_scheme: typeof brand_color_scheme;
+  brand_name_font: typeof brand_name_font;
+  brand_name_weight: typeof brand_name_weight;
+  brand_name_effect: typeof brand_name_effect;
   header_slogan_align: typeof header_slogan_align;
+  brand_slogan_weight: typeof brand_slogan_weight;
+  brand_slogan_effect: typeof brand_slogan_effect;
+  menu_font_weight: typeof menu_font_weight;
+  menu_text_transform: typeof menu_text_transform;
+  menu_font_family: typeof menu_font_family;
+  menu_justify_content: typeof menu_justify_content;
+  menu_anim_style: typeof menu_anim_style;
+  menu_anim_speed: typeof menu_anim_speed;
+  sp_not_align: typeof sp_not_align;
   enum_site_settings_service_price_page_rows_per_page: typeof enum_site_settings_service_price_page_rows_per_page;
+  vc_not_align: typeof vc_not_align;
+  enum_flow_not_align: typeof enum_flow_not_align;
+  enum_quality_not_align: typeof enum_quality_not_align;
+  enum_site_settings_survey_page_notice_align: typeof enum_site_settings_survey_page_notice_align;
+  enum_site_settings_faq_page_notice_align: typeof enum_site_settings_faq_page_notice_align;
+  enum_site_settings_forms_page_notice_align: typeof enum_site_settings_forms_page_notice_align;
+  pp_not_align: typeof pp_not_align;
+  lt_not_align: typeof lt_not_align;
+  sa_not_align: typeof sa_not_align;
+  cp_not_align: typeof cp_not_align;
+  enum__site_settings_v_version_header_contact_cards_icon_type: typeof enum__site_settings_v_version_header_contact_cards_icon_type;
+  enum__site_settings_v_version_header_contact_cards_font_family: typeof enum__site_settings_v_version_header_contact_cards_font_family;
+  enum__site_settings_v_version_header_contact_cards_font_weight: typeof enum__site_settings_v_version_header_contact_cards_font_weight;
   enum__site_settings_v_version_service_price_page_rows_per_page: typeof enum__site_settings_v_version_service_price_page_rows_per_page;
+  enum__site_settings_v_version_survey_page_notice_align: typeof enum__site_settings_v_version_survey_page_notice_align;
+  enum__site_settings_v_version_faq_page_notice_align: typeof enum__site_settings_v_version_faq_page_notice_align;
+  enum__site_settings_v_version_forms_page_notice_align: typeof enum__site_settings_v_version_forms_page_notice_align;
   enum_navigation_items_children_link_type: typeof enum_navigation_items_children_link_type;
   enum_navigation_items_children_preset: typeof enum_navigation_items_children_preset;
   enum_navigation_items_link_type: typeof enum_navigation_items_link_type;
@@ -15575,11 +19270,15 @@ type DatabaseSchema = {
   enum__navigation_v_version_items_link_type: typeof enum__navigation_v_version_items_link_type;
   enum__navigation_v_version_items_preset: typeof enum__navigation_v_version_items_preset;
   enum_footer_columns_links_link_mode: typeof enum_footer_columns_links_link_mode;
+  ft_col_align: typeof ft_col_align;
   enum__footer_v_version_columns_links_link_mode: typeof enum__footer_v_version_columns_links_link_mode;
+  ct_not_align: typeof ct_not_align;
   enum_theme_settings_font_family: typeof enum_theme_settings_font_family;
+  enum_theme_settings_page_hero_bg_type: typeof enum_theme_settings_page_hero_bg_type;
   share_pos: typeof share_pos;
   banner_pos: typeof banner_pos;
   enum__theme_settings_v_version_font_family: typeof enum__theme_settings_v_version_font_family;
+  enum__theme_settings_v_version_page_hero_bg_type: typeof enum__theme_settings_v_version_page_hero_bg_type;
   enum_homepage_quick_links_visual_mode: typeof enum_homepage_quick_links_visual_mode;
   enum_homepage_quick_links_icon: typeof enum_homepage_quick_links_icon;
   enum_homepage_quick_links_image_fit: typeof enum_homepage_quick_links_image_fit;
@@ -15587,13 +19286,16 @@ type DatabaseSchema = {
   enum_tech_items_link_mode: typeof enum_tech_items_link_mode;
   enum_expert_items_image_fit: typeof enum_expert_items_image_fit;
   enum_expert_items_link_mode: typeof enum_expert_items_link_mode;
+  enum_fn_sources_source: typeof enum_fn_sources_source;
   enum_news_manual_link_mode: typeof enum_news_manual_link_mode;
   enum_dept_manual_link_mode: typeof enum_dept_manual_link_mode;
   enum_schedule_manual_link_mode: typeof enum_schedule_manual_link_mode;
   enum_homepage_sections_schedule_tab_order_tab: typeof enum_homepage_sections_schedule_tab_order_tab;
   enum_vaccine_manual_link_mode: typeof enum_vaccine_manual_link_mode;
-  enum_homepage_sections_vaccination_tab_order_tab: typeof enum_homepage_sections_vaccination_tab_order_tab;
+  enum_homepage_vax_tabs_tab: typeof enum_homepage_vax_tabs_tab;
   enum_homepage_sections_type: typeof enum_homepage_sections_type;
+  enum_homepage_sections_featured_filter_mode: typeof enum_homepage_sections_featured_filter_mode;
+  enum_homepage_sections_featured_card_fit: typeof enum_homepage_sections_featured_card_fit;
   enum_homepage_sections_image_position: typeof enum_homepage_sections_image_position;
   enum_homepage_sections_button_link_mode: typeof enum_homepage_sections_button_link_mode;
   enum_homepage_sections_section_layout: typeof enum_homepage_sections_section_layout;
@@ -15606,20 +19308,73 @@ type DatabaseSchema = {
   enum__tech_items_v_link_mode: typeof enum__tech_items_v_link_mode;
   enum__expert_items_v_image_fit: typeof enum__expert_items_v_image_fit;
   enum__expert_items_v_link_mode: typeof enum__expert_items_v_link_mode;
+  enum__fn_sources_v_source: typeof enum__fn_sources_v_source;
   enum__news_manual_v_link_mode: typeof enum__news_manual_v_link_mode;
   enum__dept_manual_v_link_mode: typeof enum__dept_manual_v_link_mode;
   enum__schedule_manual_v_link_mode: typeof enum__schedule_manual_v_link_mode;
   enum__homepage_v_version_sections_schedule_tab_order_tab: typeof enum__homepage_v_version_sections_schedule_tab_order_tab;
   enum__vaccine_manual_v_link_mode: typeof enum__vaccine_manual_v_link_mode;
-  enum__homepage_v_version_sections_vaccination_tab_order_tab: typeof enum__homepage_v_version_sections_vaccination_tab_order_tab;
+  enum__homepage_vax_tabs_v_tab: typeof enum__homepage_vax_tabs_v_tab;
   enum__homepage_v_version_sections_type: typeof enum__homepage_v_version_sections_type;
+  enum__homepage_v_version_sections_featured_filter_mode: typeof enum__homepage_v_version_sections_featured_filter_mode;
+  enum__homepage_v_version_sections_featured_card_fit: typeof enum__homepage_v_version_sections_featured_card_fit;
   enum__homepage_v_version_sections_image_position: typeof enum__homepage_v_version_sections_image_position;
   enum__homepage_v_version_sections_button_link_mode: typeof enum__homepage_v_version_sections_button_link_mode;
   enum__homepage_v_version_sections_section_layout: typeof enum__homepage_v_version_sections_section_layout;
   enum__homepage_v_version_sections_font_family: typeof enum__homepage_v_version_sections_font_family;
   enum__homepage_v_version_status: typeof enum__homepage_v_version_status;
+  hist_milestone_align: typeof hist_milestone_align;
+  hist_icon_type: typeof hist_icon_type;
+  hist_hero_align: typeof hist_hero_align;
+  hist_lead_align: typeof hist_lead_align;
+  hist_font_family: typeof hist_font_family;
+  ab_cp_align: typeof ab_cp_align;
+  ab_fc_align: typeof ab_fc_align;
+  ab_hero_align: typeof ab_hero_align;
+  ab_cm_align: typeof ab_cm_align;
+  wh_ms_align: typeof wh_ms_align;
+  wh_ms_tcolor: typeof wh_ms_tcolor;
+  wh_ms_tsize: typeof wh_ms_tsize;
+  wh_ms_dcolor: typeof wh_ms_dcolor;
+  wh_ms_dsize: typeof wh_ms_dsize;
+  wh_dept_icon: typeof wh_dept_icon;
+  wh_dept_badge_color: typeof wh_dept_badge_color;
+  wh_dept_align: typeof wh_dept_align;
+  wh_dept_tcolor: typeof wh_dept_tcolor;
+  wh_dept_tsize: typeof wh_dept_tsize;
+  wh_dept_ncolor: typeof wh_dept_ncolor;
+  wh_dept_nsize: typeof wh_dept_nsize;
+  wh_link_icon: typeof wh_link_icon;
+  wh_link_align: typeof wh_link_align;
+  wh_link_tcolor: typeof wh_link_tcolor;
+  wh_link_tsize: typeof wh_link_tsize;
+  wh_note_align: typeof wh_note_align;
+  wh_note_tcolor: typeof wh_note_tcolor;
+  wh_note_tsize: typeof wh_note_tsize;
+  enum_working_hours_settings_hero_title_size: typeof enum_working_hours_settings_hero_title_size;
+  enum_working_hours_settings_hero_title_color: typeof enum_working_hours_settings_hero_title_color;
+  enum_working_hours_settings_hero_bg_type: typeof enum_working_hours_settings_hero_bg_type;
+  enum_working_hours_settings_hero_bg_gradient: typeof enum_working_hours_settings_hero_bg_gradient;
+  enum_working_hours_settings_hero_overlay_opacity: typeof enum_working_hours_settings_hero_overlay_opacity;
+  enum_working_hours_settings_emergency_banner_text_align: typeof enum_working_hours_settings_emergency_banner_text_align;
+  enum_working_hours_settings_emergency_banner_title_size: typeof enum_working_hours_settings_emergency_banner_title_size;
+  enum_working_hours_settings_emergency_banner_desc_size: typeof enum_working_hours_settings_emergency_banner_desc_size;
   enum_seo_settings_status: typeof enum_seo_settings_status;
   enum__seo_settings_v_version_status: typeof enum__seo_settings_v_version_status;
+  sch_n_align: typeof sch_n_align;
+  sch_n_tcolor: typeof sch_n_tcolor;
+  sch_n_tsize: typeof sch_n_tsize;
+  enum_schedule_settings_hero_title_size: typeof enum_schedule_settings_hero_title_size;
+  enum_schedule_settings_hero_title_color: typeof enum_schedule_settings_hero_title_color;
+  enum_schedule_settings_hero_bg_type: typeof enum_schedule_settings_hero_bg_type;
+  enum_schedule_settings_hero_bg_gradient: typeof enum_schedule_settings_hero_bg_gradient;
+  enum_schedule_settings_hero_overlay_opacity: typeof enum_schedule_settings_hero_overlay_opacity;
+  enum_schedule_settings_quick_notice_text_align: typeof enum_schedule_settings_quick_notice_text_align;
+  enum_schedule_settings_quick_notice_title_color: typeof enum_schedule_settings_quick_notice_title_color;
+  enum_appointment_settings_custom_fields_type: typeof enum_appointment_settings_custom_fields_type;
+  enum_appointment_settings_custom_fields_column: typeof enum_appointment_settings_custom_fields_column;
+  enum_appointment_settings_font_family: typeof enum_appointment_settings_font_family;
+  enum_appointment_settings_specialty_source: typeof enum_appointment_settings_specialty_source;
   enum_quick_links_settings_items_link_mode: typeof enum_quick_links_settings_items_link_mode;
   enum_quick_links_settings_items_visual_mode: typeof enum_quick_links_settings_items_visual_mode;
   enum_quick_links_settings_items_icon: typeof enum_quick_links_settings_items_icon;
@@ -15651,16 +19406,24 @@ type DatabaseSchema = {
   _procurement_v: typeof _procurement_v;
   documents: typeof documents;
   _documents_v: typeof _documents_v;
+  clinical_protocols: typeof clinical_protocols;
+  _clinical_protocols_v: typeof _clinical_protocols_v;
   departments_deputy_leaders: typeof departments_deputy_leaders;
   departments_gallery: typeof departments_gallery;
   departments: typeof departments;
+  specialties_sidebar_banners: typeof specialties_sidebar_banners;
   specialties: typeof specialties;
+  _specialties_v_version_sidebar_banners: typeof _specialties_v_version_sidebar_banners;
   _specialties_v: typeof _specialties_v;
   doctors: typeof doctors;
   _doctors_v: typeof _doctors_v;
+  schedules_daily_assignments: typeof schedules_daily_assignments;
   schedules_weekly_slots: typeof schedules_weekly_slots;
+  schedules_weekly_dept_slots: typeof schedules_weekly_dept_slots;
+  schedules_emergency_contacts: typeof schedules_emergency_contacts;
   schedules_attachment_files: typeof schedules_attachment_files;
   schedules: typeof schedules;
+  appointments: typeof appointments;
   services: typeof services;
   service_prices: typeof service_prices;
   _service_prices_v: typeof _service_prices_v;
@@ -15748,13 +19511,13 @@ type DatabaseSchema = {
   payload_migrations: typeof payload_migrations;
   site_settings_header_contact_cards: typeof site_settings_header_contact_cards;
   site_settings_header_social_links: typeof site_settings_header_social_links;
-  site_settings_website_assistant_quick_topics: typeof site_settings_website_assistant_quick_topics;
-  site_settings_website_assistant_custom_answers: typeof site_settings_website_assistant_custom_answers;
+  site_assistant_topics: typeof site_assistant_topics;
+  site_assistant_answers: typeof site_assistant_answers;
   site_settings: typeof site_settings;
   _site_settings_v_version_header_contact_cards: typeof _site_settings_v_version_header_contact_cards;
   _site_settings_v_version_header_social_links: typeof _site_settings_v_version_header_social_links;
-  _site_settings_v_version_website_assistant_quick_topics: typeof _site_settings_v_version_website_assistant_quick_topics;
-  _site_settings_v_version_website_assistant_custom_answers: typeof _site_settings_v_version_website_assistant_custom_answers;
+  _site_assistant_topics_v: typeof _site_assistant_topics_v;
+  _site_assistant_answers_v: typeof _site_assistant_answers_v;
   _site_settings_v: typeof _site_settings_v;
   navigation_items_children: typeof navigation_items_children;
   navigation_items: typeof navigation_items;
@@ -15783,6 +19546,7 @@ type DatabaseSchema = {
   homepage_stats: typeof homepage_stats;
   tech_items: typeof tech_items;
   expert_items: typeof expert_items;
+  fn_sources: typeof fn_sources;
   content_values: typeof content_values;
   news_manual: typeof news_manual;
   content_tabs: typeof content_tabs;
@@ -15792,7 +19556,7 @@ type DatabaseSchema = {
   schedule_manual: typeof schedule_manual;
   homepage_sections_schedule_tab_order: typeof homepage_sections_schedule_tab_order;
   vaccine_manual: typeof vaccine_manual;
-  homepage_sections_vaccination_tab_order: typeof homepage_sections_vaccination_tab_order;
+  homepage_vax_tabs: typeof homepage_vax_tabs;
   homepage_sections: typeof homepage_sections;
   homepage: typeof homepage;
   _homepage_v_version_banners: typeof _homepage_v_version_banners;
@@ -15800,6 +19564,7 @@ type DatabaseSchema = {
   _homepage_v_version_stats: typeof _homepage_v_version_stats;
   _tech_items_v: typeof _tech_items_v;
   _expert_items_v: typeof _expert_items_v;
+  _fn_sources_v: typeof _fn_sources_v;
   _content_values_v: typeof _content_values_v;
   _news_manual_v: typeof _news_manual_v;
   _content_tabs_v: typeof _content_tabs_v;
@@ -15809,7 +19574,7 @@ type DatabaseSchema = {
   _schedule_manual_v: typeof _schedule_manual_v;
   _homepage_v_version_sections_schedule_tab_order: typeof _homepage_v_version_sections_schedule_tab_order;
   _vaccine_manual_v: typeof _vaccine_manual_v;
-  _homepage_v_version_sections_vaccination_tab_order: typeof _homepage_v_version_sections_vaccination_tab_order;
+  _homepage_vax_tabs_v: typeof _homepage_vax_tabs_v;
   _homepage_v_version_sections: typeof _homepage_v_version_sections;
   _homepage_v: typeof _homepage_v;
   organization_chart_deputy_directors: typeof organization_chart_deputy_directors;
@@ -15820,12 +19585,16 @@ type DatabaseSchema = {
   _organization_chart_v_version_offices: typeof _organization_chart_v_version_offices;
   _organization_chart_v_version_departments: typeof _organization_chart_v_version_departments;
   _organization_chart_v: typeof _organization_chart_v;
+  hospital_history_quick_stats: typeof hospital_history_quick_stats;
   hospital_history_milestones: typeof hospital_history_milestones;
-  hospital_history_core_values_values_list: typeof hospital_history_core_values_values_list;
+  history_core_values: typeof history_core_values;
+  hospital_history_journey_steps: typeof hospital_history_journey_steps;
   hospital_history_achievements: typeof hospital_history_achievements;
   hospital_history: typeof hospital_history;
+  _hospital_history_v_version_quick_stats: typeof _hospital_history_v_version_quick_stats;
   _hospital_history_v_version_milestones: typeof _hospital_history_v_version_milestones;
-  _hospital_history_v_version_core_values_values_list: typeof _hospital_history_v_version_core_values_values_list;
+  _history_core_values_v: typeof _history_core_values_v;
+  _hospital_history_v_version_journey_steps: typeof _hospital_history_v_version_journey_steps;
   _hospital_history_v_version_achievements: typeof _hospital_history_v_version_achievements;
   _hospital_history_v: typeof _hospital_history_v;
   about_page_stats: typeof about_page_stats;
@@ -15838,6 +19607,12 @@ type DatabaseSchema = {
   _about_page_v_version_facilities_items: typeof _about_page_v_version_facilities_items;
   _about_page_v_version_related_links_links: typeof _about_page_v_version_related_links_links;
   _about_page_v: typeof _about_page_v;
+  wh_milestones: typeof wh_milestones;
+  wh_dept_rows: typeof wh_dept_rows;
+  wh_depts: typeof wh_depts;
+  wh_sched_links: typeof wh_sched_links;
+  wh_notes: typeof wh_notes;
+  working_hours_settings: typeof working_hours_settings;
   upload_settings: typeof upload_settings;
   default_media_settings_custom_defaults: typeof default_media_settings_custom_defaults;
   default_media_settings: typeof default_media_settings;
@@ -15848,7 +19623,13 @@ type DatabaseSchema = {
   chatbot_settings_quick_topics: typeof chatbot_settings_quick_topics;
   chatbot_settings: typeof chatbot_settings;
   system_settings: typeof system_settings;
+  sch_notes: typeof sch_notes;
   schedule_settings: typeof schedule_settings;
+  appointment_settings_time_slots: typeof appointment_settings_time_slots;
+  appointment_settings_custom_specialties: typeof appointment_settings_custom_specialties;
+  appointment_settings_custom_fields: typeof appointment_settings_custom_fields;
+  appointment_settings: typeof appointment_settings;
+  appointment_settings_rels: typeof appointment_settings_rels;
   quick_links_settings_items: typeof quick_links_settings_items;
   quick_links_settings: typeof quick_links_settings;
   _quick_links_settings_v_version_items: typeof _quick_links_settings_v_version_items;
@@ -15874,16 +19655,24 @@ type DatabaseSchema = {
   relations__procurement_v: typeof relations__procurement_v;
   relations_documents: typeof relations_documents;
   relations__documents_v: typeof relations__documents_v;
+  relations_clinical_protocols: typeof relations_clinical_protocols;
+  relations__clinical_protocols_v: typeof relations__clinical_protocols_v;
   relations_departments_deputy_leaders: typeof relations_departments_deputy_leaders;
   relations_departments_gallery: typeof relations_departments_gallery;
   relations_departments: typeof relations_departments;
+  relations_specialties_sidebar_banners: typeof relations_specialties_sidebar_banners;
   relations_specialties: typeof relations_specialties;
+  relations__specialties_v_version_sidebar_banners: typeof relations__specialties_v_version_sidebar_banners;
   relations__specialties_v: typeof relations__specialties_v;
   relations_doctors: typeof relations_doctors;
   relations__doctors_v: typeof relations__doctors_v;
+  relations_schedules_daily_assignments: typeof relations_schedules_daily_assignments;
   relations_schedules_weekly_slots: typeof relations_schedules_weekly_slots;
+  relations_schedules_weekly_dept_slots: typeof relations_schedules_weekly_dept_slots;
+  relations_schedules_emergency_contacts: typeof relations_schedules_emergency_contacts;
   relations_schedules_attachment_files: typeof relations_schedules_attachment_files;
   relations_schedules: typeof relations_schedules;
+  relations_appointments: typeof relations_appointments;
   relations_services: typeof relations_services;
   relations_service_prices: typeof relations_service_prices;
   relations__service_prices_v: typeof relations__service_prices_v;
@@ -15971,13 +19760,13 @@ type DatabaseSchema = {
   relations_payload_migrations: typeof relations_payload_migrations;
   relations_site_settings_header_contact_cards: typeof relations_site_settings_header_contact_cards;
   relations_site_settings_header_social_links: typeof relations_site_settings_header_social_links;
-  relations_site_settings_website_assistant_quick_topics: typeof relations_site_settings_website_assistant_quick_topics;
-  relations_site_settings_website_assistant_custom_answers: typeof relations_site_settings_website_assistant_custom_answers;
+  relations_site_assistant_topics: typeof relations_site_assistant_topics;
+  relations_site_assistant_answers: typeof relations_site_assistant_answers;
   relations_site_settings: typeof relations_site_settings;
   relations__site_settings_v_version_header_contact_cards: typeof relations__site_settings_v_version_header_contact_cards;
   relations__site_settings_v_version_header_social_links: typeof relations__site_settings_v_version_header_social_links;
-  relations__site_settings_v_version_website_assistant_quick_topics: typeof relations__site_settings_v_version_website_assistant_quick_topics;
-  relations__site_settings_v_version_website_assistant_custom_answers: typeof relations__site_settings_v_version_website_assistant_custom_answers;
+  relations__site_assistant_topics_v: typeof relations__site_assistant_topics_v;
+  relations__site_assistant_answers_v: typeof relations__site_assistant_answers_v;
   relations__site_settings_v: typeof relations__site_settings_v;
   relations_navigation_items_children: typeof relations_navigation_items_children;
   relations_navigation_items: typeof relations_navigation_items;
@@ -16006,6 +19795,7 @@ type DatabaseSchema = {
   relations_homepage_stats: typeof relations_homepage_stats;
   relations_tech_items: typeof relations_tech_items;
   relations_expert_items: typeof relations_expert_items;
+  relations_fn_sources: typeof relations_fn_sources;
   relations_content_values: typeof relations_content_values;
   relations_news_manual: typeof relations_news_manual;
   relations_content_tabs: typeof relations_content_tabs;
@@ -16015,7 +19805,7 @@ type DatabaseSchema = {
   relations_schedule_manual: typeof relations_schedule_manual;
   relations_homepage_sections_schedule_tab_order: typeof relations_homepage_sections_schedule_tab_order;
   relations_vaccine_manual: typeof relations_vaccine_manual;
-  relations_homepage_sections_vaccination_tab_order: typeof relations_homepage_sections_vaccination_tab_order;
+  relations_homepage_vax_tabs: typeof relations_homepage_vax_tabs;
   relations_homepage_sections: typeof relations_homepage_sections;
   relations_homepage: typeof relations_homepage;
   relations__homepage_v_version_banners: typeof relations__homepage_v_version_banners;
@@ -16023,6 +19813,7 @@ type DatabaseSchema = {
   relations__homepage_v_version_stats: typeof relations__homepage_v_version_stats;
   relations__tech_items_v: typeof relations__tech_items_v;
   relations__expert_items_v: typeof relations__expert_items_v;
+  relations__fn_sources_v: typeof relations__fn_sources_v;
   relations__content_values_v: typeof relations__content_values_v;
   relations__news_manual_v: typeof relations__news_manual_v;
   relations__content_tabs_v: typeof relations__content_tabs_v;
@@ -16032,7 +19823,7 @@ type DatabaseSchema = {
   relations__schedule_manual_v: typeof relations__schedule_manual_v;
   relations__homepage_v_version_sections_schedule_tab_order: typeof relations__homepage_v_version_sections_schedule_tab_order;
   relations__vaccine_manual_v: typeof relations__vaccine_manual_v;
-  relations__homepage_v_version_sections_vaccination_tab_order: typeof relations__homepage_v_version_sections_vaccination_tab_order;
+  relations__homepage_vax_tabs_v: typeof relations__homepage_vax_tabs_v;
   relations__homepage_v_version_sections: typeof relations__homepage_v_version_sections;
   relations__homepage_v: typeof relations__homepage_v;
   relations_organization_chart_deputy_directors: typeof relations_organization_chart_deputy_directors;
@@ -16043,12 +19834,16 @@ type DatabaseSchema = {
   relations__organization_chart_v_version_offices: typeof relations__organization_chart_v_version_offices;
   relations__organization_chart_v_version_departments: typeof relations__organization_chart_v_version_departments;
   relations__organization_chart_v: typeof relations__organization_chart_v;
+  relations_hospital_history_quick_stats: typeof relations_hospital_history_quick_stats;
   relations_hospital_history_milestones: typeof relations_hospital_history_milestones;
-  relations_hospital_history_core_values_values_list: typeof relations_hospital_history_core_values_values_list;
+  relations_history_core_values: typeof relations_history_core_values;
+  relations_hospital_history_journey_steps: typeof relations_hospital_history_journey_steps;
   relations_hospital_history_achievements: typeof relations_hospital_history_achievements;
   relations_hospital_history: typeof relations_hospital_history;
+  relations__hospital_history_v_version_quick_stats: typeof relations__hospital_history_v_version_quick_stats;
   relations__hospital_history_v_version_milestones: typeof relations__hospital_history_v_version_milestones;
-  relations__hospital_history_v_version_core_values_values_list: typeof relations__hospital_history_v_version_core_values_values_list;
+  relations__history_core_values_v: typeof relations__history_core_values_v;
+  relations__hospital_history_v_version_journey_steps: typeof relations__hospital_history_v_version_journey_steps;
   relations__hospital_history_v_version_achievements: typeof relations__hospital_history_v_version_achievements;
   relations__hospital_history_v: typeof relations__hospital_history_v;
   relations_about_page_stats: typeof relations_about_page_stats;
@@ -16061,6 +19856,12 @@ type DatabaseSchema = {
   relations__about_page_v_version_facilities_items: typeof relations__about_page_v_version_facilities_items;
   relations__about_page_v_version_related_links_links: typeof relations__about_page_v_version_related_links_links;
   relations__about_page_v: typeof relations__about_page_v;
+  relations_wh_milestones: typeof relations_wh_milestones;
+  relations_wh_dept_rows: typeof relations_wh_dept_rows;
+  relations_wh_depts: typeof relations_wh_depts;
+  relations_wh_sched_links: typeof relations_wh_sched_links;
+  relations_wh_notes: typeof relations_wh_notes;
+  relations_working_hours_settings: typeof relations_working_hours_settings;
   relations_upload_settings: typeof relations_upload_settings;
   relations_default_media_settings_custom_defaults: typeof relations_default_media_settings_custom_defaults;
   relations_default_media_settings: typeof relations_default_media_settings;
@@ -16071,7 +19872,13 @@ type DatabaseSchema = {
   relations_chatbot_settings_quick_topics: typeof relations_chatbot_settings_quick_topics;
   relations_chatbot_settings: typeof relations_chatbot_settings;
   relations_system_settings: typeof relations_system_settings;
+  relations_sch_notes: typeof relations_sch_notes;
   relations_schedule_settings: typeof relations_schedule_settings;
+  relations_appointment_settings_time_slots: typeof relations_appointment_settings_time_slots;
+  relations_appointment_settings_custom_specialties: typeof relations_appointment_settings_custom_specialties;
+  relations_appointment_settings_custom_fields: typeof relations_appointment_settings_custom_fields;
+  relations_appointment_settings_rels: typeof relations_appointment_settings_rels;
+  relations_appointment_settings: typeof relations_appointment_settings;
   relations_quick_links_settings_items: typeof relations_quick_links_settings_items;
   relations_quick_links_settings: typeof relations_quick_links_settings;
   relations__quick_links_settings_v_version_items: typeof relations__quick_links_settings_v_version_items;

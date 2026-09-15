@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { contentDeleteAccess, moduleAccess, publicPublished, workflowUpdateAccess } from '@/access'
+import { contentDeleteAccess, moduleAccess, publicPublishedFor, workflowUpdateAccess } from '@/access'
 import { attachmentsField, categoryRelationshipField, slugField, workflowFields } from '@/fields/common'
 import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
@@ -14,7 +14,7 @@ export const News: CollectionConfig = {
     description: 'Đăng và quản lý tin tức, hoạt động và kiến thức sức khỏe.',
   },
   access: {
-    read: publicPublished,
+    read: publicPublishedFor('news'),
     create: moduleAccess('news', 'create'),
     update: workflowUpdateAccess('news'),
     delete: contentDeleteAccess('news'),

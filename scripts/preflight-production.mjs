@@ -30,6 +30,39 @@ if (site) {
 const db = need('DATABASE_URL')
 if (db && !/^postgres(ql)?:\/\//i.test(db)) errors.push('DATABASE_URL phải là PostgreSQL URL')
 
+const migrationDbName = process.env.DATABASE_MIGRATION_URL?.trim()
+  ? 'DATABASE_MIGRATION_URL'
+  : process.env.DATABASE_URL_UNPOOLED?.trim()
+    ? 'DATABASE_URL_UNPOOLED'
+    : ''
+const migrationDb = migrationDbName ? process.env[migrationDbName]?.trim() || '' : ''
+const databaseHost = (value) => {
+  try { return new URL(value).hostname }
+  catch { return '' }
+}
+const isNeonPooler = (value) => databaseHost(value).includes('-pooler.')
+
+if (migrationDb && !/^postgres(ql)?:\/\//i.test(migrationDb)) {
+  errors.push(`${migrationDbName} phải là PostgreSQL URL`)
+}
+if (isNeonPooler(db)) {
+  if (!migrationDb) {
+    errors.push('DATABASE_URL đang là Neon pooled URL; phải thêm DATABASE_MIGRATION_URL bằng Direct connection string')
+  } else if (isNeonPooler(migrationDb)) {
+    errors.push(`${migrationDbName} vẫn là Neon pooled URL; migration phải dùng Direct connection string`)
+  } else {
+    ok.push(`Migration Neon dùng kết nối trực tiếp qua ${migrationDbName}`)
+  }
+} else if (migrationDb) {
+  ok.push(`Migration dùng kết nối riêng qua ${migrationDbName}`)
+}
+
+if (process.env.PAYLOAD_DB_PUSH === 'true') {
+  errors.push('PAYLOAD_DB_PUSH phải là false trên Production; dùng db:migrate:deploy thay cho schema push')
+} else {
+  ok.push('PAYLOAD_DB_PUSH không bật trên Production')
+}
+
 for (const name of ['PAYLOAD_SECRET', 'PREVIEW_SECRET']) {
   const value = need(name)
   if (value && value.length < 32) errors.push(`${name} phải có ít nhất 32 ký tự`)

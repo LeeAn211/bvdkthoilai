@@ -1,5 +1,5 @@
 import type { GlobalConfig } from 'payload'
-import { loggedIn } from '@/access'
+import { moduleAccess } from '@/access'
 
 export const ContactSettings: GlobalConfig = {
   slug: 'contact-settings',
@@ -8,7 +8,7 @@ export const ContactSettings: GlobalConfig = {
     group: '🌐 Trang chủ & Giao diện Website',
     description: 'Quản lý thông tin liên hệ, hotline, cấp cứu, địa chỉ, bản đồ Google Maps và giao diện trang /lien-he.',
   },
-  access: { read: () => true, update: loggedIn },
+  access: { read: () => true, update: moduleAccess('site-settings', 'edit') },
   versions: { max: 20 },
   fields: [
     // ── 1. BANNER HERO ĐẦU TRANG ──

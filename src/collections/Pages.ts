@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { contentDeleteAccess, moduleAccess, publicPublished, workflowUpdateAccess } from '@/access'
+import { contentDeleteAccess, moduleAccess, publicPublishedFor, workflowUpdateAccess } from '@/access'
 import { attachmentsField, slugField, seoFields, workflowFields } from '@/fields/common'
 import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 import { createSlugRedirect } from '@/hooks/contentWorkflow'
@@ -8,7 +8,7 @@ export const Pages: CollectionConfig = {
   slug: 'pages',
   labels: { singular: 'Trang nội dung', plural: 'Trang nội dung' },
   admin: { useAsTitle: 'title', group: '🌐 Trang chủ & Giao diện Website' },
-  access: { read: publicPublished, create: moduleAccess('pages', 'create'), update: workflowUpdateAccess('pages'), delete: contentDeleteAccess('pages') },
+  access: { read: publicPublishedFor('pages'), create: moduleAccess('pages', 'create'), update: workflowUpdateAccess('pages'), delete: contentDeleteAccess('pages') },
   trash: true,
   versions: { drafts: { autosave: true, schedulePublish: false }, maxPerDoc: 30 },
   hooks: { afterChange: [createSlugRedirect('pages')], beforeDelete: [detachNavigationReference('pages')] },

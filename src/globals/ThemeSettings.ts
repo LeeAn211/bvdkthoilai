@@ -1,5 +1,5 @@
 import type { GlobalConfig, Field } from 'payload'
-import { loggedIn } from '@/access'
+import { loggedIn, moduleAccess } from '@/access'
 
 const colorField = (name: string, label: string, defaultValue?: string, opts?: Record<string, unknown>): Field => ({
   name,
@@ -17,7 +17,7 @@ export const ThemeSettings: GlobalConfig = {
   slug: 'theme-settings',
   label: 'Màu sắc & Giao diện',
   admin: { group: '🌐 Trang chủ & Giao diện Website' },
-  access: { read: loggedIn, update: loggedIn },
+  access: { read: loggedIn, update: moduleAccess('site-settings', 'edit') },
   versions: { max: 20 },
   fields: [
     colorField('primaryColor', 'Màu chính', '#0878D1'),

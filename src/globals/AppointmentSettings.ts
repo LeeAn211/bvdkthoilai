@@ -25,7 +25,7 @@ export const AppointmentSettings: GlobalConfig = {
   },
   access: {
     read: () => true,
-    update: moduleAccess('schedules', 'edit'),
+    update: moduleAccess('appointments', 'edit'),
   },
   fields: [
     {

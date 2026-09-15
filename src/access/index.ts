@@ -81,6 +81,16 @@ export const publicPublished: Access = ({ req }) => {
   return { _status: { equals: 'published' } } as Where
 }
 
+export const publicActiveFor = (module: string): Access => ({ req }) => {
+  if (isActiveUser(req.user) && hasModulePermission(req.user, module, 'view')) return true
+  return { active: { equals: true } }
+}
+
+export const publicPublishedFor = (module: string): Access => ({ req }) => {
+  if (isActiveUser(req.user) && hasModulePermission(req.user, module, 'view')) return true
+  return { _status: { equals: 'published' } } as Where
+}
+
 export const admins: Access = ({ req }) => isActiveUser(req.user) && isElevatedRole(roleOf(req.user))
 export const superAdmins: Access = ({ req }) => isActiveUser(req.user) && roleOf(req.user) === 'super-admin'
 export const publishers: Access = ({ req }) => isActiveUser(req.user) && ['super-admin', 'system-admin', 'admin', 'reviewer'].includes(roleOf(req.user) || '')
@@ -89,6 +99,9 @@ export const procurementTeam: Access = ({ req }) => isActiveUser(req.user) && ['
 export const adminField: FieldAccess = ({ req }) => isActiveUser(req.user) && isElevatedRole(roleOf(req.user))
 
 const moduleRoleDefaults: Record<string, Partial<Record<PermissionAction, Role[]>>> = {
+  homepage: { view: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'], edit: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'] },
+  'site-settings': { view: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'], edit: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'] },
+  navigation: { view: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'], edit: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'] },
   news: { view: ['editor', 'reviewer', 'department', 'department-manager'], create: ['editor', 'reviewer', 'department', 'department-manager'], edit: ['editor', 'reviewer', 'department', 'department-manager'], delete: ['reviewer'], submit: ['editor', 'department', 'department-manager'], approve: ['reviewer'], publish: ['reviewer'], hide: ['reviewer'], restore: ['reviewer'] },
   notices: { view: ['editor', 'reviewer', 'department', 'department-manager'], create: ['editor', 'reviewer', 'department', 'department-manager'], edit: ['editor', 'reviewer', 'department', 'department-manager'], delete: ['reviewer'], submit: ['editor', 'department', 'department-manager'], approve: ['reviewer'], publish: ['reviewer'], hide: ['reviewer'], restore: ['reviewer'] },
   documents: { view: ['editor', 'reviewer', 'department', 'department-manager'], create: ['editor', 'reviewer', 'department', 'department-manager'], edit: ['editor', 'reviewer', 'department', 'department-manager'], delete: ['reviewer'], publish: ['reviewer'], restore: ['reviewer'] },
@@ -100,6 +113,7 @@ const moduleRoleDefaults: Record<string, Partial<Record<PermissionAction, Role[]
   specialties: { view: ['hr', 'department', 'department-manager'], create: ['hr', 'department-manager'], edit: ['hr', 'department', 'department-manager'], delete: ['hr'], publish: ['hr', 'department-manager'] },
   doctors: { view: ['hr', 'department', 'department-manager'], create: ['hr', 'department', 'department-manager'], edit: ['hr', 'department', 'department-manager'], delete: ['hr'], import: ['hr'], export: ['hr'] },
   schedules: { view: ['clinic-schedule', 'department-manager'], create: ['clinic-schedule'], edit: ['clinic-schedule'], delete: ['clinic-schedule'], publish: ['clinic-schedule'], import: ['clinic-schedule'], export: ['clinic-schedule'] },
+  appointments: { view: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'], create: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'], edit: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'], delete: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'], export: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'] },
   vaccinations: { view: ['vaccination'], create: ['vaccination'], edit: ['vaccination'], delete: ['vaccination'], publish: ['vaccination'], import: ['vaccination'], export: ['vaccination'] },
   services: { view: ['finance'], create: ['finance'], edit: ['finance'], delete: ['finance'], publish: ['finance'], import: ['finance'], export: ['finance'] },
   feedback: { view: ['quality-management', 'department-manager'], create: ['quality-management'], edit: ['quality-management', 'department-manager'], delete: ['quality-management'], export: ['quality-management'] },
@@ -124,9 +138,13 @@ export const hasModulePermission = (user: any, module: string, action: Permissio
   if (!isActiveUser(user)) return false
   const role = roleOf(user)
   if (isElevatedRole(role)) return true
-  if (roleHasModulePermission(user, module, action)) return true
   const rows = Array.isArray(user?.permissions) ? user.permissions : []
-  return rows.some((row: any) => row?.module === module && Array.isArray(row.actions) && row.actions.includes(action))
+  const hasExplicitPermission = rows.some(
+    (row: any) => row?.module === module && Array.isArray(row.actions) && row.actions.includes(action),
+  )
+
+  if (user?.useCustomPermissions === true) return hasExplicitPermission
+  return roleHasModulePermission(user, module, action) || hasExplicitPermission
 }
 
 export const mediaReadAccess: Access = ({ req }) => {

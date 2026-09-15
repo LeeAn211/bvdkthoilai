@@ -1,5 +1,5 @@
 import type { Field, GlobalConfig } from 'payload'
-import { loggedIn } from '@/access'
+import { loggedIn, moduleAccess } from '@/access'
 import { resolveNavigationItem } from '@/lib/managedLinks'
 
 const menuLinkFields = (): Field[] => [
@@ -185,7 +185,7 @@ export const Navigation: GlobalConfig = {
   },
   access: {
     read: loggedIn,
-    update: loggedIn,
+    update: moduleAccess('navigation', 'edit'),
   },
   versions: {
     max: 30,

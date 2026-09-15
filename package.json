@@ -9,18 +9,25 @@
     "payload": "payload",
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
+    "generate:db-schema": "payload generate:db-schema",
     "seed": "tsx --env-file=.env scripts/seed.ts",
     "import:services": "tsx scripts/import-services.ts",
     "typecheck": "tsc --noEmit",
     "audit:config": "node scripts/audit-config.mjs",
     "clean:payload": "node scripts/clean-payload.mjs",
     "predev": "payload generate:importmap && payload generate:types",
-    "prebuild": "payload generate:importmap && payload generate:types",
-    "prestart": "echo [startup] Khong tu dong sua database. Migration/repair chi chay thu cong.",
+    "prebuild": "payload generate:importmap && payload generate:types && payload generate:db-schema && node scripts/validate-db-schema-contract.mjs",
+    "prestart": "node scripts/db-migrate.mjs",
     "verify:importmap": "node scripts/verify-importmap.mjs",
     "migrate:create": "payload migrate:create",
     "migrate": "payload migrate",
     "migrate:changelog": "node scripts/apply-changelog-migrations.mjs",
+    "db:migrate:deploy": "node scripts/db-migrate.mjs",
+    "db:migrate:status": "node scripts/db-migrate.mjs --status",
+    "db:migrate:dry-run": "node scripts/db-migrate.mjs --dry-run",
+    "db:migrate:verify": "node scripts/db-migrate.mjs --verify-only",
+    "db:schema:check": "node scripts/validate-db-schema-contract.mjs",
+    "db:schema:seal": "node scripts/seal-db-schema.mjs",
     "backup": "sh scripts/backup.sh",
     "restore": "sh scripts/restore.sh",
     "repair:delete": "node scripts/repair-delete-constraints.mjs",
@@ -32,10 +39,11 @@
     "validate:homepage-seo-search": "node scripts/validate-homepage-seo-search.mjs",
     "validate:chatbot-forms-feedback": "node scripts/validate-chatbot-forms-feedback.mjs",
     "validate:quality-surveys": "node scripts/validate-quality-surveys.mjs",
+    "validate:migrations": "node scripts/validate-db-migrations.mjs && node scripts/test-db-schema-contract.mjs",
     "backup:verify": "sh scripts/verify-backup.sh",
     "validate:system-hardening": "node scripts/validate-system-hardening.mjs",
     "validate:uat-production": "node scripts/validate-uat-production.mjs",
-    "validate:all": "npm run validate:foundation && npm run validate:site-shell && npm run validate:public-content && npm run validate:patient-services && npm run validate:organization && npm run validate:homepage-seo-search && npm run validate:chatbot-forms-feedback && npm run validate:quality-surveys && npm run validate:system-hardening && npm run validate:uat-production",
+    "validate:all": "npm run validate:foundation && npm run validate:site-shell && npm run validate:public-content && npm run validate:patient-services && npm run validate:organization && npm run validate:homepage-seo-search && npm run validate:chatbot-forms-feedback && npm run validate:quality-surveys && npm run validate:migrations && npm run validate:system-hardening && npm run validate:uat-production",
     "preflight:production": "node scripts/preflight-production.mjs",
     "smoke:production": "node scripts/smoke-production.mjs",
     "deploy:check": "npm run validate:all && npm run preflight:production && npm run typecheck && npm run build",
@@ -52,21 +60,21 @@
     "repair:users-schema": "node scripts/repair-users-schema.mjs"
   },
   "dependencies": {
-    "@payloadcms/db-postgres": "3.88.0",
-    "@payloadcms/next": "3.88.0",
-    "@payloadcms/richtext-lexical": "3.88.0",
-    "@payloadcms/storage-s3": "3.88.0",
-    "@payloadcms/translations": "3.88.0",
-    "@payloadcms/ui": "3.88.0",
+    "@payloadcms/db-postgres": "3.89.0",
+    "@payloadcms/next": "3.89.0",
+    "@payloadcms/richtext-lexical": "3.89.0",
+    "@payloadcms/storage-s3": "3.89.0",
+    "@payloadcms/translations": "3.89.0",
+    "@payloadcms/ui": "3.89.0",
     "exceljs": "^4.4.0",
     "jszip": "^3.10.1",
-    "next": "16.3.2",
-    "payload": "3.88.0",
+    "next": "16.3.5",
+    "payload": "3.89.0",
     "pg": "8.20.0",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sharp": "^0.34.0"
+    "sharp": "0.35.4"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
@@ -75,8 +83,12 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "tsx": "^4.20.0",
-    "typescript": "^5.9.0",
-    "xlsx": "^0.18.5"
+    "typescript": "^5.9.0"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "11.1.1"
+    }
   },
   "engines": {
     "node": ">=20.9.0"

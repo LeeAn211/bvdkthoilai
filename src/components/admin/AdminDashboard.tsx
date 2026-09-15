@@ -1,6 +1,8 @@
 import config from '@payload-config'
 import { getPayload } from 'payload'
 import Link from 'next/link'
+import { headers } from 'next/headers'
+import { hasModulePermission } from '@/access'
 import AdminAccountSummary from './AdminAccountSummary'
 import AdminDashboardClient, { DashboardGlyph, MetricCardConfig, GlyphName } from './AdminDashboardClient'
 import styles from './AdminDashboard.module.css'
@@ -13,6 +15,11 @@ const formatDate = (value?: string) => value ? new Intl.DateTimeFormat('vi-VN', 
 
 export default async function AdminDashboard() {
   const payload = await getPayload({ config })
+  const { user } = await payload.auth({ headers: await headers() })
+  const currentUser = user as any
+  const elevated = ['super-admin', 'system-admin', 'admin'].includes(currentUser?.role)
+  const can = (moduleName: string, action: 'view' | 'create' = 'view') =>
+    hasModulePermission(currentUser, moduleName, action)
   // Truy vấn đồng thời toàn bộ chỉ số thực tế từ cơ sở dữ liệu
   const [
     // 📰 Truyền thông & Văn bản
@@ -445,7 +452,43 @@ export default async function AdminDashboard() {
       }))
     : []
 
+  const cardPermissionModules: Record<string, string> = {
+    schedules: 'schedules',
+    appointments: 'appointments',
+    services: 'services',
+    'service-prices': 'services',
+    vaccines: 'vaccinations',
+    'clinical-protocols': 'clinical-protocols',
+    doctors: 'doctors',
+    departments: 'departments',
+    'advanced-techniques': 'pages',
+    'scientific-activities': 'news',
+    news: 'news',
+    notices: 'notices',
+    procurement: 'procurement',
+    documents: 'documents',
+    recruitment: 'recruitment',
+    feedback: 'feedback',
+    consultations: 'consultations',
+    surveys: 'surveys',
+    pages: 'pages',
+    faqs: 'faqs',
+    media: 'media',
+  }
+
   const initialMetricCards = [...coreMetricCards, ...dynamicMetricCards]
+    .filter((card) => {
+      if (card.visible === false) return false
+      if (card.id === 'users' || card.id === 'audit-logs') return elevated
+      if (card.id.startsWith('section-')) return can('pages')
+      const moduleName = cardPermissionModules[card.id]
+      return moduleName ? can(moduleName) : false
+    })
+    .map((card) => {
+      const moduleName = card.id.startsWith('section-') ? 'pages' : cardPermissionModules[card.id]
+      if (!card.createHref || !moduleName || can(moduleName, 'create')) return card
+      return { ...card, createHref: undefined }
+    })
 
   // Cơ cấu dữ liệu hệ thống
   const contentBreakdown = [
@@ -823,17 +866,17 @@ export default async function AdminDashboard() {
   return (
     <AdminDashboardClient
       initialMetricCards={initialMetricCards}
-      initialCharts={initialCharts}
-      timelineData={timelineData}
-      departmentStats={departmentStats}
-      satisfactionScore={satisfactionScore}
-      surveyResponses={surveyResponses || 120}
-      slaResolvedPercent={slaResolvedPercent}
-      totalAppointments={appointments}
-      clinicalProtocols={clinicalProtocols}
+      initialCharts={elevated ? initialCharts : Object.fromEntries(Object.keys(initialCharts).map((key) => [key, false])) as typeof initialCharts}
+      timelineData={elevated ? timelineData : []}
+      departmentStats={elevated ? departmentStats : []}
+      satisfactionScore={elevated ? satisfactionScore : 0}
+      surveyResponses={can('surveys') ? surveyResponses : 0}
+      slaResolvedPercent={can('feedback') ? slaResolvedPercent : 0}
+      totalAppointments={can('appointments') ? appointments : 0}
+      clinicalProtocols={can('clinical-protocols') ? clinicalProtocols : 0}
       accountSummaryNode={<AdminAccountSummary key="account-summary-node" />}
-      commandBarNode={commandBarNode}
-      bentoContentNode={bentoContentNode}
+      commandBarNode={elevated ? commandBarNode : null}
+      bentoContentNode={elevated ? bentoContentNode : null}
     />
   )
 }

@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { moduleAccess, publicActive } from '@/access'
+import { moduleAccess, publicActiveFor } from '@/access'
 
 /**
  * Bảng legacy của giai đoạn đầu: từng trộn thông báo, đợt tiêm và danh mục vắc xin.
@@ -16,7 +16,7 @@ export const Vaccinations: CollectionConfig = {
     description: 'Dữ liệu tương thích phiên bản cũ. Không nhập mới. Hãy dùng Lịch tiêm chủng và Danh mục vắc xin.',
   },
   access: {
-    read: publicActive,
+    read: publicActiveFor('vaccinations'),
     create: moduleAccess('vaccinations', 'create'),
     update: moduleAccess('vaccinations', 'edit'),
     delete: moduleAccess('vaccinations', 'delete'),

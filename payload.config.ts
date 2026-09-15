@@ -3,7 +3,7 @@ import { fileURLToPath } from 'url'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { vi } from '@payloadcms/translations/languages/vi'
-import { buildConfig } from 'payload'
+import { buildConfig, type CollectionConfig, type GlobalConfig } from 'payload'
 import sharp from 'sharp'
 
 import { Users } from './src/collections/Users'
@@ -78,6 +78,7 @@ import { AboutPage } from './src/globals/AboutPage'
 import { WorkingHoursSettings } from './src/globals/WorkingHoursSettings'
 import { withAudit, withGlobalAudit } from './src/lib/audit'
 import { hospitalEditor } from './src/editor/hospitalEditor'
+import { hasModulePermission } from './src/access'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -106,6 +107,98 @@ const r2EnvConfigured = Boolean(r2Bucket && r2AccessKeyId && r2SecretAccessKey &
 // để không bị lỗi khi máy không có mạng hoặc còn sót biến R2 trong .env.local.
 // Muốn test R2 ở local thì đặt MEDIA_STORAGE=r2.
 const r2Enabled = r2EnvConfigured && (isProduction || mediaStorage === 'r2')
+
+const collectionPermissionModules: Record<string, string> = {
+  media: 'media',
+  news: 'news',
+  notices: 'notices',
+  procurement: 'procurement',
+  documents: 'documents',
+  'clinical-protocols': 'clinical-protocols',
+  departments: 'departments',
+  specialties: 'specialties',
+  doctors: 'doctors',
+  schedules: 'schedules',
+  appointments: 'appointments',
+  services: 'services',
+  servicePrices: 'services',
+  vaccinations: 'vaccinations',
+  vaccinationSchedules: 'vaccinations',
+  vaccines: 'vaccinations',
+  vaccinePrices: 'vaccinations',
+  recruitment: 'recruitment',
+  pages: 'pages',
+  categories: 'categories',
+  feedback: 'feedback',
+  feedbackCategories: 'feedback',
+  feedbackCases: 'feedback',
+  feedbackActions: 'feedback',
+  consultations: 'consultations',
+  faqs: 'faqs',
+  forms: 'forms',
+  formSubmissions: 'forms',
+  chatbotIntents: 'chatbot',
+  chatbotConversations: 'chatbot',
+  chatbotUnanswered: 'chatbot',
+  'survey-templates': 'surveys',
+  'survey-template-versions': 'surveys',
+  'survey-questions': 'surveys',
+  'survey-campaigns': 'surveys',
+  'survey-codes': 'surveys',
+  'survey-responses': 'surveys',
+  'survey-answers': 'surveys',
+  'survey-statistics': 'surveys',
+  redirects: 'pages',
+  'dynamic-modules': 'pages',
+  'content-sections': 'pages',
+  'custom-posts': 'pages',
+  'advanced-techniques': 'pages',
+  'our-experts': 'doctors',
+  'scientific-activity-groups': 'news',
+  'scientific-activities': 'news',
+  importJobs: 'services',
+}
+
+const globalPermissionModules: Record<string, string> = {
+  'site-settings': 'site-settings',
+  navigation: 'navigation',
+  footer: 'site-settings',
+  'contact-settings': 'site-settings',
+  'theme-settings': 'site-settings',
+  homepage: 'homepage',
+  'medpro-settings': 'appointments',
+  'chatbot-settings': 'chatbot',
+  'schedule-settings': 'schedules',
+  'appointment-settings': 'appointments',
+  'quick-links-settings': 'homepage',
+}
+
+const hideWithoutModulePermission = <T extends CollectionConfig | GlobalConfig>(
+  config: T,
+  moduleName?: string,
+): T => {
+  if (!moduleName) return config
+
+  const existingHidden = config.admin?.hidden
+  return {
+    ...config,
+    admin: {
+      ...config.admin,
+      hidden: (args: any) => {
+        const alreadyHidden = typeof existingHidden === 'function'
+          ? existingHidden(args)
+          : existingHidden === true
+        return alreadyHidden || !hasModulePermission(args.user, moduleName, 'view')
+      },
+    },
+  }
+}
+
+const applyCollectionPermissionVisibility = (config: CollectionConfig): CollectionConfig =>
+  hideWithoutModulePermission(config, collectionPermissionModules[config.slug])
+
+const applyGlobalPermissionVisibility = (config: GlobalConfig): GlobalConfig =>
+  hideWithoutModulePermission(config, globalPermissionModules[config.slug])
 
 if (isProduction && (!payloadSecret || payloadSecret === 'CHANGE_ME' || payloadSecret.length < 32)) {
   throw new Error('PAYLOAD_SECRET bắt buộc phải có ít nhất 32 ký tự trên Production.')
@@ -180,8 +273,8 @@ export default buildConfig({
     Users,
     ...[Media, News, Notices, Procurement, Documents, ClinicalProtocols,
       Departments, Specialties, Doctors, Schedules, Appointments, Services, ServicePrices, Vaccinations, VaccinationSchedules, Vaccines, VaccinePrices, Recruitment, Pages, Categories, Feedback, Consultations, FeedbackCategories, FeedbackCases, FeedbackActions, FAQs, Forms, FormSubmissions, ChatbotIntents, ChatbotConversations, ChatbotUnanswered, SurveyTemplates, SurveyTemplateVersions, SurveyQuestions, SurveyCampaigns, SurveyCodes, SurveyResponses, SurveyAnswers, SurveyStatistics, Redirects, DynamicModules, ContentSections, CustomPosts, AdvancedTechniques, OurExperts, ScientificActivityGroups, ScientificActivities, ImportJobs
-    ].map((collection) => withAudit(collection)),
+    ].map((collection) => withAudit(applyCollectionPermissionVisibility(collection))),
     AuditLogs,
   ],
-  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, WorkingHoursSettings, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings].map((global) => withGlobalAudit(global))
+  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, WorkingHoursSettings, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings].map((global) => withGlobalAudit(applyGlobalPermissionVisibility(global)))
 })

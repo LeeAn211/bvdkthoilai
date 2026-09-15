@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { moduleAccess, publicPublished, workflowUpdateAccess, contentDeleteAccess } from '@/access'
+import { moduleAccess, publicPublishedFor, workflowUpdateAccess, contentDeleteAccess } from '@/access'
 import { slugField, seoFields, workflowFields } from '@/fields/common'
 
 export const DynamicModules: CollectionConfig = {
@@ -11,7 +11,7 @@ export const DynamicModules: CollectionConfig = {
     description: 'Tạo module nội dung tái sử dụng để chèn vào Trang chủ mà không hard-code giao diện.',
   },
   access: {
-    read: publicPublished,
+    read: publicPublishedFor('pages'),
     create: moduleAccess('pages', 'create'),
     update: workflowUpdateAccess('pages'),
     delete: contentDeleteAccess('pages'),

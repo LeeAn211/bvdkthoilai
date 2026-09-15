@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { moduleAccess, publicActive } from '@/access'
+import { moduleAccess, publicActiveFor } from '@/access'
 
 export const Schedules: CollectionConfig = {
   slug: 'schedules',
@@ -9,7 +9,7 @@ export const Schedules: CollectionConfig = {
     group: '🏥 Khám bệnh & Dịch vụ Y tế',
     description: 'Ưu tiên đăng ảnh lịch khám tuần chính thức. Vẫn hỗ trợ nhập theo ngày/tuần/lịch trực cấp cứu để tra cứu chi tiết.',
   },
-  access: { read: publicActive, create: moduleAccess('schedules', 'create'), update: moduleAccess('schedules', 'edit'), delete: moduleAccess('schedules', 'delete') },
+  access: { read: publicActiveFor('schedules'), create: moduleAccess('schedules', 'create'), update: moduleAccess('schedules', 'edit'), delete: moduleAccess('schedules', 'delete') },
   fields: [
     { name: 'title', label: 'Tên lịch', type: 'text', required: true, defaultValue: 'Lịch khám bác sĩ' },
     { name: 'summary', label: 'Mô tả ngắn', type: 'textarea', maxLength: 300, admin: { description: 'Hiển thị ở thẻ danh sách trước khi người xem bấm Xem chi tiết.' } },
@@ -275,5 +275,4 @@ export const Schedules: CollectionConfig = {
     { name: 'active', label: 'Đang áp dụng', type: 'checkbox', defaultValue: true },
   ],
 }
-
 

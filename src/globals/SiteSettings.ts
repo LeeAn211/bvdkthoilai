@@ -1,5 +1,5 @@
 import type { GlobalConfig, Field } from 'payload'
-import { loggedIn } from '@/access'
+import { moduleAccess } from '@/access'
 
 // Helper: field màu với ColorPickerField custom component
 const colorField = (name: string, label: string, defaultValue?: string, opts?: Record<string, unknown>): Field => ({
@@ -39,7 +39,7 @@ export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: 'Header & Nhận diện',
   admin: { group: '🌐 Trang chủ & Giao diện Website' },
-  access: { read: () => true, update: loggedIn },
+  access: { read: () => true, update: moduleAccess('site-settings', 'edit') },
   versions: { max: 20 },
   hooks: {
     afterRead: [({ doc }) => ({
@@ -1190,6 +1190,7 @@ export const SiteSettings: GlobalConfig = {
         colorField('primaryColor', 'Màu chính chatbot', '#0878D1', { admin: { description: 'Nhập mã màu, ví dụ: #0878D1' } }),
         {
           name: 'quickTopics',
+          dbName: 'site_assistant_topics',
           label: 'Các nút hỏi nhanh',
           type: 'array',
           maxRows: 12,
@@ -1202,6 +1203,7 @@ export const SiteSettings: GlobalConfig = {
         },
         {
           name: 'customAnswers',
+          dbName: 'site_assistant_answers',
           label: 'Kho câu hỏi và câu trả lời',
           type: 'array',
           maxRows: 100,

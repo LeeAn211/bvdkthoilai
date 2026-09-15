@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { moduleAccess, publicActive } from '@/access'
+import { moduleAccess, publicActiveFor } from '@/access'
 
 export const ServicePrices: CollectionConfig = {
   slug: 'servicePrices',
@@ -11,7 +11,7 @@ export const ServicePrices: CollectionConfig = {
     defaultColumns: ['service', 'insurancePrice', 'servicePrice', 'effectiveFrom', 'effectiveTo', 'active'],
   },
   access: {
-    read: publicActive,
+    read: publicActiveFor('services'),
     create: moduleAccess('services', 'create'),
     update: moduleAccess('services', 'edit'),
     delete: moduleAccess('services', 'delete'),

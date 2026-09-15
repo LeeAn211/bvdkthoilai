@@ -3,7 +3,7 @@ const { Client } = pg
 
 async function run() {
   const c = new Client({
-    connectionString: 'postgresql://postgres:Nguyentanan1707%40@localhost:5432/thoi_lai_hospital_chuan',
+    connectionString: process.env.DATABASE_URL,
   })
   await c.connect()
 

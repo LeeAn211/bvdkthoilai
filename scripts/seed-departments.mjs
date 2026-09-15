@@ -1,7 +1,7 @@
 import pg from 'pg'
 
 const pool = new pg.Pool({
-  connectionString: 'postgresql://postgres:Nguyentanan1707%40@localhost:5432/thoi_lai_hospital',
+  connectionString: process.env.DATABASE_URL,
 })
 
 const depts = [

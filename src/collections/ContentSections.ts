@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { moduleAccess, publicPublished, workflowUpdateAccess, contentDeleteAccess } from '@/access'
+import { moduleAccess, publicPublishedFor, workflowUpdateAccess, contentDeleteAccess } from '@/access'
 import { slugField, workflowFields, seoFields, layoutTemplateField } from '@/fields/common'
 
 export const ContentSections: CollectionConfig = {
@@ -12,7 +12,7 @@ export const ContentSections: CollectionConfig = {
     description: 'Các mục này được tạo tự động khi Menu chọn “Tự tạo MỤC NỘI DUNG mới”. Ví dụ tạo Menu Chuyển đổi số thì Admin sẽ có mục Chuyển đổi số để quản lý bài viết.',
   },
   access: {
-    read: publicPublished,
+    read: publicPublishedFor('pages'),
     create: moduleAccess('pages', 'create'),
     update: workflowUpdateAccess('pages'),
     delete: contentDeleteAccess('pages'),

@@ -3,7 +3,7 @@ const { Client } = pg;
 
 async function syncMenuColumns() {
   const client = new Client({
-    connectionString: 'postgresql://postgres:Nguyentanan1707%40@localhost:5432/thoi_lai_hospital'
+    connectionString: process.env.DATABASE_URL
   });
   await client.connect();
 

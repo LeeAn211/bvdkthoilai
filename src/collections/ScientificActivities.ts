@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { contentDeleteAccess, moduleAccess, publicPublished, workflowUpdateAccess } from '@/access'
+import { contentDeleteAccess, moduleAccess, publicPublishedFor, workflowUpdateAccess } from '@/access'
 import { attachmentsField, imageDisplayFields, layoutTemplateField, postSourceField, seoFields, slugField, workflowFields } from '@/fields/common'
 import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
@@ -14,7 +14,7 @@ export const ScientificActivities: CollectionConfig = {
     description: 'Thêm và quản lý bài viết cho mục Hoạt động khoa học trên trang chủ và trang danh sách riêng.',
   },
   access: {
-    read: publicPublished,
+    read: publicPublishedFor('news'),
     create: moduleAccess('news', 'create'),
     update: workflowUpdateAccess('news'),
     delete: contentDeleteAccess('news'),

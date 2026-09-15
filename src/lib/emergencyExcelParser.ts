@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx'
+import { workbookToRows } from './excelRows'
 
 export type ParsedEmergencyData = {
   slots: Array<{
@@ -25,9 +25,7 @@ export type ParsedEmergencyData = {
 }
 
 export function parseEmergencyWorkbook(workbook: any, fileName?: string): ParsedEmergencyData {
-  const sheetName = workbook.SheetNames[0]
-  const ws = workbook.Sheets[sheetName]
-  const raw: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
+  const { rows: raw } = workbookToRows(workbook)
 
   // ── Bước 1: Tìm dòng header ngày (có "Thứ Hai" hoặc "Thứ Ba") ──────────
   let headerRow = -1

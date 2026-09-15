@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { contentDeleteAccess, moduleAccess, publicPublished, workflowUpdateAccess } from '@/access'
+import { contentDeleteAccess, moduleAccess, publicPublishedFor, workflowUpdateAccess } from '@/access'
 import { attachmentsField, categoryRelationshipField, slugField, workflowFields } from '@/fields/common'
 import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
@@ -8,7 +8,7 @@ export const Notices: CollectionConfig = {
   slug: 'notices',
   labels: { singular: 'Thông báo', plural: 'Thông báo' },
   admin: { useAsTitle: 'title', group: '📰 Truyền thông & Văn bản', defaultColumns: ['title', 'level', 'workflowState', '_status', 'publishedAt', 'startAt', 'expireAt'] },
-  access: { read: publicPublished, create: moduleAccess('notices', 'create'), update: workflowUpdateAccess('notices'), delete: contentDeleteAccess('notices') },
+  access: { read: publicPublishedFor('notices'), create: moduleAccess('notices', 'create'), update: workflowUpdateAccess('notices'), delete: contentDeleteAccess('notices') },
   trash: true,
   versions: { drafts: { autosave: true, schedulePublish: false }, maxPerDoc: 50 },
   hooks: {

@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx'
+import { workbookToRows } from './excelRows'
 
 export type ParsedDailyAssignment = {
   departmentName: string
@@ -33,9 +33,7 @@ export function guessDeptIcon(name: string): string {
 }
 
 export function parseDailyScheduleWorkbook(workbook: any, fileName?: string): ParsedDailyScheduleData {
-  const sheetName = workbook.SheetNames[0]
-  const ws = workbook.Sheets[sheetName]
-  const raw: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
+  const { rows: raw } = workbookToRows(workbook)
 
   let parsedDate: string | undefined = undefined
   let parsedTitle: string | undefined = undefined

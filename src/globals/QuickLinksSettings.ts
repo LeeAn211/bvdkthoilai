@@ -1,5 +1,5 @@
 import type { GlobalConfig } from 'payload'
-import { loggedIn } from '@/access'
+import { loggedIn, moduleAccess } from '@/access'
 import { resolveSmartLink } from '@/lib/managedLinks'
 
 const defaultQuickLinks = [
@@ -20,7 +20,7 @@ export const QuickLinksSettings: GlobalConfig = {
     group: '🌐 Trang chủ & Giao diện Website',
     description: 'Quản lý thanh dịch vụ nhanh dưới banner: thêm, bớt, ẩn/hiện, kéo thả thứ tự và chọn icon hoặc hình riêng cho từng mục.',
   },
-  access: { read: loggedIn, update: loggedIn },
+  access: { read: loggedIn, update: moduleAccess('homepage', 'edit') },
   versions: { drafts: true, max: 20 },
   hooks: {
     beforeChange: [async ({ data, req }) => {

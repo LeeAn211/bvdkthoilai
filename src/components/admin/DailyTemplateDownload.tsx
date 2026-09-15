@@ -2,7 +2,6 @@
 
 import { useRef, useState } from 'react'
 import { useForm } from '@payloadcms/ui'
-import * as XLSX from 'xlsx'
 import { parseDailyScheduleWorkbook, ParsedDailyAssignment } from '@/lib/dailyScheduleExcelParser'
 
 export default function DailyTemplateDownload() {
@@ -26,7 +25,9 @@ export default function DailyTemplateDownload() {
 
     try {
       const buffer = await file.arrayBuffer()
-      const workbook = XLSX.read(buffer, { type: 'array' })
+      const { Workbook } = await import('exceljs')
+      const workbook = new Workbook()
+      await workbook.xlsx.load(buffer as any)
       const data = parseDailyScheduleWorkbook(workbook, file.name)
 
       if (!data.assignments || data.assignments.length === 0) {
@@ -185,13 +186,13 @@ export default function DailyTemplateDownload() {
           <line x1="12" y1="3" x2="12" y2="15" />
         </svg>
         <span style={{ fontSize: 12.5, fontWeight: 600, color: '#1e293b', flex: 1, minWidth: 0 }}>
-          <b>Upload file Excel lịch ngày</b> — Hỗ trợ file .xlsx hoặc .xls
+          <b>Upload file Excel lịch ngày</b> — Hỗ trợ file .xlsx
         </span>
 
         <input
           ref={inputRef}
           type="file"
-          accept=".xlsx,.xls"
+          accept=".xlsx"
           style={{ display: 'none' }}
           onChange={(e) => {
             setFile(e.target.files?.[0] || null)

@@ -1,12 +1,12 @@
 import type { CollectionConfig } from 'payload'
-import { moduleAccess, publicActive } from '@/access'
+import { moduleAccess, publicActiveFor } from '@/access'
 
 export const VaccinePrices: CollectionConfig = {
   slug: 'vaccinePrices',
   labels: { singular: 'Giá vắc xin', plural: 'Lịch sử giá vắc xin' },
   admin: { useAsTitle: 'decisionNo', group: '🏥 Khám bệnh & Dịch vụ Y tế', defaultColumns: ['vaccine', 'price', 'effectiveFrom', 'effectiveTo', 'active'] },
   access: {
-    read: publicActive,
+    read: publicActiveFor('vaccinations'),
     create: moduleAccess('vaccinations', 'create'),
     update: moduleAccess('vaccinations', 'edit'),
     delete: moduleAccess('vaccinations', 'delete'),

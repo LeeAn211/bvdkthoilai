@@ -24,10 +24,11 @@ export default async function VaccinationPage() {
     medproUrl = (siteSettings as any)?.medproUrl || medproUrl
     hotline = (siteSettings as any)?.hotline || hotline
 
-    const [scheduleResult, vaccineResult, priceResult, defaults] = await Promise.all([
+    const [scheduleResult, vaccineResult, priceResult, legacyResult, defaults] = await Promise.all([
       payload.find({ collection: 'vaccinationSchedules', where: { active: { equals: true } }, sort: '-date', limit: 300, depth: 1 }),
       payload.find({ collection: 'vaccines', where: { active: { equals: true } }, sort: 'name', limit: 300, depth: 1 }),
       payload.find({ collection: 'vaccinePrices', where: { active: { equals: true } }, sort: '-effectiveFrom', limit: 2000, depth: 1 }),
+      payload.find({ collection: 'vaccinations', where: { active: { equals: true } }, sort: '-date', limit: 300, depth: 1 }).catch(() => ({ docs: [] })),
       getDefaultContentMedia(),
     ])
 
@@ -79,6 +80,50 @@ export default async function VaccinationPage() {
         href: `/tiem-chung/${x.id}?type=vaccine`,
       }
     })
+
+    // Chỉ dùng dữ liệu legacy khi collection chuẩn tương ứng chưa có dữ liệu.
+    // Điều này giữ tương thích sau nâng cấp mà không tạo bản ghi trùng trên giao diện.
+    const legacyDocs = legacyResult.docs as any[]
+    if (schedules.length === 0) {
+      schedules = legacyDocs
+        .filter((x) => x.entryType !== 'vaccine')
+        .map((x) => ({
+          id: String(x.id),
+          title: x.vaccineName,
+          summary: x.summary || x.target || x.note,
+          scheduleKind: x.entryType === 'announcement' ? 'announcement' : 'official',
+          target: x.target,
+          date: formatDate(x.date),
+          endDate: formatDate(x.endDate),
+          startTime: x.startTime,
+          endTime: x.endTime,
+          location: x.location,
+          registrationUrl: x.registrationUrl,
+          note: x.note,
+          coverUrl: mediaUrl(x.announcementImage || x.campaignImage) || defaults.vaccinations,
+          href: `/tiem-chung/${x.id}`,
+        }))
+    }
+
+    if (vaccines.length === 0) {
+      vaccines = legacyDocs
+        .filter((x) => x.entryType === 'vaccine')
+        .map((x) => ({
+          id: String(x.id),
+          name: x.vaccineName,
+          summary: x.summary,
+          manufacturer: x.manufacturer,
+          origin: x.origin,
+          prevents: x.prevents,
+          ageGroup: x.ageGroup,
+          availability: x.availability || 'available',
+          price: typeof x.fee === 'number' ? x.fee : undefined,
+          note: x.note,
+          registrationUrl: x.registrationUrl,
+          coverUrl: mediaUrl(x.vaccineImage) || defaults.vaccinations,
+          href: `/tiem-chung/${x.id}`,
+        }))
+    }
   } catch (error) {
     console.error('[VaccinationPage] Lỗi khi tải dữ liệu tiêm chủng:', error)
   }

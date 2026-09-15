@@ -2,7 +2,6 @@
 
 import { useRef, useState } from 'react'
 import { useForm } from '@payloadcms/ui'
-import * as XLSX from 'xlsx'
 import { parseEmergencyWorkbook } from '@/lib/emergencyExcelParser'
 
 type DeptSlot = {
@@ -43,7 +42,9 @@ export default function EmergencyTemplateDownload() {
     setBusy(true); setError(''); setSlots(null); setApplied(false)
     try {
       const buffer = await file.arrayBuffer()
-      const workbook = XLSX.read(buffer, { type: 'array' })
+      const { Workbook } = await import('exceljs')
+      const workbook = new Workbook()
+      await workbook.xlsx.load(buffer as any)
       const data = parseEmergencyWorkbook(workbook, file.name)
 
       setSlots(data.slots || [])
@@ -186,7 +187,7 @@ export default function EmergencyTemplateDownload() {
           <b>Upload file Excel lịch trực</b> — Hỗ trợ .xlsx
         </span>
 
-        <input ref={inputRef} type="file" accept=".xlsx,.xls" style={{ display: 'none' }}
+        <input ref={inputRef} type="file" accept=".xlsx" style={{ display: 'none' }}
           onChange={e => { setFile(e.target.files?.[0] || null); setError(''); setSlots(null); setApplied(false) }} />
 
         <div onClick={() => inputRef.current?.click()} style={{

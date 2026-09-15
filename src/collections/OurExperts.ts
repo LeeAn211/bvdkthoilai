@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { anyone, loggedIn } from '@/access'
+import { anyone, moduleAccess } from '@/access'
 import { seoFields, slugField, slugifyVietnamese } from '@/fields/common'
 import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 
@@ -14,9 +14,9 @@ export const OurExperts: CollectionConfig = {
   },
   access: {
     read: anyone,
-    create: loggedIn,
-    update: loggedIn,
-    delete: loggedIn,
+    create: moduleAccess('doctors', 'create'),
+    update: moduleAccess('doctors', 'edit'),
+    delete: moduleAccess('doctors', 'delete'),
   },
   hooks: {
     beforeDelete: [detachNavigationReference('our-experts')],

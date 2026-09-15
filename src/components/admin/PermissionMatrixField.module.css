@@ -1,0 +1,214 @@
+.field {
+  margin-bottom: 28px;
+}
+
+.heading {
+  align-items: flex-start;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.label {
+  color: var(--theme-text);
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.required {
+  color: var(--theme-error-500);
+}
+
+.description {
+  color: var(--theme-elevation-600);
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 4px 0 0;
+  max-width: 820px;
+}
+
+.summary {
+  background: var(--theme-elevation-50);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 999px;
+  color: var(--theme-elevation-700);
+  flex: none;
+  font-size: 12px;
+  padding: 7px 12px;
+}
+
+.modeExact,
+.modeSupplemental {
+  align-items: center;
+  border: 1px solid;
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  gap: 6px 10px;
+  margin-bottom: 20px;
+  padding: 10px 12px;
+}
+
+.modeExact {
+  background: color-mix(in srgb, var(--theme-success-500) 10%, transparent);
+  border-color: color-mix(in srgb, var(--theme-success-500) 35%, transparent);
+  color: var(--theme-success-700);
+}
+
+.modeSupplemental {
+  background: color-mix(in srgb, var(--theme-warning-500) 10%, transparent);
+  border-color: color-mix(in srgb, var(--theme-warning-500) 35%, transparent);
+  color: var(--theme-warning-700);
+}
+
+.group + .group {
+  margin-top: 24px;
+}
+
+.groupTitle {
+  color: var(--theme-elevation-700);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.card {
+  background: var(--theme-elevation-0);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 10px;
+  padding: 14px;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.cardEnabled {
+  border-color: color-mix(in srgb, var(--theme-success-500) 55%, var(--theme-elevation-150));
+  box-shadow: inset 3px 0 0 var(--theme-success-500);
+}
+
+.cardHeader {
+  align-items: flex-start;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.moduleToggle,
+.action {
+  align-items: flex-start;
+  cursor: pointer;
+  display: flex;
+}
+
+.moduleToggle {
+  gap: 9px;
+  min-width: 0;
+}
+
+.moduleToggle input,
+.action input {
+  accent-color: var(--theme-success-500);
+  flex: none;
+  height: 16px;
+  margin: 1px 0 0;
+  width: 16px;
+}
+
+.moduleToggle strong {
+  color: var(--theme-text);
+  display: block;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.moduleToggle small {
+  color: var(--theme-elevation-600);
+  display: block;
+  font-size: 11px;
+  line-height: 1.45;
+  margin-top: 2px;
+}
+
+.selectAll {
+  background: transparent;
+  border: 0;
+  color: var(--theme-success-600);
+  cursor: pointer;
+  flex: none;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 0;
+}
+
+.selectAll:hover {
+  text-decoration: underline;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 13px;
+}
+
+.action {
+  background: var(--theme-elevation-50);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 6px;
+  color: var(--theme-elevation-700);
+  font-size: 11px;
+  gap: 6px;
+  line-height: 1.35;
+  padding: 6px 8px;
+}
+
+.action:has(input:checked) {
+  background: color-mix(in srgb, var(--theme-success-500) 10%, var(--theme-elevation-0));
+  border-color: color-mix(in srgb, var(--theme-success-500) 38%, var(--theme-elevation-150));
+  color: var(--theme-text);
+}
+
+.action:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.legacy {
+  background: color-mix(in srgb, var(--theme-warning-500) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--theme-warning-500) 32%, transparent);
+  border-radius: 8px;
+  color: var(--theme-warning-700);
+  font-size: 12px;
+  margin-top: 20px;
+  padding: 10px 12px;
+}
+
+.legacy p {
+  margin: 3px 0 0;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .heading {
+    display: block;
+  }
+
+  .summary {
+    display: inline-block;
+    margin-top: 10px;
+  }
+}

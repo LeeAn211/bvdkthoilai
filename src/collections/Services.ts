@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { moduleAccess, publicActive } from '@/access'
+import { moduleAccess, publicActiveFor } from '@/access'
 
 export const Services: CollectionConfig = {
   slug: 'services',
@@ -10,7 +10,7 @@ export const Services: CollectionConfig = {
     description: 'Thêm từng dịch vụ hoặc dùng khung nhập Excel ngay phía trên danh sách.',
     components: { beforeList: ['/src/components/admin/ServicesExcelImport'] },
   },
-  access: { read: publicActive, create: moduleAccess('services', 'create'), update: moduleAccess('services', 'edit'), delete: moduleAccess('services', 'delete') },
+  access: { read: publicActiveFor('services'), create: moduleAccess('services', 'create'), update: moduleAccess('services', 'edit'), delete: moduleAccess('services', 'delete') },
   fields: [
     { name: 'sequence', label: 'STT', type: 'number', admin: { position: 'sidebar' } },
     { name: 'code', label: 'Mã dịch vụ', type: 'text', required: true, unique: true, index: true },

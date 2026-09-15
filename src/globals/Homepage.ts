@@ -1,5 +1,5 @@
 import type { Field, GlobalConfig } from 'payload'
-import { loggedIn } from '@/access'
+import { moduleAccess } from '@/access'
 import { resolveHomepageLinks } from '@/lib/managedLinks'
 
 // Helper: field màu với ColorPickerField custom component
@@ -117,7 +117,7 @@ export const Homepage: GlobalConfig = {
     group: '🌐 Trang chủ & Giao diện Website',
     description: 'Quản lý banner, nội dung, thứ tự, màu sắc và cỡ chữ của các mục trên trang chủ.',
   },
-  access: { read: () => true, update: loggedIn },
+  access: { read: () => true, update: moduleAccess('homepage', 'edit') },
   versions: { drafts: true, max: 20 },
   hooks: {
     beforeChange: [async ({ data, req }) => resolveHomepageLinks(req, data)],
@@ -818,6 +818,7 @@ export const Homepage: GlobalConfig = {
         },
         {
           name: 'vaccinationTabOrder',
+          dbName: 'homepage_vax_tabs',
           label: 'Thứ tự các tab Tiêm ngừa',
           type: 'array',
           admin: {

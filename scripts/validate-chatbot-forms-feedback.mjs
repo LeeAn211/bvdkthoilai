@@ -15,7 +15,7 @@ const checks = [
   ['Chatbot API', 'src/app/(frontend)/api/chatbot/route.ts', "collection: 'chatbotIntents'"],
   ['Unanswered logging', 'src/app/(frontend)/api/chatbot/route.ts', "collection: 'chatbotUnanswered'"],
   ['Dynamic forms API', 'src/app/(frontend)/api/forms/route.ts', "collection: 'formSubmissions'"],
-  ['Feedback page', 'src/app/(frontend)/gop-y/page.tsx', '<FeedbackForm/>'],
+  ['Feedback page', 'src/app/(frontend)/gop-y/page.tsx', '<FeedbackForm'],
   ['Feedback lookup page', 'src/app/(frontend)/gop-y/tra-cuu/page.tsx', '<FeedbackLookup'],
   ['Dynamic form page', 'src/app/(frontend)/bieu-mau/[slug]/page.tsx', '<DynamicPublicForm'],
   ['Chatbot server lookup client', 'src/components/WebsiteAssistant.tsx', "fetch('/api/chatbot'"],

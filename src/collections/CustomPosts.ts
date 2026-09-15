@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { moduleAccess, publicPublished, workflowUpdateAccess, contentDeleteAccess } from '@/access'
+import { moduleAccess, publicPublishedFor, workflowUpdateAccess, contentDeleteAccess } from '@/access'
 import { attachmentsField, slugField, workflowFields } from '@/fields/common'
 import { syncPublishedAt } from '@/hooks/contentWorkflow'
 
@@ -13,7 +13,7 @@ export const CustomPosts: CollectionConfig = {
     description: 'Đăng bài cho các mục nội dung mở rộng được tạo từ Menu, ví dụ Chuyển đổi số.',
   },
   access: {
-    read: publicPublished,
+    read: publicPublishedFor('pages'),
     create: moduleAccess('pages', 'create'),
     update: workflowUpdateAccess('pages'),
     delete: contentDeleteAccess('pages'),

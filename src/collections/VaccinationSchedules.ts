@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { moduleAccess, publicActive } from '@/access'
+import { moduleAccess, publicActiveFor } from '@/access'
 
 export const VaccinationSchedules: CollectionConfig = {
   slug: 'vaccinationSchedules',
@@ -11,7 +11,7 @@ export const VaccinationSchedules: CollectionConfig = {
     defaultColumns: ['title', 'date', 'endDate', 'scheduleKind', 'active'],
   },
   access: {
-    read: publicActive,
+    read: publicActiveFor('vaccinations'),
     create: moduleAccess('vaccinations', 'create'),
     update: moduleAccess('vaccinations', 'edit'),
     delete: moduleAccess('vaccinations', 'delete'),

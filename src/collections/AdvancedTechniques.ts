@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { anyone, loggedIn } from '@/access'
+import { anyone, moduleAccess } from '@/access'
 import { attachmentsField, seoFields, slugField } from '@/fields/common'
 import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 
@@ -14,9 +14,9 @@ export const AdvancedTechniques: CollectionConfig = {
   },
   access: {
     read: anyone,
-    create: loggedIn,
-    update: loggedIn,
-    delete: loggedIn,
+    create: moduleAccess('pages', 'create'),
+    update: moduleAccess('pages', 'edit'),
+    delete: moduleAccess('pages', 'delete'),
   },
   hooks: {
     beforeDelete: [detachNavigationReference('advanced-techniques')],

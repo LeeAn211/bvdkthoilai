@@ -288,7 +288,11 @@ export interface User {
    */
   status: 'active' | 'locked' | 'inactive';
   /**
-   * Chỉ dùng để cấp thêm quyền ngoài vai trò mặc định. Quyền được kiểm tra server-side qua access helper.
+   * Bật: chỉ cho phép đúng các mục và thao tác đã tích bên dưới. Tắt: giữ quyền mặc định theo vai trò và cộng thêm các quyền được tích.
+   */
+  useCustomPermissions?: boolean | null;
+  /**
+   * Chọn trực quan từng mục và từng thao tác được phép trong Admin.
    */
   permissions?:
     | {
@@ -3266,6 +3270,7 @@ export interface UsersSelect<T extends boolean = true> {
   role?: T;
   department?: T;
   status?: T;
+  useCustomPermissions?: T;
   permissions?:
     | T
     | {

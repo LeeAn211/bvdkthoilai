@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { moduleAccess, publicActive } from '@/access'
+import { moduleAccess, publicActiveFor } from '@/access'
 import { slugField } from '@/fields/common'
 
 export const Vaccines: CollectionConfig = {
@@ -7,7 +7,7 @@ export const Vaccines: CollectionConfig = {
   labels: { singular: 'Vắc xin', plural: 'Danh mục vắc xin' },
   admin: { useAsTitle: 'name', group: '🏥 Khám bệnh & Dịch vụ Y tế', defaultColumns: ['name', 'manufacturer', 'origin', 'availability', 'active'] },
   access: {
-    read: publicActive,
+    read: publicActiveFor('vaccinations'),
     create: moduleAccess('vaccinations', 'create'),
     update: moduleAccess('vaccinations', 'edit'),
     delete: moduleAccess('vaccinations', 'delete'),

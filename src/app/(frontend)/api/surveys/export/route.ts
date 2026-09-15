@@ -1,2 +1,42 @@
-import { NextResponse } from 'next/server'; import { getCMS } from '@/lib/payload'
-export async function GET(req:Request){const p=await getCMS();const auth:any=await p.auth({headers:req.headers});if(!auth?.user||!['super-admin','system-admin','admin','quality-management'].includes(auth.user.role))return NextResponse.json({error:'Không có quyền'},{status:403});const u=new URL(req.url);const campaign=u.searchParams.get('campaign');if(!campaign)return NextResponse.json({error:'Thiếu campaign'},{status:400});const campaignId=Number(campaign);if(!Number.isFinite(campaignId))return NextResponse.json({error:'Campaign không hợp lệ'},{status:400});const r:any=await p.find({collection:'survey-responses',where:{campaign:{equals:campaignId}},limit:10000,sort:'submittedAt',overrideAccess:true});const esc=(v:any)=>`"${String(v??'').replaceAll('"','""')}"`;const rows=[['Mã phản hồi','Thời gian','Điểm TB','Ý kiến'],...r.docs.map((x:any)=>[x.responseCode,x.submittedAt,x.overallScore??'',x.comment??''])];const csv='\uFEFF'+rows.map((row:any[])=>row.map(esc).join(',')).join('\r\n');return new NextResponse(csv,{headers:{'content-type':'text/csv; charset=utf-8','content-disposition':'attachment; filename="khao-sat.csv"'}})}
+import { NextResponse } from 'next/server'
+
+import { hasModulePermission } from '@/access'
+import { getCMS } from '@/lib/payload'
+
+export async function GET(request: Request) {
+  const payload = await getCMS()
+  const { user } = await payload.auth({ headers: request.headers })
+
+  if (!user || !hasModulePermission(user, 'surveys', 'export')) {
+    return NextResponse.json({ error: 'Không có quyền xuất dữ liệu khảo sát.' }, { status: 403 })
+  }
+
+  const campaign = new URL(request.url).searchParams.get('campaign')
+  if (!campaign) return NextResponse.json({ error: 'Thiếu campaign' }, { status: 400 })
+
+  const campaignId = Number(campaign)
+  if (!Number.isFinite(campaignId)) {
+    return NextResponse.json({ error: 'Campaign không hợp lệ' }, { status: 400 })
+  }
+
+  const result = await payload.find({
+    collection: 'survey-responses',
+    where: { campaign: { equals: campaignId } },
+    limit: 10000,
+    sort: 'submittedAt',
+    overrideAccess: true,
+  })
+  const escapeCell = (value: unknown) => `"${String(value ?? '').replaceAll('"', '""')}"`
+  const rows = [
+    ['Mã phản hồi', 'Thời gian', 'Điểm TB', 'Ý kiến'],
+    ...result.docs.map((item) => [item.responseCode, item.submittedAt, item.overallScore ?? '', item.comment ?? '']),
+  ]
+  const csv = `\uFEFF${rows.map((row) => row.map(escapeCell).join(',')).join('\r\n')}`
+
+  return new NextResponse(csv, {
+    headers: {
+      'content-type': 'text/csv; charset=utf-8',
+      'content-disposition': 'attachment; filename="khao-sat.csv"',
+    },
+  })
+}

@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { contentDeleteAccess, moduleAccess, publicPublished } from '@/access'
+import { contentDeleteAccess, moduleAccess } from '@/access'
 import { seoFields, slugField } from '@/fields/common'
 
 export const ClinicalProtocols: CollectionConfig = {
@@ -13,9 +13,9 @@ export const ClinicalProtocols: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: moduleAccess('documents', 'create'),
-    update: moduleAccess('documents', 'edit'),
-    delete: contentDeleteAccess('documents'),
+    create: moduleAccess('clinical-protocols', 'create'),
+    update: moduleAccess('clinical-protocols', 'edit'),
+    delete: contentDeleteAccess('clinical-protocols'),
   },
   trash: true,
   versions: { maxPerDoc: 30 },

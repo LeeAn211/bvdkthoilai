@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { contentDeleteAccess, moduleAccess, publicPublished, workflowUpdateAccess } from '@/access'
+import { contentDeleteAccess, moduleAccess, publicPublishedFor, workflowUpdateAccess } from '@/access'
 import { attachmentsField, categoryRelationshipField, slugField, workflowFields } from '@/fields/common'
 import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
 
@@ -7,7 +7,7 @@ export const Recruitment: CollectionConfig = {
   slug: 'recruitment',
   labels: { singular: 'Tin tuyển dụng', plural: 'Tuyển dụng' },
   admin: { useAsTitle: 'title', group: '📰 Truyền thông & Văn bản', defaultColumns: ['title', 'department', 'quantity', 'publishedAt', 'deadlineAt', 'workflowState', '_status'] },
-  access: { read: publicPublished, create: moduleAccess('recruitment', 'create'), update: workflowUpdateAccess('recruitment'), delete: contentDeleteAccess('recruitment') },
+  access: { read: publicPublishedFor('recruitment'), create: moduleAccess('recruitment', 'create'), update: workflowUpdateAccess('recruitment'), delete: contentDeleteAccess('recruitment') },
   trash: true,
   versions: { drafts: { autosave: true, schedulePublish: false }, maxPerDoc: 30 },
   hooks: { beforeChange: [syncPublishedAt('publishedAt')], afterChange: [createSlugRedirect('recruitment')] },

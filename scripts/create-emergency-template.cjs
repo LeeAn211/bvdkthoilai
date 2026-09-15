@@ -1,21 +1,12 @@
 /**
  * Script tạo file Excel mẫu: Lịch trực Cấp cứu theo Tuần
  * Chạy: node scripts/create-emergency-template.js
- * Yêu cầu: npm install xlsx (cài 1 lần)
+ * Dùng ExcelJS đã được cài trong dự án.
  */
 
 const path = require('path')
 const fs = require('fs')
-
-// Thử dùng thư viện xlsx nếu có
-let XLSX
-try {
-  XLSX = require('xlsx')
-} catch {
-  console.log('⚠️  Chưa có thư viện xlsx. Đang cài...')
-  require('child_process').execSync('npm install xlsx --no-save', { stdio: 'inherit' })
-  XLSX = require('xlsx')
-}
+const ExcelJS = require('exceljs')
 
 // ============================================================
 // DỮ LIỆU MẪU
@@ -82,7 +73,7 @@ function buildInputSheet() {
     ])
   }
 
-  return XLSX.utils.aoa_to_sheet(rows)
+  return rows
 }
 
 // ============================================================
@@ -122,36 +113,32 @@ function buildGuideSheet() {
     [''],
     ['📞 Hỗ trợ: Liên hệ quản trị viên hệ thống'],
   ]
-  return XLSX.utils.aoa_to_sheet(rows)
+  return rows
 }
 
 // ============================================================
 // TẠO FILE
 // ============================================================
-const wb = XLSX.utils.book_new()
+async function main() {
+  const workbook = new ExcelJS.Workbook()
+  const inputSheet = workbook.addWorksheet('LỊCH TRỰC')
+  inputSheet.addRows(buildInputSheet())
+  inputSheet.columns = [16, 40, 40, 40, 30, 12].map((width) => ({ width }))
 
-const ws1 = buildInputSheet()
-// Căn chỉnh độ rộng cột
-ws1['!cols'] = [
-  { wch: 16 }, // Thứ
-  { wch: 40 }, // Sáng
-  { wch: 40 }, // Chiều
-  { wch: 40 }, // Tối
-  { wch: 30 }, // Ghi chú
-  { wch: 12 }, // Giá trị
-]
-XLSX.utils.book_append_sheet(wb, ws1, 'LỊCH TRỰC')
+  const guideSheet = workbook.addWorksheet('HƯỚNG DẪN')
+  guideSheet.addRows(buildGuideSheet())
+  guideSheet.columns = [{ width: 70 }]
 
-const ws2 = buildGuideSheet()
-ws2['!cols'] = [{ wch: 70 }]
-XLSX.utils.book_append_sheet(wb, ws2, 'HƯỚNG DẪN')
+  const outDir = path.join(__dirname, '..', 'public', 'templates')
+  if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true })
+  const outPath = path.join(outDir, 'lich-truc-cap-cuu-mau.xlsx')
+  await workbook.xlsx.writeFile(outPath)
 
-// Xuất file
-const outDir = path.join(__dirname, '..', 'public', 'templates')
-if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true })
+  console.log(`✅ Đã tạo file Excel mẫu tại:\n   ${outPath}`)
+  console.log('\nMở file bằng Excel hoặc Google Sheets để xem và chỉnh sửa.')
+}
 
-const outPath = path.join(outDir, 'lich-truc-cap-cuu-mau.xlsx')
-XLSX.writeFile(wb, outPath)
-
-console.log(`✅ Đã tạo file Excel mẫu tại:\n   ${outPath}`)
-console.log('\nMở file bằng Excel hoặc Google Sheets để xem và chỉnh sửa.')
+main().catch((error) => {
+  console.error(error)
+  process.exitCode = 1
+})

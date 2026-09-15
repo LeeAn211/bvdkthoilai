@@ -16,7 +16,7 @@ CREATE DATABASE thoi_lai_hospital
 Ví dụ:
 
 ```env
-DATABASE_URL=postgresql://postgres:MAT_KHAU_POSTGRES@localhost:5432/thoi_lai_hospital
+DATABASE_URL=postgresql://postgres:change_me@localhost:5432/thoi_lai_hospital
 PAYLOAD_SECRET=CHUOI_BI_MAT_DAI_NGAU_NHIEN
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 PAYLOAD_DB_PUSH=true
@@ -60,3 +60,5 @@ Thư mục file media trong project (nếu còn) cũng không tự tạo lại c
 
 ## 6. Không chạy các repair cũ trước khi bootstrap
 Không cần chạy `repair:users-schema`, `repair:visibility`, `migrate:legacy` trên database trống. Payload sẽ tạo schema theo collection/global hiện tại.
+
+Sau khi baseline đã được tạo thành công, chạy `npm run db:migrate:deploy` để ghi nhận và xác minh các migration production hiện có, rồi giữ `PAYLOAD_DB_PUSH=false` trước khi khởi động môi trường production/Railway.

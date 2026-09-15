@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { admins } from '@/access'
+import { moduleAccess } from '@/access'
 
 export const Redirects: CollectionConfig = {
   slug: 'redirects',
@@ -10,7 +10,12 @@ export const Redirects: CollectionConfig = {
     defaultColumns: ['fromPath', 'toPath', 'sourceCollection', 'active', 'updatedAt'],
     description: 'Được tạo tự động khi đổi slug của nội dung đã xuất bản. Có thể thêm thủ công khi cần.',
   },
-  access: { read: () => true, create: admins, update: admins, delete: admins },
+  access: {
+    read: () => true,
+    create: moduleAccess('pages', 'create'),
+    update: moduleAccess('pages', 'edit'),
+    delete: moduleAccess('pages', 'delete'),
+  },
   trash: true,
   fields: [
     { name: 'fromPath', label: 'Đường dẫn cũ', type: 'text', required: true, unique: true, index: true },
