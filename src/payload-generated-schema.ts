@@ -8844,6 +8844,22 @@ export const site_settings = pgTable(
     ).default("/lien-he"),
     brand_primaryColor: varchar("brand_primary_color").default("#0878D1"),
     brand_secondaryColor: varchar("brand_secondary_color").default("#FFFFFF"),
+    smtpSettings_enabled: boolean("smtp_settings_enabled").default(true),
+    smtpSettings_host: varchar("smtp_settings_host").default("smtp.gmail.com"),
+    smtpSettings_port: numeric("smtp_settings_port", {
+      mode: "number",
+    }).default(465),
+    smtpSettings_user: varchar("smtp_settings_user").default(
+      "leean170792@gmail.com",
+    ),
+    smtpSettings_pass:
+      varchar("smtp_settings_pass").default("mvdbzvsojuorpwgv"),
+    smtpSettings_fromAddress: varchar("smtp_settings_from_address").default(
+      "leean170792@gmail.com",
+    ),
+    smtpSettings_fromName: varchar("smtp_settings_from_name").default(
+      "Bệnh viện Đa khoa Khu vực Thới Lai",
+    ),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -9634,6 +9650,27 @@ export const _site_settings_v = pgTable(
     version_brand_secondaryColor: varchar(
       "version_brand_secondary_color",
     ).default("#FFFFFF"),
+    version_smtpSettings_enabled: boolean(
+      "version_smtp_settings_enabled",
+    ).default(true),
+    version_smtpSettings_host: varchar("version_smtp_settings_host").default(
+      "smtp.gmail.com",
+    ),
+    version_smtpSettings_port: numeric("version_smtp_settings_port", {
+      mode: "number",
+    }).default(465),
+    version_smtpSettings_user: varchar("version_smtp_settings_user").default(
+      "leean170792@gmail.com",
+    ),
+    version_smtpSettings_pass: varchar("version_smtp_settings_pass").default(
+      "mvdbzvsojuorpwgv",
+    ),
+    version_smtpSettings_fromAddress: varchar(
+      "version_smtp_settings_from_address",
+    ).default("leean170792@gmail.com"),
+    version_smtpSettings_fromName: varchar(
+      "version_smtp_settings_from_name",
+    ).default("Bệnh viện Đa khoa Khu vực Thới Lai"),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,

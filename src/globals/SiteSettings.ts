@@ -1233,5 +1233,79 @@ export const SiteSettings: GlobalConfig = {
         colorField('secondaryColor', 'Màu phụ', '#FFFFFF'),
       ],
     },
+    {
+      name: 'smtpSettings',
+      label: '📧 Cấu hình Email gửi tự động (SMTP / Quên mật khẩu)',
+      type: 'group',
+      admin: {
+        description: 'Tùy chỉnh hòm thư gửi tự động của hệ thống (Gửi thông báo, Quên mật khẩu). Bạn có thể đổi Gmail hoặc email tên miền tại đây.',
+      },
+      fields: [
+        {
+          name: 'enabled',
+          label: 'Bật gửi email qua SMTP',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: { description: 'Bật để kích hoạt tính năng gửi mail tự động.' },
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'host',
+              label: 'Máy chủ SMTP (Host)',
+              type: 'text',
+              defaultValue: 'smtp.gmail.com',
+              admin: { width: '50%', placeholder: 'smtp.gmail.com' },
+            },
+            {
+              name: 'port',
+              label: 'Cổng kết nối (Port)',
+              type: 'number',
+              defaultValue: 465,
+              admin: { width: '50%', description: '465 (SSL) hoặc 587 (TLS)' },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'user',
+              label: 'Tài khoản Email gửi',
+              type: 'text',
+              defaultValue: 'leean170792@gmail.com',
+              admin: { width: '50%', placeholder: 'bvdkthoilai@gmail.com' },
+            },
+            {
+              name: 'pass',
+              label: 'Mật khẩu ứng dụng (App Password)',
+              type: 'text',
+              defaultValue: 'mvdbzvsojuorpwgv',
+              admin: { width: '50%', description: 'Mã 16 chữ cái tạo từ bảo mật Google.' },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'fromAddress',
+              label: 'Địa chỉ Email người gửi hiển thị',
+              type: 'text',
+              defaultValue: 'leean170792@gmail.com',
+              admin: { width: '50%', placeholder: 'leean170792@gmail.com' },
+            },
+            {
+              name: 'fromName',
+              label: 'Tên người gửi hiển thị',
+              type: 'text',
+              defaultValue: 'Bệnh viện Đa khoa Khu vực Thới Lai',
+              admin: { width: '50%', placeholder: 'Bệnh viện Đa khoa Khu vực Thới Lai' },
+            },
+          ],
+        },
+      ],
+    },
   ],
 }

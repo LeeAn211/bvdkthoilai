@@ -1,5 +1,40 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Đóng gói Migration 008: Đưa toàn bộ Cấu hình Email SMTP gửi tự động vào Admin CMS
+
+- **Thời gian thực hiện:** 11:15 (Asia/Saigon)
+- **Yêu cầu:** Cho phép Ban quản trị bệnh viện có thể xem, thay đổi thông tin máy chủ SMTP, tài khoản hòm thư gửi mail tự động (Gmail, mail theo tên miền, mật khẩu ứng dụng, cổng kết nối, tên người gửi) trực tiếp từ giao diện Admin CMS mà không cần sửa code hay can thiệp vào biến môi trường `.env`.
+- **Nội dung thực hiện:**
+  - Thêm nhóm cấu hình `smtpSettings` vào Global `SiteSettings.ts` (**Trang chủ & Giao diện Website -> Header & Nhận diện -> 📧 Cấu hình Email gửi tự động (SMTP / Quên mật khẩu)**) với các trường:
+    - `enabled`: Công tắc bật/tắt gửi email tự động.
+    - `host`: Máy chủ SMTP (mặc định: `smtp.gmail.com`).
+    - `port`: Cổng kết nối (mặc định: `465`).
+    - `user`: Tài khoản email gửi (`leean170792@gmail.com`).
+    - `pass`: Mật khẩu ứng dụng (App Password 16 chữ cái từ Google).
+    - `fromAddress`: Địa chỉ email người gửi hiển thị.
+    - `fromName`: Tên người gửi hiển thị (**Bệnh viện Đa khoa Khu vực Thới Lai**).
+  - Cập nhật mẫu email đặt lại mật khẩu trong `Users.ts`:
+    - Tiêu đề: `[BV Đa khoa Thới Lai] Yêu cầu đặt lại mật khẩu tài khoản`.
+    - Giao diện HTML chuẩn nhận diện thương hiệu y tế bệnh viện, có nút bấm đặt lại mật khẩu trực quan và cảnh báo bảo mật thời hạn 2 giờ.
+  - Tạo Migration `scripts/db-migrations/20260915_008_add_smtp_settings_to_site_settings.mjs`:
+    - Thêm các cột `smtp_settings_*` vào bảng `site_settings` và `version_smtp_settings_*` vào bảng `_site_settings_v`.
+    - Có hàm `verify()` kiểm tra cột vật lý trên cơ sở dữ liệu.
+  - Cập nhật và khóa schema contract: `npm run db:schema:seal -- 20260915_008_add_smtp_settings_to_site_settings`.
+  - Áp dụng migration tại local: 8/8 applied thành công.
+  - Chạy toàn bộ test suites `npm run validate:all`: PASS 100% (61/61 migration tests, 29/29 UAT tests).
+- **Files Modified:**
+  - `src/globals/SiteSettings.ts`
+  - `src/collections/Users.ts`
+  - `src/payload-generated-schema.ts`
+  - `src/payload-types.ts`
+  - `scripts/db-migrations/20260915_008_add_smtp_settings_to_site_settings.mjs` (Mới)
+  - `scripts/db-schema-contract.json`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+- **Database / Schema:**
+  - Cột mới trong `site_settings`: `smtp_settings_enabled`, `smtp_settings_host`, `smtp_settings_port`, `smtp_settings_user`, `smtp_settings_pass`, `smtp_settings_from_address`, `smtp_settings_from_name`.
+  - Cột mới trong `_site_settings_v`: `version_smtp_settings_enabled`, `version_smtp_settings_host`, `version_smtp_settings_port`, `version_smtp_settings_user`, `version_smtp_settings_pass`, `version_smtp_settings_from_address`, `version_smtp_settings_from_name`.
+
 ## [2026-09-15] - Tích hợp Dịch vụ Gửi Email Thật (Nodemailer Gmail SMTP) cho CMS & Quên mật khẩu
 
 - **Thời gian thực hiện:** 10:40 (Asia/Saigon)

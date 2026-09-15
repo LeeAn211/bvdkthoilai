@@ -6,10 +6,12 @@ Khép kín luồng GitHub → Railway → Neon để mỗi bản deploy tự áp
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 09:45 ngày 2026-09-15 (Asia/Saigon).
-- Đóng gói Migration `20260915_007_sync_all_missing_columns_and_tables` đồng bộ toàn diện các cột Smart Links trong `tech_items`, `expert_items`, các bảng cấu hình `theme_settings`, `_theme_settings_v` và các trang `site_settings` còn thiếu.
-- Tổng cộng 7/7 migration applied & verified thành công.
-- Schema contract hợp lệ, toàn bộ 57/57 migration tests và toàn bộ test suites đều PASS 100%.
+- **Hoàn thành** lúc 11:15 ngày 2026-09-15 (Asia/Saigon).
+- Tích hợp Gmail SMTP và đưa toàn bộ nhóm cấu hình Email SMTP tự động vào Admin CMS (`SiteSettings.ts`).
+- Đóng gói Migration `20260915_008_add_smtp_settings_to_site_settings` đồng bộ các cột `smtp_settings_*` trong `site_settings` và `_site_settings_v`.
+- Tổng cộng 8/8 migration applied & verified thành công.
+- Schema contract hợp lệ, toàn bộ 61/61 migration tests và toàn bộ test suites đều PASS 100%.
+
 
 ## Phạm vi
 

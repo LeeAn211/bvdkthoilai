@@ -5113,6 +5113,27 @@ export interface SiteSetting {
     primaryColor?: string | null;
     secondaryColor?: string | null;
   };
+  /**
+   * Tùy chỉnh hòm thư gửi tự động của hệ thống (Gửi thông báo, Quên mật khẩu). Bạn có thể đổi Gmail hoặc email tên miền tại đây.
+   */
+  smtpSettings?: {
+    /**
+     * Bật để kích hoạt tính năng gửi mail tự động.
+     */
+    enabled?: boolean | null;
+    host?: string | null;
+    /**
+     * 465 (SSL) hoặc 587 (TLS)
+     */
+    port?: number | null;
+    user?: string | null;
+    /**
+     * Mã 16 chữ cái tạo từ bảo mật Google.
+     */
+    pass?: string | null;
+    fromAddress?: string | null;
+    fromName?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -7304,6 +7325,17 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | {
         primaryColor?: T;
         secondaryColor?: T;
+      };
+  smtpSettings?:
+    | T
+    | {
+        enabled?: T;
+        host?: T;
+        port?: T;
+        user?: T;
+        pass?: T;
+        fromAddress?: T;
+        fromName?: T;
       };
   updatedAt?: T;
   createdAt?: T;

@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260915_007_sync_all_missing_columns_and_tables",
-  "schemaSha256": "30c9f2e6a84c4d91696acd88d84cb016afc172d3e6f1d06c740f2c8bf5b03a1a"
+  "migrationId": "20260915_008_add_smtp_settings_to_site_settings",
+  "schemaSha256": "7ba922f6a59226cb8444f03559e3b8395b2b1634dc72029d9dad3451793a8629"
 }
