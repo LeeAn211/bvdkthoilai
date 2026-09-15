@@ -2,15 +2,18 @@
 
 ## Mục tiêu
 
-Khép kín luồng GitHub → Railway → Neon để mỗi bản deploy tự áp dụng schema mới trước khi Next.js khởi động, đồng thời chặn rõ ràng bản deploy nếu code thay đổi schema nhưng thiếu migration.
+Đóng gói migration và đồng bộ triệt để bảng quan hệ `_specialties_v_version_sidebar_banners` cùng bảng `specialties_sidebar_banners` và các cột cấu hình chi tiết chuyên khoa để giải quyết dứt điểm lỗi query draft version khi deploy/truy cập web.
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 11:15 ngày 2026-09-15 (Asia/Saigon).
-- Tích hợp Gmail SMTP và đưa toàn bộ nhóm cấu hình Email SMTP tự động vào Admin CMS (`SiteSettings.ts`).
-- Đóng gói Migration `20260915_008_add_smtp_settings_to_site_settings` đồng bộ các cột `smtp_settings_*` trong `site_settings` và `_site_settings_v`.
-- Tổng cộng 8/8 migration applied & verified thành công.
-- Schema contract hợp lệ, toàn bộ 61/61 migration tests và toàn bộ test suites đều PASS 100%.
+- **Hoàn thành** lúc 12:47 ngày 2026-09-15 (Asia/Saigon).
+- **Đã tạo và triển khai migration `20260915_009_create_specialties_sidebar_banners_tables`**:
+  - Tạo bảng `specialties_sidebar_banners` và `_specialties_v_version_sidebar_banners` với đầy đủ khóa ngoại `CASCADE`, `id`, `_order`, `_parent_id`, `image_id`, `_uuid` và index.
+  - Đồng bộ an toàn 17 cột cấu hình trang chi tiết chuyên khoa trên cả 2 bảng `specialties` và `_specialties_v`.
+  - Đã seal schema contract và deploy migration thành công (9/9 applied, 0 pending).
+  - Tự động chạy an toàn khi Railway deploy lên Neon (`prestart`).
+- Toàn bộ kiểm tra contract và migration đều PASS 100%.
+
 
 
 ## Phạm vi

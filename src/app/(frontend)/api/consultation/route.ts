@@ -11,8 +11,20 @@ export async function POST(req: Request) {
     const throttle = rateLimit(req, 'consultation-create', 8, 15 * 60_000)
     if (!throttle.allowed) return NextResponse.json({ error: 'Bạn gửi quá nhiều câu hỏi. Vui lòng thử lại sau.' }, { status: 429, headers: { 'Retry-After': String(throttle.retryAfter) } })
     const body = await req.json()
-    const question = String(body.question || '').trim().slice(0, 3000)
-    if (question.length < 3) return NextResponse.json({ error: 'Câu hỏi không hợp lệ' }, { status: 400 })
+    const rawQuestion = String(body.question || '').trim().slice(0, 3000)
+    const fullName = String(body.fullName || '').trim().slice(0, 150)
+    const phone = String(body.phone || '').trim().slice(0, 30)
+
+    if (rawQuestion.length < 2 && !phone) return NextResponse.json({ error: 'Nội dung hoặc số điện thoại không hợp lệ' }, { status: 400 })
+
+    let question = rawQuestion
+    if (fullName || phone) {
+      const contactInfo = [
+        fullName ? `Họ tên: ${fullName}` : '',
+        phone ? `SĐT: ${phone}` : '',
+      ].filter(Boolean).join(' | ')
+      question = `[YÊU CẦU GỌI LẠI / TƯ VẤN] ${contactInfo}\nNội dung: ${rawQuestion || 'Yêu cầu tư vấn viên liên hệ hỗ trợ'}`
+    }
 
     const payload = await getCMS()
     const publicToken = randomUUID()

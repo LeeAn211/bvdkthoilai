@@ -1,5 +1,137 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Đóng gói Migration 009: Tạo bảng Sidebar Banners và Đồng bộ Cột Chuyên khoa
+
+- **Thời gian thực hiện:** 12:47 (Asia/Saigon)
+- **Yêu cầu:** Khắc phục lỗi thiếu quan hệ PostgreSQL `error: relation "_specialties_v_version_sidebar_banners" does not exist` khi Payload CMS truy vấn draft version của Chuyên khoa (Specialties).
+- **Nội dung thực hiện:**
+  - **Tạo Migration `20260915_009_create_specialties_sidebar_banners_tables.mjs`**:
+    - Tạo bảng mảng con `specialties_sidebar_banners` cho bảng chính `specialties` với đầy đủ các trường `_order`, `_parent_id`, `id`, `image_id`, `title`, `btn_text`, `link`, `open_new_tab`, `desc`, khóa ngoại CASCADE và index.
+    - Tạo bảng phiên bản `_specialties_v_version_sidebar_banners` cho bảng `_specialties_v` với khóa chính `serial`, `_uuid`, khóa ngoại CASCADE và index.
+    - Bổ sung an toàn (`ADD COLUMN IF NOT EXISTS`) 17 cột cấu hình hiển thị trang chi tiết chuyên khoa cho cả `specialties` và `_specialties_v`.
+  - **Đóng gói và xác thực Schema Contract**:
+    - Chạy `npm run generate:db-schema` và seal contract bằng `npm run db:schema:seal -- 20260915_009_create_specialties_sidebar_banners_tables`.
+    - Kiểm tra `npm run db:schema:check` và triển khai `npm run db:migrate:deploy`.
+    - Trạng thái: 9/9 migrations đã applied thành công 100%. Tự động chạy trên Railway/Neon khi deploy.
+- **Files Modified:**
+  - `scripts/db-migrations/20260915_009_create_specialties_sidebar_banners_tables.mjs` (NEW)
+  - `scripts/db-migrations/db-schema-contract.json`
+  - `CHANGELOG.md`
+
+
+- **Thời gian thực hiện:** 12:28 (Asia/Saigon)
+- **Yêu cầu:** Xử lý trường hợp người bệnh dùng từ ngữ địa phương (như "nhứt đầu", "nhứt tay", "đau giò cẳng", "đau bao tử", "sanh đẻ", "con nít",...) để chatbot tự hiểu và chuyển đúng câu trả lời/phòng khám chuyên khoa.
+- **Nội dung thực hiện:**
+  - **Bộ từ điển Phương ngữ Nam Bộ & Tây Nam Bộ (`DIALECT_MAP`)**:
+    - Chuẩn hóa thuật toán tìm - thay thế cụm từ đa âm tiết trước, từ đơn tiết sau để không làm biến dạng cấu trúc ngữ nghĩa câu hỏi.
+    - Cụm từ triệu chứng đau nhức: `nhut`, `nhuc`, `moi`, `e am`, `thon`, `tuc` => chuẩn hóa thành `dau`.
+    - Bộ phận cơ thể địa phương:
+      + `nhut tay`, `nhuc tay` => `dau tay` => tự động chuyển hướng **Phòng khám Ngoại Chấn thương** (chụp X-quang, kiểm tra xương khớp).
+      + `nhut dau`, `nhuc dau` => `dau dau` => tự động chuyển hướng **Phòng khám Nội Thần kinh** (đo huyết áp, tuần hoàn não).
+      + `gio`, `cang`, `gio cang` => `chan` (`dau gio cang` => `dau chan`).
+      + `bao tu` => `da day` (`dau bao tu` => tự động chuyển **Phòng khám Nội Tiêu hóa**, nội soi HP, siêu âm bụng).
+      + `cu hong` => `hong`, `lo tai` => `tai`, `con mat` => `mat`, `cai rang` => `rang`.
+    - Thuật ngữ thai sản & sinh đẻ: `sanh`, `sanh de`, `de con`, `co bau`, `can bau` => tự động chuyển **Khoa Phụ sản** (khám thai, sinh con BHYT).
+    - Thuật ngữ nhi khoa: `con nit`, `em be`, `be nho`, `con em`, `oc sua` => tự động chuyển **Khoa Nhi**.
+    - Thuật ngữ hành chính & dân sinh: `the` => `the BHYT`, `doi bang/chay xe` => `kham lai xe`, `xin viec/di lam` => `kham suc khoe`, `tien bac/bao nhieu` => `bang gia/chi phi`, `may gio` => `gio lam viec`.
+  - **Đồng bộ song song 2 lớp (Dual-Layer Normalizer)**: Tích hợp đồng nhất cả trên Client Component (`WebsiteAssistant.tsx`) và Server Route (`/api/chatbot/route.ts`).
+  - **Kiểm thử**: Đã chạy test đối sánh trực tiếp các mẫu câu phương ngữ và kiểm tra tính toàn vẹn hệ thống.
+- **Files Modified:**
+  - `src/components/WebsiteAssistant.tsx`
+  - `src/app/(frontend)/api/chatbot/route.ts`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-15] - Mở rộng Ngân hàng Tri thức & Tích hợp Bộ máy Định tuyến Tự động Thông minh
+
+- **Thời gian thực hiện:** 12:20 (Asia/Saigon)
+- **Yêu cầu:** Người dân có thể gõ câu hỏi bất kỳ về vấn đề nào thì hệ thống tự động nhận diện và chuyển đúng câu trả lời chính xác cho người dân biết ngay lập tức.
+- **Nội dung thực hiện:**
+  - **Bộ máy Định tuyến Tự động & So khớp Ý định (Smart Intent Scoring & Auto-Routing)**:
+    - Xây dựng thuật toán chấm điểm trọng số từ khóa (Exact match, Substring match, Prefix match) hỗ trợ đầy đủ tiếng Việt có dấu, không dấu, viết hoa/thường, loại bỏ ký tự đặc biệt.
+    - Cơ chế định tuyến 2 tầng:
+      + **Tầng 1 (Server API `/api/chatbot`)**: Quét tự động trong `chatbotIntents` và toàn bộ kho câu hỏi `customAnswers` trong `site-settings`, tự động thay thế biến động `{{HOTLINE}}`, `{{MEDPRO_URL}}`.
+      + **Tầng 2 (Client Engine `WebsiteAssistant.tsx`)**: Bộ xử lý nội bộ phản hồi tức thì với 15 nhóm chủ đề y tế & BHYT chuyên sâu, giải phóng độ trễ mạng và đảm bảo người dân luôn nhận được đúng thông tin.
+  - **15 Chuyên đề tri thức tự động nhận diện**:
+    1. *BHYT thông tuyến toàn quốc & Mức hưởng 100% không cần giấy chuyển tuyến*.
+    2. *Giấy tờ cần mang: CCCD gắn chip, app VNeID, VssID, sổ khám*.
+    3. *Quy trình khám bệnh 5 bước khép kín*.
+    4. *Bảng giá viện phí, tiền công khám, xét nghiệm, chẩn đoán hình ảnh*.
+    5. *Khám sức khỏe lái xe (liên thông Dịch vụ công Quốc gia để đổi bằng online)*.
+    6. *Khoa Phụ sản: Khám thai, siêu âm dị tật, sinh nở an toàn, da kề da*.
+    7. *Khoa Nhi: Chăm sóc trẻ sơ sinh đến 15 tuổi, miễn phí 100% BHYT cho trẻ < 6 tuổi*.
+    8. *Dịch vụ Cận lâm sàng: Xét nghiệm tự động, X-quang DR, Siêu âm Doppler, Nội soi HP, Điện tim ECG*.
+    9. *Tiêm chủng vắc xin chuẩn GSP cho trẻ em, bà bầu và người lớn*.
+    10. *Thời gian làm việc hành chính & Trực khám ngoài giờ Thứ 7, Chủ Nhật*.
+    11. *Lịch khám bác sĩ chuyên khoa trong tuần*.
+    12. *Đặt hẹn trực tuyến qua Medpro*.
+    13. *Cấp cứu 24/7 và đường dây nóng*.
+    14. *Tư vấn định hướng chuyên khoa theo triệu chứng*.
+    15. *Địa chỉ và đường đi*.
+  - **Kiểm thử**: Toàn bộ bài kiểm tra `npm run validate:all` PASS 100%.
+- **Files Modified:**
+  - `src/components/WebsiteAssistant.tsx`
+  - `src/app/(frontend)/api/chatbot/route.ts`
+  - `src/globals/SiteSettings.ts`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-15] - Tinh chỉnh Giao diện Trợ lý Y tế ảo: Tối giản, Chuyên nghiệp & Thanh thoát
+
+
+- **Thời gian thực hiện:** 12:08 (Asia/Saigon)
+- **Yêu cầu:** Thiết kế lại Chatbox cho chuyên nghiệp, bỏ thanh cấp cứu hotline đỏ, bỏ nút yêu cầu gọi lại và popup rườm rà, loại bỏ các chi tiết thừa thãi để giao diện thanh thoát và hướng tới trải nghiệm người bệnh tốt nhất.
+- **Nội dung thực hiện:**
+  - **Loại bỏ toàn bộ phần tử thừa & rườm rà**:
+    - Bỏ thanh `assistantMedicalBar` có các nút đỏ "🚨 Cấp cứu: Hotline", "📞 Yêu cầu gọi lại".
+    - Bỏ nút gọi điện thoại khẩn cấp màu đỏ trên thanh header `assistantCallHeaderBtn`.
+    - Bỏ modal popup `assistantCallbackOverlay` và toàn bộ các trường nhập form gọi lại gây rối mắt.
+    - Bỏ các nhãn badge "✚ Y tế Thới Lai" trên từng tin nhắn giúp bong bóng chat thoáng đãng.
+  - **Tái thiết kế giao diện thanh lịch & cao cấp (Premium Medical Assistant UI)**:
+    - **Header**: Thiết kế gọn gàng, tinh tế với Logo bệnh viện, tên trợ lý, chấm xanh báo trạng thái trực tuyến và nút đóng "×".
+    - **Khung hội thoại**: Nền trắng sáng kết hợp tone xanh y tế `#0878D1`, font chữ dễ đọc, cỡ chữ 13px chuẩn mực, khoảng cách tin nhắn hài hòa.
+    - **Chủ đề tra cứu nhanh (Quick Topics Chips)**: Dạng viên thuốc (pills) bo tròn thanh nhã nằm gọn phía trên ô nhập liệu (`Lịch khám bác sĩ`, `Đặt lịch khám`, `Khám BHYT & Bảng giá`, `Lịch tiêm chủng`, `Giờ làm việc`, `Gợi ý chuyên khoa`).
+    - **Ô nhập liệu (Input Area)**: Tinh gọn, bo góc mềm mại 10px, hiệu ứng focus nhẹ nhàng, nút gửi gọn gàng.
+  - **Giữ nguyên logic tra cứu chuyên khoa & hỏi đáp thông minh**:
+    - Giữ các câu trả lời súc tích, văn phong lịch sự, trang nhã.
+    - Giữ chức năng chuyển tiếp câu hỏi cho tư vấn viên (`/api/consultation`) với nút bấm đơn giản và trạng thái chờ kết nối tự nhiên.
+  - **Kiểm thử**: Bộ test suites `npm run validate:all` PASS 100% (61/61 migration tests, 29/29 UAT tests, 21/21 chatbot static tests).
+- **Files Modified:**
+  - `src/components/WebsiteAssistant.tsx`
+  - `src/app/globals.css`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-15] - Nâng cấp Toàn diện Chatbot / Trợ lý Y tế ảo Hướng tới Người bệnh
+
+
+- **Thời gian thực hiện:** 11:58 (Asia/Saigon)
+- **Yêu cầu:** Nâng cấp Chatbox lên chuyên nghiệp hơn, hướng tới hỗ trợ người bệnh trực quan, nhanh chóng và thiết thực.
+- **Nội dung thực hiện:**
+  - **Thanh Tiện ích Y tế Nhanh (Medical Quick Action Bar)**: Tích hợp ngay dưới header của Chatbot với 4 nút tác vụ tức thì:
+    - 🚨 **Cấp cứu: Hotline**: Nút màu đỏ kết nối cuộc gọi cấp cứu ngay lập tức.
+    - 📞 **Yêu cầu gọi lại**: Mở form nhận thông tin Họ tên + SĐT để nhân viên CSKH/y tế liên hệ hỗ trợ.
+    - 📅 **Lịch khám**: Tra cứu nhanh lịch trực bác sĩ trong tuần.
+    - 📝 **Đặt khám**: Kết nối đặt hẹn khám bệnh tiện lợi.
+  - **Bộ Sàng lọc Triệu chứng & Chỉ dẫn Khoa phòng (Symptom Guidance)**:
+    - Hướng dẫn người bệnh chọn đúng chuyên khoa khi có các triệu chứng đau bụng (Nội tiêu hóa), sốt co giật ở trẻ (Nhi), thai sản (Phụ sản), té ngã xương khớp (Ngoại chấn thương), đau mắt (Mắt)...
+    - Kèm khuyến cáo an toàn y tế chuẩn mực.
+  - **Bộ Tri thức Hỏi đáp BHYT & Quy trình Khám chữa bệnh phong phú**:
+    - Bổ sung các kịch bản chuẩn về BHYT thông tuyến, bảng giá viện phí, giờ làm việc hành chính & ngoài giờ, quy trình khám bệnh.
+    - Nhận diện từ khóa thông minh, hỗ trợ tiếng Việt có dấu và không dấu.
+  - **Form Yêu cầu Gọi lại (Callback Modal)**:
+    - Tiếp nhận thông tin bệnh nhân (Họ tên, SĐT, Nhu cầu khám) gửi vào API `/api/consultation`.
+  - **Tối ưu Giao diện Chuẩn Y tế (Medical Modern UI)**:
+    - Nâng cấp CSS hiện đại với bo góc 24px, đổ bóng y tế cao cấp, viền nhận diện thương hiệu, responsive tối ưu trên cả di động và máy tính.
+  - **Kiểm thử**: Bộ test suites `npm run validate:all` PASS 100% (61/61 migration tests, 29/29 UAT tests).
+- **Files Modified:**
+  - `src/components/WebsiteAssistant.tsx`
+  - `src/app/globals.css`
+  - `src/globals/SiteSettings.ts`
+  - `src/app/(frontend)/api/consultation/route.ts`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
 ## [2026-09-15] - Cập nhật SMTP Cổng 587 (TLS) & Chống Timeout Treo Khởi Động trên Railway
 
 - **Thời gian thực hiện:** 11:32 (Asia/Saigon)
