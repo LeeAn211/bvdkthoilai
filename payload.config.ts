@@ -111,7 +111,7 @@ const r2EnvConfigured = Boolean(r2Bucket && r2AccessKeyId && r2SecretAccessKey &
 const r2Enabled = r2EnvConfigured && (isProduction || mediaStorage === 'r2')
 
 const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com'
-const smtpPort = Number(process.env.SMTP_PORT || 465)
+const smtpPort = Number(process.env.SMTP_PORT || 587)
 const smtpUser = process.env.SMTP_USER || 'leean170792@gmail.com'
 const smtpPass = (process.env.SMTP_PASS || 'mvdbzvsojuorpwgv').replace(/\s+/g, '')
 const smtpConfigured = Boolean(smtpUser && smtpPass)
@@ -238,9 +238,16 @@ export default buildConfig({
             user: smtpUser,
             pass: smtpPass,
           },
+          tls: {
+            rejectUnauthorized: false,
+          },
+          connectionTimeout: 10000,
+          greetingTimeout: 10000,
+          socketTimeout: 15000,
         }),
       })
     : undefined,
+
   db: postgresAdapter({
     push: process.env.PAYLOAD_DB_PUSH === 'true',
     pool: {

@@ -1,5 +1,21 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Cập nhật SMTP Cổng 587 (TLS) & Chống Timeout Treo Khởi Động trên Railway
+
+- **Thời gian thực hiện:** 11:32 (Asia/Saigon)
+- **Yêu cầu:** Khắc phục lỗi Railway container bị treo `Error verifying Nodemailer transport ... Connection timeout (ETIMEDOUT)` khi kết nối cổng 465.
+- **Nội dung thực hiện:**
+  - Chuyển cổng SMTP mặc định từ `465` (SSL) sang `587` (STARTTLS) tương thích 100% với môi trường container và tường lửa máy chủ đám mây Railway.
+  - Thiết lập timeout bảo vệ (`connectionTimeout: 10000`, `greetingTimeout: 10000`, `socketTimeout: 15000`) và cấu hình `tls: { rejectUnauthorized: false }` để đảm bảo Nodemailer không bao giờ chặn hoặc làm treo quá trình khởi động ứng dụng.
+  - Cập nhật `.env.example`: đặt `SMTP_PORT=587`.
+  - Kiểm tra kết nối SMTP thực tế: `587 Success: true`.
+  - Bộ test suites `npm run validate:all`: PASS 100%.
+- **Files Modified:**
+  - `payload.config.ts`
+  - `.env.example`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
 ## [2026-09-15] - Đóng gói Migration 008: Đưa toàn bộ Cấu hình Email SMTP gửi tự động vào Admin CMS
 
 - **Thời gian thực hiện:** 11:15 (Asia/Saigon)

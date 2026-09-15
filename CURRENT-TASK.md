@@ -22,6 +22,7 @@ Khép kín luồng GitHub → Railway → Neon để mỗi bản deploy tự áp
 
 ## Nguyên tắc an toàn
 
+- **LƯU Ý QUAN TRỌNG (YÊU CẦU NGƯỜI DÙNG)**: Tạm thời KHÔNG commit/push lên GitHub. Chỉ thực hiện push khi người dùng yêu cầu rõ ràng.
 - Không bật `PAYLOAD_DB_PUSH` trên production.
 - Không drop/reset/truncate hoặc sao chép đè dữ liệu Neon.
 - Migration có lỗi hoặc schema thiếu migration phải làm deployment mới thất bại trước khi nhận traffic.
