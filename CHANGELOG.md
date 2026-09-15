@@ -1,5 +1,46 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Sửa triệt để Menu xổ xuống và Hiển thị Ngày Giờ ở góc phải trên Điện thoại
+
+- **Thời gian thực hiện:** 18:35 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Fix menu xổ xuống (dropdown): Khắc phục tình trạng khi mở menu con trên điện thoại vẫn bị kẹt trong thanh cuộn ngang, phải vuốt sang ngang mới xem và bấm được, gây khó thao tác.
+  2. Thanh trên cùng (Utility Bar): Đưa hiển thị Ngày & Giờ thời gian thực sang góc phải của thanh tiện ích giống như giao diện máy tính để bàn (desktop), giữ cụm biểu tượng mạng xã hội và ô tìm kiếm bên trái.
+- **Nội dung thực hiện:**
+  - **Khắc phục Menu dropdown trên Điện thoại (`MobileNavHeader.tsx` & `SiteHeader.module.css`)**:
+    - Chuyển dropdown menu con trên mobile sang dạng panel nổi (`position: fixed; left: 8px; right: 8px; top: 56px; max-width: calc(100vw - 16px); z-index: 9999;`).
+    - Bổ sung thanh tiêu đề `navDropdownMobileHeader` kèm nút đóng nhanh (✕) và lớp nền mờ `mobileDropdownBackdrop` che phủ toàn màn hình.
+    - Vùng danh sách các mục con `navDropdownInnerList` hỗ trợ cuộn dọc độc lập, các nút liên kết lớn có chiều cao 44px+ thuận tiện cho ngón tay chạm bấm ngay lập tức mà không bao giờ bị cắt xén hay phải vuốt ngang.
+  - **Tối ưu Thanh tiện ích góc phải (`CurrentWeekdayTime.tsx`, `SiteHeader.module.css`, `globals.css`)**:
+    - Bố cục flex trên mobile: Cụm mạng xã hội và tìm kiếm đặt `order: 1` (bên trái), cụm Ngày & Giờ đặt `order: 2` (bên phải với `text-align: right; justify-content: flex-end;`).
+    - `CurrentWeekdayTime.tsx`: Hỗ trợ chế độ hiển thị linh hoạt với nhãn rút gọn tinh tế trên màn hình nhỏ (`utilityTimeCompact`: ví dụ `T3, 15/09 • 18:35`) và nhãn đầy đủ trên desktop (`utilityTimeFull`), đi kèm icon lịch màu vàng kim `#ffd24d`.
+- **Files Modified:**
+  - `src/components/MobileNavHeader.tsx`
+  - `src/components/CurrentWeekdayTime.tsx`
+  - `src/components/SiteHeader.module.css`
+  - `src/app/globals.css`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-15] - Tinh chỉnh Logo không nền, Tên đơn vị trên 1 dòng và Căn giữa ô trên Điện thoại
+
+- **Thời gian thực hiện:** 17:50 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Bỏ khung nền trắng bao quanh logo trên điện thoại để logo hòa vào nền tự nhiên.
+  2. Tên đơn vị (BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI) không được xuống dòng (`white-space: nowrap`).
+  3. Cả cụm logo, tên đơn vị và slogan phải được căn giữa theo chiều dọc trong ô trắng (khắc phục hiện tượng bị lệch lên sát mép trên).
+- **Nội dung thực hiện:**
+  - `SiteHeader.module.css` & `globals.css`:
+    - Đặt `.mastheadLogo` trên mobile: bỏ nền trắng (`background: transparent`), bỏ viền bo và đổ bóng (`box-shadow: none; border-radius: 0; padding: 0`), hiển thị logo nguyên bản trong suốt.
+    - Căn giữa dọc trọn vẹn: Thiết lập `.hospitalMasthead { min-height: auto !important; display: flex !important; align-items: center !important; }` và `.hospitalMastheadInner { min-height: 80px !important; display: flex !important; align-items: center !important; justify-content: center !important; margin: auto !important; }` giúp cụm logo và văn bản luôn ở chính giữa ô trắng.
+    - Không xuống dòng: Thêm `white-space: nowrap !important; text-overflow: ellipsis; overflow: hidden;` cùng font co giãn tự động `clamp(10.5px, 3.4vw, 14.5px)` cho tên bệnh viện và slogan.
+- **Files Modified:**
+  - `src/components/SiteHeader.module.css`
+  - `src/app/globals.css`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+
 ## [2026-09-15] - Thiết kế lại Logo, Tiêu đề bệnh viện, Menu xổ xuống và Thanh tiện ích trên Điện thoại
 
 - **Thời gian thực hiện:** 16:30 (Asia/Saigon)

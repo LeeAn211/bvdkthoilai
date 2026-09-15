@@ -253,43 +253,138 @@
     overflow-y: visible !important;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
   }
   .root :global(.mainHeader::-webkit-scrollbar) {
     display: none;
   }
   .root :global(.mainMenu) {
     min-width: max-content;
-    gap: 8px !important;
-    padding-inline: 12px !important;
+    gap: 6px !important;
+    padding-inline: 10px !important;
+    position: static !important;
   }
   .root :global(.mainMenu .navSimpleLink),
   .root :global(.mainMenu .navMainLink) {
     font-size: 13px !important;
     padding: 0 10px !important;
   }
-  /* Căn chỉnh dropdown trên mobile để không bị cắt lệch hoặc khó bấm */
+
+  /* Căn chỉnh dropdown trên mobile thành floating panel full-width gọn gàng không bị kẹt trong scroll */
   .root :global(.navDropdown) {
-    position: absolute !important;
-    top: calc(100% + 2px) !important;
-    left: 0 !important;
-    transform: none !important;
-    min-width: 220px !important;
-    max-width: calc(100vw - 24px) !important;
-    box-shadow: 0 10px 30px rgba(7, 84, 168, 0.22), 0 2px 8px rgba(0,0,0,0.1) !important;
-    border: 1.5px solid #0878d1 !important;
-    border-radius: 12px !important;
+    position: fixed !important;
+    top: 56px !important;
+    left: 8px !important;
+    right: 8px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 16px) !important;
+    max-height: calc(82vh - 60px) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #ffffff !important;
+    box-shadow: 0 16px 40px rgba(7, 43, 76, 0.35), 0 2px 10px rgba(0,0,0,0.12) !important;
+    border: 2px solid #0878d1 !important;
+    border-radius: 14px !important;
+    z-index: 9999 !important;
+    transform: translateY(-8px) scale(0.98) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease !important;
   }
+
   .root :global(.navItem.mobileOpen .navDropdown),
   .root :global(.navDropdown.dropdownVisible) {
-    transform: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateY(0) scale(1) !important;
   }
-  .root :global(.navDropdown a) {
-    padding: 11px 14px !important;
+
+  /* Dropdown Header trên Mobile */
+  .root :global(.navDropdownMobileHeader) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 10px 14px !important;
+    background: linear-gradient(90deg, #074682, #0878d1) !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+  }
+  .root :global(.navDropdownMobileTitle) {
     font-size: 13.5px !important;
-    border-bottom: 1px solid #f1f5f9;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.3px !important;
+    color: #ffffff !important;
+  }
+  .root :global(.navDropdownCloseBtn) {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+  }
+  .root :global(.navDropdownCloseBtn:active) {
+    background: rgba(255, 255, 255, 0.35) !important;
+  }
+
+  /* List items trong dropdown mobile */
+  .root :global(.navDropdownInnerList) {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(82vh - 110px) !important;
+    padding: 6px 0 !important;
+  }
+
+  .root :global(.navDropdown a) {
+    padding: 12px 16px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    border-radius: 0 !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    color: #1e3a5f !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+  .root :global(.navDropdown a:active),
+  .root :global(.navDropdown a:hover) {
+    background: #f0f7ff !important;
+    color: #075db8 !important;
   }
   .root :global(.navDropdown a:last-child) {
-    border-bottom: none;
+    border-bottom: none !important;
+  }
+
+  .root :global(.navDropdown a.navDropdownAll) {
+    background: #f8fafc !important;
+    font-weight: 750 !important;
+    color: #0878d1 !important;
+    border-bottom: 1.5px solid #e2e8f0 !important;
+  }
+
+  /* Backdrop đen mờ khi mở dropdown */
+  .root :global(.mobileDropdownBackdrop) {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 15, 35, 0.45) !important;
+    backdrop-filter: blur(2px) !important;
+    z-index: 9990 !important;
   }
 }
 
@@ -554,76 +649,131 @@
 /* Responsive: Tên đơn vị và logo trên màn hình nhỏ cân đối, chuyên nghiệp */
 @media (max-width: 640px) {
   .root :global(.utilityInner) {
-    min-height: 42px !important;
-    padding: 6px 12px !important;
-    flex-wrap: wrap !important;
-    gap: 8px 12px !important;
+    min-height: 38px !important;
+    padding: 5px 10px !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
     justify-content: space-between !important;
   }
-  .root :global(.utilityGroup.utilityContact) {
-    flex: 1 1 auto;
-  }
+  /* Cụm mạng xã hội và tìm kiếm nằm bên TRÁI */
   .root :global(.utilityGroup.utilityRight) {
+    order: 1 !important;
     display: flex !important;
     align-items: center !important;
-    gap: 8px !important;
+    gap: 6px !important;
+    flex: 0 0 auto !important;
+  }
+  /* Cụm ngày giờ nằm góc PHẢI */
+  .root :global(.utilityGroup.utilityContact) {
+    order: 2 !important;
+    flex: 1 1 auto !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    text-align: right !important;
+    min-width: 0 !important;
   }
   .root :global(.utilityCurrentTime) {
     font-size: 11.5px !important;
     white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 4px !important;
+  }
+  .root :global(.utilityTimeFull) {
+    display: none !important;
+  }
+  .root :global(.utilityTimeCompact) {
+    display: inline !important;
+    font-weight: 750 !important;
+    color: #ffffff !important;
+    letter-spacing: 0.2px !important;
   }
   .root :global(.utilityTimeIcon) {
-    width: 14px !important;
-    height: 14px !important;
-    flex: 0 0 14px !important;
+    width: 13px !important;
+    height: 13px !important;
+    flex: 0 0 13px !important;
+    color: #ffd24d !important;
   }
   .root :global(.headerSocial) {
-    width: 24px !important;
-    height: 24px !important;
-    flex: 0 0 24px !important;
+    width: 22px !important;
+    height: 22px !important;
+    flex: 0 0 22px !important;
   }
   .root :global(.headerSocial img) {
-    width: 24px !important;
-    height: 24px !important;
+    width: 22px !important;
+    height: 22px !important;
   }
   .root :global(.utilitySearch) {
-    width: 130px !important;
-    height: 26px !important;
+    width: 96px !important;
+    height: 24px !important;
     border-radius: 999px !important;
     background: #ffffff !important;
-    padding: 0 8px !important;
+    padding: 0 6px !important;
   }
   .root :global(.utilitySearch input) {
-    font-size: 11px !important;
+    font-size: 10px !important;
   }
+  .root :global(.utilitySearch button) {
+    font-size: 13px !important;
+    padding: 0 !important;
+  }
+}
 
+/* Desktop default for utilityTimeFull vs Compact */
+.root :global(.utilityTimeFull) {
+  display: inline !important;
+}
+.root :global(.utilityTimeCompact) {
+  display: none !important;
+}
+
+  .root :global(.hospitalMasthead) {
+    min-height: auto !important;
+    height: auto !important;
+    display: flex !important;
+    align-items: center !important;
+  }
   .root :global(.hospitalMastheadInner) {
-    min-height: 84px !important;
+    min-height: 80px !important;
+    height: auto !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 12px !important;
-    padding: 12px 14px !important;
+    gap: 10px !important;
+    padding: 10px 12px !important;
+    margin: auto !important;
+    width: 100% !important;
   }
   .root :global(.mastheadBrand) {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 12px !important;
+    gap: 10px !important;
     width: 100% !important;
     min-width: 0 !important;
     margin: 0 auto !important;
     text-align: left !important;
   }
   .root :global(.mastheadLogo) {
-    width: 58px !important;
-    height: 58px !important;
-    flex: 0 0 58px !important;
+    width: 52px !important;
+    height: 52px !important;
+    flex: 0 0 52px !important;
     margin: 0 !important;
-    padding: 3px !important;
-    border-radius: 12px !important;
-    background: #ffffff !important;
-    box-shadow: 0 3px 10px rgba(8, 120, 209, 0.14) !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .root :global(.mastheadLogoImage) {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    background: transparent !important;
   }
   .root :global(.mastheadBrandText) {
     display: flex !important;
@@ -634,20 +784,28 @@
     text-align: left !important;
   }
   .root :global(.mastheadBrandText strong) {
-    font-size: clamp(12.5px, 3.8vw, 15.5px) !important;
+    font-size: clamp(10.5px, 3.4vw, 14.5px) !important;
     font-weight: 800 !important;
-    line-height: 1.3 !important;
+    line-height: 1.25 !important;
     color: var(--masthead-title-color, #0754aa) !important;
     text-align: left !important;
-    letter-spacing: -0.2px !important;
+    letter-spacing: -0.3px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
   }
   .root :global(.mastheadBrandText small) {
-    font-size: clamp(10px, 2.7vw, 12px) !important;
+    font-size: clamp(8.5px, 2.5vw, 11px) !important;
     font-weight: 600 !important;
-    margin-top: 3px !important;
-    line-height: 1.25 !important;
+    margin-top: 2px !important;
+    line-height: 1.2 !important;
     color: var(--masthead-subtitle-color, #0a9b50) !important;
     text-align: left !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
   }
   /* Ẩn thẻ liên hệ cồng kềnh trên mobile nhỏ */
   .root :global(.mastheadContacts) { display: none !important; }
@@ -655,16 +813,16 @@
 
 @media (max-width: 380px) {
   .root :global(.mastheadLogo) {
-    width: 50px !important;
-    height: 50px !important;
-    flex: 0 0 50px !important;
+    width: 44px !important;
+    height: 44px !important;
+    flex: 0 0 44px !important;
   }
   .root :global(.mastheadBrandText strong) {
-    font-size: 11.8px !important;
-    line-height: 1.25 !important;
+    font-size: 10px !important;
+    letter-spacing: -0.4px !important;
   }
   .root :global(.mastheadBrandText small) {
-    font-size: 9.5px !important;
+    font-size: 8px !important;
   }
   .root :global(.utilitySearch) {
     width: 105px !important;

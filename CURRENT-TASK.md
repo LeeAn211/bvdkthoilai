@@ -2,11 +2,24 @@
 
 ## Mục tiêu
 
-Thiết kế lại phần logo, tên bệnh viện, menu xổ xuống và thanh tiện ích trên điện thoại theo yêu cầu thẩm mỹ chuyên nghiệp và dễ thao tác.
+1. Sửa triệt để menu xổ xuống (dropdown) trên mobile: Tránh kẹt trong thanh cuộn ngang, mở dạng panel phủ toàn chiều ngang màn hình kèm backdrop mờ và nút đóng nhanh, chạm bấm tức thì không cần vuốt.
+2. Đưa ngày giờ thời gian thực lên góc phải thanh tiện ích trên cùng (Utility Bar) trên điện thoại giống như desktop.
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 16:31 ngày 2026-09-15 (Asia/Saigon).
+- **Hoàn thành** lúc 18:35 ngày 2026-09-15 (Asia/Saigon).
+- **Chi tiết đã xử lý:**
+  - `MobileNavHeader.tsx`:
+    - Thêm header `navDropdownMobileHeader` với tiêu đề mục cha và nút đóng ✕.
+    - Danh sách `navDropdownInnerList` hỗ trợ cuộn dọc độc lập khi danh mục dài.
+    - Thêm lớp phủ nền mờ `mobileDropdownBackdrop` che phủ nền khi mở dropdown và đóng khi chạm ra ngoài.
+  - `CurrentWeekdayTime.tsx`:
+    - Tạo 2 chế độ hiển thị: nhãn đầy đủ `utilityTimeFull` cho màn hình lớn và nhãn rút gọn tinh tế `utilityTimeCompact` (`T3, 15/09 • 18:35`) vừa vặn góc phải mobile.
+  - `SiteHeader.module.css` & `globals.css`:
+    - Menu con trên mobile chuyển sang `position: fixed; left: 8px; right: 8px; top: 56px; z-index: 9999;` tránh hoàn toàn việc bị cắt xén hoặc kẹt trong overflow cuộn ngang của thanh menu.
+    - Thanh trên cùng: Đảo vị trí với flexbox, bên trái là icon MXH + tìm kiếm (`order: 1`), bên phải là ngày giờ thời gian thực (`order: 2`).
+  - `npm run typecheck`: Kết quả **Code 0 - Pass 100%**.
+
 - **Chi tiết các hạng mục đã hoàn tất:**
   1. **Thanh tiện ích trên cùng (Utility Bar)**: Hiển thị đầy đủ ngày giờ thời gian thực (`CurrentWeekdayTime`), các biểu tượng mạng xã hội (Facebook, Zalo, YouTube...) và ô tìm kiếm toàn diện trên giao diện điện thoại.
   2. **Logo và Tên Bệnh viện**: Logo kích thước 58px nổi bật với bo góc và viền đổ bóng nhẹ, tên bệnh viện và câu slogan được bố trí cân đối sang trọng, căn chỉnh lề trái đồng nhất, chống rớt từ mồ côi.
