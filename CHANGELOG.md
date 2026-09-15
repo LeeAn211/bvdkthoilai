@@ -1,5 +1,26 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Tích hợp Dịch vụ Gửi Email Thật (Nodemailer Gmail SMTP) cho CMS & Quên mật khẩu
+
+- **Thời gian thực hiện:** 10:40 (Asia/Saigon)
+- **Yêu cầu:** Khắc phục cảnh báo `[WARN]: No email adapter provided. Email will be written to console`, đồng thời kích hoạt tính năng gửi email thực tế để người dùng có thể tự đặt lại mật khẩu khi bấm "Quên mật khẩu".
+- **Nội dung thực hiện:**
+  - Cài đặt adapter chính thức: `@payloadcms/email-nodemailer` và `nodemailer` kèm types.
+  - Cấu hình Email Adapter trong `payload.config.ts`:
+    - Hỗ trợ gửi thư qua Gmail SMTP (`smtp.gmail.com`, SSL Port `465`).
+    - Xác thực an toàn với tài khoản `leean170792@gmail.com` và Mật khẩu ứng dụng.
+    - Tiêu đề người gửi đại diện chính thức: **Bệnh viện Đa khoa Khu vực Thới Lai**.
+    - Đã kiểm tra kết nối SMTP thực tế tới máy chủ Google: `SMTP CONNECTION SUCCESSFUL!`.
+  - Cập nhật tài liệu biến môi trường mẫu `.env.example`: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM_ADDRESS`, `SMTP_FROM_NAME`.
+  - Kiểm tra toàn bộ test suites và typecheck: PASS 100%.
+- **Files Modified:**
+  - `payload.config.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `.env.example`
+  - `CHANGELOG.md`
+
+
 ## [2026-09-15] - Đóng gói Migration 007: Đồng bộ toàn diện Tech Items, Expert Items, Theme Settings và Site Settings Page Configs
 
 - **Thời gian thực hiện:** 09:45 (Asia/Saigon)

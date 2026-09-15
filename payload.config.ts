@@ -1,6 +1,8 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import nodemailer from 'nodemailer'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { vi } from '@payloadcms/translations/languages/vi'
 import { buildConfig, type CollectionConfig, type GlobalConfig } from 'payload'
@@ -107,6 +109,12 @@ const r2EnvConfigured = Boolean(r2Bucket && r2AccessKeyId && r2SecretAccessKey &
 // để không bị lỗi khi máy không có mạng hoặc còn sót biến R2 trong .env.local.
 // Muốn test R2 ở local thì đặt MEDIA_STORAGE=r2.
 const r2Enabled = r2EnvConfigured && (isProduction || mediaStorage === 'r2')
+
+const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com'
+const smtpPort = Number(process.env.SMTP_PORT || 465)
+const smtpUser = process.env.SMTP_USER || 'leean170792@gmail.com'
+const smtpPass = (process.env.SMTP_PASS || 'mvdbzvsojuorpwgv').replace(/\s+/g, '')
+const smtpConfigured = Boolean(smtpUser && smtpPass)
 
 const collectionPermissionModules: Record<string, string> = {
   media: 'media',
@@ -218,6 +226,21 @@ export default buildConfig({
   },
   editor: hospitalEditor,
   secret: payloadSecret || 'development-only-secret-change-before-production',
+  email: smtpConfigured
+    ? nodemailerAdapter({
+        defaultFromAddress: process.env.SMTP_FROM_ADDRESS || smtpUser,
+        defaultFromName: process.env.SMTP_FROM_NAME || 'Bệnh viện Đa khoa Khu vực Thới Lai',
+        transport: nodemailer.createTransport({
+          host: smtpHost,
+          port: smtpPort,
+          secure: smtpPort === 465,
+          auth: {
+            user: smtpUser,
+            pass: smtpPass,
+          },
+        }),
+      })
+    : undefined,
   db: postgresAdapter({
     push: process.env.PAYLOAD_DB_PUSH === 'true',
     pool: {
