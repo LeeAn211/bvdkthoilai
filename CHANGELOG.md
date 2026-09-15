@@ -1,5 +1,31 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Đóng gói Migration 005: Khắc phục lỗi Drizzle Query site_settings & homepage trên Production
+
+- **Thời gian thực hiện:** 08:55 (Asia/Saigon)
+- **Yêu cầu:** Sửa lỗi Railway container khởi động ghi nhận lỗi `[HomePage] site-settings error` và `[HomePage] getHomepage error` khi query bảng `site_settings` và `homepage`.
+- **Nguyên nhân cốt lõi:**
+  1. Thiếu các cột `version_*` trong bảng phiên bản `_site_settings_v` (do SiteSettings có bật tính năng `versions`). Khi Drizzle/Payload truy vấn, ORM kết nối cả bảng chính và bảng phiên bản.
+  2. Sự sai khác kiểu enum giữa migration 004 và Drizzle schema: `header_slogan_align` thay vì `enum_site_settings_header_brand_appearance_slogan_align`, các enum notice align `pp_not_align`, `lt_not_align`, `sa_not_align`, `cp_not_align`, và thiếu giá trị `'custom'` trong `brand_color_scheme`.
+  3. Bảng phụ `fn_sources` và `_fn_sources_v` (featuredSources của các section trên Trang chủ) chưa được tạo trên PostgreSQL Neon.
+- **Nội dung thực hiện:**
+  - Tạo migration `scripts/db-migrations/20260915_005_fix_brand_enums_versions_and_fn_sources.mjs` xử lý chuẩn hóa toàn diện:
+    - Tạo chuẩn các enum `brand_color_scheme` (có `'custom'`), `brand_name_font`, `header_slogan_align`, `pp_not_align`, `lt_not_align`, `sa_not_align`, `cp_not_align`, `enum_fn_sources_source`, `enum__fn_sources_v_source`.
+    - Chuyển đổi an toàn các cột ở bảng `site_settings` sang đúng kiểu enum.
+    - Thêm toàn bộ các cột `version_*` cho bảng phiên bản `_site_settings_v`.
+    - Tạo bảng `fn_sources` và `_fn_sources_v` kèm index và quan hệ foreign key.
+  - Chạy `npm run generate:db-schema` và seal contract `20260915_005_fix_brand_enums_versions_and_fn_sources`.
+  - Chạy apply thành công tại database: `npm run db:migrate:deploy` (5 applied, 0 pending).
+  - Xác thực toàn bộ test suite `npm run validate:all`: PASS 100%.
+  - Cải tiến bắt lỗi chi tiết trong `src/app/(frontend)/page.tsx` (`e?.cause?.message`).
+- **Files Modified:**
+  - `scripts/db-migrations/20260915_005_fix_brand_enums_versions_and_fn_sources.mjs` (Mới)
+  - `scripts/db-schema-contract.json`
+  - `src/app/(frontend)/page.tsx`
+  - `CHANGELOG.md`
+- **Database / Schema:**
+  - Cập nhật enum và bảng `fn_sources`, `_fn_sources_v`, bảng `_site_settings_v`.
+
 ## [2026-09-15] - Tích hợp Rule 15 (Mandatory DB Migration Packaging) & Đóng gói Migration 004
 
 - **Thời gian thực hiện:** 07:36 (Asia/Saigon)

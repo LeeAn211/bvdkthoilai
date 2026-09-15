@@ -6,11 +6,11 @@ Khép kín luồng GitHub → Railway → Neon để mỗi bản deploy tự áp
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 07:12 ngày 2026-09-15 (Asia/Saigon).
-- `npm start` tự apply + verify migration trước khi Next.js mở cổng; không còn phụ thuộc hoàn toàn vào Railway Pre-Deploy.
-- Build sinh lại Payload DB schema và kiểm tra schema contract; thay schema thiếu migration sẽ bị chặn.
-- Neon runtime hỗ trợ pooled URL, migration bắt buộc Direct URL; GitHub quality gate kiểm tra contract/TypeScript/regression.
-- Database trong `.env` local đang trỏ `localhost`; không tự ý kết nối hoặc thay đổi Neon production.
+- **Hoàn thành** lúc 08:55 ngày 2026-09-15 (Asia/Saigon).
+- Đã khắc phục triệt để lỗi Drizzle query `site_settings` và `homepage` thông qua Migration `20260915_005_fix_brand_enums_versions_and_fn_sources`.
+- Chuẩn hóa các kiểu enum, thêm đầy đủ các cột version vào `_site_settings_v`, tạo bảng `fn_sources` và `_fn_sources_v`.
+- Tổng cộng 5/5 migration applied & verified thành công.
+- Schema contract hợp lệ, toàn bộ 49/49 migration tests và 243/243 test suites đều PASS.
 
 ## Phạm vi
 

@@ -61,8 +61,8 @@ export default async function HomePage() {
   try {
     const [payload, homepage, settings, contentDefaults, quickSettings] = await Promise.all([
       getCMS(),
-      getHomepage().catch((e: any) => { console.error('[HomePage] getHomepage error:', e?.message || e); return {} }),
-      getGlobal('site-settings').catch((e: any) => { console.error('[HomePage] site-settings error:', e?.message || e); return {} }),
+      getHomepage().catch((e: any) => { console.error('[HomePage] getHomepage error:', e?.cause?.message || e?.message || e); return {} }),
+      getGlobal('site-settings').catch((e: any) => { console.error('[HomePage] site-settings error:', e?.cause?.message || e?.message || e); return {} }),
       getDefaultContentMedia().catch(() => ({ news: '/default-content/news.svg', notices: '/default-content/notices.svg', procurement: '/default-content/procurement.svg' })),
       getGlobal('quick-links-settings').catch(() => ({})),
     ])
