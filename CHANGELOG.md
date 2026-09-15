@@ -14,6 +14,9 @@
   - **Tối ưu Thanh tiện ích góc phải (`CurrentWeekdayTime.tsx`, `SiteHeader.module.css`, `globals.css`)**:
     - Bố cục flex trên mobile: Cụm mạng xã hội và tìm kiếm đặt `order: 1` (bên trái), cụm Ngày & Giờ đặt `order: 2` (bên phải với `text-align: right; justify-content: flex-end;`).
     - `CurrentWeekdayTime.tsx`: Hỗ trợ chế độ hiển thị linh hoạt với nhãn rút gọn tinh tế trên màn hình nhỏ (`utilityTimeCompact`: ví dụ `T3, 15/09 • 18:35`) và nhãn đầy đủ trên desktop (`utilityTimeFull`), đi kèm icon lịch màu vàng kim `#ffd24d`.
+  - **Khắc phục cú pháp CSS (`globals.css` & `SiteHeader.module.css`)**:
+    - Chuyển khai báo `.utilityTimeFull` / `.utilityTimeCompact` ra ngoài trước khối `@media (max-width: 640px)` và bỏ dấu đóng ngoặc nhọn thừa gây lỗi parse cú pháp CSS khi chạy `npm run build` trên Turbopack / Railway.
+    - Đã xác thực production build nội bộ: Biên dịch hoàn tất thành công 45/45 trang (`npm run build` thành công 100%).
 - **Files Modified:**
   - `src/components/MobileNavHeader.tsx`
   - `src/components/CurrentWeekdayTime.tsx`

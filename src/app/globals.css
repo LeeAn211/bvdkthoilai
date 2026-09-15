@@ -4323,7 +4323,12 @@ body {
   text-align: var(--masthead-slogan-align, center) !important;
 }
 .siteHeaderRoot .headerSocial img { width: 27px; height: 27px; object-fit: contain; border-radius: 50%; display:block; }
-.siteHeaderRoot .socialCustomText { display:inline-flex; width:27px; height:27px; border-radius:50%; align-items:center; justify-content:center; background:#fff; color:#0756b4; font-size:8px; font-weight:700; }
+.siteHeaderRoot .utilityTimeFull {
+  display: inline !important;
+}
+.siteHeaderRoot .utilityTimeCompact {
+  display: none !important;
+}
 
 @media (max-width: 640px) {
   .siteHeaderRoot .utilityInner {
@@ -4398,14 +4403,6 @@ body {
     font-size: 13px !important;
     padding: 0 !important;
   }
-}
-
-.siteHeaderRoot .utilityTimeFull {
-  display: inline !important;
-}
-.siteHeaderRoot .utilityTimeCompact {
-  display: none !important;
-}
 
   .siteHeaderRoot .hospitalMasthead {
     min-height: auto !important;

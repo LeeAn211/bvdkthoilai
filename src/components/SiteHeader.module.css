@@ -646,6 +646,14 @@
 .root :global(.headerSocial img) { width: 27px; height: 27px; object-fit: contain; border-radius: 50%; display:block; }
 .root :global(.socialCustomText) { display:inline-flex; width:27px; height:27px; border-radius:50%; align-items:center; justify-content:center; background:#fff; color:#0756b4; font-size:8px; font-weight:700; }
 
+/* Desktop default for utilityTimeFull vs Compact */
+.root :global(.utilityTimeFull) {
+  display: inline !important;
+}
+.root :global(.utilityTimeCompact) {
+  display: none !important;
+}
+
 /* Responsive: Tên đơn vị và logo trên màn hình nhỏ cân đối, chuyên nghiệp */
 @media (max-width: 640px) {
   .root :global(.utilityInner) {
@@ -722,15 +730,6 @@
     font-size: 13px !important;
     padding: 0 !important;
   }
-}
-
-/* Desktop default for utilityTimeFull vs Compact */
-.root :global(.utilityTimeFull) {
-  display: inline !important;
-}
-.root :global(.utilityTimeCompact) {
-  display: none !important;
-}
 
   .root :global(.hospitalMasthead) {
     min-height: auto !important;
