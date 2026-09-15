@@ -6,11 +6,10 @@ Khép kín luồng GitHub → Railway → Neon để mỗi bản deploy tự áp
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 08:55 ngày 2026-09-15 (Asia/Saigon).
-- Đã khắc phục triệt để lỗi Drizzle query `site_settings` và `homepage` thông qua Migration `20260915_005_fix_brand_enums_versions_and_fn_sources`.
-- Chuẩn hóa các kiểu enum, thêm đầy đủ các cột version vào `_site_settings_v`, tạo bảng `fn_sources` và `_fn_sources_v`.
-- Tổng cộng 5/5 migration applied & verified thành công.
-- Schema contract hợp lệ, toàn bộ 49/49 migration tests và 243/243 test suites đều PASS.
+- **Hoàn thành** lúc 09:18 ngày 2026-09-15 (Asia/Saigon).
+- Đóng gói Migration `20260915_006_seed_default_homepage_sections` tự động seed 12 khối section chuẩn y tế cho Homepage trên PostgreSQL khi bảng còn trống.
+- Tổng cộng 6/6 migration applied & verified thành công.
+- Schema contract hợp lệ, toàn bộ 53/53 migration tests và 243/243 test suites đều PASS.
 
 ## Phạm vi
 

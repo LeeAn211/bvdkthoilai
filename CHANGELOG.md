@@ -1,5 +1,23 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-15] - Đóng gói Migration 006: Tự động Seed 12 khối Section chuẩn y tế cho Homepage
+
+- **Thời gian thực hiện:** 09:18 (Asia/Saigon)
+- **Yêu cầu:** Khắc phục trường hợp trang quản trị `/admin/globals/homepage` trên server production bị trống mảng "Bố cục & giao diện các mục trang chủ" (sections).
+- **Nguyên nhân:** Lần khởi tạo database đầu tiên trên môi trường mới chỉ seed trường `banners` mà chưa seed mảng lồng nhau `sections` của Homepage, khiến danh sách khối rỗng nếu quản trị viên chưa bấm thêm thủ công.
+- **Nội dung thực hiện:**
+  - Đóng gói migration `scripts/db-migrations/20260915_006_seed_default_homepage_sections.mjs`:
+    - Kiểm tra bảng `homepage_sections` cho bản ghi `homepage`.
+    - Nếu bảng đang trống (`count == 0`), tự động nạp đầy đủ 12 khối Section chuẩn y tế (Tin tức nổi bật, Kỹ thuật chuyên sâu, Đội ngũ bác sĩ, Cổng thông tin, Đơn vị trực thuộc/Medpro, Thông báo, Đấu thầu, Lịch khám, Tiêm chủng, Hoạt động khoa học, Giới thiệu, Văn bản).
+    - Tự động nạp các tab con cho Lịch khám (`emergency`, `daily`, `weekly`, `attachments`) và Tiêm chủng (`announcements`, `campaigns`, `vaccines`).
+    - Có kiểm tra điều kiện an toàn (`ON CONFLICT DO NOTHING`, giữ nguyên dữ liệu nếu đã có sẵn).
+  - Khóa Schema Contract `20260915_006_seed_default_homepage_sections` và xác minh: PASS 100%.
+- **Files Modified:**
+  - `scripts/db-migrations/20260915_006_seed_default_homepage_sections.mjs` (Mới)
+  - `scripts/db-schema-contract.json`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
 ## [2026-09-15] - Đóng gói Migration 005: Khắc phục lỗi Drizzle Query site_settings & homepage trên Production
 
 - **Thời gian thực hiện:** 08:55 (Asia/Saigon)
