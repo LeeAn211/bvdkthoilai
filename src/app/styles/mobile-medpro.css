@@ -29,107 +29,127 @@
 
   /* Padding top cho body = chiều cao top bar */
   body {
-    padding-top: 56px !important;
+    padding-top: 52px !important;
     padding-bottom: 0 !important;
   }
 
   /* ==========================================================================
-     TOP BAR CỐ ĐỊNH
+     TOP BAR CO DINH - NEN TRANG, VIEN DUOI XANH
      ========================================================================== */
   .mobileTopBar {
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
+    gap: 8px !important;
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
     z-index: 9000 !important;
-    height: 56px !important;
-    padding: 0 14px !important;
-    background: linear-gradient(90deg, #072b4c 0%, #0754a8 55%, #0878d1 100%) !important;
-    box-shadow: 0 2px 12px rgba(7, 43, 76, 0.35) !important;
+    height: 52px !important;
+    padding: 0 12px !important;
+    background: #ffffff !important;
+    border-bottom: 2px solid #bae6fd !important;
+    box-shadow: 0 2px 12px rgba(7, 43, 76, 0.10) !important;
   }
 
-  /* Brand: logo + tên bệnh viện */
-  .mobileTopBrand {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    text-decoration: none !important;
+  /* O tim kiem */
+  .mobileTopSearch {
     flex: 1 1 0 !important;
     min-width: 0 !important;
-    overflow: hidden !important;
-  }
-
-  .mobileTopLogo {
-    width: 38px !important;
-    height: 38px !important;
-    object-fit: contain !important;
-    object-position: center !important;
-    border-radius: 6px !important;
-    background: rgba(255,255,255,0.12) !important;
-    flex-shrink: 0 !important;
-  }
-
-  .mobileTopName {
-    font-size: 13px !important;
-    font-weight: 800 !important;
-    color: #ffffff !important;
-    line-height: 1.25 !important;
-    letter-spacing: 0.1px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    text-transform: uppercase !important;
-  }
-
-  /* Nhóm nút bên phải */
-  .mobileTopActions {
     display: flex !important;
     align-items: center !important;
     gap: 6px !important;
+    background: #f0f7ff !important;
+    border: 1.5px solid #d0e8fb !important;
+    border-radius: 10px !important;
+    padding: 0 10px !important;
+    height: 36px !important;
+    transition: border-color 0.2s ease !important;
+  }
+
+  .mobileTopSearch:focus-within {
+    border-color: #0878d1 !important;
+    background: #ffffff !important;
+  }
+
+  .mobileTopSearchIcon {
+    flex-shrink: 0 !important;
+    color: #64748b !important;
+  }
+
+  .mobileTopSearch:focus-within .mobileTopSearchIcon {
+    color: #0878d1 !important;
+  }
+
+  .mobileTopSearchInput {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #0f2e47 !important;
+    outline: none !important;
+    line-height: 1.2 !important;
+    padding: 0 !important;
+  }
+
+  .mobileTopSearchInput::placeholder {
+    color: #94a3b8 !important;
+    font-weight: 400 !important;
+  }
+
+  /* Icon mang xa hoi */
+  .mobileTopSocials {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
     flex-shrink: 0 !important;
   }
 
-  /* Nút gọi điện */
-  .mobileTopCall {
+  .mobileTopSocialLink {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 38px !important;
-    height: 38px !important;
-    border-radius: 50% !important;
-    background: rgba(255,255,255,0.14) !important;
-    color: #ffffff !important;
-    text-decoration: none !important;
-    transition: background 0.2s ease !important;
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    transition: opacity 0.2s ease, transform 0.15s ease !important;
     -webkit-tap-highlight-color: transparent !important;
   }
 
-  .mobileTopCall:active {
-    background: rgba(255,255,255,0.28) !important;
+  .mobileTopSocialLink:active {
+    opacity: 0.8 !important;
+    transform: scale(0.92) !important;
   }
 
-  /* Hamburger button ☰ */
+  /* Hamburger button */
   .mobileTopHamburger {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 40px !important;
-    height: 40px !important;
+    width: 38px !important;
+    height: 38px !important;
     border-radius: 8px !important;
-    background: rgba(255,255,255,0.14) !important;
-    color: #ffffff !important;
-    border: none !important;
+    background: #f0f7ff !important;
+    color: #0754a8 !important;
+    border: 1.5px solid #d0e8fb !important;
     cursor: pointer !important;
-    transition: background 0.2s ease !important;
+    flex-shrink: 0 !important;
+    transition: background 0.2s ease, border-color 0.2s ease !important;
     -webkit-tap-highlight-color: transparent !important;
   }
 
-  .mobileTopHamburger.isOpen,
+  .mobileTopHamburger.isOpen {
+    background: #0754a8 !important;
+    color: #ffffff !important;
+    border-color: #0754a8 !important;
+  }
+
   .mobileTopHamburger:active {
-    background: rgba(255,255,255,0.28) !important;
+    background: #0754a8 !important;
+    color: #ffffff !important;
   }
 
   /* ==========================================================================
@@ -162,11 +182,11 @@
     display: flex !important;
     flex-direction: column !important;
     position: fixed !important;
-    top: 56px !important;
+    top: 52px !important;
     left: 0 !important;
     right: 0 !important;
     z-index: 9002 !important;
-    max-height: calc(100dvh - 56px) !important;
+    max-height: calc(100dvh - 52px) !important;
     background: #ffffff !important;
     box-shadow: 0 8px 32px rgba(7, 43, 76, 0.22) !important;
     transform: translateY(-8px) !important;

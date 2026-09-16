@@ -3,20 +3,64 @@
 import React, { useState, useEffect } from 'react'
 import { isExternalUrl, resolveMenuUrl } from '@/lib/navigation'
 
+interface SocialLink {
+  platform?: string
+  label?: string
+  url: string
+}
+
 interface MobileTopBarProps {
-  logoUrl?: string
-  hospitalName?: string
   hotline?: string
   items: any[]
   medproUrl?: string
+  socialLinks?: SocialLink[]
+}
+
+function SocialIcon({ platform }: { platform: string }) {
+  switch (platform) {
+    case 'facebook':
+      return (
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <rect width="24" height="24" rx="4" fill="#1877f2" />
+          <path d="M16 8h-2a1 1 0 0 0-1 1v2h3l-.5 3H13v7h-3v-7H8v-3h2V9a4 4 0 0 1 4-4h2v3z" fill="#fff" />
+        </svg>
+      )
+    case 'zalo':
+      return (
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <rect width="24" height="24" rx="4" fill="#0b7df0" />
+          <text x="3" y="17" fill="#fff" fontSize="9" fontWeight="900" fontFamily="Arial,sans-serif">ZALO</text>
+        </svg>
+      )
+    case 'youtube':
+      return (
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <rect width="24" height="24" rx="4" fill="#ff0033" />
+          <polygon points="9,7 19,12 9,17" fill="#fff" />
+        </svg>
+      )
+    case 'tiktok':
+      return (
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <rect width="24" height="24" rx="4" fill="#010101" />
+          <path d="M16 3h-3v11a2 2 0 1 1-2-2v-3a5 5 0 1 0 5 5V8a7 7 0 0 0 4 1V6a4 4 0 0 1-4-3z" fill="#fff" />
+        </svg>
+      )
+    default:
+      return (
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20" />
+        </svg>
+      )
+  }
 }
 
 export function MobileTopBar({
-  logoUrl,
-  hospitalName = 'BVĐK KV THỚI LAI',
   hotline = '02923686115',
   items,
   medproUrl = 'https://medpro.vn/',
+  socialLinks = [],
 }: MobileTopBarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [expandedItem, setExpandedItem] = useState<number | null>(null)
@@ -30,8 +74,6 @@ export function MobileTopBar({
     return () => { document.body.style.overflow = '' }
   }, [isOpen])
 
-  const cleanPhone = hotline.replace(/[^\d+]/g, '') || '02923686115'
-
   const handleClose = () => {
     setIsOpen(false)
     setExpandedItem(null)
@@ -43,71 +85,96 @@ export function MobileTopBar({
     setExpandedItem(prev => prev === index ? null : index)
   }
 
+  const visibleSocials = socialLinks.slice(0, 3)
+  const cleanPhone = hotline.replace(/[^\d+]/g, '') || '02923686115'
+
   return (
     <>
-      {/* ── MOBILE TOP BAR ── */}
       <div className="mobileTopBar" role="banner">
-        <a className="mobileTopBrand" href="/" aria-label="Trang chủ Bệnh viện Đa khoa Khu vực Thới Lai" onClick={handleClose}>
-          {logoUrl && (
-            <img
-              src={logoUrl}
-              alt=""
-              className="mobileTopLogo"
-              width={36}
-              height={36}
-            />
-          )}
-          <span className="mobileTopName">{hospitalName}</span>
-        </a>
+        <form
+          className="mobileTopSearch"
+          action="/tim-kiem"
+          method="get"
+          role="search"
+          onSubmit={handleClose}
+        >
+          <svg
+            className="mobileTopSearchIcon"
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <line x1="16.5" y1="16.5" x2="22" y2="22" />
+          </svg>
+          <input
+            name="q"
+            type="search"
+            className="mobileTopSearchInput"
+            placeholder="Tìm kiếm dịch vụ, bác sĩ..."
+            minLength={2}
+            maxLength={100}
+            aria-label="Tìm kiếm trên website bệnh viện"
+          />
+        </form>
 
-        <div className="mobileTopActions">
-          <a
-            href={`tel:${cleanPhone}`}
-            className="mobileTopCall"
-            aria-label={`Gọi ${hotline}`}
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M7.4 3.6 10 7.3 8.3 9.1c1.1 2.3 3.1 4.3 5.4 5.4l1.8-1.7 3.7 2.6-.6 3.4c-.2 1-1.1 1.7-2.1 1.6C9.3 19.5 4.5 14.7 3.6 7.5c-.1-1 .6-1.9 1.6-2.1l2.2-.4Z" />
+        {visibleSocials.length > 0 && (
+          <div className="mobileTopSocials" aria-label="Mạng xã hội">
+            {visibleSocials.map((s, i) => (
+              <a
+                key={i}
+                href={s.url}
+                target="_blank"
+                rel="noreferrer"
+                className="mobileTopSocialLink"
+                aria-label={s.label || s.platform || 'Mạng xã hội'}
+              >
+                <SocialIcon platform={String(s.platform || '').toLowerCase()} />
+              </a>
+            ))}
+          </div>
+        )}
+
+        <button
+          type="button"
+          className={`mobileTopHamburger${isOpen ? ' isOpen' : ''}`}
+          onClick={() => setIsOpen(v => !v)}
+          aria-expanded={isOpen}
+          aria-label={isOpen ? 'Đóng menu' : 'Mở menu điều hướng'}
+        >
+          {isOpen ? (
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
-          </a>
-          <button
-            type="button"
-            className={`mobileTopHamburger${isOpen ? ' isOpen' : ''}`}
-            onClick={() => setIsOpen(v => !v)}
-            aria-expanded={isOpen}
-            aria-label={isOpen ? 'Đóng menu' : 'Mở menu'}
-          >
-            {isOpen ? (
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            )}
-          </button>
-        </div>
+          ) : (
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          )}
+        </button>
       </div>
 
-      {/* ── BACKDROP ── */}
       <div
         className={`mobileMenuBackdrop${isOpen ? ' isActive' : ''}`}
         onClick={handleClose}
         aria-hidden="true"
       />
 
-      {/* ── FULL MENU PANEL (slide down from top) ── */}
       <div
         className={`mobileMenuPanel${isOpen ? ' isActive' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label="Menu điều hướng chính"
       >
-        {/* Quick action buttons */}
         <div className="mobileMenuQuickRow">
           <a className="mqBtn mqBtnPrimary" href="/lich-kham" onClick={handleClose}>
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -131,7 +198,6 @@ export function MobileTopBar({
           </a>
         </div>
 
-        {/* Nav list */}
         <nav className="mobileMenuNav" aria-label="Danh mục điều hướng">
           <a className="mobileMenuItem" href="/" onClick={handleClose}>
             <span className="mobileMenuItemLabel">
@@ -199,7 +265,7 @@ export function MobileTopBar({
                         rel={child.openInNewTab || isExternalUrl(childUrl) ? 'noreferrer' : undefined}
                         onClick={handleClose}
                       >
-                        <span aria-hidden="true">›</span>
+                        <span aria-hidden="true">&rsaquo;</span>
                         {child.label}
                       </a>
                     )

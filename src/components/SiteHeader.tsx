@@ -454,11 +454,10 @@ export async function SiteHeader() {
 
       {/* Mobile Top Bar — only visible on < 900px */}
       <MobileTopBar
-        logoUrl={logo || undefined}
-        hospitalName={hospitalName}
         hotline={hotline}
         items={items}
         medproUrl={medproUrl}
+        socialLinks={socialLinks}
       />
 
       <header className={`mainHeader ${settings?.headerStickyMenu === false ? 'notSticky' : ''} ${animClass}`} style={menuStyle}>
