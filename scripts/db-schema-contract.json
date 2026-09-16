@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260915_010_sync_all_remaining_collection_and_global_columns",
-  "schemaSha256": "7ba922f6a59226cb8444f03559e3b8395b2b1634dc72029d9dad3451793a8629"
+  "migrationId": "20260916_011_sync_all_cover_fit_and_image_fit_enums",
+  "schemaSha256": "29879e77c0bcf6cd1d08f510736b33ff15f8e9af0e8b5dd316e7aa75320be177"
 }

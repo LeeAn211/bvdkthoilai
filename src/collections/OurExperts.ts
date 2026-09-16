@@ -166,6 +166,7 @@ export const OurExperts: CollectionConfig = {
         { label: 'Lấp đầy khung - Canh đỉnh đầu / mặt rõ nét (cover-top)', value: 'cover-top' },
         { label: 'Lấp đầy khung - Canh chính giữa tâm ảnh (cover-center)', value: 'cover-center' },
         { label: 'Lấp đầy khung - Canh phần dưới (cover-bottom)', value: 'cover-bottom' },
+        { label: 'Lấp đầy khung chuẩn (cover)', value: 'cover' },
         { label: 'Co giãn vừa kín khung ảnh (fill)', value: 'fill' },
       ],
       admin: {

@@ -858,7 +858,7 @@ export interface Procurement {
   /**
    * Nếu ảnh bị cắt mất chữ, chọn “Vừa vặn toàn bộ ảnh” để hiển thị đầy đủ không bị xén.
    */
-  coverFit?: ('cover' | 'contain') | null;
+  coverFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill') | null;
   /**
    * Chỉnh góc lấy nét khi ảnh bị xén mất phần trên hoặc tiêu đề.
    */
@@ -2666,7 +2666,7 @@ export interface AdvancedTechnique {
   /**
    * Tùy chọn cách hiển thị để poster/ảnh không bị cắt mất chữ hoặc góc: Chọn "Vừa vặn khung" để ảnh luôn hiển thị trọn vẹn 100% không bị cắt bất kỳ góc nào; hoặc chọn "Lấp đầy khung" nếu muốn ảnh phủ kín toàn bộ thẻ.
    */
-  imageFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'fill') | null;
+  imageFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill') | null;
   /**
    * BẬT: Bấm vào thẻ kỹ thuật sẽ chuyển đến bài viết chi tiết (/ky-thuat-chuyen-sau/[slug]) hoặc Đường dẫn tùy chỉnh bên dưới. TẮT: Thẻ chỉ hiển thị thông tin để xem (không bấm chuyển trang, không hiện con trỏ link).
    */
@@ -2788,7 +2788,7 @@ export interface OurExpert {
   /**
    * Tùy chọn cách hiển thị để ảnh chân dung không bị mất đầu hoặc viền xấu: Chọn "Vừa vặn khung" để ảnh luôn hiển thị trọn vẹn 100% không bị cắt bất kỳ góc nào; hoặc chọn "Lấp đầy khung - Canh đỉnh đầu" để ảnh phủ kín thẻ nhưng luôn thấy rõ khuôn mặt.
    */
-  imageFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'fill') | null;
+  imageFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill') | null;
   /**
    * BẬT: Bấm vào thẻ chuyên gia sẽ chuyển đến trang chi tiết Bác sĩ hoặc Link tùy chỉnh bên dưới. TẮT: Thẻ chuyên gia chỉ hiển thị thông tin tĩnh để xem (không bấm chuyển trang, không hiện con trỏ link).
    */
@@ -2905,7 +2905,7 @@ export interface ScientificActivity {
   /**
    * Nếu ảnh bị cắt mất chi tiết hoặc chữ, chọn “Vừa vặn toàn bộ ảnh” để hiển thị đầy đủ không bị xén.
    */
-  coverFit?: ('cover' | 'contain') | null;
+  coverFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill') | null;
   /**
    * Chỉnh góc lấy nét khi ảnh bị xén mất phần đầu hoặc tiêu đề.
    */

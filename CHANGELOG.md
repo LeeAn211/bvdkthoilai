@@ -1,5 +1,41 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-16] - Sửa lỗi "Something went wrong" khi chọn Cách hiển thị ảnh đại diện (cover-bottom, cover-top, cover-center, fill)
+
+- **Thời gian thực hiện:** 07:22 (Asia/Saigon)
+- **Yêu cầu:** Sửa lỗi không lưu được bài viết khi thay đổi tùy chọn "Cách hiển thị ảnh đại diện trên thẻ / trang chủ" (báo lỗi "Something went wrong" trên mọi loại nội dung).
+- **Nguyên nhân cốt lõi:**
+  - Trong PostgreSQL, các trường select của Payload CMS (`coverFit`, `imageFit`, `coverPosition`) được lưu dưới dạng kiểu `enum` tĩnh (ví dụ `enum_news_cover_fit`, `enum__news_v_version_cover_fit`, `enum_notices_cover_fit`, v.v.).
+  - Khi schema TypeScript mở rộng thêm các giá trị mới (`cover-bottom`, `cover-top`, `cover-center`, `fill`), cơ sở dữ liệu trên Neon (Railway) chưa được chạy migration bổ sung các giá trị này vào enum PostgreSQL. Khi người dùng chọn bất kỳ giá trị mới nào (như `cover-bottom`), PostgreSQL ném lỗi `invalid input value for enum ...: "cover-bottom"` khiến Payload CMS báo lỗi "Something went wrong" và không thể lưu bài viết.
+  - Một số collection (`Procurement`, `ScientificActivities` qua `common.ts`) trước đó chỉ có 2 tùy chọn cũ (`cover`, `contain`), thiếu tính đồng nhất với Tin tức, Thông báo, Tuyển dụng.
+- **Nội dung thực hiện:**
+  - **Tạo và triển khai Migration `20260916_011_sync_all_cover_fit_and_image_fit_enums.mjs`**:
+    - Đồng bộ tất cả giá trị `['contain', 'cover', 'cover-top', 'cover-center', 'cover-bottom', 'fill']` vào toàn bộ 24 kiểu enum fit (tường minh và quét động) trên cả bảng chính và bảng phiên bản (`_v`): `enum_news_cover_fit`, `enum__news_v_version_cover_fit`, `enum_notices_cover_fit`, `enum__notices_v_version_cover_fit`, `enum_procurement_cover_fit`, `enum__procurement_v_version_cover_fit`, `enum_recruitment_cover_fit`, `enum__recruitment_v_version_cover_fit`, `enum_scientific_activities_cover_fit`, `enum__scientific_activities_v_version_cover_fit`, `enum_specialties_cover_fit`, `enum_our_experts_image_fit`, `enum_advanced_techniques_image_fit`, `enum_expert_items_image_fit`, `enum_tech_items_image_fit`, v.v.
+    - Đồng bộ tất cả giá trị vị trí `['top', 'center', 'bottom']` vào toàn bộ các enum `cover_position`.
+    - Đảm bảo tất cả các cột tồn tại trên bảng chính và bảng phiên bản.
+  - **Đồng bộ Schema TypeScript**:
+    - `src/fields/common.ts`: Bổ sung đủ 6 tùy chọn cho `imageDisplayFields` (`coverFit`).
+    - `src/collections/Procurement.ts`: Bổ sung đủ 6 tùy chọn cho `coverFit`.
+    - `src/collections/OurExperts.ts`: Bổ sung tùy chọn `cover` cho `imageFit`.
+    - `src/collections/AdvancedTechniques.ts`: Bổ sung tùy chọn `cover` cho `imageFit`.
+  - **Đóng gói Contract Schema**:
+    - Sinh lại schema Drizzle: `npm run generate:db-schema` (cập nhật `src/payload-generated-schema.ts`).
+    - Seal schema contract: `npm run db:schema:seal -- 20260916_011_sync_all_cover_fit_and_image_fit_enums`.
+    - Chạy migration deploy thành công: 11 applied, 0 pending.
+    - Sinh lại TS types: `npm run generate:types`.
+    - Kiểm tra `npm run typecheck`: Pass 100% (0 errors).
+- **Files Modified:**
+  - `src/fields/common.ts`
+  - `src/collections/Procurement.ts`
+  - `src/collections/OurExperts.ts`
+  - `src/collections/AdvancedTechniques.ts`
+  - `scripts/db-migrations/20260916_011_sync_all_cover_fit_and_image_fit_enums.mjs`
+  - `src/payload-generated-schema.ts`
+  - `src/payload-schema-contract.json`
+  - `src/payload-types.ts`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
 ## [2026-09-16] - Khắc phục Cảnh báo Next.js Standalone và Lỗi Nodemailer ETIMEDOUT trên Railway
 
 - **Thời gian thực hiện:** 07:05 (Asia/Saigon)

@@ -198,8 +198,12 @@ export const enum_procurement_layout_template = pgEnum(
   ["default", "bachmai", "classic"],
 );
 export const enum_procurement_cover_fit = pgEnum("enum_procurement_cover_fit", [
-  "cover",
   "contain",
+  "cover-top",
+  "cover-center",
+  "cover-bottom",
+  "cover",
+  "fill",
 ]);
 export const enum_procurement_cover_position = pgEnum(
   "enum_procurement_cover_position",
@@ -234,7 +238,7 @@ export const enum__procurement_v_version_layout_template = pgEnum(
 );
 export const enum__procurement_v_version_cover_fit = pgEnum(
   "enum__procurement_v_version_cover_fit",
-  ["cover", "contain"],
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
 );
 export const enum__procurement_v_version_cover_position = pgEnum(
   "enum__procurement_v_version_cover_position",
@@ -682,13 +686,14 @@ export const enum__custom_posts_v_version_status = pgEnum(
 );
 export const enum_advanced_techniques_image_fit = pgEnum(
   "enum_advanced_techniques_image_fit",
-  ["contain", "cover-top", "cover-center", "cover-bottom", "fill"],
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
 );
 export const enum_our_experts_image_fit = pgEnum("enum_our_experts_image_fit", [
   "contain",
   "cover-top",
   "cover-center",
   "cover-bottom",
+  "cover",
   "fill",
 ]);
 export const enum_scientific_activities_category = pgEnum(
@@ -706,7 +711,7 @@ export const enum_scientific_activities_layout_template = pgEnum(
 );
 export const enum_scientific_activities_cover_fit = pgEnum(
   "enum_scientific_activities_cover_fit",
-  ["cover", "contain"],
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
 );
 export const enum_scientific_activities_cover_position = pgEnum(
   "enum_scientific_activities_cover_position",
@@ -735,7 +740,7 @@ export const enum__scientific_activities_v_version_layout_template = pgEnum(
 );
 export const enum__scientific_activities_v_version_cover_fit = pgEnum(
   "enum__scientific_activities_v_version_cover_fit",
-  ["cover", "contain"],
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
 );
 export const enum__scientific_activities_v_version_cover_position = pgEnum(
   "enum__scientific_activities_v_version_cover_position",

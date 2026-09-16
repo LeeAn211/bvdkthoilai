@@ -2,16 +2,26 @@
 
 ## Mục tiêu
 
-1. Khắc phục cảnh báo Next.js `⚠ "next start" does not work with "output: standalone" configuration`.
-2. Khắc phục lỗi `ETIMEDOUT` kết nối Nodemailer khi khởi chạy ứng dụng trên container Railway.
+1. Khắc phục lỗi "Something went wrong" khi thay đổi tùy chọn "Cách hiển thị ảnh đại diện trên thẻ / trang chủ" (`coverFit`, `imageFit`, `coverPosition`) trên tất cả các loại nội dung (Tin tức, Thông báo, Tuyển dụng, Mua sắm, Chuyên khoa, Chuyên gia, Kỹ thuật...).
+2. Đồng bộ toàn diện kiểu dữ liệu PostgreSQL ENUM và schema contract tự động kích hoạt khi deploy Railway.
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 07:05 ngày 2026-09-16 (Asia/Saigon).
+- **Hoàn thành** lúc 07:22 ngày 2026-09-16 (Asia/Saigon).
 - **Chi tiết đã xử lý:**
-  - `next.config.mjs`: Loại bỏ `output: 'standalone'` để Next.js chạy chuẩn xác với `npm start` (`next start`) theo thiết lập của `Dockerfile`.
-  - `payload.config.ts`: Loại bỏ fallback cứng Gmail credentials; chỉ khởi tạo `nodemailerAdapter` khi có biến môi trường `SMTP_USER` và `SMTP_PASS`, tránh lỗi timeout xác thực mạng ngoại vi trên Railway.
-  - `npm run typecheck`: Thành công 100% (0 errors).
+  - **Migration `20260916_011_sync_all_cover_fit_and_image_fit_enums.mjs`**:
+    - Đồng bộ toàn bộ các giá trị `['contain', 'cover', 'cover-top', 'cover-center', 'cover-bottom', 'fill']` vào tất cả các kiểu enum fit của toàn bộ các bảng nội dung và bảng phiên bản (`_v`).
+    - Đồng bộ giá trị `['top', 'center', 'bottom']` cho tất cả các kiểu enum `cover_position`.
+    - Đảm bảo tất cả cột tồn tại trong database PostgreSQL (Neon/Railway) qua `safeAddColumn`.
+  - **Schema TypeScript**:
+    - Cập nhật đầy đủ 6 tùy chọn hiển thị ảnh cho `src/fields/common.ts`, `Procurement.ts`, `OurExperts.ts`, `AdvancedTechniques.ts`.
+  - **Quy trình đóng gói tự động**:
+    - `npm run generate:db-schema` → đã sinh lại `src/payload-generated-schema.ts`.
+    - `npm run db:schema:seal -- 20260916_011_sync_all_cover_fit_and_image_fit_enums` → seal SHA-256 thành công.
+    - `npm run db:migrate:deploy` → 11/11 applied, 0 pending.
+    - `npm run generate:types` → đồng bộ `src/payload-types.ts`.
+    - `npm run typecheck` → Pass 100% (0 errors).
+
 
 
 - **Chi tiết các hạng mục đã hoàn tất:**

@@ -205,8 +205,12 @@ export const Procurement: CollectionConfig = {
                   type: 'select',
                   defaultValue: 'cover',
                   options: [
-                    { label: 'Lấp đầy khung (Khuyên dùng)', value: 'cover' },
-                    { label: 'Vừa vặn toàn bộ ảnh (Không crop, hiển thị trọn vẹn 100%)', value: 'contain' },
+                    { label: 'Vừa vặn khung, trọn vẹn không bị cắt (khuyên dùng - contain)', value: 'contain' },
+                    { label: 'Lấp đầy khung - Canh đỉnh đầu / phần trên (cover-top)', value: 'cover-top' },
+                    { label: 'Lấp đầy khung - Canh chính giữa tâm ảnh (cover-center)', value: 'cover-center' },
+                    { label: 'Lấp đầy khung - Canh phần dưới (cover-bottom)', value: 'cover-bottom' },
+                    { label: 'Lấp đầy khung (chuẩn mặc định - cover)', value: 'cover' },
+                    { label: 'Co giãn vừa kín khung ảnh (fill)', value: 'fill' },
                   ],
                   admin: {
                     width: '50%',
