@@ -112,9 +112,11 @@ const r2Enabled = r2EnvConfigured && (isProduction || mediaStorage === 'r2')
 
 const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com'
 const smtpPort = Number(process.env.SMTP_PORT || 587)
-const smtpUser = process.env.SMTP_USER || 'leean170792@gmail.com'
-const smtpPass = (process.env.SMTP_PASS || 'mvdbzvsojuorpwgv').replace(/\s+/g, '')
-const smtpConfigured = Boolean(smtpUser && smtpPass)
+const smtpUser = process.env.SMTP_USER || ''
+const smtpPass = (process.env.SMTP_PASS || '').replace(/\s+/g, '')
+// Chỉ kích hoạt SMTP Adapter khi có cấu hình đầy đủ trong biến môi trường thực tế,
+// tránh việc Nodemailer liên tục verify và timeout khi deploy trên Railway/Production
+const smtpConfigured = Boolean(process.env.SMTP_PASS && process.env.SMTP_USER)
 
 const collectionPermissionModules: Record<string, string> = {
   media: 'media',

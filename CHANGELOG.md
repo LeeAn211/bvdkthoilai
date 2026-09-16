@@ -1,5 +1,25 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-16] - Khắc phục Cảnh báo Next.js Standalone và Lỗi Nodemailer ETIMEDOUT trên Railway
+
+- **Thời gian thực hiện:** 07:05 (Asia/Saigon)
+- **Yêu cầu / Lỗi phát hiện từ log Railway:**
+  1. Cảnh báo: `⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.`
+  2. Lỗi gây treo/crash container khi deploy: `Error: Connection timeout ... code: 'ETIMEDOUT', command: 'CONN' ... msg: 'Error verifying Nodemailer transport.'`
+- **Nguyên nhân:**
+  1. `next.config.mjs` bật cấu hình `output: 'standalone'` trong khi `Dockerfile` và `package.json` khởi chạy bằng `CMD ["npm", "start"]` (thực thi `prestart` chạy db-migrate rồi gọi `next start`). Next.js 16 phát sinh cảnh báo không tương thích.
+  2. `payload.config.ts` trước đó có fallback cứng thông tin SMTP Gmail cá nhân (`leean170792@gmail.com`). Khi chạy trên container đám mây của Railway, các kết nối outbound tới cổng 587/SMTP Gmail bị chặn hoặc timeout, khiến Nodemailer adapter trong Payload liên tục thử verify kết nối và ném lỗi `ETIMEDOUT`.
+- **Nội dung thực hiện:**
+  - `next.config.mjs`: Loại bỏ `output: 'standalone'`, giúp Next.js tương thích 100% với `next start` và `Dockerfile`, không còn cảnh báo sai cấu hình output.
+  - `payload.config.ts`: Chỉ kích hoạt `nodemailerAdapter` khi cả hai biến môi trường `SMTP_USER` và `SMTP_PASS` được cung cấp rõ ràng (`smtpConfigured = Boolean(process.env.SMTP_PASS && process.env.SMTP_USER)`), loại bỏ hoàn toàn fallback cứng. Nếu người dùng chưa cấu hình SMTP thực tế, Payload sẽ chạy an toàn mà không verify Nodemailer, giải quyết dứt điểm lỗi `ETIMEDOUT`.
+- **Kiểm tra:**
+  - `npm run typecheck`: Pass 100% (0 errors).
+- **Files Modified:**
+  - `next.config.mjs`
+  - `payload.config.ts`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
 ## [2026-09-15] - Tối ưu Menu Dropdown như Desktop và Điều chỉnh Vị trí Ngày Giờ trên Điện thoại
 
 - **Thời gian thực hiện:** 19:35 (Asia/Saigon)

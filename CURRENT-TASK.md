@@ -2,19 +2,17 @@
 
 ## Mục tiêu
 
-1. Điều chỉnh thanh tiện ích trên cùng (Utility Bar) trên điện thoại: Ngày & Giờ nằm bên TRÁI; cụm Mạng xã hội và ô Tìm kiếm nằm ở góc PHẢI.
-2. Menu trên điện thoại thiết kế kiểu xổ xuống (dropdown) tự nhiên neo ngay dưới từng mục cha như trên Desktop: Cố định vị trí menu khi bấm xổ xuống, nếu nội dung dài thì có thanh cuộn ngang để lướt, không làm menu bị nhảy/di chuyển lên xuống toàn màn hình.
+1. Khắc phục cảnh báo Next.js `⚠ "next start" does not work with "output: standalone" configuration`.
+2. Khắc phục lỗi `ETIMEDOUT` kết nối Nodemailer khi khởi chạy ứng dụng trên container Railway.
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 19:35 ngày 2026-09-15 (Asia/Saigon).
+- **Hoàn thành** lúc 07:05 ngày 2026-09-16 (Asia/Saigon).
 - **Chi tiết đã xử lý:**
-  - `MobileNavHeader.tsx`: Loại bỏ header phụ và lớp phủ backdrop, giữ cấu trúc menu dropdown gọn nhẹ, click mở/đóng trực quan.
-  - `SiteHeader.module.css` & `globals.css`:
-    - Menu dropdown trên mobile định vị `position: absolute !important; top: 100% !important; left: 0 !important; width: 250px;`, neo chuẩn xác bên dưới mục cha đang được chọn, thanh menu cuộn ngang tự nhiên mượt mà (`overflow-x: auto`), không làm dịch chuyển lên xuống khung trang.
-    - Thanh trên cùng: Đổi vị trí flexbox: Ngày & Giờ ở bên TRÁI (`order: 1`), Mạng xã hội & Ô tìm kiếm ở góc PHẢI (`order: 2`).
-  - `npm run typecheck`: Pass 100%.
-  - `npm run build`: Thành công 100% (45/45 static pages).
+  - `next.config.mjs`: Loại bỏ `output: 'standalone'` để Next.js chạy chuẩn xác với `npm start` (`next start`) theo thiết lập của `Dockerfile`.
+  - `payload.config.ts`: Loại bỏ fallback cứng Gmail credentials; chỉ khởi tạo `nodemailerAdapter` khi có biến môi trường `SMTP_USER` và `SMTP_PASS`, tránh lỗi timeout xác thực mạng ngoại vi trên Railway.
+  - `npm run typecheck`: Thành công 100% (0 errors).
+
 
 - **Chi tiết các hạng mục đã hoàn tất:**
   1. **Thanh tiện ích trên cùng (Utility Bar)**: Hiển thị đầy đủ ngày giờ thời gian thực (`CurrentWeekdayTime`), các biểu tượng mạng xã hội (Facebook, Zalo, YouTube...) và ô tìm kiếm toàn diện trên giao diện điện thoại.
