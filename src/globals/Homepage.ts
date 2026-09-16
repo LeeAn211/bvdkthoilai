@@ -329,10 +329,10 @@ export const Homepage: GlobalConfig = {
           type: 'number',
           min: 1,
           max: 4,
-          defaultValue: 3,
+          defaultValue: 4,
           admin: {
             condition: (_data, siblingData) => siblingData?.type === 'advanced-techniques',
-            description: 'Khuyên dùng 3 thẻ như thiết kế mẫu.',
+            description: 'Khuyên dùng 4 thẻ để bố cục cân đối và đẹp mắt.',
           },
         },
         {
@@ -366,6 +366,11 @@ export const Homepage: GlobalConfig = {
             {
               title: 'Kỹ thuật truyền dịch vào buồng ối',
               badge: 'Sản phụ khoa',
+              visible: true,
+            },
+            {
+              title: 'Phẫu thuật nội soi tán sỏi niệu quản ngược dòng bằng Laser',
+              badge: 'Ngoại Thận - Tiết niệu',
               visible: true,
             },
           ],
@@ -486,6 +491,11 @@ export const Homepage: GlobalConfig = {
             {
               name: 'BS.CKII. Huỳnh Thanh Liêm',
               position: 'Phó Giám đốc Bệnh viện',
+              visible: true,
+            },
+            {
+              name: 'BS.CKI. Nguyễn Thành Công',
+              position: 'Trưởng phòng Kế hoạch Tổng hợp',
               visible: true,
             },
           ],

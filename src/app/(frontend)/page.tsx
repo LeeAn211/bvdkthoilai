@@ -801,6 +801,13 @@ export default async function HomePage() {
                 url: '/chuyen-khoa',
                 visible: true,
               },
+              {
+                title: 'Phẫu thuật nội soi tán sỏi niệu quản ngược dòng bằng Laser',
+                badge: 'Ngoại Thận - Tiết niệu',
+                image: '',
+                url: '/chuyen-khoa',
+                visible: true,
+              },
             ]
             const collectionSlides = advancedTechniques.map((tech: any) => {
               const isLinkEnabled = tech.enableLink !== false
@@ -863,7 +870,7 @@ export default async function HomePage() {
                   <AdvancedTechniquesCarousel
                     items={techniqueSlides}
                     autoplaySeconds={Number(item.techniqueAutoplaySeconds ?? 5)}
-                    itemsPerView={Number(item.techniqueItemsPerView ?? 3)}
+                    itemsPerView={Number(item.techniqueItemsPerView ?? 4)}
                     cardBarBgColor={finalCardBg}
                     cardBarTextColor={finalCardText}
                   />
@@ -894,6 +901,14 @@ export default async function HomePage() {
                 name: 'BS.CKII. Huỳnh Thanh Liêm',
                 position: 'Phó Giám đốc Bệnh viện',
                 badge: 'Ban Giám đốc',
+                image: '',
+                url: '/chuyen-khoa',
+                visible: true,
+              },
+              {
+                name: 'BS.CKI. Nguyễn Thành Công',
+                position: 'Trưởng phòng Kế hoạch Tổng hợp',
+                badge: 'Lãnh đạo Khoa/Phòng',
                 image: '',
                 url: '/chuyen-khoa',
                 visible: true,
@@ -1125,7 +1140,7 @@ export default async function HomePage() {
                   <OurExpertsCarousel
                     items={rawSortedExperts}
                     autoplaySeconds={Number(item.expertAutoplaySeconds ?? 5)}
-                    itemsPerView={4}
+                    itemsPerView={Number(item.expertItemsPerView ?? 4)}
                     cardBarBgColor={finalCardBg}
                     cardBarTextColor={finalCardText}
                   />

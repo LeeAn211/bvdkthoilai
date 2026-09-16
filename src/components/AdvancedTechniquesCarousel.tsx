@@ -25,7 +25,7 @@ type Props = {
 export function AdvancedTechniquesCarousel({
   items = [],
   autoplaySeconds = 5,
-  itemsPerView = 3,
+  itemsPerView = 4,
   cardBarBgColor,
   cardBarTextColor,
 }: Props) {
@@ -39,7 +39,8 @@ export function AdvancedTechniquesCarousel({
   const touchStartX = useRef<number | null>(null)
 
   const total = safeItems.length
-  const maxPerView = Math.max(1, Math.min(itemsPerView || 3, total || 1))
+  const targetPerView = itemsPerView || 4
+  const maxPerView = total >= targetPerView ? targetPerView : (total >= 3 ? targetPerView : (total || 1))
 
   useEffect(() => {
     if (total <= 1 || !autoplaySeconds || autoplaySeconds <= 0 || isPaused) return

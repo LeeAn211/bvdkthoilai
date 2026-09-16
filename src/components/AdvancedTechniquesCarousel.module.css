@@ -6,8 +6,28 @@
 
 .techCarouselTrack {
   display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.techCarouselTrack[data-count="1"] {
+  grid-template-columns: 1fr;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.techCarouselTrack[data-count="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.techCarouselTrack[data-count="3"] {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+}
+
+.techCarouselTrack[data-count="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .techCardLink {
@@ -193,15 +213,28 @@
   transform: scale(0.96);
 }
 
-@media (max-width: 980px) {
-  .techCarouselTrack {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 1024px) {
+  .techCarouselTrack,
+  .techCarouselTrack[data-count="4"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
   }
 }
 
+@media (max-width: 800px) {
+  .techCarouselTrack,
+  .techCarouselTrack[data-count="3"],
+  .techCarouselTrack[data-count="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
 @media (max-width: 600px) {
-  .techCarouselTrack {
+  .techCarouselTrack,
+  .techCarouselTrack[data-count="2"],
+  .techCarouselTrack[data-count="3"],
+  .techCarouselTrack[data-count="4"] {
     grid-template-columns: 1fr;
     max-width: 360px;
     margin: 0 auto;

@@ -5796,7 +5796,7 @@ export interface Homepage {
          */
         techniqueAutoplaySeconds?: number | null;
         /**
-         * Khuyên dùng 3 thẻ như thiết kế mẫu.
+         * Khuyên dùng 4 thẻ để bố cục cân đối và đẹp mắt.
          */
         techniqueItemsPerView?: number | null;
         cardBarBgColor?: string | null;
