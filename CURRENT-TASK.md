@@ -2,18 +2,21 @@
 
 ## Mục tiêu
 
-1. Hiển thị 4 ô (card) cho hai khối "Chuyên gia của chúng tôi" (`OurExpertsCarousel`) và "Kỹ thuật chuyên sâu" (`AdvancedTechniquesCarousel`) trên màn hình máy tính (Desktop) thay vì 3 ô như trước.
-2. Trên điện thoại (Mobile) giữ nguyên mặc định cũ (1 ô thẻ duy nhất với thao tác vuốt chạm / nút bấm chuyển động).
+1. Thêm trường quản trị nội dung dòng chữ chạy ngang (ticker marquee) vào Admin CMS để người quản trị có thể thay đổi trực tiếp.
+2. Thiết kế lại trang bài viết chi tiết của Kỹ thuật chuyên sâu (`/ky-thuat-chuyen-sau/[slug]`) đồng bộ và chuyên nghiệp giống như trang chi tiết Tin tức (`/tin-tuc/[slug]`).
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 07:35 ngày 2026-09-16 (Asia/Saigon).
+- **Hoàn thành** lúc 07:58 ngày 2026-09-16 (Asia/Saigon).
 - **Chi tiết đã xử lý:**
-  - `AdvancedTechniquesCarousel`: Cập nhật `itemsPerView = 4`, track CSS `grid-template-columns: repeat(4, minmax(0, 1fr))`, `gap: 20px`, giữ nguyên mobile 1 cột (`@media (max-width: 600px)`).
-  - `OurExpertsCarousel`: Đảm bảo 4 ô thẻ hiển thị trọn vẹn, tinh chỉnh responsive breakpoint, giữ nguyên mobile 1 cột.
-  - `src/app/(frontend)/page.tsx` & `Homepage.ts`: Đồng bộ `itemsPerView = 4` và bổ sung thẻ mẫu thứ 4 cho dữ liệu fallback/default.
-  - `npm run typecheck`: Pass 100% (0 errors).
+  - `SiteSettings.ts`: Thêm trường `text` ("Nội dung chữ chạy trên website") trực tiếp vào nhóm `tickerAppearance` ("Cài đặt thanh chữ chạy - Marquee").
+  - `SiteHeader.tsx`: Cập nhật logic đọc `tickerSettings.text || settings?.slogan || ...`.
+  - Migration `20260916_012_add_ticker_appearance_text.mjs`: Thêm cột `ticker_appearance_text` vào `site_settings` và `version_ticker_appearance_text` vào `_site_settings_v`. Đã chạy migration (12/12 applied) và seal schema contract.
+  - `ArticleDetailTemplate.tsx`: Bổ sung các slot tùy biến `customBodyTop`, `customBodyBottom`, `children`.
+  - `ky-thuat-chuyen-sau/[slug]/page.tsx`: Chuyển đổi sang `ArticleDetailTemplate` với Breadcrumbs, highlights (Khoa/Phòng, Bác sĩ, Chỉ định), khối ưu điểm, sidebar kỹ thuật khác và banner tiện ích.
   - `npm run db:schema:check`: Pass contract hợp lệ.
+  - `npm run db:migrate:status`: Pass 12/12 applied, 0 pending.
+  - `npm run typecheck`: Pass 100% (0 errors).
 
 
 

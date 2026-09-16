@@ -8476,6 +8476,9 @@ export const site_settings = pgTable(
     tickerAppearance_enabled: boolean("ticker_appearance_enabled").default(
       true,
     ),
+    tickerAppearance_text: varchar("ticker_appearance_text").default(
+      "Chào mừng đến với Cổng thông tin Bệnh viện Đa khoa khu vực Thới Lai",
+    ),
     tickerAppearance_backgroundColor: varchar(
       "ticker_appearance_background_color",
     ).default("#FF9F2F"),
@@ -9248,6 +9251,11 @@ export const _site_settings_v = pgTable(
     version_tickerAppearance_enabled: boolean(
       "version_ticker_appearance_enabled",
     ).default(true),
+    version_tickerAppearance_text: varchar(
+      "version_ticker_appearance_text",
+    ).default(
+      "Chào mừng đến với Cổng thông tin Bệnh viện Đa khoa khu vực Thới Lai",
+    ),
     version_tickerAppearance_backgroundColor: varchar(
       "version_ticker_appearance_background_color",
     ).default("#FF9F2F"),
@@ -11685,7 +11693,7 @@ export const homepage_sections = pgTable(
     }).default(5),
     techniqueItemsPerView: numeric("technique_items_per_view", {
       mode: "number",
-    }).default(3),
+    }).default(4),
     cardBarBgColor: varchar("card_bar_bg_color"),
     cardBarTextColor: varchar("card_bar_text_color"),
     expertAutoplaySeconds: numeric("expert_autoplay_seconds", {
@@ -12372,7 +12380,7 @@ export const _homepage_v_version_sections = pgTable(
     }).default(5),
     techniqueItemsPerView: numeric("technique_items_per_view", {
       mode: "number",
-    }).default(3),
+    }).default(4),
     cardBarBgColor: varchar("card_bar_bg_color"),
     cardBarTextColor: varchar("card_bar_text_color"),
     expertAutoplaySeconds: numeric("expert_autoplay_seconds", {

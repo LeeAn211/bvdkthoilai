@@ -4862,12 +4862,13 @@ export interface SiteSetting {
       }[]
     | null;
   tiktokUrl?: string | null;
-  /**
-   * Nội dung này chạy ngang ngay dưới menu. Để trống sẽ dùng thông báo đặt khám mặc định của bệnh viện.
-   */
   slogan?: string | null;
   tickerAppearance?: {
     enabled?: boolean | null;
+    /**
+     * Dòng chữ này chạy ngang liên tục ngay dưới thanh menu chính.
+     */
+    text?: string | null;
     /**
      * Nhập mã màu, ví dụ: #FF9F2F
      */
@@ -7133,6 +7134,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | T
     | {
         enabled?: T;
+        text?: T;
         backgroundColor?: T;
         textColor?: T;
         fontSize?: T;

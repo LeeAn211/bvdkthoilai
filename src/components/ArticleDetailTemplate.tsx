@@ -46,6 +46,9 @@ export interface ArticleDetailTemplateProps {
   // Content
   excerpt?: string
   content: any
+  customBodyTop?: React.ReactNode
+  customBodyBottom?: React.ReactNode
+  children?: React.ReactNode
   attachments?: any[]
   attachmentTitle?: string
   sourceName?: string
@@ -128,6 +131,9 @@ export function ArticleDetailTemplate({
   highlights,
   excerpt,
   content,
+  customBodyTop,
+  customBodyBottom,
+  children,
   attachments,
   attachmentTitle = 'Tài liệu / Văn bản đính kèm',
   sourceName,
@@ -415,10 +421,17 @@ export function ArticleDetailTemplate({
             {/* Đoạn trích dẫn Sapo nổi bật */}
             {excerpt && <div className={styles.postDetailExcerpt}>{excerpt}</div>}
 
+            {/* Khối tùy chỉnh trên nội dung (ảnh đại diện chi tiết, khối ưu điểm...) */}
+            {customBodyTop}
+
             {/* Nội dung chi tiết RichText */}
             <div className={styles.postDetailBody}>
               <RichText data={content} />
             </div>
+
+            {/* Khối tùy chỉnh dưới nội dung */}
+            {customBodyBottom}
+            {children}
 
             {/* Danh sách đính kèm tệp */}
             {attachments && attachments.length > 0 && (

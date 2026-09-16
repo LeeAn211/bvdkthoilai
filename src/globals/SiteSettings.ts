@@ -784,19 +784,28 @@ export const SiteSettings: GlobalConfig = {
     { name: 'tiktokUrl', label: 'Liên kết TikTok (dữ liệu cũ)', type: 'text', admin: { hidden: true } },
     {
       name: 'slogan',
-      label: 'Nội dung chữ chạy / Khẩu hiệu',
+      label: 'Nội dung chữ chạy (Dữ liệu cũ)',
       type: 'text',
       admin: {
-        description: 'Nội dung này chạy ngang ngay dưới menu. Để trống sẽ dùng thông báo đặt khám mặc định của bệnh viện.',
-        placeholder: 'Nhập thông báo cần chạy trên website…',
+        hidden: true,
       },
     },
     {
       name: 'tickerAppearance',
-      label: 'Cài đặt thanh chữ chạy',
+      label: 'Cài đặt thanh chữ chạy (Marquee)',
       type: 'group',
       fields: [
         { name: 'enabled', label: 'Hiển thị thanh chữ chạy', type: 'checkbox', defaultValue: true },
+        {
+          name: 'text',
+          label: 'Nội dung chữ chạy trên website',
+          type: 'text',
+          defaultValue: 'Chào mừng đến với Cổng thông tin Bệnh viện Đa khoa khu vực Thới Lai',
+          admin: {
+            description: 'Dòng chữ này chạy ngang liên tục ngay dưới thanh menu chính.',
+            placeholder: 'Nhập nội dung chữ chạy…',
+          },
+        },
         colorField('backgroundColor', 'Màu nền', '#FF9F2F', { admin: { description: 'Nhập mã màu, ví dụ: #FF9F2F' } }),
         colorField('textColor', 'Màu chữ', '#FFFFFF', { admin: { description: 'Nhập mã màu, ví dụ: #FFFFFF' } }),
         {

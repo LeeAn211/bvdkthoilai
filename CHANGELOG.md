@@ -1,5 +1,43 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-16] - Đưa nội dung chữ chạy vào Admin CMS & Thiết kế lại trang chi tiết Kỹ thuật chuyên sâu
+
+- **Thời gian thực hiện:** 07:58 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Thêm trường quản trị nội dung dòng chữ chạy ngang (ticker marquee) vào Admin CMS để người quản trị có thể thay đổi tùy ý.
+  2. Thiết kế lại trang chi tiết bài viết Kỹ thuật chuyên sâu (`/ky-thuat-chuyen-sau/[slug]`) theo giao diện chuẩn, đồng bộ và chuyên nghiệp giống như trang chi tiết Tin tức (`/tin-tuc/[slug]`).
+- **Nội dung thực hiện:**
+  - **Quản lý nội dung chữ chạy trong Admin CMS (`SiteSettings.ts`, `SiteHeader.tsx`)**:
+    - Bổ sung trường `text` (Nội dung chữ chạy trên website) vào trực tiếp nhóm `tickerAppearance` (Cài đặt thanh chữ chạy - Marquee) trong `src/globals/SiteSettings.ts`, với giá trị mặc định là `"Chào mừng đến với Cổng thông tin Bệnh viện Đa khoa khu vực Thới Lai"`.
+    - Ẩn trường cũ `slogan` và giữ cơ chế fallback an toàn `tickerSettings.text || settings?.slogan || 'Chào mừng...'` trong `src/components/SiteHeader.tsx`.
+    - Tạo và thực thi Migration `20260916_012_add_ticker_appearance_text.mjs`: bổ sung cột `ticker_appearance_text` vào `site_settings` và `version_ticker_appearance_text` vào `_site_settings_v`, tự động đồng bộ dữ liệu hiện có.
+    - Đã seal schema contract và deploy migration thành công (12/12 applied, 0 pending).
+  - **Nâng cấp trang chi tiết Kỹ thuật chuyên sâu (`ArticleDetailTemplate.tsx`, `ky-thuat-chuyen-sau/[slug]/page.tsx`)**:
+    - Mở rộng `ArticleDetailTemplateProps` hỗ trợ các slot nội dung linh hoạt: `customBodyTop`, `customBodyBottom`, `children`.
+    - Tái cấu trúc toàn diện trang `src/app/(frontend)/ky-thuat-chuyen-sau/[slug]/page.tsx` sử dụng `ArticleDetailTemplate`:
+      - Breadcrumbs dẫn đường chuẩn y tế: `Trang chủ` / `Kỹ thuật chuyên sâu` / `[Tên Khoa/Phòng]` / `[Tiêu đề kỹ thuật]`.
+      - Thanh metadata: Ngày đăng, số lượt xem, nhãn chuyên khoa (có liên kết đến trang Khoa/Phòng).
+      - Bảng thông tin nổi bật (highlights): Khoa/Phòng phụ trách, Bác sĩ/Nhân sự chuyên môn, Tiêu chuẩn phân loại, Đối tượng chỉ định.
+      - Khối ảnh đại diện kỹ thuật (nếu bật `showCoverInDetail`) và khối "Ưu điểm vượt trội của kỹ thuật" được bo góc, viền xanh y tế sang trọng.
+      - Cột Sidebar bên phải: Khối "Kỹ thuật chuyên sâu khác" và hệ thống banner tiện ích đặt lịch khám Medpro, bảng giá, tiêm chủng đồng bộ từ `theme-settings`.
+      - Khối "Kỹ thuật cùng chuyên mục" dưới chân trang giúp tăng khả năng giữ chân người đọc.
+      - Nút quay lại trang chủ / danh sách kỹ thuật (`BackToList`).
+  - **Kiểm tra**:
+    - `npm run db:schema:check`: Pass contract hợp lệ (`20260916_012_add_ticker_appearance_text`).
+    - `npm run db:migrate:status`: Pass 12 applied / 0 pending.
+    - `npm run typecheck`: Pass 100% (0 errors).
+- **Files Modified:**
+  - `src/globals/SiteSettings.ts`
+  - `src/components/SiteHeader.tsx`
+  - `src/components/ArticleDetailTemplate.tsx`
+  - `src/app/(frontend)/ky-thuat-chuyen-sau/[slug]/page.tsx`
+  - `scripts/db-migrations/20260916_012_add_ticker_appearance_text.mjs`
+  - `src/payload-generated-schema.ts`
+  - `scripts/db-schema-contract.json`
+  - `src/payload-types.ts`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
 ## [2026-09-16] - Khắc phục cảnh báo Next.js missing-data-scroll-behavior trên thẻ <html>
 
 - **Thời gian thực hiện:** 07:51 (Asia/Saigon)

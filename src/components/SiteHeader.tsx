@@ -95,8 +95,8 @@ export async function SiteHeader() {
   const logo = mediaUrl(settings?.logo)
   const hospitalName = settings?.hospitalName || 'BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI'
   const slogan = settings?.headerSlogan || 'Điều trị bằng trái tim - Chăm sóc bằng tấm lòng'
-  const tickerText = settings?.slogan || 'Chào mừng đến với Cổng thông tin Bệnh viện Đa khoa khu vực Thới Lai'
   const tickerSettings = settings?.tickerAppearance || {}
+  const tickerText = tickerSettings.text || settings?.slogan || 'Chào mừng đến với Cổng thông tin Bệnh viện Đa khoa khu vực Thới Lai'
   const tickerStyle = {
     '--ticker-background': tickerSettings.backgroundColor || '#f5a623',
     '--ticker-color': tickerSettings.textColor || '#ffffff',
