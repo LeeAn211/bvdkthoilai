@@ -27,10 +27,10 @@
     display: none !important;
   }
 
-  /* Padding top cho body = chiều cao top bar */
+  /* Padding top cho body = chiều cao top bar (52px), padding bottom = chiều cao bottom nav (64px) */
   body {
     padding-top: 52px !important;
-    padding-bottom: 0 !important;
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   /* ==========================================================================
