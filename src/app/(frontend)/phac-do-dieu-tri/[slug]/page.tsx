@@ -69,6 +69,15 @@ export default async function Page({ params }: Props) {
   const fileName = mediaLabel(item.file)
   const fileFormat = mediaFormat(item.file)
 
+  let defaultPin = 'BVTL2026'
+  let hospitalName = 'Bệnh viện Đa khoa Khu vực Thới Lai'
+  try {
+    const payload = await getCMS()
+    const settings = await payload.findGlobal({ slug: 'site-settings' as any }) as any
+    if (settings?.defaultDocumentPin) defaultPin = settings.defaultDocumentPin
+    if (settings?.hospitalName) hospitalName = settings.hospitalName
+  } catch {}
+
   const docData = {
     id: item.id,
     title: item.title,
@@ -77,13 +86,16 @@ export default async function Page({ params }: Props) {
     effectiveAt: item.effectiveAt ? new Date(item.effectiveAt).toLocaleDateString('vi-VN') : '',
     documentType: item.documentType || 'Phác đồ điều trị',
     category: cat,
-    issuer: item.issuer || 'Bệnh viện Đa khoa Khu vực Thới Lai',
+    issuer: item.issuer || hospitalName,
     signer: item.signer,
     summary: item.summary,
     content: item.content,
     fileUrl,
     fileName,
     fileFormat,
+    accessMode: item.accessMode || 'public',
+    pinCode: item.pinCode,
+    defaultPin,
     allowDownload: item.allowDownload !== false,
     preventCopy: Boolean(item.preventCopy),
     showViewer: item.showViewer !== false,

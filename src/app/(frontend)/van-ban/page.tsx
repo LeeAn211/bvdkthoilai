@@ -19,23 +19,20 @@ export default async function Page() {
 
   try {
     const payload = await getCMS()
-    const [docRes, cpRes, defaults] = await Promise.all([
+    const [docRes, defaults, settings] = await Promise.all([
       payload.find({
         collection: 'documents',
         sort: '-issuedAt',
         limit: 200,
         depth: 2,
       }).catch(() => ({ docs: [] })),
-      payload.find({
-        collection: 'clinical-protocols' as any,
-        sort: '-issuedAt',
-        limit: 200,
-        depth: 2,
-      }).catch(() => ({ docs: [] })),
       getDefaultContentMedia(),
+      payload.findGlobal({ slug: 'site-settings' as any }).catch(() => null) as any,
     ])
 
-    const normalDocs: DocumentDirectoryItem[] = (docRes.docs as any[]).map(x => {
+    const defaultIssuer = settings?.hospitalName || 'BVĐK Khu vực Thới Lai'
+
+    items = (docRes.docs as any[]).map(x => {
       const fileUrl = mediaUrl(x.file)
       const detailHref = x.slug ? `/van-ban/${x.slug}` : (fileUrl || '#')
       const cat = categoryName(x) || x.category || x.documentType || 'Văn bản – Tài liệu'
@@ -47,7 +44,7 @@ export default async function Page() {
         slug: x.slug,
         number: x.number,
         category: cat,
-        issuer: x.issuer || 'BVĐK Khu vực Thới Lai',
+        issuer: x.issuer || defaultIssuer,
         signer: x.signer,
         issuedAt: x.issuedAt,
         date: dateStr,
@@ -60,44 +57,12 @@ export default async function Page() {
         fileFormat: mediaFormat(x.file),
         coverUrl: mediaUrl(x.cover || x.seoImage) || defaults.documents,
         href: detailHref,
+        accessMode: x.accessMode || 'public',
         allowDownload: x.allowDownload !== false,
         preventCopy: Boolean(x.preventCopy),
         showViewer: x.showViewer !== false,
       }
-    })
-
-    const cpDocs: DocumentDirectoryItem[] = (cpRes.docs as any[]).map(x => {
-      const fileUrl = mediaUrl(x.file)
-      const detailHref = x.slug ? `/phac-do-dieu-tri/${x.slug}` : (fileUrl || '#')
-      const spec = typeof x.specialty === 'object' && x.specialty?.name ? x.specialty.name : ''
-      const cat = spec ? `Phác đồ (${spec})` : (x.documentType || 'Phác đồ điều trị')
-      const dateStr = x.issuedAt ? new Date(x.issuedAt).toLocaleDateString('vi-VN') : ''
-
-      return {
-        id: `cp-${x.id}`,
-        title: x.title,
-        slug: x.slug,
-        number: x.code,
-        category: cat,
-        issuer: x.issuer || 'BVĐK Khu vực Thới Lai',
-        signer: x.signer,
-        issuedAt: x.issuedAt,
-        date: dateStr,
-        documentType: 'Phác đồ điều trị',
-        summary: x.summary,
-        excerpt: x.summary || 'Phác đồ điều trị và hướng dẫn chẩn đoán chuyên môn của bệnh viện.',
-        fileUrl,
-        fileName: mediaLabel(x.file),
-        fileFormat: mediaFormat(x.file),
-        coverUrl: mediaUrl(x.cover || x.seoImage) || defaults.documents,
-        href: detailHref,
-        allowDownload: x.allowDownload !== false,
-        preventCopy: Boolean(x.preventCopy),
-        showViewer: x.showViewer !== false,
-      }
-    })
-
-    items = [...normalDocs, ...cpDocs].sort((a, b) => {
+    }).sort((a, b) => {
       const timeA = a.issuedAt ? new Date(a.issuedAt).getTime() : 0
       const timeB = b.issuedAt ? new Date(b.issuedAt).getTime() : 0
       return timeB - timeA

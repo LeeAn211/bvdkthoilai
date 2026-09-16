@@ -62,8 +62,8 @@ export interface ArticleDetailTemplateProps {
   attachmentTitle?: string
   showAttachments?: boolean
 
-  // Source (Nguồn bài viết)
   sourceName?: string
+  hospitalName?: string
   showSource?: boolean
 
   // Share
@@ -175,6 +175,7 @@ export function ArticleDetailTemplate({
   attachmentTitle = 'Tài liệu / Văn bản đính kèm',
   showAttachments,
   sourceName,
+  hospitalName,
   showSource,
   showShareButtons,
   showSidebar,
@@ -210,7 +211,7 @@ export function ArticleDetailTemplate({
 
   const finalSidebarTitle = displayConfig?.sidebarLatestTitle || sidebarTitle
   const finalRelatedTitle = displayConfig?.relatedSectionTitle || relatedTitle
-  const finalSourceName = sourceName || displayConfig?.defaultSourceName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
+  const finalSourceName = sourceName || hospitalName || displayConfig?.defaultSourceName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
 
   // Vị trí thanh chia sẻ: 'left' | 'right' | 'top' | 'bottom'
   const sharePosition = shareConfig?.position || 'left'

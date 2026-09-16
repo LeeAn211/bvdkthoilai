@@ -138,6 +138,15 @@ export const Recruitment: CollectionConfig = {
               ],
             },
             {
+              name: 'showSource',
+              label: 'Hiển thị nguồn thông tin ở chân trang chi tiết',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Bật để hiển thị thông tin nguồn dưới chân tin tuyển dụng. Tắt nếu không muốn hiện nguồn cho riêng bài này.',
+              },
+            },
+            {
               type: 'row',
               fields: [
                 {

@@ -109,30 +109,45 @@ export default async function SurveyHubPage() {
             </div>
           )}
 
-          {/* Khối 3 nguyên tắc khảo sát */}
-          <div className="patientCareInfoGrid">
-            <div className="patientCareInfoBox">
-              <div className="patientCareInfoIcon">🛡️</div>
-              <div>
-                <h3 className="patientCareInfoTitle">100% Ẩn danh & Bảo mật</h3>
-                <p className="patientCareInfoText">Mọi thông tin phản hồi của quý vị được mã hóa bảo mật, không ảnh hưởng đến quyền lợi khám chữa bệnh.</p>
+          {/* Khối 3 nguyên tắc khảo sát (quản lý từ CMS) */}
+          {(() => {
+            const DEFAULT_SURVEY_BOXES = [
+              {
+                icon: '🛡️',
+                title: '100% Ẩn danh & Bảo mật',
+                desc: 'Mọi thông tin phản hồi của quý vị được mã hóa bảo mật, không ảnh hưởng đến quyền lợi khám chữa bệnh.',
+              },
+              {
+                icon: '📊',
+                title: 'Chuẩn Bộ Y tế (83 Tiêu chí)',
+                desc: 'Nội dung khảo sát áp dụng theo mẫu chuẩn sự hài lòng người bệnh do Bộ Y tế ban hành định kỳ.',
+              },
+              {
+                icon: '🎯',
+                title: 'Cải tiến hành động cụ thể',
+                desc: 'Kết quả khảo sát được Ban Giám đốc tiếp nhận hàng tháng để chấn chỉnh và đầu tư cải tiến dịch vụ.',
+              },
+            ]
+            const boxes = Array.isArray(surveyConf.infoBoxes) && surveyConf.infoBoxes.length > 0
+              ? surveyConf.infoBoxes.filter((b: any) => b?.enabled !== false)
+              : DEFAULT_SURVEY_BOXES
+
+            if (boxes.length === 0) return null
+
+            return (
+              <div className="patientCareInfoGrid" style={{ marginBottom: '28px' }}>
+                {boxes.map((b: any, idx: number) => (
+                  <div className="patientCareInfoBox" key={idx}>
+                    <div className="patientCareInfoIcon">{b.icon || '🛡️'}</div>
+                    <div>
+                      <h3 className="patientCareInfoTitle">{b.title}</h3>
+                      <p className="patientCareInfoText" style={{ whiteSpace: 'pre-line' }}>{b.desc}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-            <div className="patientCareInfoBox">
-              <div className="patientCareInfoIcon">📊</div>
-              <div>
-                <h3 className="patientCareInfoTitle">Chuẩn Bộ Y tế (83 Tiêu chí)</h3>
-                <p className="patientCareInfoText">Nội dung khảo sát áp dụng theo mẫu chuẩn sự hài lòng người bệnh do Bộ Y tế ban hành định kỳ.</p>
-              </div>
-            </div>
-            <div className="patientCareInfoBox">
-              <div className="patientCareInfoIcon">🎯</div>
-              <div>
-                <h3 className="patientCareInfoTitle">Cải tiến hành động cụ thể</h3>
-                <p className="patientCareInfoText">Kết quả khảo sát được Ban Giám đốc tiếp nhận hàng tháng để chấn chỉnh và đầu tư cải tiến dịch vụ.</p>
-              </div>
-            </div>
-          </div>
+            )
+          })()}
 
           {/* Danh sách các chiến dịch khảo sát */}
           <div style={{ marginBottom: '20px' }}>

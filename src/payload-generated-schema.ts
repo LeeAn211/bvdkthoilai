@@ -252,6 +252,12 @@ export const enum__procurement_v_version_status = pgEnum(
   "enum__procurement_v_version_status",
   ["draft", "published"],
 );
+export const enum_documents_access_mode = pgEnum("enum_documents_access_mode", [
+  "public",
+  "pin",
+  "internal",
+  "locked",
+]);
 export const enum_documents_text_align = pgEnum("enum_documents_text_align", [
   "left",
   "center",
@@ -278,6 +284,10 @@ export const enum_documents_summary_size = pgEnum(
   "enum_documents_summary_size",
   ["normal", "large", "small"],
 );
+export const enum__documents_v_version_access_mode = pgEnum(
+  "enum__documents_v_version_access_mode",
+  ["public", "pin", "internal", "locked"],
+);
 export const enum__documents_v_version_text_align = pgEnum(
   "enum__documents_v_version_text_align",
   ["left", "center", "right", "justify"],
@@ -298,6 +308,10 @@ export const enum__documents_v_version_summary_size = pgEnum(
   "enum__documents_v_version_summary_size",
   ["normal", "large", "small"],
 );
+export const enum_clinical_protocols_access_mode = pgEnum(
+  "enum_clinical_protocols_access_mode",
+  ["public", "pin", "internal", "locked"],
+);
 export const enum_clinical_protocols_text_align = pgEnum(
   "enum_clinical_protocols_text_align",
   ["left", "center", "right", "justify"],
@@ -317,6 +331,10 @@ export const enum_clinical_protocols_summary_color = pgEnum(
 export const enum_clinical_protocols_summary_size = pgEnum(
   "enum_clinical_protocols_summary_size",
   ["normal", "large", "small"],
+);
+export const enum__clinical_protocols_v_version_access_mode = pgEnum(
+  "enum__clinical_protocols_v_version_access_mode",
+  ["public", "pin", "internal", "locked"],
 );
 export const enum__clinical_protocols_v_version_text_align = pgEnum(
   "enum__clinical_protocols_v_version_text_align",
@@ -791,6 +809,7 @@ export const enum_site_settings_header_contact_cards_font_weight = pgEnum(
   "enum_site_settings_header_contact_cards_font_weight",
   ["400", "600", "700", "800", "900"],
 );
+export const qp_icon_t = pgEnum("qp_icon_t", ["blue", "green", "amber"]);
 export const brand_color_scheme = pgEnum("brand_color_scheme", [
   "custom",
   "navy-gold",
@@ -916,6 +935,26 @@ export const enum_site_settings_forms_page_notice_align = pgEnum(
   ["left", "center", "justify"],
 );
 export const pp_not_align = pgEnum("pp_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const fb_not_align = pgEnum("fb_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const ip_not_align = pgEnum("ip_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const pkg_not_align = pgEnum("pkg_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const map_not_align = pgEnum("map_not_align", [
   "left",
   "center",
   "justify",
@@ -1624,6 +1663,16 @@ export const enum_working_hours_settings_emergency_banner_desc_size = pgEnum(
   "enum_working_hours_settings_emergency_banner_desc_size",
   ["normal", "large"],
 );
+export const pps_badge_t = pgEnum("pps_badge_t", [
+  "active",
+  "periodic",
+  "closed",
+]);
+export const pps_not_align = pgEnum("pps_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
 export const enum_seo_settings_status = pgEnum("enum_seo_settings_status", [
   "draft",
   "published",
@@ -1981,6 +2030,7 @@ export const news = pgTable(
     layoutTemplate:
       enum_news_layout_template("layout_template").default("default"),
     source: varchar("source"),
+    showSource: boolean("show_source").default(true),
     coverFit: enum_news_cover_fit("cover_fit").default("cover"),
     coverPosition: enum_news_cover_position("cover_position").default("top"),
     seoTitle: varchar("seo_title"),
@@ -2081,6 +2131,7 @@ export const _news_v = pgTable(
       "version_layout_template",
     ).default("default"),
     version_source: varchar("version_source"),
+    version_showSource: boolean("version_show_source").default(true),
     version_coverFit:
       enum__news_v_version_cover_fit("version_cover_fit").default("cover"),
     version_coverPosition: enum__news_v_version_cover_position(
@@ -2209,6 +2260,7 @@ export const notices = pgTable(
     layoutTemplate:
       enum_notices_layout_template("layout_template").default("default"),
     source: varchar("source"),
+    showSource: boolean("show_source").default(true),
     coverFit: enum_notices_cover_fit("cover_fit").default("cover"),
     coverPosition: enum_notices_cover_position("cover_position").default("top"),
     seoTitle: varchar("seo_title"),
@@ -2321,6 +2373,7 @@ export const _notices_v = pgTable(
       "version_layout_template",
     ).default("default"),
     version_source: varchar("version_source"),
+    version_showSource: boolean("version_show_source").default(true),
     version_coverFit:
       enum__notices_v_version_cover_fit("version_cover_fit").default("cover"),
     version_coverPosition: enum__notices_v_version_cover_position(
@@ -2490,6 +2543,7 @@ export const procurement = pgTable(
     layoutTemplate:
       enum_procurement_layout_template("layout_template").default("default"),
     source: varchar("source"),
+    showSource: boolean("show_source").default(true),
     coverFit: enum_procurement_cover_fit("cover_fit").default("cover"),
     coverPosition:
       enum_procurement_cover_position("cover_position").default("top"),
@@ -2631,6 +2685,7 @@ export const _procurement_v = pgTable(
       "version_layout_template",
     ).default("default"),
     version_source: varchar("version_source"),
+    version_showSource: boolean("version_show_source").default(true),
     version_coverFit:
       enum__procurement_v_version_cover_fit("version_cover_fit").default(
         "cover",
@@ -2765,6 +2820,8 @@ export const documents = pgTable(
       onDelete: "set null",
     }),
     content: jsonb("content"),
+    accessMode: enum_documents_access_mode("access_mode").default("public"),
+    pinCode: varchar("pin_code"),
     allowDownload: boolean("allow_download").default(true),
     preventCopy: boolean("prevent_copy").default(false),
     showViewer: boolean("show_viewer").default(true),
@@ -2856,6 +2913,10 @@ export const _documents_v = pgTable(
       onDelete: "set null",
     }),
     version_content: jsonb("version_content"),
+    version_accessMode: enum__documents_v_version_access_mode(
+      "version_access_mode",
+    ).default("public"),
+    version_pinCode: varchar("version_pin_code"),
     version_allowDownload: boolean("version_allow_download").default(true),
     version_preventCopy: boolean("version_prevent_copy").default(false),
     version_showViewer: boolean("version_show_viewer").default(true),
@@ -2970,6 +3031,9 @@ export const clinical_protocols = pgTable(
     }),
     summary: varchar("summary"),
     content: jsonb("content"),
+    accessMode:
+      enum_clinical_protocols_access_mode("access_mode").default("public"),
+    pinCode: varchar("pin_code"),
     allowDownload: boolean("allow_download").default(true),
     preventCopy: boolean("prevent_copy").default(false),
     showViewer: boolean("show_viewer").default(true),
@@ -3066,6 +3130,10 @@ export const _clinical_protocols_v = pgTable(
     }),
     version_summary: varchar("version_summary"),
     version_content: jsonb("version_content"),
+    version_accessMode: enum__clinical_protocols_v_version_access_mode(
+      "version_access_mode",
+    ).default("public"),
+    version_pinCode: varchar("version_pin_code"),
     version_allowDownload: boolean("version_allow_download").default(true),
     version_preventCopy: boolean("version_prevent_copy").default(false),
     version_showViewer: boolean("version_show_viewer").default(true),
@@ -4780,6 +4848,7 @@ export const recruitment = pgTable(
     layoutTemplate:
       enum_recruitment_layout_template("layout_template").default("default"),
     source: varchar("source"),
+    showSource: boolean("show_source").default(true),
     coverFit: enum_recruitment_cover_fit("cover_fit").default("cover"),
     seoTitle: varchar("seo_title"),
     canonicalUrl: varchar("canonical_url"),
@@ -4899,6 +4968,7 @@ export const _recruitment_v = pgTable(
       "version_layout_template",
     ).default("default"),
     version_source: varchar("version_source"),
+    version_showSource: boolean("version_show_source").default(true),
     version_coverFit:
       enum__recruitment_v_version_cover_fit("version_cover_fit").default(
         "cover",
@@ -5585,12 +5655,23 @@ export const feedback = pgTable(
   "feedback",
   {
     id: serial("id").primaryKey(),
+    code: varchar("code"),
     name: varchar("name").notNull(),
     phone: varchar("phone").notNull(),
     email: varchar("email"),
     type: enum_feedback_type("type").notNull(),
     message: varchar("message").notNull(),
-    status: enum_feedback_status("status").default("new"),
+    status: enum_feedback_status("status").notNull().default("new"),
+    handledBy: integer("handled_by_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    resolvedAt: timestamp("resolved_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    response: varchar("response"),
+    resolutionNote: varchar("resolution_note"),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -5607,6 +5688,8 @@ export const feedback = pgTable(
       .notNull(),
   },
   (columns) => [
+    index("feedback_code_idx").on(columns.code),
+    index("feedback_handled_by_idx").on(columns.handledBy),
     index("feedback_updated_at_idx").on(columns.updatedAt),
     index("feedback_created_at_idx").on(columns.createdAt),
   ],
@@ -6835,6 +6918,7 @@ export const custom_posts = pgTable(
     layoutTemplate:
       enum_custom_posts_layout_template("layout_template").default("default"),
     source: varchar("source"),
+    showSource: boolean("show_source").default(true),
     seoTitle: varchar("seo_title"),
     canonicalUrl: varchar("canonical_url"),
     seoDescription: varchar("seo_description"),
@@ -6934,6 +7018,7 @@ export const _custom_posts_v = pgTable(
       "version_layout_template",
     ).default("default"),
     version_source: varchar("version_source"),
+    version_showSource: boolean("version_show_source").default(true),
     version_seoTitle: varchar("version_seo_title"),
     version_canonicalUrl: varchar("version_canonical_url"),
     version_seoDescription: varchar("version_seo_description"),
@@ -7085,6 +7170,7 @@ export const advanced_techniques = pgTable(
     enableLink: boolean("enable_link").default(true),
     customUrl: varchar("custom_url"),
     showCoverInDetail: boolean("show_cover_in_detail").default(false),
+    showSource: boolean("show_source").default(false),
     summary: varchar("summary"),
     content: jsonb("content").notNull(),
     indications: varchar("indications"),
@@ -7269,6 +7355,7 @@ export const scientific_activities = pgTable(
       precision: 3,
     }),
     source: varchar("source"),
+    showSource: boolean("show_source").default(true),
     layoutTemplate:
       enum_scientific_activities_layout_template("layout_template").default(
         "default",
@@ -7385,6 +7472,7 @@ export const _scientific_activities_v = pgTable(
       precision: 3,
     }),
     version_source: varchar("version_source"),
+    version_showSource: boolean("version_show_source").default(true),
     version_layoutTemplate:
       enum__scientific_activities_v_version_layout_template(
         "version_layout_template",
@@ -8223,6 +8311,376 @@ export const site_settings_header_social_links = pgTable(
   ],
 );
 
+export const ef_steps = pgTable(
+  "ef_steps",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    step: numeric("step", { mode: "number" }).notNull(),
+    title: varchar("title").notNull(),
+    location: varchar("location").notNull(),
+    timeEstimate: varchar("time_estimate"),
+    desc: varchar("desc").notNull(),
+    actions: varchar("actions"),
+    note: varchar("note"),
+    isHighlight: boolean("is_highlight").default(false),
+    isEmergency: boolean("is_emergency").default(false),
+  },
+  (columns) => [
+    index("ef_steps_order_idx").on(columns._order),
+    index("ef_steps_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [ef_tabs.id],
+      name: "ef_steps_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const ef_tabs = pgTable(
+  "ef_tabs",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    label: varchar("label").notNull(),
+    badgeText: varchar("badge_text"),
+    title: varchar("title").notNull(),
+    summary: varchar("summary").notNull(),
+  },
+  (columns) => [
+    index("ef_tabs_order_idx").on(columns._order),
+    index("ef_tabs_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "ef_tabs_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const ef_checks = pgTable(
+  "ef_checks",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    icon: varchar("icon").default("id"),
+  },
+  (columns) => [
+    index("ef_checks_order_idx").on(columns._order),
+    index("ef_checks_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "ef_checks_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const ef_prios = pgTable(
+  "ef_prios",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    text: varchar("text").notNull(),
+  },
+  (columns) => [
+    index("ef_prios_order_idx").on(columns._order),
+    index("ef_prios_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "ef_prios_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const qp_stats = pgTable(
+  "qp_stats",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    val: varchar("val").notNull(),
+    unit: varchar("unit"),
+    label: varchar("label").notNull(),
+  },
+  (columns) => [
+    index("qp_stats_order_idx").on(columns._order),
+    index("qp_stats_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "qp_stats_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const qp_dims = pgTable(
+  "qp_dims",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    code: varchar("code").notNull(),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    score: varchar("score").notNull(),
+    percent: numeric("percent", { mode: "number" }).notNull(),
+  },
+  (columns) => [
+    index("qp_dims_order_idx").on(columns._order),
+    index("qp_dims_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "qp_dims_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const qp_progs = pgTable(
+  "qp_progs",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    iconType: qp_icon_t("icon_type").default("blue"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    highlights: varchar("highlights"),
+  },
+  (columns) => [
+    index("qp_progs_order_idx").on(columns._order),
+    index("qp_progs_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "qp_progs_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const sv_boxes = pgTable(
+  "sv_boxes",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("🛡️"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+  },
+  (columns) => [
+    index("sv_boxes_order_idx").on(columns._order),
+    index("sv_boxes_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "sv_boxes_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const fm_boxes = pgTable(
+  "fm_boxes",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("⚡"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+  },
+  (columns) => [
+    index("fm_boxes_order_idx").on(columns._order),
+    index("fm_boxes_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "fm_boxes_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const fb_boxes = pgTable(
+  "fb_boxes",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("📞"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+  },
+  (columns) => [
+    index("fb_boxes_order_idx").on(columns._order),
+    index("fb_boxes_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "fb_boxes_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const ip_steps = pgTable(
+  "ip_steps",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    step: numeric("step", { mode: "number" }).notNull(),
+    title: varchar("title").notNull(),
+    location: varchar("location").notNull(),
+    desc: varchar("desc").notNull(),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("ip_steps_order_idx").on(columns._order),
+    index("ip_steps_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "ip_steps_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const ip_hours = pgTable(
+  "ip_hours",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    session: varchar("session").notNull(),
+    timeRange: varchar("time_range").notNull(),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("ip_hours_order_idx").on(columns._order),
+    index("ip_hours_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "ip_hours_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const ip_items = pgTable(
+  "ip_items",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("🎒"),
+    category: varchar("category").notNull(),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+  },
+  (columns) => [
+    index("ip_items_order_idx").on(columns._order),
+    index("ip_items_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "ip_items_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const chk_pkgs = pgTable(
+  "chk_pkgs",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    badge: varchar("badge"),
+    title: varchar("title").notNull(),
+    targetUser: varchar("target_user").notNull(),
+    priceText: varchar("price_text").notNull(),
+    desc: varchar("desc").notNull(),
+    features: varchar("features").notNull(),
+    buttonText: varchar("button_text").default("Đăng ký gói khám"),
+    buttonLink: varchar("button_link").default("/dat-lich-kham"),
+  },
+  (columns) => [
+    index("chk_pkgs_order_idx").on(columns._order),
+    index("chk_pkgs_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "chk_pkgs_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hm_floors = pgTable(
+  "hm_floors",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    floorName: varchar("floor_name").notNull(),
+    overview: varchar("overview").notNull(),
+    rooms: varchar("rooms").notNull(),
+  },
+  (columns) => [
+    index("hm_floors_order_idx").on(columns._order),
+    index("hm_floors_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "hm_floors_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hm_facils = pgTable(
+  "hm_facils",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("📍"),
+    name: varchar("name").notNull(),
+    location: varchar("location").notNull(),
+    hours: varchar("hours").default("24/24 hoặc Giờ hành chính"),
+    desc: varchar("desc"),
+  },
+  (columns) => [
+    index("hm_facils_order_idx").on(columns._order),
+    index("hm_facils_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [site_settings.id],
+      name: "hm_facils_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const site_assistant_topics = pgTable(
   "site_assistant_topics",
   {
@@ -8731,6 +9189,100 @@ export const site_settings = pgTable(
     patientPortalPage_noticeAlign: pp_not_align(
       "patient_portal_page_notice_align",
     ).default("left"),
+    feedbackPage_eyebrow: varchar("feedback_page_eyebrow").default(
+      "CHĂM SÓC NGƯỜI BỆNH & TIẾP NHẬN Ý KIẾN",
+    ),
+    feedbackPage_title: varchar("feedback_page_title").default(
+      "Góp ý – Phản ánh Chất lượng",
+    ),
+    feedbackPage_description: varchar("feedback_page_description").default(
+      "Mọi ý kiến đóng góp, phản ánh hoặc khen ngợi của quý vị đều được Ban Giám đốc tiếp nhận trực tiếp và giải quyết minh bạch, có mã theo dõi tiến độ.",
+    ),
+    feedbackPage_showNoticeBanner: boolean(
+      "feedback_page_show_notice_banner",
+    ).default(false),
+    feedbackPage_noticeTitle: varchar("feedback_page_notice_title").default(
+      "Quy trình tiếp nhận phản ánh",
+    ),
+    feedbackPage_noticeContent: varchar("feedback_page_notice_content").default(
+      "• Ban Giám đốc tiếp nhận trực tiếp mọi ý kiến phản ánh của người bệnh và thân nhân.\n• Mọi phản ánh đều được cấp mã tra cứu tiến độ xử lý minh bạch.",
+    ),
+    feedbackPage_noticeAlign: fb_not_align(
+      "feedback_page_notice_align",
+    ).default("left"),
+    inpatientPage_eyebrow: varchar("inpatient_page_eyebrow").default(
+      "HƯỚNG DẪN DÀNH CHO NGƯỜI BỆNH",
+    ),
+    inpatientPage_title: varchar("inpatient_page_title").default(
+      "Hướng dẫn Điều trị Nội trú",
+    ),
+    inpatientPage_description: varchar("inpatient_page_description").default(
+      "Thông tin chi tiết về thủ tục nhập viện, đồ dùng cần chuẩn bị, quy định buồng bệnh, giờ thăm bệnh và chế độ dinh dưỡng tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    inpatientPage_showNoticeBanner: boolean(
+      "inpatient_page_show_notice_banner",
+    ).default(true),
+    inpatientPage_noticeTitle: varchar("inpatient_page_notice_title").default(
+      "Nội quy buồng bệnh và an toàn người bệnh",
+    ),
+    inpatientPage_noticeContent: varchar(
+      "inpatient_page_notice_content",
+    ).default(
+      "• Mỗi người bệnh được tối đa 01 người thân ở lại chăm sóc và phải đeo thẻ nuôi bệnh.\n• Giữ gìn trật tự chung, tuyệt đối không hút thuốc lá trong khuôn viên bệnh viện.\n• Bệnh viện phục vụ chế độ ăn bệnh lý đạt chuẩn an toàn vệ sinh thực phẩm.",
+    ),
+    inpatientPage_noticeAlign: ip_not_align(
+      "inpatient_page_notice_align",
+    ).default("left"),
+    checkupPackagesPage_eyebrow: varchar(
+      "checkup_packages_page_eyebrow",
+    ).default("CHỦ ĐỘNG BẢO VỆ SỨC KHỎE"),
+    checkupPackagesPage_title: varchar("checkup_packages_page_title").default(
+      "Gói Khám Sức khỏe & Tầm soát Bệnh lý",
+    ),
+    checkupPackagesPage_description: varchar(
+      "checkup_packages_page_description",
+    ).default(
+      "Các gói khám sức khỏe tổng quát, tầm soát bệnh lý mạn tính và khám cấp giấy chứng nhận sức khỏe với chi phí minh bạch, chuẩn y tế tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    checkupPackagesPage_showNoticeBanner: boolean(
+      "checkup_packages_page_show_notice_banner",
+    ).default(true),
+    checkupPackagesPage_noticeTitle: varchar(
+      "checkup_packages_page_notice_title",
+    ).default("Lưu ý quan trọng trước khi đi khám sức khỏe"),
+    checkupPackagesPage_noticeContent: varchar(
+      "checkup_packages_page_notice_content",
+    ).default(
+      "• Nhịn ăn sáng từ 8 - 10 tiếng nếu gói khám có xét nghiệm đường huyết, mỡ máu.\n• Uống nhiều nước lọc và nhịn tiểu trước khi làm siêu âm ổ bụng.\n• Không sử dụng rượu bia, chất kích thích 24 giờ trước khi khám.",
+    ),
+    checkupPackagesPage_noticeAlign: pkg_not_align(
+      "checkup_packages_page_notice_align",
+    ).default("left"),
+    hospitalMapPage_eyebrow: varchar("hospital_map_page_eyebrow").default(
+      "CHỈ DẪN TIẾP ĐÓN TIỆN ÍCH",
+    ),
+    hospitalMapPage_title: varchar("hospital_map_page_title").default(
+      "Sơ đồ Chỉ dẫn Khoa / Phòng & Tiện ích",
+    ),
+    hospitalMapPage_description: varchar(
+      "hospital_map_page_description",
+    ).default(
+      "Bản đồ chỉ dẫn phân tầng các khoa phòng chuyên môn, phòng khám chức năng và các khu vực dịch vụ công cộng tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    hospitalMapPage_showNoticeBanner: boolean(
+      "hospital_map_page_show_notice_banner",
+    ).default(true),
+    hospitalMapPage_noticeTitle: varchar(
+      "hospital_map_page_notice_title",
+    ).default("Bàn Hướng dẫn & Hỗ trợ người bệnh di chuyển"),
+    hospitalMapPage_noticeContent: varchar(
+      "hospital_map_page_notice_content",
+    ).default(
+      "• Tại sảnh chính Tầng trệt có Tổ Chăm sóc khách hàng trực tiếp chỉ dẫn và xe lăn hỗ trợ người già, người khuyết tật.\n• Thang máy vận chuyển ưu tiên người bệnh nội trú và xe cáng cấp cứu.",
+    ),
+    hospitalMapPage_noticeAlign: map_not_align(
+      "hospital_map_page_notice_align",
+    ).default("left"),
     lichTrucPage_eyebrow: varchar("lich_truc_page_eyebrow").default(
       "TRỰC 24/7",
     ),
@@ -8868,6 +9420,7 @@ export const site_settings = pgTable(
     smtpSettings_fromName: varchar("smtp_settings_from_name").default(
       "Bệnh viện Đa khoa Khu vực Thới Lai",
     ),
+    defaultDocumentPin: varchar("default_document_pin").default("BVTL2026"),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -8980,6 +9533,392 @@ export const _site_settings_v_version_header_social_links = pgTable(
       columns: [columns["_parentID"]],
       foreignColumns: [_site_settings_v.id],
       name: "_site_settings_v_version_header_social_links_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _ef_steps_v = pgTable(
+  "_ef_steps_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    step: numeric("step", { mode: "number" }).notNull(),
+    title: varchar("title").notNull(),
+    location: varchar("location").notNull(),
+    timeEstimate: varchar("time_estimate"),
+    desc: varchar("desc").notNull(),
+    actions: varchar("actions"),
+    note: varchar("note"),
+    isHighlight: boolean("is_highlight").default(false),
+    isEmergency: boolean("is_emergency").default(false),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_ef_steps_v_order_idx").on(columns._order),
+    index("_ef_steps_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_ef_tabs_v.id],
+      name: "_ef_steps_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _ef_tabs_v = pgTable(
+  "_ef_tabs_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    _uuid: varchar("_uuid").notNull(),
+    label: varchar("label").notNull(),
+    badgeText: varchar("badge_text"),
+    title: varchar("title").notNull(),
+    summary: varchar("summary").notNull(),
+  },
+  (columns) => [
+    index("_ef_tabs_v_order_idx").on(columns._order),
+    index("_ef_tabs_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_ef_tabs_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _ef_checks_v = pgTable(
+  "_ef_checks_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    icon: varchar("icon").default("id"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_ef_checks_v_order_idx").on(columns._order),
+    index("_ef_checks_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_ef_checks_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _ef_prios_v = pgTable(
+  "_ef_prios_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    text: varchar("text").notNull(),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_ef_prios_v_order_idx").on(columns._order),
+    index("_ef_prios_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_ef_prios_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _qp_stats_v = pgTable(
+  "_qp_stats_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    val: varchar("val").notNull(),
+    unit: varchar("unit"),
+    label: varchar("label").notNull(),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_qp_stats_v_order_idx").on(columns._order),
+    index("_qp_stats_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_qp_stats_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _qp_dims_v = pgTable(
+  "_qp_dims_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    code: varchar("code").notNull(),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    score: varchar("score").notNull(),
+    percent: numeric("percent", { mode: "number" }).notNull(),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_qp_dims_v_order_idx").on(columns._order),
+    index("_qp_dims_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_qp_dims_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _qp_progs_v = pgTable(
+  "_qp_progs_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    iconType: qp_icon_t("icon_type").default("blue"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    highlights: varchar("highlights"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_qp_progs_v_order_idx").on(columns._order),
+    index("_qp_progs_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_qp_progs_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _sv_boxes_v = pgTable(
+  "_sv_boxes_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("🛡️"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_sv_boxes_v_order_idx").on(columns._order),
+    index("_sv_boxes_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_sv_boxes_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _fm_boxes_v = pgTable(
+  "_fm_boxes_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("⚡"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_fm_boxes_v_order_idx").on(columns._order),
+    index("_fm_boxes_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_fm_boxes_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _fb_boxes_v = pgTable(
+  "_fb_boxes_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("📞"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_fb_boxes_v_order_idx").on(columns._order),
+    index("_fb_boxes_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_fb_boxes_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _ip_steps_v = pgTable(
+  "_ip_steps_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    step: numeric("step", { mode: "number" }).notNull(),
+    title: varchar("title").notNull(),
+    location: varchar("location").notNull(),
+    desc: varchar("desc").notNull(),
+    note: varchar("note"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_ip_steps_v_order_idx").on(columns._order),
+    index("_ip_steps_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_ip_steps_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _ip_hours_v = pgTable(
+  "_ip_hours_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    session: varchar("session").notNull(),
+    timeRange: varchar("time_range").notNull(),
+    note: varchar("note"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_ip_hours_v_order_idx").on(columns._order),
+    index("_ip_hours_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_ip_hours_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _ip_items_v = pgTable(
+  "_ip_items_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("🎒"),
+    category: varchar("category").notNull(),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_ip_items_v_order_idx").on(columns._order),
+    index("_ip_items_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_ip_items_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _chk_pkgs_v = pgTable(
+  "_chk_pkgs_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    badge: varchar("badge"),
+    title: varchar("title").notNull(),
+    targetUser: varchar("target_user").notNull(),
+    priceText: varchar("price_text").notNull(),
+    desc: varchar("desc").notNull(),
+    features: varchar("features").notNull(),
+    buttonText: varchar("button_text").default("Đăng ký gói khám"),
+    buttonLink: varchar("button_link").default("/dat-lich-kham"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_chk_pkgs_v_order_idx").on(columns._order),
+    index("_chk_pkgs_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_chk_pkgs_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _hm_floors_v = pgTable(
+  "_hm_floors_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    floorName: varchar("floor_name").notNull(),
+    overview: varchar("overview").notNull(),
+    rooms: varchar("rooms").notNull(),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hm_floors_v_order_idx").on(columns._order),
+    index("_hm_floors_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_hm_floors_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _hm_facils_v = pgTable(
+  "_hm_facils_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("📍"),
+    name: varchar("name").notNull(),
+    location: varchar("location").notNull(),
+    hours: varchar("hours").default("24/24 hoặc Giờ hành chính"),
+    desc: varchar("desc"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hm_facils_v_order_idx").on(columns._order),
+    index("_hm_facils_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_site_settings_v.id],
+      name: "_hm_facils_v_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -9534,6 +10473,106 @@ export const _site_settings_v = pgTable(
     version_patientPortalPage_noticeAlign: pp_not_align(
       "version_patient_portal_page_notice_align",
     ).default("left"),
+    version_feedbackPage_eyebrow: varchar(
+      "version_feedback_page_eyebrow",
+    ).default("CHĂM SÓC NGƯỜI BỆNH & TIẾP NHẬN Ý KIẾN"),
+    version_feedbackPage_title: varchar("version_feedback_page_title").default(
+      "Góp ý – Phản ánh Chất lượng",
+    ),
+    version_feedbackPage_description: varchar(
+      "version_feedback_page_description",
+    ).default(
+      "Mọi ý kiến đóng góp, phản ánh hoặc khen ngợi của quý vị đều được Ban Giám đốc tiếp nhận trực tiếp và giải quyết minh bạch, có mã theo dõi tiến độ.",
+    ),
+    version_feedbackPage_showNoticeBanner: boolean(
+      "version_feedback_page_show_notice_banner",
+    ).default(false),
+    version_feedbackPage_noticeTitle: varchar(
+      "version_feedback_page_notice_title",
+    ).default("Quy trình tiếp nhận phản ánh"),
+    version_feedbackPage_noticeContent: varchar(
+      "version_feedback_page_notice_content",
+    ).default(
+      "• Ban Giám đốc tiếp nhận trực tiếp mọi ý kiến phản ánh của người bệnh và thân nhân.\n• Mọi phản ánh đều được cấp mã tra cứu tiến độ xử lý minh bạch.",
+    ),
+    version_feedbackPage_noticeAlign: fb_not_align(
+      "version_feedback_page_notice_align",
+    ).default("left"),
+    version_inpatientPage_eyebrow: varchar(
+      "version_inpatient_page_eyebrow",
+    ).default("HƯỚNG DẪN DÀNH CHO NGƯỜI BỆNH"),
+    version_inpatientPage_title: varchar(
+      "version_inpatient_page_title",
+    ).default("Hướng dẫn Điều trị Nội trú"),
+    version_inpatientPage_description: varchar(
+      "version_inpatient_page_description",
+    ).default(
+      "Thông tin chi tiết về thủ tục nhập viện, đồ dùng cần chuẩn bị, quy định buồng bệnh, giờ thăm bệnh và chế độ dinh dưỡng tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_inpatientPage_showNoticeBanner: boolean(
+      "version_inpatient_page_show_notice_banner",
+    ).default(true),
+    version_inpatientPage_noticeTitle: varchar(
+      "version_inpatient_page_notice_title",
+    ).default("Nội quy buồng bệnh và an toàn người bệnh"),
+    version_inpatientPage_noticeContent: varchar(
+      "version_inpatient_page_notice_content",
+    ).default(
+      "• Mỗi người bệnh được tối đa 01 người thân ở lại chăm sóc và phải đeo thẻ nuôi bệnh.\n• Giữ gìn trật tự chung, tuyệt đối không hút thuốc lá trong khuôn viên bệnh viện.\n• Bệnh viện phục vụ chế độ ăn bệnh lý đạt chuẩn an toàn vệ sinh thực phẩm.",
+    ),
+    version_inpatientPage_noticeAlign: ip_not_align(
+      "version_inpatient_page_notice_align",
+    ).default("left"),
+    version_checkupPackagesPage_eyebrow: varchar(
+      "version_checkup_packages_page_eyebrow",
+    ).default("CHỦ ĐỘNG BẢO VỆ SỨC KHỎE"),
+    version_checkupPackagesPage_title: varchar(
+      "version_checkup_packages_page_title",
+    ).default("Gói Khám Sức khỏe & Tầm soát Bệnh lý"),
+    version_checkupPackagesPage_description: varchar(
+      "version_checkup_packages_page_description",
+    ).default(
+      "Các gói khám sức khỏe tổng quát, tầm soát bệnh lý mạn tính và khám cấp giấy chứng nhận sức khỏe với chi phí minh bạch, chuẩn y tế tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_checkupPackagesPage_showNoticeBanner: boolean(
+      "version_checkup_packages_page_show_notice_banner",
+    ).default(true),
+    version_checkupPackagesPage_noticeTitle: varchar(
+      "version_checkup_packages_page_notice_title",
+    ).default("Lưu ý quan trọng trước khi đi khám sức khỏe"),
+    version_checkupPackagesPage_noticeContent: varchar(
+      "version_checkup_packages_page_notice_content",
+    ).default(
+      "• Nhịn ăn sáng từ 8 - 10 tiếng nếu gói khám có xét nghiệm đường huyết, mỡ máu.\n• Uống nhiều nước lọc và nhịn tiểu trước khi làm siêu âm ổ bụng.\n• Không sử dụng rượu bia, chất kích thích 24 giờ trước khi khám.",
+    ),
+    version_checkupPackagesPage_noticeAlign: pkg_not_align(
+      "version_checkup_packages_page_notice_align",
+    ).default("left"),
+    version_hospitalMapPage_eyebrow: varchar(
+      "version_hospital_map_page_eyebrow",
+    ).default("CHỈ DẪN TIẾP ĐÓN TIỆN ÍCH"),
+    version_hospitalMapPage_title: varchar(
+      "version_hospital_map_page_title",
+    ).default("Sơ đồ Chỉ dẫn Khoa / Phòng & Tiện ích"),
+    version_hospitalMapPage_description: varchar(
+      "version_hospital_map_page_description",
+    ).default(
+      "Bản đồ chỉ dẫn phân tầng các khoa phòng chuyên môn, phòng khám chức năng và các khu vực dịch vụ công cộng tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+    ),
+    version_hospitalMapPage_showNoticeBanner: boolean(
+      "version_hospital_map_page_show_notice_banner",
+    ).default(true),
+    version_hospitalMapPage_noticeTitle: varchar(
+      "version_hospital_map_page_notice_title",
+    ).default("Bàn Hướng dẫn & Hỗ trợ người bệnh di chuyển"),
+    version_hospitalMapPage_noticeContent: varchar(
+      "version_hospital_map_page_notice_content",
+    ).default(
+      "• Tại sảnh chính Tầng trệt có Tổ Chăm sóc khách hàng trực tiếp chỉ dẫn và xe lăn hỗ trợ người già, người khuyết tật.\n• Thang máy vận chuyển ưu tiên người bệnh nội trú và xe cáng cấp cứu.",
+    ),
+    version_hospitalMapPage_noticeAlign: map_not_align(
+      "version_hospital_map_page_notice_align",
+    ).default("left"),
     version_lichTrucPage_eyebrow: varchar(
       "version_lich_truc_page_eyebrow",
     ).default("TRỰC 24/7"),
@@ -9684,6 +10723,9 @@ export const _site_settings_v = pgTable(
     version_smtpSettings_fromName: varchar(
       "version_smtp_settings_from_name",
     ).default("Bệnh viện Đa khoa Khu vực Thới Lai"),
+    version_defaultDocumentPin: varchar("version_default_document_pin").default(
+      "BVTL2026",
+    ),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,
@@ -14277,6 +15319,146 @@ export const working_hours_settings = pgTable(
   ],
 );
 
+export const pps_sub_tabs = pgTable(
+  "pps_sub_tabs",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    key: varchar("key").notNull(),
+    label: varchar("label").notNull(),
+    href: varchar("href").notNull(),
+    icon: varchar("icon").default("🏥"),
+    badge: varchar("badge"),
+  },
+  (columns) => [
+    index("pps_sub_tabs_order_idx").on(columns._order),
+    index("pps_sub_tabs_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [patient_portal_settings.id],
+      name: "pps_sub_tabs_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const pps_commits = pgTable(
+  "pps_commits",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("❤️"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+  },
+  (columns) => [
+    index("pps_commits_order_idx").on(columns._order),
+    index("pps_commits_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [patient_portal_settings.id],
+      name: "pps_commits_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const pps_svc_items = pgTable(
+  "pps_svc_items",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    href: varchar("href").notNull(),
+    icon: varchar("icon").default("🩺"),
+    badge: varchar("badge"),
+    badgeType: pps_badge_t("badge_type").default("active"),
+    buttonText: varchar("button_text").default("Truy cập dịch vụ →"),
+  },
+  (columns) => [
+    index("pps_svc_items_order_idx").on(columns._order),
+    index("pps_svc_items_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [pps_svc_groups.id],
+      name: "pps_svc_items_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const pps_svc_groups = pgTable(
+  "pps_svc_groups",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    categoryTitle: varchar("category_title").notNull(),
+  },
+  (columns) => [
+    index("pps_svc_groups_order_idx").on(columns._order),
+    index("pps_svc_groups_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [patient_portal_settings.id],
+      name: "pps_svc_groups_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const patient_portal_settings = pgTable("patient_portal_settings", {
+  id: serial("id").primaryKey(),
+  hero_eyebrow: varchar("hero_eyebrow").default(
+    "CỔNG TIỆN ÍCH DÀNH CHO NGƯỜI BỆNH",
+  ),
+  hero_title: varchar("hero_title").notNull().default("Dành cho Người bệnh"),
+  hero_description: varchar("hero_description").default(
+    "Tổng hợp đầy đủ hướng dẫn quy trình khám chữa bệnh, lịch làm việc, biểu phí, kênh tiếp nhận phản ánh và khảo sát ý kiến tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+  ),
+  hero_showNoticeBanner: boolean("hero_show_notice_banner").default(false),
+  hero_noticeTitle: varchar("hero_notice_title").default(
+    "Thông báo dành cho người bệnh & thân nhân",
+  ),
+  hero_noticeContent: varchar("hero_notice_content").default(
+    "• Vui lòng mang theo CCCD gắn chip (hoặc ứng dụng VNeID mức 2) và thẻ BHYT khi đến đăng ký khám.\n• Đặt lịch hẹn trực tuyến để được tiếp nhận ưu tiên và giảm thời gian chờ đợi.",
+  ),
+  hero_noticeAlign: pps_not_align("hero_notice_align").default("left"),
+  commitmentsSection_enabled: boolean("commitments_section_enabled").default(
+    true,
+  ),
+  ctaSection_enabled: boolean("cta_section_enabled").default(true),
+  ctaSection_title: varchar("cta_section_title").default(
+    "Bạn cần hỗ trợ khẩn cấp hoặc cần hỏi thêm thông tin?",
+  ),
+  ctaSection_description: varchar("cta_section_description").default(
+    "Đường dây nóng bệnh viện: {{HOTLINE}} · Cấp cứu 24/24: {{EMERGENCY_HOTLINE}}. Bệnh viện luôn sẵn sàng phục vụ!",
+  ),
+  ctaSection_primaryBtnText: varchar("cta_section_primary_btn_text").default(
+    "Gọi tư vấn ngay",
+  ),
+  ctaSection_secondaryBtnText: varchar(
+    "cta_section_secondary_btn_text",
+  ).default("Thông tin liên hệ"),
+  ctaSection_secondaryBtnLink: varchar(
+    "cta_section_secondary_btn_link",
+  ).default("/lien-he"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
 export const upload_settings = pgTable("upload_settings", {
   id: serial("id").primaryKey(),
   imageMaxMB: numeric("image_max_m_b", { mode: "number" })
@@ -16381,7 +17563,13 @@ export const relations__pages_v = relations(_pages_v, ({ one, many }) => ({
   }),
 }));
 export const relations_categories = relations(categories, () => ({}));
-export const relations_feedback = relations(feedback, () => ({}));
+export const relations_feedback = relations(feedback, ({ one }) => ({
+  handledBy: one(users, {
+    fields: [feedback.handledBy],
+    references: [users.id],
+    relationName: "handledBy",
+  }),
+}));
 export const relations_consultations = relations(consultations, () => ({}));
 export const relations_feedback_categories = relations(
   feedback_categories,
@@ -17280,6 +18468,121 @@ export const relations_site_settings_header_social_links = relations(
     }),
   }),
 );
+export const relations_ef_steps = relations(ef_steps, ({ one }) => ({
+  _parentID: one(ef_tabs, {
+    fields: [ef_steps._parentID],
+    references: [ef_tabs.id],
+    relationName: "steps",
+  }),
+}));
+export const relations_ef_tabs = relations(ef_tabs, ({ one, many }) => ({
+  _parentID: one(site_settings, {
+    fields: [ef_tabs._parentID],
+    references: [site_settings.id],
+    relationName: "examinationFlowPage_flowTabs",
+  }),
+  steps: many(ef_steps, {
+    relationName: "steps",
+  }),
+}));
+export const relations_ef_checks = relations(ef_checks, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [ef_checks._parentID],
+    references: [site_settings.id],
+    relationName: "examinationFlowPage_checklists",
+  }),
+}));
+export const relations_ef_prios = relations(ef_prios, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [ef_prios._parentID],
+    references: [site_settings.id],
+    relationName: "examinationFlowPage_priorities",
+  }),
+}));
+export const relations_qp_stats = relations(qp_stats, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [qp_stats._parentID],
+    references: [site_settings.id],
+    relationName: "qualityPage_statCards",
+  }),
+}));
+export const relations_qp_dims = relations(qp_dims, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [qp_dims._parentID],
+    references: [site_settings.id],
+    relationName: "qualityPage_dimensions",
+  }),
+}));
+export const relations_qp_progs = relations(qp_progs, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [qp_progs._parentID],
+    references: [site_settings.id],
+    relationName: "qualityPage_programs",
+  }),
+}));
+export const relations_sv_boxes = relations(sv_boxes, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [sv_boxes._parentID],
+    references: [site_settings.id],
+    relationName: "surveyPage_infoBoxes",
+  }),
+}));
+export const relations_fm_boxes = relations(fm_boxes, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [fm_boxes._parentID],
+    references: [site_settings.id],
+    relationName: "formsPage_infoBoxes",
+  }),
+}));
+export const relations_fb_boxes = relations(fb_boxes, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [fb_boxes._parentID],
+    references: [site_settings.id],
+    relationName: "feedbackPage_infoBoxes",
+  }),
+}));
+export const relations_ip_steps = relations(ip_steps, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [ip_steps._parentID],
+    references: [site_settings.id],
+    relationName: "inpatientPage_admissionSteps",
+  }),
+}));
+export const relations_ip_hours = relations(ip_hours, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [ip_hours._parentID],
+    references: [site_settings.id],
+    relationName: "inpatientPage_visitingHours",
+  }),
+}));
+export const relations_ip_items = relations(ip_items, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [ip_items._parentID],
+    references: [site_settings.id],
+    relationName: "inpatientPage_belongingsChecklist",
+  }),
+}));
+export const relations_chk_pkgs = relations(chk_pkgs, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [chk_pkgs._parentID],
+    references: [site_settings.id],
+    relationName: "checkupPackagesPage_packages",
+  }),
+}));
+export const relations_hm_floors = relations(hm_floors, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [hm_floors._parentID],
+    references: [site_settings.id],
+    relationName: "hospitalMapPage_floors",
+  }),
+}));
+export const relations_hm_facils = relations(hm_facils, ({ one }) => ({
+  _parentID: one(site_settings, {
+    fields: [hm_facils._parentID],
+    references: [site_settings.id],
+    relationName: "hospitalMapPage_facilities",
+  }),
+}));
 export const relations_site_assistant_topics = relations(
   site_assistant_topics,
   ({ one }) => ({
@@ -17329,6 +18632,51 @@ export const relations_site_settings = relations(
       references: [media.id],
       relationName: "favicon",
     }),
+    examinationFlowPage_flowTabs: many(ef_tabs, {
+      relationName: "examinationFlowPage_flowTabs",
+    }),
+    examinationFlowPage_checklists: many(ef_checks, {
+      relationName: "examinationFlowPage_checklists",
+    }),
+    examinationFlowPage_priorities: many(ef_prios, {
+      relationName: "examinationFlowPage_priorities",
+    }),
+    qualityPage_statCards: many(qp_stats, {
+      relationName: "qualityPage_statCards",
+    }),
+    qualityPage_dimensions: many(qp_dims, {
+      relationName: "qualityPage_dimensions",
+    }),
+    qualityPage_programs: many(qp_progs, {
+      relationName: "qualityPage_programs",
+    }),
+    surveyPage_infoBoxes: many(sv_boxes, {
+      relationName: "surveyPage_infoBoxes",
+    }),
+    formsPage_infoBoxes: many(fm_boxes, {
+      relationName: "formsPage_infoBoxes",
+    }),
+    feedbackPage_infoBoxes: many(fb_boxes, {
+      relationName: "feedbackPage_infoBoxes",
+    }),
+    inpatientPage_admissionSteps: many(ip_steps, {
+      relationName: "inpatientPage_admissionSteps",
+    }),
+    inpatientPage_visitingHours: many(ip_hours, {
+      relationName: "inpatientPage_visitingHours",
+    }),
+    inpatientPage_belongingsChecklist: many(ip_items, {
+      relationName: "inpatientPage_belongingsChecklist",
+    }),
+    checkupPackagesPage_packages: many(chk_pkgs, {
+      relationName: "checkupPackagesPage_packages",
+    }),
+    hospitalMapPage_floors: many(hm_floors, {
+      relationName: "hospitalMapPage_floors",
+    }),
+    hospitalMapPage_facilities: many(hm_facils, {
+      relationName: "hospitalMapPage_facilities",
+    }),
     websiteAssistant_assistantLogo: one(media, {
       fields: [site_settings.websiteAssistant_assistantLogo],
       references: [media.id],
@@ -17370,6 +18718,121 @@ export const relations__site_settings_v_version_header_social_links = relations(
     }),
   }),
 );
+export const relations__ef_steps_v = relations(_ef_steps_v, ({ one }) => ({
+  _parentID: one(_ef_tabs_v, {
+    fields: [_ef_steps_v._parentID],
+    references: [_ef_tabs_v.id],
+    relationName: "steps",
+  }),
+}));
+export const relations__ef_tabs_v = relations(_ef_tabs_v, ({ one, many }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_ef_tabs_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_examinationFlowPage_flowTabs",
+  }),
+  steps: many(_ef_steps_v, {
+    relationName: "steps",
+  }),
+}));
+export const relations__ef_checks_v = relations(_ef_checks_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_ef_checks_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_examinationFlowPage_checklists",
+  }),
+}));
+export const relations__ef_prios_v = relations(_ef_prios_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_ef_prios_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_examinationFlowPage_priorities",
+  }),
+}));
+export const relations__qp_stats_v = relations(_qp_stats_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_qp_stats_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_qualityPage_statCards",
+  }),
+}));
+export const relations__qp_dims_v = relations(_qp_dims_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_qp_dims_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_qualityPage_dimensions",
+  }),
+}));
+export const relations__qp_progs_v = relations(_qp_progs_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_qp_progs_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_qualityPage_programs",
+  }),
+}));
+export const relations__sv_boxes_v = relations(_sv_boxes_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_sv_boxes_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_surveyPage_infoBoxes",
+  }),
+}));
+export const relations__fm_boxes_v = relations(_fm_boxes_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_fm_boxes_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_formsPage_infoBoxes",
+  }),
+}));
+export const relations__fb_boxes_v = relations(_fb_boxes_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_fb_boxes_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_feedbackPage_infoBoxes",
+  }),
+}));
+export const relations__ip_steps_v = relations(_ip_steps_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_ip_steps_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_inpatientPage_admissionSteps",
+  }),
+}));
+export const relations__ip_hours_v = relations(_ip_hours_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_ip_hours_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_inpatientPage_visitingHours",
+  }),
+}));
+export const relations__ip_items_v = relations(_ip_items_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_ip_items_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_inpatientPage_belongingsChecklist",
+  }),
+}));
+export const relations__chk_pkgs_v = relations(_chk_pkgs_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_chk_pkgs_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_checkupPackagesPage_packages",
+  }),
+}));
+export const relations__hm_floors_v = relations(_hm_floors_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_hm_floors_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_hospitalMapPage_floors",
+  }),
+}));
+export const relations__hm_facils_v = relations(_hm_facils_v, ({ one }) => ({
+  _parentID: one(_site_settings_v, {
+    fields: [_hm_facils_v._parentID],
+    references: [_site_settings_v.id],
+    relationName: "version_hospitalMapPage_facilities",
+  }),
+}));
 export const relations__site_assistant_topics_v = relations(
   _site_assistant_topics_v,
   ({ one }) => ({
@@ -17424,6 +18887,51 @@ export const relations__site_settings_v = relations(
       fields: [_site_settings_v.version_favicon],
       references: [media.id],
       relationName: "version_favicon",
+    }),
+    version_examinationFlowPage_flowTabs: many(_ef_tabs_v, {
+      relationName: "version_examinationFlowPage_flowTabs",
+    }),
+    version_examinationFlowPage_checklists: many(_ef_checks_v, {
+      relationName: "version_examinationFlowPage_checklists",
+    }),
+    version_examinationFlowPage_priorities: many(_ef_prios_v, {
+      relationName: "version_examinationFlowPage_priorities",
+    }),
+    version_qualityPage_statCards: many(_qp_stats_v, {
+      relationName: "version_qualityPage_statCards",
+    }),
+    version_qualityPage_dimensions: many(_qp_dims_v, {
+      relationName: "version_qualityPage_dimensions",
+    }),
+    version_qualityPage_programs: many(_qp_progs_v, {
+      relationName: "version_qualityPage_programs",
+    }),
+    version_surveyPage_infoBoxes: many(_sv_boxes_v, {
+      relationName: "version_surveyPage_infoBoxes",
+    }),
+    version_formsPage_infoBoxes: many(_fm_boxes_v, {
+      relationName: "version_formsPage_infoBoxes",
+    }),
+    version_feedbackPage_infoBoxes: many(_fb_boxes_v, {
+      relationName: "version_feedbackPage_infoBoxes",
+    }),
+    version_inpatientPage_admissionSteps: many(_ip_steps_v, {
+      relationName: "version_inpatientPage_admissionSteps",
+    }),
+    version_inpatientPage_visitingHours: many(_ip_hours_v, {
+      relationName: "version_inpatientPage_visitingHours",
+    }),
+    version_inpatientPage_belongingsChecklist: many(_ip_items_v, {
+      relationName: "version_inpatientPage_belongingsChecklist",
+    }),
+    version_checkupPackagesPage_packages: many(_chk_pkgs_v, {
+      relationName: "version_checkupPackagesPage_packages",
+    }),
+    version_hospitalMapPage_floors: many(_hm_floors_v, {
+      relationName: "version_hospitalMapPage_floors",
+    }),
+    version_hospitalMapPage_facilities: many(_hm_facils_v, {
+      relationName: "version_hospitalMapPage_facilities",
     }),
     version_websiteAssistant_assistantLogo: one(media, {
       fields: [_site_settings_v.version_websiteAssistant_assistantLogo],
@@ -19010,6 +20518,54 @@ export const relations_working_hours_settings = relations(
     }),
   }),
 );
+export const relations_pps_sub_tabs = relations(pps_sub_tabs, ({ one }) => ({
+  _parentID: one(patient_portal_settings, {
+    fields: [pps_sub_tabs._parentID],
+    references: [patient_portal_settings.id],
+    relationName: "subNavTabs",
+  }),
+}));
+export const relations_pps_commits = relations(pps_commits, ({ one }) => ({
+  _parentID: one(patient_portal_settings, {
+    fields: [pps_commits._parentID],
+    references: [patient_portal_settings.id],
+    relationName: "commitmentsSection_items",
+  }),
+}));
+export const relations_pps_svc_items = relations(pps_svc_items, ({ one }) => ({
+  _parentID: one(pps_svc_groups, {
+    fields: [pps_svc_items._parentID],
+    references: [pps_svc_groups.id],
+    relationName: "items",
+  }),
+}));
+export const relations_pps_svc_groups = relations(
+  pps_svc_groups,
+  ({ one, many }) => ({
+    _parentID: one(patient_portal_settings, {
+      fields: [pps_svc_groups._parentID],
+      references: [patient_portal_settings.id],
+      relationName: "serviceGroups",
+    }),
+    items: many(pps_svc_items, {
+      relationName: "items",
+    }),
+  }),
+);
+export const relations_patient_portal_settings = relations(
+  patient_portal_settings,
+  ({ many }) => ({
+    subNavTabs: many(pps_sub_tabs, {
+      relationName: "subNavTabs",
+    }),
+    commitmentsSection_items: many(pps_commits, {
+      relationName: "commitmentsSection_items",
+    }),
+    serviceGroups: many(pps_svc_groups, {
+      relationName: "serviceGroups",
+    }),
+  }),
+);
 export const relations_upload_settings = relations(upload_settings, () => ({}));
 export const relations_default_media_settings_custom_defaults = relations(
   default_media_settings_custom_defaults,
@@ -19315,21 +20871,25 @@ type DatabaseSchema = {
   enum__procurement_v_version_cover_position: typeof enum__procurement_v_version_cover_position;
   enum__procurement_v_version_workflow_state: typeof enum__procurement_v_version_workflow_state;
   enum__procurement_v_version_status: typeof enum__procurement_v_version_status;
+  enum_documents_access_mode: typeof enum_documents_access_mode;
   enum_documents_text_align: typeof enum_documents_text_align;
   enum_documents_title_color: typeof enum_documents_title_color;
   enum_documents_title_size: typeof enum_documents_title_size;
   enum_documents_summary_color: typeof enum_documents_summary_color;
   enum_documents_summary_size: typeof enum_documents_summary_size;
+  enum__documents_v_version_access_mode: typeof enum__documents_v_version_access_mode;
   enum__documents_v_version_text_align: typeof enum__documents_v_version_text_align;
   enum__documents_v_version_title_color: typeof enum__documents_v_version_title_color;
   enum__documents_v_version_title_size: typeof enum__documents_v_version_title_size;
   enum__documents_v_version_summary_color: typeof enum__documents_v_version_summary_color;
   enum__documents_v_version_summary_size: typeof enum__documents_v_version_summary_size;
+  enum_clinical_protocols_access_mode: typeof enum_clinical_protocols_access_mode;
   enum_clinical_protocols_text_align: typeof enum_clinical_protocols_text_align;
   enum_clinical_protocols_title_color: typeof enum_clinical_protocols_title_color;
   enum_clinical_protocols_title_size: typeof enum_clinical_protocols_title_size;
   enum_clinical_protocols_summary_color: typeof enum_clinical_protocols_summary_color;
   enum_clinical_protocols_summary_size: typeof enum_clinical_protocols_summary_size;
+  enum__clinical_protocols_v_version_access_mode: typeof enum__clinical_protocols_v_version_access_mode;
   enum__clinical_protocols_v_version_text_align: typeof enum__clinical_protocols_v_version_text_align;
   enum__clinical_protocols_v_version_title_color: typeof enum__clinical_protocols_v_version_title_color;
   enum__clinical_protocols_v_version_title_size: typeof enum__clinical_protocols_v_version_title_size;
@@ -19429,6 +20989,7 @@ type DatabaseSchema = {
   enum_site_settings_header_contact_cards_icon_type: typeof enum_site_settings_header_contact_cards_icon_type;
   enum_site_settings_header_contact_cards_font_family: typeof enum_site_settings_header_contact_cards_font_family;
   enum_site_settings_header_contact_cards_font_weight: typeof enum_site_settings_header_contact_cards_font_weight;
+  qp_icon_t: typeof qp_icon_t;
   brand_color_scheme: typeof brand_color_scheme;
   brand_name_font: typeof brand_name_font;
   brand_name_weight: typeof brand_name_weight;
@@ -19451,6 +21012,10 @@ type DatabaseSchema = {
   enum_site_settings_faq_page_notice_align: typeof enum_site_settings_faq_page_notice_align;
   enum_site_settings_forms_page_notice_align: typeof enum_site_settings_forms_page_notice_align;
   pp_not_align: typeof pp_not_align;
+  fb_not_align: typeof fb_not_align;
+  ip_not_align: typeof ip_not_align;
+  pkg_not_align: typeof pkg_not_align;
+  map_not_align: typeof map_not_align;
   lt_not_align: typeof lt_not_align;
   sa_not_align: typeof sa_not_align;
   cp_not_align: typeof cp_not_align;
@@ -19559,6 +21124,8 @@ type DatabaseSchema = {
   enum_working_hours_settings_emergency_banner_text_align: typeof enum_working_hours_settings_emergency_banner_text_align;
   enum_working_hours_settings_emergency_banner_title_size: typeof enum_working_hours_settings_emergency_banner_title_size;
   enum_working_hours_settings_emergency_banner_desc_size: typeof enum_working_hours_settings_emergency_banner_desc_size;
+  pps_badge_t: typeof pps_badge_t;
+  pps_not_align: typeof pps_not_align;
   enum_seo_settings_status: typeof enum_seo_settings_status;
   enum__seo_settings_v_version_status: typeof enum__seo_settings_v_version_status;
   sch_n_align: typeof sch_n_align;
@@ -19711,11 +21278,43 @@ type DatabaseSchema = {
   payload_migrations: typeof payload_migrations;
   site_settings_header_contact_cards: typeof site_settings_header_contact_cards;
   site_settings_header_social_links: typeof site_settings_header_social_links;
+  ef_steps: typeof ef_steps;
+  ef_tabs: typeof ef_tabs;
+  ef_checks: typeof ef_checks;
+  ef_prios: typeof ef_prios;
+  qp_stats: typeof qp_stats;
+  qp_dims: typeof qp_dims;
+  qp_progs: typeof qp_progs;
+  sv_boxes: typeof sv_boxes;
+  fm_boxes: typeof fm_boxes;
+  fb_boxes: typeof fb_boxes;
+  ip_steps: typeof ip_steps;
+  ip_hours: typeof ip_hours;
+  ip_items: typeof ip_items;
+  chk_pkgs: typeof chk_pkgs;
+  hm_floors: typeof hm_floors;
+  hm_facils: typeof hm_facils;
   site_assistant_topics: typeof site_assistant_topics;
   site_assistant_answers: typeof site_assistant_answers;
   site_settings: typeof site_settings;
   _site_settings_v_version_header_contact_cards: typeof _site_settings_v_version_header_contact_cards;
   _site_settings_v_version_header_social_links: typeof _site_settings_v_version_header_social_links;
+  _ef_steps_v: typeof _ef_steps_v;
+  _ef_tabs_v: typeof _ef_tabs_v;
+  _ef_checks_v: typeof _ef_checks_v;
+  _ef_prios_v: typeof _ef_prios_v;
+  _qp_stats_v: typeof _qp_stats_v;
+  _qp_dims_v: typeof _qp_dims_v;
+  _qp_progs_v: typeof _qp_progs_v;
+  _sv_boxes_v: typeof _sv_boxes_v;
+  _fm_boxes_v: typeof _fm_boxes_v;
+  _fb_boxes_v: typeof _fb_boxes_v;
+  _ip_steps_v: typeof _ip_steps_v;
+  _ip_hours_v: typeof _ip_hours_v;
+  _ip_items_v: typeof _ip_items_v;
+  _chk_pkgs_v: typeof _chk_pkgs_v;
+  _hm_floors_v: typeof _hm_floors_v;
+  _hm_facils_v: typeof _hm_facils_v;
   _site_assistant_topics_v: typeof _site_assistant_topics_v;
   _site_assistant_answers_v: typeof _site_assistant_answers_v;
   _site_settings_v: typeof _site_settings_v;
@@ -19813,6 +21412,11 @@ type DatabaseSchema = {
   wh_sched_links: typeof wh_sched_links;
   wh_notes: typeof wh_notes;
   working_hours_settings: typeof working_hours_settings;
+  pps_sub_tabs: typeof pps_sub_tabs;
+  pps_commits: typeof pps_commits;
+  pps_svc_items: typeof pps_svc_items;
+  pps_svc_groups: typeof pps_svc_groups;
+  patient_portal_settings: typeof patient_portal_settings;
   upload_settings: typeof upload_settings;
   default_media_settings_custom_defaults: typeof default_media_settings_custom_defaults;
   default_media_settings: typeof default_media_settings;
@@ -19960,11 +21564,43 @@ type DatabaseSchema = {
   relations_payload_migrations: typeof relations_payload_migrations;
   relations_site_settings_header_contact_cards: typeof relations_site_settings_header_contact_cards;
   relations_site_settings_header_social_links: typeof relations_site_settings_header_social_links;
+  relations_ef_steps: typeof relations_ef_steps;
+  relations_ef_tabs: typeof relations_ef_tabs;
+  relations_ef_checks: typeof relations_ef_checks;
+  relations_ef_prios: typeof relations_ef_prios;
+  relations_qp_stats: typeof relations_qp_stats;
+  relations_qp_dims: typeof relations_qp_dims;
+  relations_qp_progs: typeof relations_qp_progs;
+  relations_sv_boxes: typeof relations_sv_boxes;
+  relations_fm_boxes: typeof relations_fm_boxes;
+  relations_fb_boxes: typeof relations_fb_boxes;
+  relations_ip_steps: typeof relations_ip_steps;
+  relations_ip_hours: typeof relations_ip_hours;
+  relations_ip_items: typeof relations_ip_items;
+  relations_chk_pkgs: typeof relations_chk_pkgs;
+  relations_hm_floors: typeof relations_hm_floors;
+  relations_hm_facils: typeof relations_hm_facils;
   relations_site_assistant_topics: typeof relations_site_assistant_topics;
   relations_site_assistant_answers: typeof relations_site_assistant_answers;
   relations_site_settings: typeof relations_site_settings;
   relations__site_settings_v_version_header_contact_cards: typeof relations__site_settings_v_version_header_contact_cards;
   relations__site_settings_v_version_header_social_links: typeof relations__site_settings_v_version_header_social_links;
+  relations__ef_steps_v: typeof relations__ef_steps_v;
+  relations__ef_tabs_v: typeof relations__ef_tabs_v;
+  relations__ef_checks_v: typeof relations__ef_checks_v;
+  relations__ef_prios_v: typeof relations__ef_prios_v;
+  relations__qp_stats_v: typeof relations__qp_stats_v;
+  relations__qp_dims_v: typeof relations__qp_dims_v;
+  relations__qp_progs_v: typeof relations__qp_progs_v;
+  relations__sv_boxes_v: typeof relations__sv_boxes_v;
+  relations__fm_boxes_v: typeof relations__fm_boxes_v;
+  relations__fb_boxes_v: typeof relations__fb_boxes_v;
+  relations__ip_steps_v: typeof relations__ip_steps_v;
+  relations__ip_hours_v: typeof relations__ip_hours_v;
+  relations__ip_items_v: typeof relations__ip_items_v;
+  relations__chk_pkgs_v: typeof relations__chk_pkgs_v;
+  relations__hm_floors_v: typeof relations__hm_floors_v;
+  relations__hm_facils_v: typeof relations__hm_facils_v;
   relations__site_assistant_topics_v: typeof relations__site_assistant_topics_v;
   relations__site_assistant_answers_v: typeof relations__site_assistant_answers_v;
   relations__site_settings_v: typeof relations__site_settings_v;
@@ -20062,6 +21698,11 @@ type DatabaseSchema = {
   relations_wh_sched_links: typeof relations_wh_sched_links;
   relations_wh_notes: typeof relations_wh_notes;
   relations_working_hours_settings: typeof relations_working_hours_settings;
+  relations_pps_sub_tabs: typeof relations_pps_sub_tabs;
+  relations_pps_commits: typeof relations_pps_commits;
+  relations_pps_svc_items: typeof relations_pps_svc_items;
+  relations_pps_svc_groups: typeof relations_pps_svc_groups;
+  relations_patient_portal_settings: typeof relations_patient_portal_settings;
   relations_upload_settings: typeof relations_upload_settings;
   relations_default_media_settings_custom_defaults: typeof relations_default_media_settings_custom_defaults;
   relations_default_media_settings: typeof relations_default_media_settings;

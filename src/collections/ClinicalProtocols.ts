@@ -56,6 +56,37 @@ export const ClinicalProtocols: CollectionConfig = {
       type: 'row',
       fields: [
         {
+          name: 'accessMode',
+          label: 'Chế độ bảo mật & Quyền truy cập',
+          type: 'select',
+          defaultValue: 'public',
+          options: [
+            { label: 'Công khai (Mọi người đều được xem và tải)', value: 'public' },
+            { label: 'Mã PIN bảo mật (Khóa xem, khóa tải, khóa in khi chưa có mã)', value: 'pin' },
+            { label: 'Lưu hành nội bộ (Chỉ nhân viên y tế / Bác sĩ)', value: 'internal' },
+            { label: 'Khóa hoàn toàn (Chỉ xem trích yếu, cấm tải)', value: 'locked' },
+          ],
+          admin: {
+            width: '50%',
+            description: 'Nếu chọn Mã PIN: Trình xem file, nút Tải về và lệnh In PDF sẽ bị chặn 100% cho đến khi người dùng nhập đúng mã PIN.',
+          },
+        },
+        {
+          name: 'pinCode',
+          label: 'Mã PIN xác thực riêng (nếu dùng mã PIN)',
+          type: 'text',
+          admin: {
+            width: '50%',
+            placeholder: 'VD: TL2026 (để trống sẽ dùng mã PIN chung của viện)',
+            description: 'Đặt mã PIN riêng cho phác đồ này. Nếu để trống, hệ thống tự động áp dụng Mã PIN mặc định trong Cài đặt Hệ thống.',
+          },
+        },
+      ],
+    },
+    {
+      type: 'row',
+      fields: [
+        {
           name: 'allowDownload',
           label: 'Cho phép tải phác đồ về máy',
           type: 'checkbox',

@@ -117,6 +117,15 @@ export const CustomPosts: CollectionConfig = {
                 },
               ],
             },
+            {
+              name: 'showSource',
+              label: 'Hiển thị nguồn bài viết ở chân trang chi tiết',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Bật để hiển thị thông tin nguồn dưới chân bài viết. Tắt nếu không muốn hiện nguồn cho riêng bài này.',
+              },
+            },
           ],
         },
         {

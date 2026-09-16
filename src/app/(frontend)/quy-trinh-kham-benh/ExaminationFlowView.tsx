@@ -322,18 +322,55 @@ export function ExaminationFlowView({
   emergencyHotline?: string
   settings?: any
 }) {
-  const [activeTabId, setActiveTabId] = useState('bhyt')
+  // Chuẩn hóa danh sách Tabs từ CMS nếu có cấu hình
+  const rawTabs: any[] = Array.isArray(settings?.flowTabs) && settings.flowTabs.length > 0
+    ? settings.flowTabs.filter((t: any) => t?.enabled !== false).map((t: any) => ({
+        id: t.id || t.label?.toLowerCase()?.replace(/\s+/g, '-') || 'tab',
+        label: t.label,
+        badgeText: t.badgeText || '',
+        title: t.title,
+        summary: t.summary,
+        steps: Array.isArray(t.steps)
+          ? t.steps.filter((s: any) => s?.enabled !== false).map((s: any) => ({
+              step: Number(s.step) || 1,
+              title: s.title,
+              location: s.location,
+              timeEstimate: s.timeEstimate || undefined,
+              desc: s.desc,
+              actions: s.actions
+                ? (typeof s.actions === 'string' ? s.actions.split('\n').filter(Boolean) : Array.isArray(s.actions) ? s.actions : [])
+                : [],
+              note: s.note || undefined,
+              isHighlight: Boolean(s.isHighlight),
+              isEmergency: Boolean(s.isEmergency),
+            }))
+          : [],
+      }))
+    : FLOW_DATA
 
-  const currentTab = FLOW_DATA.find((t) => t.id === activeTabId) || FLOW_DATA[0]
+  const activeTabsList = rawTabs.length > 0 ? rawTabs : FLOW_DATA
+  const [activeTabId, setActiveTabId] = useState(activeTabsList[0]?.id || 'bhyt')
+
+  const currentTab = activeTabsList.find((t) => t.id === activeTabId) || activeTabsList[0] || FLOW_DATA[0]
   const showChecklist = settings?.showChecklist !== false
   const showPriority = settings?.showPriority !== false
   const showSupportBanner = settings?.showSupportBanner !== false
+
+  // Danh mục giấy tờ chuẩn bị từ CMS nếu có
+  const checklistItems = Array.isArray(settings?.checklists) && settings.checklists.length > 0
+    ? settings.checklists.filter((c: any) => c?.enabled !== false)
+    : CHECKLIST_ITEMS
+
+  // Danh mục đối tượng ưu tiên từ CMS nếu có
+  const priorityGroups: string[] = Array.isArray(settings?.priorities) && settings.priorities.length > 0
+    ? settings.priorities.filter((p: any) => p?.enabled !== false).map((p: any) => p.text)
+    : PRIORITY_GROUPS
 
   return (
     <div className="flowPageWrapper">
       {/* 1. THANH CHỌN QUY TRÌNH (TABS) */}
       <div className="flowTabNav" role="tablist">
-        {FLOW_DATA.map((tab) => (
+        {activeTabsList.map((tab) => (
           <button
             type="button"
             key={tab.id}
@@ -343,7 +380,7 @@ export function ExaminationFlowView({
             onClick={() => setActiveTabId(tab.id)}
           >
             <span>{tab.label}</span>
-            <span className="flowTabCount">{tab.steps.length} bước</span>
+            <span className="flowTabCount">{tab.steps?.length || 0} bước</span>
           </button>
         ))}
       </div>
@@ -352,17 +389,19 @@ export function ExaminationFlowView({
       <div className="flowIntroCard">
         <div className="flowIntroText">
           <h2>{currentTab.title}</h2>
-          <p>{currentTab.summary}</p>
+          <p style={{ whiteSpace: 'pre-line' }}>{currentTab.summary}</p>
         </div>
-        <div className="flowIntroBadge">
-          <span>🛡️</span>
-          <span>{currentTab.badgeText}</span>
-        </div>
+        {currentTab.badgeText && (
+          <div className="flowIntroBadge">
+            <span>🛡️</span>
+            <span>{currentTab.badgeText}</span>
+          </div>
+        )}
       </div>
 
       {/* 3. SƠ ĐỒ TIMELINE TỪNG BƯỚC KHÁM BỆNH */}
       <div className="flowTimeline">
-        {currentTab.steps.map((s) => (
+        {currentTab.steps.map((s: any) => (
           <div
             className={`flowStepCard ${s.isHighlight ? 'highlightStep' : ''} ${s.isEmergency ? 'emergencyStep' : ''}`}
             key={s.step}
@@ -390,7 +429,7 @@ export function ExaminationFlowView({
 
               {s.actions && s.actions.length > 0 && (
                 <div className="flowSubActionList">
-                  {s.actions.map((act, idx) => (
+                  {s.actions.map((act: any, idx: number) => (
                     <div className="flowSubActionItem" key={idx}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
@@ -417,7 +456,7 @@ export function ExaminationFlowView({
       </div>
 
       {/* 4. KHỐI GIẤY TỜ CẦN CHUẨN BỊ (CHECKLIST) */}
-      {showChecklist && (
+      {showChecklist && checklistItems.length > 0 && (
         <section className="flowChecklistSection">
           <div className="checklistHeader">
             <span className="checklistEyebrow">HƯỚNG DẪN THỦ TỤC</span>
@@ -425,7 +464,7 @@ export function ExaminationFlowView({
           </div>
 
           <div className="checklistGrid">
-            {CHECKLIST_ITEMS.map((item, idx) => (
+            {checklistItems.map((item: any, idx: number) => (
               <div className="checklistItemCard" key={idx}>
                 <div className="checklistItemHead">
                   <div className="checkIconWrap">
@@ -443,14 +482,14 @@ export function ExaminationFlowView({
       )}
 
       {/* 5. KHỐI ĐỐI TƯỢNG ƯU TIÊN TIẾP ĐÓN */}
-      {showPriority && (
+      {showPriority && priorityGroups.length > 0 && (
         <div className="flowPrioritySection">
           <div className="priorityHeader">
             <span>⭐</span>
             <h3>Thứ tự đối tượng được Ưu tiên Tiếp đón & Khám trước theo quy định</h3>
           </div>
           <div className="priorityList">
-            {PRIORITY_GROUPS.map((p, idx) => (
+            {priorityGroups.map((p, idx) => (
               <div className="priorityItem" key={idx}>
                 <span>✓</span>
                 <span>{p}</span>

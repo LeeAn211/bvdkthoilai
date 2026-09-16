@@ -79,12 +79,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { sectionSlug, slug } = await params
-  const [{ section, item, related }, theme] = await Promise.all([
+  const [{ section, item, related }, theme, siteSettings] = await Promise.all([
     getData(sectionSlug, slug),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
+    getGlobal('site-settings').catch(() => null) as Promise<any>,
   ])
 
   if (!section || !item) notFound()
+
+  const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
 
   // Xác định áp dụng mẫu chuẩn hiện đại theo mức ưu tiên:
   // 1. Nếu bài viết hoặc mục nội dung chọn trực tiếp: 'modern' / 'bachmai' -> true, 'classic' -> false
@@ -140,6 +143,8 @@ export default async function Page({ params }: Props) {
         attachments={item.attachments}
         attachmentTitle="Tài liệu đính kèm"
         sourceName={item.source || undefined}
+        hospitalName={hospitalName}
+        showSource={item.showSource ?? undefined}
         adminConfig={theme?.detailLayout}
         sidebarTitle="Bài viết mới"
         latestItems={mappedRelated}

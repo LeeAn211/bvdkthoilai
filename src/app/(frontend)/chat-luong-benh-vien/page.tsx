@@ -44,8 +44,20 @@ export default async function HospitalQualityPage() {
   const showPrograms = qualitySettings.showPrograms !== false
   const showFeedbackBox = qualitySettings.showFeedbackBox !== false
 
+  // 4 Thẻ chỉ số chất lượng mặc định
+  const DEFAULT_STATS = [
+    { val: '4.22', unit: '/ 5.0', label: 'Điểm chất lượng bệnh viện' },
+    { val: '94.8', unit: '%', label: 'Tỷ lệ hài lòng chung' },
+    { val: '83', unit: 'tiêu chí', label: 'Bộ tiêu chí chất lượng Bộ Y tế' },
+    { val: '100', unit: '%', label: 'Bảo đảm an toàn người bệnh' },
+  ]
+
+  const qualityStats = Array.isArray(qualitySettings.statCards) && qualitySettings.statCards.length > 0
+    ? qualitySettings.statCards.filter((s: any) => s?.enabled !== false)
+    : DEFAULT_STATS
+
   // 5 Nhóm tiêu chuẩn cốt lõi theo Bộ tiêu chí đánh giá chất lượng bệnh viện (Bộ Y tế)
-  const qualityDimensions = [
+  const DEFAULT_DIMENSIONS = [
     {
       code: 'PHẦN A',
       title: 'Hướng đến người bệnh',
@@ -83,8 +95,12 @@ export default async function HospitalQualityPage() {
     },
   ]
 
+  const qualityDimensions = Array.isArray(qualitySettings.dimensions) && qualitySettings.dimensions.length > 0
+    ? qualitySettings.dimensions.filter((d: any) => d?.enabled !== false)
+    : DEFAULT_DIMENSIONS
+
   // Các chương trình hành động cải tiến chất lượng nổi bật
-  const improvementPrograms = [
+  const DEFAULT_PROGRAMS = [
     {
       iconType: 'blue',
       title: 'Ứng dụng Chuyển đổi số Y tế',
@@ -104,6 +120,15 @@ export default async function HospitalQualityPage() {
       highlights: ['Hòm thư góp ý và đường dây nóng 24/7', 'Đánh giá hài lòng người bệnh nội trú & ngoại trú hàng quý', 'Giải quyết thắc mắc phản ánh trong 24h'],
     },
   ]
+
+  const improvementPrograms = Array.isArray(qualitySettings.programs) && qualitySettings.programs.length > 0
+    ? qualitySettings.programs.filter((p: any) => p?.enabled !== false).map((p: any) => ({
+        ...p,
+        highlights: p.highlights
+          ? (typeof p.highlights === 'string' ? p.highlights.split('\n').filter(Boolean) : Array.isArray(p.highlights) ? p.highlights : [])
+          : [],
+      }))
+    : DEFAULT_PROGRAMS
 
   return (
     <>
@@ -172,65 +197,24 @@ export default async function HospitalQualityPage() {
           )}
 
           {/* 1. Thẻ chỉ số chất lượng chính */}
-          {showQualityCards && (
+          {showQualityCards && qualityStats.length > 0 && (
             <div className="qualityStatsGrid">
-              <div className="qualityStatCard">
-                <div className="qualityStatIcon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="8" r="7" />
-                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
-                  </svg>
-                </div>
-                <div className="qualityStatContent">
-                  <div className="qualityStatVal">
-                    4.22<span className="qualityStatUnit">/ 5.0</span>
+              {qualityStats.map((stat: any, sIdx: number) => (
+                <div className="qualityStatCard" key={sIdx}>
+                  <div className="qualityStatIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="8" r="7" />
+                      <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
+                    </svg>
                   </div>
-                  <div className="qualityStatLabel">Điểm chất lượng bệnh viện</div>
-                </div>
-              </div>
-
-              <div className="qualityStatCard">
-                <div className="qualityStatIcon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
-                  </svg>
-                </div>
-                <div className="qualityStatContent">
-                  <div className="qualityStatVal">
-                    94.8<span className="qualityStatUnit">%</span>
+                  <div className="qualityStatContent">
+                    <div className="qualityStatVal">
+                      {stat.val}<span className="qualityStatUnit">{stat.unit}</span>
+                    </div>
+                    <div className="qualityStatLabel">{stat.label}</div>
                   </div>
-                  <div className="qualityStatLabel">Tỷ lệ hài lòng chung</div>
                 </div>
-              </div>
-
-              <div className="qualityStatCard">
-                <div className="qualityStatIcon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                    <polyline points="22 4 12 14.01 9 11.01" />
-                  </svg>
-                </div>
-                <div className="qualityStatContent">
-                  <div className="qualityStatVal">
-                    83<span className="qualityStatUnit">tiêu chí</span>
-                  </div>
-                  <div className="qualityStatLabel">Bộ tiêu chí chất lượng Bộ Y tế</div>
-                </div>
-              </div>
-
-              <div className="qualityStatCard">
-                <div className="qualityStatIcon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  </svg>
-                </div>
-                <div className="qualityStatContent">
-                  <div className="qualityStatVal">
-                    100<span className="qualityStatUnit">%</span>
-                  </div>
-                  <div className="qualityStatLabel">Bảo đảm an toàn người bệnh</div>
-                </div>
-              </div>
+              ))}
             </div>
           )}
 
@@ -253,7 +237,7 @@ export default async function HospitalQualityPage() {
               </div>
 
               <div className="criteriaGrid">
-                {qualityDimensions.map((dim, idx) => (
+                {qualityDimensions.map((dim: any, idx: number) => (
                   <div className="criteriaCard" key={idx}>
                     <div className="criteriaCardTop">
                       <span className="criteriaCode">{dim.code}</span>
@@ -283,7 +267,7 @@ export default async function HospitalQualityPage() {
               </div>
 
               <div className="programsGrid">
-                {improvementPrograms.map((prog, pIdx) => (
+                {improvementPrograms.map((prog: any, pIdx: number) => (
                   <div className="programCard" key={pIdx}>
                     <div className={`programIconWrap ${prog.iconType}`} aria-hidden="true">
                       {prog.iconType === 'blue' && (
@@ -310,7 +294,7 @@ export default async function HospitalQualityPage() {
                     <h3 className="programTitle">{prog.title}</h3>
                     <p className="programDesc">{prog.desc}</p>
                     <ul className="programHighlights">
-                      {prog.highlights.map((hl, hlIdx) => (
+                      {prog.highlights.map((hl: any, hlIdx: number) => (
                         <li key={hlIdx}>
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                             <polyline points="20 6 9 17 4 12" strokeLinecap="round" strokeLinejoin="round" />

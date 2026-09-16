@@ -78,6 +78,7 @@ import { QuickLinksSettings } from './src/globals/QuickLinksSettings'
 import { HospitalHistory } from './src/globals/HospitalHistory'
 import { AboutPage } from './src/globals/AboutPage'
 import { WorkingHoursSettings } from './src/globals/WorkingHoursSettings'
+import { PatientPortalSettings } from './src/globals/PatientPortalSettings'
 import { withAudit, withGlobalAudit } from './src/lib/audit'
 import { hospitalEditor } from './src/editor/hospitalEditor'
 import { hasModulePermission } from './src/access'
@@ -181,6 +182,7 @@ const globalPermissionModules: Record<string, string> = {
   'schedule-settings': 'schedules',
   'appointment-settings': 'appointments',
   'quick-links-settings': 'homepage',
+  'patient-portal-settings': 'site-settings',
 }
 
 const hideWithoutModulePermission = <T extends CollectionConfig | GlobalConfig>(
@@ -232,6 +234,7 @@ export default buildConfig({
     ? nodemailerAdapter({
         defaultFromAddress: process.env.SMTP_FROM_ADDRESS || smtpUser,
         defaultFromName: process.env.SMTP_FROM_NAME || 'Bệnh viện Đa khoa Khu vực Thới Lai',
+        skipVerify: true,
         transport: nodemailer.createTransport({
           host: smtpHost,
           port: smtpPort,
@@ -308,5 +311,5 @@ export default buildConfig({
     ].map((collection) => withAudit(applyCollectionPermissionVisibility(collection))),
     AuditLogs,
   ],
-  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, WorkingHoursSettings, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings].map((global) => withGlobalAudit(applyGlobalPermissionVisibility(global)))
+  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, WorkingHoursSettings, PatientPortalSettings, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings].map((global) => withGlobalAudit(applyGlobalPermissionVisibility(global)))
 })

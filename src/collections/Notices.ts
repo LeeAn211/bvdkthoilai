@@ -131,6 +131,15 @@ export const Notices: CollectionConfig = {
               ],
             },
             {
+              name: 'showSource',
+              label: 'Hiển thị nguồn thông báo ở chân trang chi tiết',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Bật để hiển thị thông tin nguồn dưới chân thông báo. Tắt nếu không muốn hiện nguồn cho riêng bài này.',
+              },
+            },
+            {
               type: 'row',
               fields: [
                 {

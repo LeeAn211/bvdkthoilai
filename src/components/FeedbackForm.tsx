@@ -7,14 +7,33 @@ export function FeedbackForm() {
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
   async function submit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault(); setState('sending'); setError(''); setCode('')
-    const form = new FormData(e.currentTarget)
+    e.preventDefault()
+    const formElement = e.currentTarget
+    setState('sending')
+    setError('')
+    setCode('')
+    const form = new FormData(formElement)
     const payload = Object.fromEntries(form.entries()) as any
     payload.allowContact = form.get('allowContact') === 'on'
-    const res = await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-    const data = await res.json().catch(() => ({}))
-    if (res.ok) { setState('done'); setCode(data.code || ''); e.currentTarget.reset() }
-    else { setState('error'); setError(data.error || 'Không thể gửi phản hồi. Vui lòng thử lại.') }
+    try {
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok) {
+        setState('done')
+        setCode(data.code || '')
+        formElement?.reset?.()
+      } else {
+        setState('error')
+        setError(data.error || 'Không thể gửi phản hồi. Vui lòng thử lại.')
+      }
+    } catch {
+      setState('error')
+      setError('Lỗi kết nối máy chủ. Vui lòng thử lại sau.')
+    }
   }
   return (
     <form className="feedback-form" onSubmit={submit}>

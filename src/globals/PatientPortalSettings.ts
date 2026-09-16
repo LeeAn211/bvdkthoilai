@@ -1,0 +1,342 @@
+import type { GlobalConfig } from 'payload'
+import { admins } from '@/access'
+
+export const PatientPortalSettings: GlobalConfig = {
+  slug: 'patient-portal-settings',
+  label: 'Trang Cổng người bệnh',
+  admin: {
+    group: '🏥 Khám bệnh & Dịch vụ Y tế',
+    description: 'Quản lý 100% giao diện trang /danh-cho-nguoi-benh: thanh điều hướng các tab dịch vụ (Sub-Nav), khối 3 cam kết, các nhóm danh mục dịch vụ (thẻ card tiện ích) và banner hotline.',
+  },
+  access: { read: () => true, update: admins },
+  fields: [
+    // ── 1. BANNER HERO ĐẦU TRANG & THÔNG BÁO ──
+    {
+      name: 'hero',
+      label: '1. Banner Hero đầu trang & Thông báo lưu ý',
+      type: 'group',
+      fields: [
+        {
+          name: 'eyebrow',
+          label: 'Nhãn nhỏ trên tiêu đề (Eyebrow)',
+          type: 'text',
+          defaultValue: 'CỔNG TIỆN ÍCH DÀNH CHO NGƯỜI BỆNH',
+        },
+        {
+          name: 'title',
+          label: 'Tiêu đề chính trang',
+          type: 'text',
+          defaultValue: 'Dành cho Người bệnh',
+          required: true,
+        },
+        {
+          name: 'description',
+          label: 'Đoạn mô tả giới thiệu (Hỗ trợ Enter xuống dòng)',
+          type: 'textarea',
+          defaultValue: 'Tổng hợp đầy đủ hướng dẫn quy trình khám chữa bệnh, lịch làm việc, biểu phí, kênh tiếp nhận phản ánh và khảo sát ý kiến tại Bệnh viện Đa khoa Khu vực Thới Lai.',
+        },
+        {
+          name: 'showNoticeBanner',
+          label: 'Bật thanh thông báo lưu ý quan trọng đầu trang',
+          type: 'checkbox',
+          defaultValue: false,
+        },
+        {
+          name: 'noticeTitle',
+          label: 'Tiêu đề thông báo lưu ý',
+          type: 'text',
+          defaultValue: 'Thông báo dành cho người bệnh & thân nhân',
+        },
+        {
+          name: 'noticeContent',
+          label: 'Nội dung thông báo lưu ý (Hỗ trợ Enter xuống dòng)',
+          type: 'textarea',
+          defaultValue: '• Vui lòng mang theo CCCD gắn chip (hoặc ứng dụng VNeID mức 2) và thẻ BHYT khi đến đăng ký khám.\n• Đặt lịch hẹn trực tuyến để được tiếp nhận ưu tiên và giảm thời gian chờ đợi.',
+        },
+        {
+          name: 'noticeAlign',
+          label: 'Canh lề nội dung thông báo',
+          type: 'select',
+          dbName: 'pps_not_align',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
+
+    // ── 2. QUẢN LÝ CÁC TAB ĐIỀU HƯỚNG SUB-NAV (CÓ THỂ BẬT/TẮT, SẮP XẾP, THÊM MỚI) ──
+    {
+      name: 'subNavTabs',
+      label: '2. Quản lý các Tab điều hướng chuyên mục (Patient Care Sub-Nav)',
+      type: 'array',
+      dbName: 'pps_sub_tabs',
+      labels: { singular: 'Tab chuyên mục', plural: 'Các tab chuyên mục' },
+      admin: {
+        description: 'Tùy chỉnh bật/tắt hiển thị từng tab, đổi tên tab, liên kết URL, biểu tượng icon hoặc thêm các tab mới khi bệnh viện mở rộng dịch vụ.',
+      },
+      defaultValue: [
+        { enabled: true, key: 'danh-cho-nguoi-benh', label: 'Cổng tổng hợp', href: '/danh-cho-nguoi-benh', icon: '🏥', badge: '' },
+        { enabled: true, key: 'khao-sat', label: 'Khảo sát ý kiến', href: '/khao-sat', icon: '📝', badge: '' },
+        { enabled: true, key: 'gop-y', label: 'Góp ý – Phản ánh', href: '/gop-y', icon: '💬', badge: '' },
+        { enabled: true, key: 'tra-cuu', label: 'Tra cứu phản ánh', href: '/gop-y/tra-cuu', icon: '🔍', badge: '' },
+        { enabled: true, key: 'hoi-dap', label: 'Hỏi đáp y tế (FAQ)', href: '/hoi-dap', icon: '❓', badge: '' },
+        { enabled: true, key: 'bieu-mau', label: 'Biểu mẫu điện tử', href: '/bieu-mau', icon: '📋', badge: '' },
+        { enabled: true, key: 'chat-luong', label: 'Chất lượng bệnh viện', href: '/chat-luong-benh-vien', icon: '⭐', badge: '' },
+        { enabled: true, key: 'lien-he', label: 'Liên hệ & Hotline', href: '/lien-he', icon: '📞', badge: '' },
+      ],
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị Tab này', type: 'checkbox', defaultValue: true },
+        { name: 'key', label: 'Mã định danh Tab (Key)', type: 'text', required: true, admin: { description: 'Ví dụ: danh-cho-nguoi-benh, khao-sat, gop-y, tra-cuu...' } },
+        { name: 'label', label: 'Tên hiển thị trên Tab', type: 'text', required: true },
+        { name: 'href', label: 'Đường dẫn liên kết (URL)', type: 'text', required: true },
+        { name: 'icon', label: 'Biểu tượng Icon (Emoji hoặc ký tự)', type: 'text', defaultValue: '🏥', admin: { placeholder: '🏥, 📝, 💬, 🔍, 📞...' } },
+        { name: 'badge', label: 'Nhãn phụ nổi bật (Badge)', type: 'text', admin: { placeholder: 'Ví dụ: Mới, HOT, 24/7 (để trống nếu không dùng)' } },
+      ],
+    },
+
+    // ── 3. KHỐI CÁC Ô CAM KẾT PHỤC VỤ (COMMITMENTS) ──
+    {
+      name: 'commitmentsSection',
+      label: '3. Khối các cam kết phục vụ người bệnh',
+      type: 'group',
+      fields: [
+        { name: 'enabled', label: 'Hiển thị khối cam kết này', type: 'checkbox', defaultValue: true },
+        {
+          name: 'items',
+          label: 'Danh sách các ô cam kết',
+          type: 'array',
+          dbName: 'pps_commits',
+          labels: { singular: 'Ô cam kết', plural: 'Các ô cam kết' },
+          defaultValue: [
+            {
+              enabled: true,
+              icon: '❤️',
+              title: 'Lấy người bệnh làm trung tâm',
+              desc: 'Mọi quy trình được tối ưu hóa nhằm rút ngắn thời gian chờ đợi, nâng cao an toàn và sự hài lòng của người bệnh.',
+            },
+            {
+              enabled: true,
+              icon: '🛡️',
+              title: 'Bảo đảm quyền lợi BHYT 100%',
+              desc: 'Người bệnh có thẻ BHYT được hưởng tối đa mức chi trả theo quy định của Luật BHYT, hỗ trợ tích hợp VssID và CCCD.',
+            },
+            {
+              enabled: true,
+              icon: '📞',
+              title: 'Hỗ trợ khẩn cấp 24/24',
+              desc: 'Khoa Cấp cứu thường trực 24/7. Đường dây nóng Ban Giám đốc tiếp nhận mọi ý kiến đóng góp kịp thời nhất.',
+            },
+          ],
+          fields: [
+            { name: 'enabled', label: 'Bật ô cam kết này', type: 'checkbox', defaultValue: true },
+            { name: 'icon', label: 'Biểu tượng (Icon)', type: 'text', defaultValue: '❤️' },
+            { name: 'title', label: 'Tiêu đề cam kết', type: 'text', required: true },
+            { name: 'desc', label: 'Nội dung chi tiết', type: 'textarea', required: true },
+          ],
+        },
+      ],
+    },
+
+    // ── 4. CÁC NHÓM DANH MỤC TIỆN ÍCH DỊCH VỤ (SERVICE CATEGORIES & CARDS) ──
+    {
+      name: 'serviceGroups',
+      label: '4. Các nhóm danh mục tiện ích dịch vụ người bệnh',
+      type: 'array',
+      dbName: 'pps_svc_groups',
+      labels: { singular: 'Nhóm danh mục', plural: 'Các nhóm danh mục' },
+      admin: {
+        description: 'Tùy chỉnh bật/tắt nhóm, đổi tiêu đề nhóm, thêm dịch vụ con hoặc thêm nhóm danh mục hoàn toàn mới theo nhu cầu thực tế của bệnh viện.',
+      },
+      defaultValue: [
+        {
+          enabled: true,
+          categoryTitle: 'HƯỚNG DẪN & THỦ TỤC THĂM KHÁM',
+          items: [
+            {
+              enabled: true,
+              title: 'Quy trình Khám bệnh',
+              desc: 'Sơ đồ các bước thăm khám có thẻ BHYT, khám thu phí tự nguyện và tiếp nhận cấp cứu 24/24.',
+              href: '/quy-trinh-kham-benh',
+              icon: '🩺',
+              badge: 'Cần xem trước',
+              badgeType: 'active',
+              buttonText: 'Truy cập dịch vụ →',
+            },
+            {
+              enabled: true,
+              title: 'Giờ làm việc & Khung giờ khám sớm',
+              desc: 'Thời gian phát số từ 06:00, nhóm khoa khám sớm 06:30 sáng và lịch trực các phòng chức năng.',
+              href: '/lich-lam-viec',
+              icon: '⏰',
+              badge: 'Từ 06:00 sáng',
+              badgeType: 'periodic',
+              buttonText: 'Xem giờ làm việc →',
+            },
+            {
+              enabled: true,
+              title: 'Lịch khám bệnh & Lịch trực cấp cứu',
+              desc: 'Tra cứu danh sách bác sĩ trực, lịch phân công phòng khám theo tuần và lịch thường trực cấp cứu.',
+              href: '/lich-kham',
+              icon: '📅',
+              badge: 'Cập nhật hàng tuần',
+              badgeType: 'active',
+              buttonText: 'Xem lịch khám →',
+            },
+            {
+              enabled: true,
+              title: 'Bảng giá Viện phí & Danh mục BHYT',
+              desc: 'Biểu phí khám bệnh, giá ngày giường, phẫu thuật thủ thuật và quyền lợi chi trả bảo hiểm y tế.',
+              href: '/bang-gia',
+              icon: '💳',
+              badge: 'Minh bạch',
+              badgeType: 'periodic',
+              buttonText: 'Tra cứu viện phí →',
+            },
+          ],
+        },
+        {
+          enabled: true,
+          categoryTitle: 'TIẾP NHẬN Ý KIẾN, KHẢO SÁT & CSKH',
+          items: [
+            {
+              enabled: true,
+              title: 'Khảo sát ý kiến & Sự hài lòng',
+              desc: 'Đánh giá chất lượng phục vụ nội trú và ngoại trú theo chuẩn 83 Tiêu chí Bộ Y tế (100% ẩn danh).',
+              href: '/khao-sat',
+              icon: '📝',
+              badge: '100% Ẩn danh',
+              badgeType: 'active',
+              buttonText: 'Tham gia khảo sát →',
+            },
+            {
+              enabled: true,
+              title: 'Góp ý – Phản ánh chất lượng',
+              desc: 'Gửi ý kiến đóng góp, phản ánh tinh thần thái độ hoặc khen ngợi tập thể y bác sĩ trực tiếp tới Ban Giám đốc.',
+              href: '/gop-y',
+              icon: '💬',
+              badge: 'Tiếp nhận 24/7',
+              badgeType: 'active',
+              buttonText: 'Gửi phản ánh →',
+            },
+            {
+              enabled: true,
+              title: 'Tra cứu Tiến độ Phản ánh',
+              desc: 'Nhập Mã tiếp nhận hoặc tra cứu theo Số điện thoại để theo dõi trực tuyến kết quả giải quyết và văn bản trả lời chính thức.',
+              href: '/gop-y/tra-cuu',
+              icon: '🔍',
+              badge: 'Minh bạch tiến độ',
+              badgeType: 'active',
+              buttonText: 'Tra cứu tiến độ →',
+            },
+            {
+              enabled: true,
+              title: 'Hỏi đáp Y tế & Câu hỏi thường gặp',
+              desc: 'Tổng hợp giải đáp thắc mắc về BHYT đúng tuyến, thủ tục chuyển viện và tiêm chủng mở rộng.',
+              href: '/hoi-dap',
+              icon: '❓',
+              badge: 'Tra cứu nhanh',
+              badgeType: 'periodic',
+              buttonText: 'Xem hỏi đáp y tế →',
+            },
+            {
+              enabled: true,
+              title: 'Biểu mẫu Điện tử & Đăng ký số',
+              desc: 'Khai báo thông tin trước khi đến viện, phiếu đăng ký khám và đơn xin sao lục hồ sơ bệnh án.',
+              href: '/bieu-mau',
+              icon: '📋',
+              badge: 'Tiết kiệm thời gian',
+              badgeType: 'periodic',
+              buttonText: 'Mở biểu mẫu số →',
+            },
+            {
+              enabled: true,
+              title: 'Chất lượng Bệnh viện & Cam kết',
+              desc: 'Bộ chỉ số đo lường chất lượng, tỷ lệ hài lòng 94.8% và các chương trình an toàn người bệnh.',
+              href: '/chat-luong-benh-vien',
+              icon: '⭐',
+              badge: 'Chuẩn Bộ Y tế',
+              badgeType: 'active',
+              buttonText: 'Xem chỉ số chất lượng →',
+            },
+          ],
+        },
+      ],
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị nhóm này', type: 'checkbox', defaultValue: true },
+        { name: 'categoryTitle', label: 'Tiêu đề nhóm danh mục', type: 'text', required: true },
+        {
+          name: 'items',
+          label: 'Danh sách các thẻ dịch vụ tiện ích',
+          type: 'array',
+          dbName: 'pps_svc_items',
+          labels: { singular: 'Thẻ tiện ích', plural: 'Các thẻ tiện ích' },
+          fields: [
+            { name: 'enabled', label: 'Bật thẻ này', type: 'checkbox', defaultValue: true },
+            { name: 'title', label: 'Tên dịch vụ / Tiện ích', type: 'text', required: true },
+            { name: 'desc', label: 'Mô tả ngắn gọn', type: 'textarea', required: true },
+            { name: 'href', label: 'Đường dẫn liên kết (URL)', type: 'text', required: true },
+            { name: 'icon', label: 'Biểu tượng (Icon)', type: 'text', defaultValue: '🩺' },
+            { name: 'badge', label: 'Nhãn nổi bật (Badge)', type: 'text', admin: { placeholder: 'Ví dụ: Cần xem trước, Từ 06:00 sáng...' } },
+            {
+              name: 'badgeType',
+              label: 'Kiểu màu nhãn nổi bật',
+              type: 'select',
+              dbName: 'pps_badge_t',
+              defaultValue: 'active',
+              options: [
+                { label: 'Xanh lá (Tích cực / Hoạt động)', value: 'active' },
+                { label: 'Xanh dương (Thông tin / Chu kỳ)', value: 'periodic' },
+                { label: 'Xám (Bình thường)', value: 'closed' },
+              ],
+            },
+            { name: 'buttonText', label: 'Chữ trên nút bấm', type: 'text', defaultValue: 'Truy cập dịch vụ →' },
+          ],
+        },
+      ],
+    },
+
+    // ── 5. KHỐI CTA HOTLINE & HỖ TRỢ CUỐI TRANG ──
+    {
+      name: 'ctaSection',
+      label: '5. Khối Kêu gọi hành động & Hotline hỗ trợ cuối trang',
+      type: 'group',
+      fields: [
+        { name: 'enabled', label: 'Hiển thị khối Hotline này', type: 'checkbox', defaultValue: true },
+        {
+          name: 'title',
+          label: 'Tiêu đề khối hỗ trợ',
+          type: 'text',
+          defaultValue: 'Bạn cần hỗ trợ khẩn cấp hoặc cần hỏi thêm thông tin?',
+        },
+        {
+          name: 'description',
+          label: 'Mô tả hỗ trợ (Hỗ trợ {{HOTLINE}} và {{EMERGENCY_HOTLINE}})',
+          type: 'textarea',
+          defaultValue: 'Đường dây nóng bệnh viện: {{HOTLINE}} · Cấp cứu 24/24: {{EMERGENCY_HOTLINE}}. Bệnh viện luôn sẵn sàng phục vụ!',
+        },
+        {
+          name: 'primaryBtnText',
+          label: 'Chữ trên nút gọi',
+          type: 'text',
+          defaultValue: 'Gọi tư vấn ngay',
+        },
+        {
+          name: 'secondaryBtnText',
+          label: 'Chữ trên nút liên hệ',
+          type: 'text',
+          defaultValue: 'Thông tin liên hệ',
+        },
+        {
+          name: 'secondaryBtnLink',
+          label: 'Liên kết nút liên hệ',
+          type: 'text',
+          defaultValue: '/lien-he',
+        },
+      ],
+    },
+  ],
+}

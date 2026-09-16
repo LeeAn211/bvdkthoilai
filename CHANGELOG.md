@@ -1,5 +1,463 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-16] - Nâng cấp Thanh Điều Hướng Mobile Chuẩn Y Tế: Top Bar Tinh Gọn + Bảng Menu Drawer Trượt
+
+- **Thời gian thực hiện:** 19:30 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Khắc phục dứt điểm hiện tượng thanh menu trên điện thoại bị di chuyển ngang, trôi dạt hoặc gãy dòng cồng kềnh khi có nhiều menu.
+  2. Áp dụng chuẩn thiết kế tốt nhất và thẩm mỹ nhất cho website bệnh viện:
+     - Thanh điều hướng mobile chỉ chiếm 1 hàng cố định nhỏ gọn 48px với nút "Trang chủ" và nút nổi bật **"DANH MỤC"**.
+     - Khi bấm vào "DANH MỤC", một bảng Drawer trượt ra mượt mà từ cạnh phải màn hình với nền mờ cao cấp (`backdrop-filter`).
+     - Các chuyên mục lớn được phân cấp rõ ràng; các chuyên mục có cấp con (như Tổ chức, Tin tức...) hỗ trợ đóng/mở dạng Accordion (+ / -) nhẹ nhàng, tiện lợi, không trôi trượt.
+     - Phía dưới Drawer có sẵn nút liên hệ khẩn cấp "CẤP CỨU 24/7: 02923.686.115".
+- **Nội dung thực hiện:**
+  - `src/components/MobileNavHeader.tsx`:
+    - Bổ sung `mobileBarRow` dành riêng cho điện thoại (< 900px) với nút Trang chủ và nút kích hoạt Drawer.
+    - Xây dựng component `mobileDrawerWrap` với hiệu ứng trượt cubic-bezier, header mang nhận diện thương hiệu bệnh viện, danh sách danh mục Accordion đóng/mở từng nhóm và nút gọi cấp cứu nhanh.
+    - Thêm cơ chế khóa cuộn trang (`body.style.overflow = 'hidden'`) khi Drawer đang mở để trải nghiệm lướt menu mượt mà tuyệt đối.
+  - `src/components/SiteHeader.module.css`:
+    - Định nghĩa bộ CSS chuyên dụng cho Mobile Bar Row và Mobile Drawer (`mobileDrawerBackdrop`, `mobileDrawerWrap`, `drawerGroup`, `drawerSubList`).
+    - Bảo toàn 100% giao diện desktop (`min-width: 901px`).
+- **Kiểm thử & Xác nhận:**
+  - `npm run typecheck`: Đạt 0 lỗi TypeScript.
+  - Giao diện mobile hiển thị sang trọng, cố định, không trôi dạt, mở đóng danh mục trơn tru.
+
+
+## [2026-09-16] - Áp dụng Cơ chế Kế thừa Thông tin Đơn vị Dùng chung (Global Fallback) cho Toàn bộ Website
+
+- **Thời gian thực hiện:** 19:15 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Áp dụng đồng bộ cho toàn bộ hệ thống website: Nếu từng bài viết, tài liệu, gói thầu, hoạt động khoa học, tuyển dụng hoặc bác sĩ có nhập thông tin đơn vị/nguồn/cơ quan ban hành riêng thì hiển thị thông tin riêng đó.
+  2. Nếu không nhập (để trống), hệ thống tự động kế thừa thông tin chung của đơn vị được cấu hình trong Admin CMS (`SiteSettings.hospitalName`, `contact-settings`, v.v.).
+  3. Khi quản trị viên thay đổi Tên đơn vị / Bệnh viện trong Admin CMS, toàn bộ các mục không nhập riêng trên toàn trang web sẽ tự động cập nhật ngay lập tức theo tên mới.
+- **Nội dung thực hiện:**
+  - `src/components/ArticleDetailTemplate.tsx`:
+    - Bổ sung prop `hospitalName?: string` vào giao diện template chuẩn.
+    - Cập nhật logic phân giải nguồn bài viết: `finalSourceName = sourceName || hospitalName || displayConfig?.defaultSourceName || 'Bệnh viện Đa khoa Khu vực Thới Lai'`.
+  - `src/app/(frontend)/tin-tuc/[slug]/page.tsx`: Truy vấn `site-settings` và truyền `hospitalName` động vào template bài viết tin tức.
+  - `src/app/(frontend)/thong-bao/[slug]/page.tsx`: Truy vấn `site-settings` và truyền `hospitalName` động vào template bài thông báo.
+  - `src/app/(frontend)/dau-thau-mua-sam/[slug]/page.tsx`: Phân giải `contactUnit` tự động fallback theo `siteSettings.hospitalName`, truyền `hospitalName` động vào template.
+  - `src/app/(frontend)/hoat-dong-khoa-hoc/[slug]/page.tsx`: Truy vấn `site-settings` và truyền `hospitalName` động vào template hoạt động khoa học.
+  - `src/app/(frontend)/tuyen-dung/[slug]/page.tsx`: Tự động kế thừa `hospitalName` cho trường Khoa/Phòng phụ trách và nguồn bài viết tuyển dụng.
+  - `src/app/(frontend)/noi-dung/[sectionSlug]/[slug]/page.tsx`: Truy vấn `site-settings` và truyền `hospitalName` động cho mọi custom post.
+  - `src/app/(frontend)/[...path]/page.tsx`: Truy vấn `site-settings` và truyền `hospitalName` động cho mọi routing đa cấp.
+  - `src/app/(frontend)/bac-si/page.tsx` & `src/app/(frontend)/bac-si/[slug]/page.tsx`: Subtitle, đơn vị công tác và phần trích yếu bio của bác sĩ tự động kế thừa `siteSettings.hospitalName` khi chưa chọn khoa phòng.
+  - `src/app/(frontend)/so-do-to-chuc/page.tsx`: Mô tả PageHero tự động kế thừa `siteSettings.hospitalName`.
+  - `src/app/(frontend)/gioi-thieu/page.tsx`: Đoạn giới thiệu tổng quan tự động kế thừa `siteSettings.hospitalName`.
+  - `src/app/(frontend)/lich-kham/page.tsx`: Mô tả PageHero tra cứu lịch khám tự động kế thừa `siteSettings.hospitalName`.
+- **Kiểm thử & Xác nhận:**
+  - `npm run typecheck`: 0 lỗi TypeScript.
+  - Không có bất kỳ lỗi biên dịch runtime nào.
+
+## [2026-09-16] - Tách riêng Chuyên trang Phác đồ điều trị khỏi Văn bản và Bổ sung Menu con chuyên biệt
+
+- **Thời gian thực hiện:** 18:55 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Tách riêng phần Phác đồ điều trị với phần Văn bản: Trang `/van-ban` chỉ quản lý và hiển thị các văn bản hành chính, quyết định, quy chế, biểu mẫu; không hiển thị lẫn phác đồ chuyên môn.
+  2. Trang `/phac-do-dieu-tri` hiển thị toàn bộ tất cả phác đồ điều trị chuyên môn, nâng cấp giao diện tra cứu dạng Bảng công văn chuẩn y tế (`DocumentDirectoryView`) có lọc theo Chuyên khoa (Nội, Ngoại, Sản, Nhi, Cấp cứu...).
+  3. Bổ sung liên kết Menu con chuyên biệt cho "Phác đồ điều trị" trên thanh điều hướng chính (`SiteHeader.tsx`) tại cả mục "Tổ chức & Chuyên khoa" và "Tin tức & Công khai" để bác sĩ, người dùng truy cập trực tiếp 1-click.
+- **Nội dung thực hiện:**
+  - `Tự động thừa kế thông tin đơn vị dùng chung`: Trên các trang chi tiết và danh mục Phác đồ điều trị (`/phac-do-dieu-tri`), Văn bản (`/van-ban`), nếu bài viết không nhập cơ quan ban hành (`issuer`), hệ thống tự động lấy tên đơn vị mặc định từ trường `hospitalName` trong Cài đặt Hệ thống (`SiteSettings.ts`). Khi người quản trị đổi tên bệnh viện ở cài đặt chung, tất cả bài viết chưa nhập sẽ tự động cập nhật đồng bộ.
+  - `src/components/MobileNavHeader.tsx`: Loại bỏ hoàn toàn dòng liên kết mặc định `Xem tất cả {item.label}` trong bảng menu con (`navDropdown`) để menu gọn gàng, người dùng bấm trực tiếp vào từng mục con mong muốn.
+  - `src/components/SiteHeader.tsx`: Bổ sung menu con "Phác đồ điều trị" (`/phac-do-dieu-tri`) vào khối danh mục Tổ chức & Chuyên khoa và khối Tin tức & Công khai.
+  - `src/app/(frontend)/van-ban/page.tsx`: Loại bỏ truy vấn gộp sang collection `clinical-protocols`, bảo toàn tính độc lập của kho văn bản điều hành.
+  - `src/app/(frontend)/phac-do-dieu-tri/page.tsx`: Nâng cấp toàn diện sử dụng component `DocumentDirectoryView`, hiển thị đầy đủ số hiệu, chuyên khoa áp dụng, ngày ban hành, huy hiệu bảo mật `🔒 Mã PIN` / `Chỉ xem` và chế độ xem linh hoạt (Bảng danh sách hoặc Lưới thẻ).
+- **Kiểm thử & Xác nhận:**
+  - `npm run typecheck`: 0 lỗi TypeScript.
+  - HTTP 200 OK trên cả `/van-ban` và `/phac-do-dieu-tri`.
+
+## [2026-09-16] - Triển khai Cơ chế Bảo mật Mã PIN & Chế độ Cho xem trực tuyến nhưng Cấm tải về cho Phác đồ điều trị và Văn bản
+
+- **Thời gian thực hiện:** 18:47 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Xử lý yêu cầu chỉ cho phép một số người được tải về hoặc copy các file phác đồ điều trị và văn bản khi website chưa có cổng đăng nhập riêng cho nhân viên.
+  2. Triển khai phương án tối ưu: Mã PIN xác thực nội bộ kết hợp hệ thống chặn toàn diện xem trước, tải file, in PDF và chống copy chữ.
+  3. Hỗ trợ đầy đủ công tắc linh hoạt: "Cho xem tài liệu nhưng KHÔNG ĐƯỢC TẢI VỀ" (`allowDownload` bật/tắt độc lập với `showViewer`).
+  4. Nếu tài liệu cài mã PIN: Chặn hoàn toàn trình xem trước (iframe), chặn nút Tải về, chặn in (`Ctrl + P` / `@media print`), chặn chuột phải và chặn sao chép (`Ctrl + C`, `Ctrl + S`).
+- **Nội dung thực hiện:**
+  - **1. Mở rộng CMS Schema (`ClinicalProtocols.ts`, `Documents.ts`, `SiteSettings.ts`)**:
+    - `accessMode`: 'public' (Công khai), 'pin' (Yêu cầu Mã PIN bảo mật), 'internal' (Nội bộ y tế), 'locked' (Khóa hoàn toàn chỉ xem trích yếu).
+    - `pinCode`: Mã PIN riêng cho từng phác đồ/văn bản (nếu để trống tự động nhận mã PIN chung của viện).
+    - `allowDownload`: Công tắc bật/tắt quyền tải file (Tắt: người dùng xem được tài liệu nhưng không thể tải file gốc).
+    - `showViewer`: Công tắc bật/tắt trình đọc tài liệu PDF/Word trực tuyến.
+    - `preventCopy`: Bật để kích hoạt chặn chọn chữ, chặn chuột phải, chặn phím tắt.
+    - `defaultDocumentPin`: Cấu hình Mã PIN chung toàn viện trong Cài đặt Hệ thống (`SiteSettings.ts`, mặc định `BVTL2026`).
+  - **2. Database Migration & Schema Contract (`20260916_019_add_document_security_pin_fields`)**:
+    - Tạo các kiểu enum PostgreSQL: `enum_clinical_protocols_access_mode`, `enum_documents_access_mode`.
+    - Thêm các cột `access_mode`, `pin_code` vào `clinical_protocols`, `_clinical_protocols_v`, `documents`, `_documents_v`.
+    - Thêm cột `default_document_pin` vào `site_settings`, `_site_settings_v`.
+    - Sinh lại schema Payload: `npm run generate:db-schema`.
+    - Seal schema contract: `npm run db:schema:seal -- 20260916_019_add_document_security_pin_fields`.
+    - Triển khai migration: `npm run db:migrate:deploy` (19 applied, 0 pending).
+  - **3. Cập nhật Frontend Components**:
+    - `DocumentProtection.tsx`: Nâng cấp chặn phím tắt `Ctrl + P`, chặn sự kiện `window.onbeforeprint`, ẩn hoàn toàn nội dung khi cố tình in thông qua `@media print`.
+    - `DocumentDetailView.tsx`: Tích hợp màn hình khóa bảo mật `lockedViewerCard` và form xác thực mã PIN, modal mở khóa nhanh khi bấm Tải về, lưu phiên làm việc trong `sessionStorage`, kiểm soát quyền tải độc lập `canDownload`.
+    - `DocumentDirectoryView.tsx`: Thêm nhãn nhận diện `🔒 Mã PIN` và `Chỉ xem` ngay tại bảng danh sách văn bản và phác đồ.
+    - `van-ban/[slug]/page.tsx` & `phac-do-dieu-tri/[slug]/page.tsx`: Kết nối và nạp mã PIN mặc định từ `SiteSettings`.
+- **Kiểm thử & Xác nhận:**
+  - `npm run typecheck`: 0 lỗi TypeScript.
+  - `npm run db:schema:check`: Schema contract hợp lệ (Migration 019).
+  - `npm run db:migrate:deploy`: 19/19 applied thành công.
+  - HTTP status `/van-ban` & `/phac-do-dieu-tri`: 200 OK.
+
+## [2026-09-16] - Thiết kế và tích hợp tự động 3 trang chuyên mục người bệnh: Nội trú, Gói khám, Sơ đồ bệnh viện
+
+- **Thời gian thực hiện:** 18:12 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Thiết kế 3 trang chuyên mục quan trọng và cần thiết nhất cho người bệnh:
+     - Hướng dẫn Nhập viện & Điều trị Nội trú (`/dieu-tri-noi-tru`)
+     - Gói Khám Sức khỏe & Tầm soát Bệnh lý (`/goi-kham`)
+     - Sơ đồ Chỉ dẫn Khoa/Phòng & Tiện ích công cộng (`/so-do-benh-vien`)
+  2. Tự động gắn các tab mới vào thanh điều hướng nhanh `PatientCareSubNav` xuyên suốt tất cả các trang người bệnh.
+  3. Tự động gắn các thẻ dịch vụ tiện ích mới vào Cổng người bệnh `/danh-cho-nguoi-benh`.
+  4. Quản trị 100% nội dung, tiêu đề, thông báo, các bước, giá gói khám, khoa phòng từ Admin CMS (`SiteSettings.ts`).
+  5. Đóng gói database migration tự động, tuân thủ nghiêm ngặt quy chuẩn PostgreSQL và schema contract.
+- **Nội dung thực hiện:**
+  - **1. Mở rộng CMS Schema trong Global `SiteSettings.ts` (`src/globals/SiteSettings.ts`)**:
+    - Nhóm `inpatientPage`: Tiêu đề, mô tả, thông báo lưu ý (`ip_not_align`), quy trình 4 bước nhập viện (`ip_steps`), 3 khung giờ thăm bệnh (`ip_hours`), danh mục đồ dùng cá nhân & trang thiết bị BV cấp phát (`ip_items`).
+    - Nhóm `checkupPackagesPage`: Tiêu đề, mô tả, thông báo lưu ý trước khi khám (`pkg_not_align`), danh sách các gói khám sức khỏe (`chk_pkgs`) với huy hiệu, đối tượng, giá niêm yết, danh mục kỹ thuật và nút đăng ký.
+    - Nhóm `hospitalMapPage`: Tiêu đề, mô tả, thông báo chỉ dẫn (`map_not_align`), danh sách sơ đồ phân tầng khoa phòng (`hm_floors`), và các tiện ích công cộng (`hm_facils`: Nhà thuốc GPP, Cổng Cấp cứu 24/24, Căn tin, ATM, Bãi xe, Xe lăn miễn phí).
+  - **2. Database Migration & Schema Contract (`20260916_018_add_inpatient_packages_map_tables`)**:
+    - Tạo các kiểu enum PostgreSQL an toàn: `ip_not_align`, `pkg_not_align`, `map_not_align`.
+    - Bổ sung các cột vào `site_settings` và `_site_settings_v`: `inpatient_page_...`, `checkup_packages_page_...`, `hospital_map_page_...`.
+    - Tạo 6 bảng vật lý chính và 6 bảng phiên bản lịch sử: `ip_steps`, `ip_hours`, `ip_items`, `chk_pkgs`, `hm_floors`, `hm_facils` và `_v`.
+    - Sinh lại schema: `npm run generate:db-schema` (cập nhật `src/payload-generated-schema.ts`).
+    - Seal schema contract: `npm run db:schema:seal -- 20260916_018_add_inpatient_packages_map_tables`.
+    - Triển khai migration thành công: `npm run db:migrate:deploy` (18 applied, 0 pending).
+  - **3. Tự động gắn vào hệ thống (Auto-linking)**:
+    - `src/components/PatientCareSubNav.tsx`: Tự động gắn thêm 3 tab `noi-tru`, `goi-kham`, `so-do`.
+    - `src/app/(frontend)/danh-cho-nguoi-benh/page.tsx`: Tự động bổ sung 3 thẻ card tiện ích mới vào danh mục dịch vụ.
+  - **4. Xây dựng giao diện Frontend chuẩn y tế**:
+    - `src/app/(frontend)/dieu-tri-noi-tru/page.tsx`: Giao diện chuẩn với Hero banner, Notice banner, timeline 4 bước nhập viện, thẻ khung giờ thăm bệnh, checklist đồ dùng và banner hotline.
+    - `src/app/(frontend)/goi-kham/page.tsx`: Giao diện thẻ gói khám hiện đại với giá niêm yết, checklist kỹ thuật, huy hiệu nổi bật và nút đăng ký khám.
+    - `src/app/(frontend)/so-do-benh-vien/page.tsx`: Giao diện phân tầng khoa phòng và lưới tiện ích công cộng (giờ mở cửa, vị trí).
+- **Kiểm thử & Xác nhận:**
+  - `npm run typecheck`: 0 lỗi TypeScript.
+  - `npm run db:schema:check`: Schema contract hợp lệ.
+  - `npm run db:migrate:status`: 18/18 applied.
+  - HTTP status cả 3 trang mới và portal: 200 OK.
+
+## [2026-09-16] - Đưa toàn bộ bài viết, nội dung các tab và khối thông tin Dành cho người bệnh vào Admin CMS
+
+- **Thời gian thực hiện:** 17:00 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Đưa toàn bộ nội dung bài viết, các bước hướng dẫn, chỉ số chất lượng, khối thông tin trên tất cả các tab thuộc khối Dành cho người bệnh vào Admin CMS để người quản trị có thể tự do chỉnh sửa, bật/tắt hoặc thêm mới.
+  2. Áp dụng cho các trang: Quy trình khám bệnh (`/quy-trinh-kham-benh`), Chất lượng bệnh viện (`/chat-luong-benh-vien`), Góp ý phản ánh (`/gop-y` & `/gop-y/tra-cuu`), Khảo sát (`/khao-sat`), Biểu mẫu điện tử (`/bieu-mau`).
+  3. Bổ sung đồng bộ tab Quy trình khám bệnh vào thanh chuyển hướng `PatientCareSubNav`.
+- **Nội dung thực hiện:**
+  - **1. Mở rộng CMS Schema trong Global `SiteSettings.ts` (`src/globals/SiteSettings.ts`)**:
+    - `examinationFlowPage`: Bổ sung quản trị các tab quy trình `flowTabs` (bảng `ef_tabs`, `ef_steps`) với các bước chi tiết (`step`, `title`, `location`, `timeEstimate`, `desc`, `actions`, `note`, `isHighlight`, `isEmergency`), danh mục giấy tờ `checklists` (bảng `ef_checks`), danh mục đối tượng ưu tiên `priorities` (bảng `ef_prios`).
+    - `qualityPage`: Bổ sung quản trị 4 thẻ chỉ số chất lượng `statCards` (bảng `qp_stats`), 5 nhóm tiêu chuẩn Bộ Y tế `dimensions` (bảng `qp_dims`), và các chương trình cải tiến `programs` (bảng `qp_progs` với enum `qp_icon_t`).
+    - `surveyPage`: Bổ sung quản trị các khối nguyên tắc/tiện ích khảo sát `infoBoxes` (bảng `sv_boxes`).
+    - `formsPage`: Bổ sung quản trị các khối tiện ích biểu mẫu `infoBoxes` (bảng `fm_boxes`).
+    - `feedbackPage`: Tạo mới nhóm quản trị trang Góp ý - Phản ánh gồm Hero banner, Notice banner (`fb_not_align`), và các khối thông tin tiện ích `infoBoxes` (bảng `fb_boxes`).
+  - **2. Database Migration & Schema Contract (`20260916_017_add_patient_care_content_tables`)**:
+    - Tạo các kiểu enum PostgreSQL: `qp_icon_t` ('blue', 'green', 'amber'), `fb_not_align` ('left', 'center', 'justify').
+    - Thêm các cột cho `site_settings` và `_site_settings_v`: `feedback_page_eyebrow`, `feedback_page_title`, `feedback_page_description`, `feedback_page_show_notice_banner`, `feedback_page_notice_title`, `feedback_page_notice_content`, `feedback_page_notice_align`.
+    - Tạo 10 bảng vật lý chính và 10 bảng phiên bản lịch sử: `ef_tabs`, `ef_steps`, `ef_checks`, `ef_prios`, `qp_stats`, `qp_dims`, `qp_progs`, `sv_boxes`, `fm_boxes`, `fb_boxes` và `_v`.
+    - Sinh lại schema Drizzle: `npm run generate:db-schema` (cập nhật `src/payload-generated-schema.ts`).
+    - Seal schema contract: `npm run db:schema:seal -- 20260916_017_add_patient_care_content_tables`.
+    - Triển khai migration an toàn: `npm run db:migrate:deploy` (17 applied, 0 pending).
+  - **3. Cập nhật thanh điều hướng `PatientCareSubNav.tsx`**:
+    - Bổ sung tab Quy trình khám (`key: 'quy-trinh'`, `href: '/quy-trinh-kham-benh'`, `icon: '🩺'`) vào danh sách mặc định.
+  - **4. Cập nhật giao diện & logic hiển thị động trên Frontend**:
+    - `src/app/(frontend)/quy-trinh-kham-benh/page.tsx`: Thêm `PatientCareSubNav activeKey="quy-trinh"`.
+    - `src/app/(frontend)/quy-trinh-kham-benh/ExaminationFlowView.tsx`: Hiển thị động các tab quy trình `flowTabs`, các bước `steps`, `checklists`, `priorities` từ CMS với fallback mặc định chuẩn xác.
+    - `src/app/(frontend)/chat-luong-benh-vien/page.tsx`: Hiển thị động các thẻ chỉ số `statCards`, tiêu chuẩn `dimensions`, và chương trình hành động `programs` từ CMS.
+    - `src/app/(frontend)/gop-y/page.tsx`: Hiển thị Hero banner, Notice banner, và các khối `infoBoxes` từ CMS.
+    - `src/app/(frontend)/khao-sat/page.tsx`: Hiển thị động 3 khối nguyên tắc từ `surveyConf.infoBoxes`.
+    - `src/app/(frontend)/bieu-mau/page.tsx`: Hiển thị động 3 khối tiện ích từ `formsConf.infoBoxes`.
+- **Kiểm thử & Xác nhận:**
+  - `npm run typecheck`: 0 errors.
+  - `npm run db:schema:check`: Valid contract.
+  - `npm run db:migrate:status`: 17/17 applied.
+  - Kiểm tra HTTP response các routes: 200 OK.
+
+## [2026-09-16] - Đưa toàn bộ cấu hình trang Dành cho người bệnh (/danh-cho-nguoi-benh) và thanh Sub-Nav vào Admin CMS
+
+- **Thời gian thực hiện:** 16:25 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Trang `http://localhost:3000/danh-cho-nguoi-benh`: Toàn bộ các thẻ danh mục, dịch vụ y tế, cam kết phục vụ, banner hành động và thanh chuyển tab con (Sub-Nav) phải quản trị được 100% từ Admin CMS.
+  2. Bật/tắt tùy ý từng tab (`enabled`), cho phép đổi tên, icon, đường dẫn, badge, cũng như thêm/bớt các tab mới theo nhu cầu thực tế.
+  3. Bật/tắt tùy ý từng nhóm dịch vụ và từng thẻ dịch vụ con, cho phép tạo thêm nhóm dịch vụ mới hoặc thêm dịch vụ mới bất kỳ lúc nào.
+- **Nội dung thực hiện:**
+  - **1. Tạo Global `PatientPortalSettings` (`src/globals/PatientPortalSettings.ts`)**:
+    - Nhóm: `🏥 Khám bệnh & Dịch vụ Y tế`, slug: `patient-portal-settings`.
+    - `hero`: Cấu hình nhãn `eyebrow`, tiêu đề `title`, mô tả `description`, cùng khối thông báo nổi bật (`showNoticeBanner`, `noticeTitle`, `noticeContent` với `white-space: pre-line`, `noticeAlign`).
+    - `subNavTabs` (bảng phụ `pps_sub_tabs`): Danh sách tab Sub-Nav với `enabled`, `key`, `label`, `href`, `icon`, `badge`. Quản trị viên có thể ẩn/hiện, sửa đổi hoặc thêm mới các tab điều hướng.
+    - `commitmentsSection` (bảng phụ `pps_commits`): Nhóm cam kết phục vụ với toggle bật/tắt toàn khối và từng cam kết (`enabled`, `icon`, `title`, `desc`).
+    - `serviceGroups` (bảng phụ `pps_svc_groups` lồng `pps_svc_items`): Quản lý các nhóm dịch vụ và các thẻ dịch vụ con với quyền bật/tắt độc lập, tiêu đề nhóm, tiêu đề thẻ, mô tả, huy hiệu (`badge`, `badgeType`), icon và liên kết.
+    - `ctaSection`: Khối banner kêu gọi hành động với toggle `enabled`, tiêu đề, mô tả (hỗ trợ biến mẫu `{{HOTLINE}}`, `{{EMERGENCY_HOTLINE}}`), nút gọi khẩn cấp và nút liên hệ tư vấn.
+  - **2. Đăng ký vào Payload CMS (`payload.config.ts`)**:
+    - Import `PatientPortalSettings` vào danh sách `globals`.
+    - Phân quyền module: `globalPermissionModules['patient-portal-settings'] = 'site-settings'`.
+  - **3. Database Migration & Schema Contract (`20260916_016_create_patient_portal_settings_tables`)**:
+    - Định nghĩa các bảng vật lý: `patient_portal_settings`, `pps_sub_tabs`, `pps_commits`, `pps_svc_groups`, `pps_svc_items`.
+    - Tối ưu tên bảng và cột < 63 ký tự, hỗ trợ khóa ngoại cascade sạch sẽ.
+    - Sinh lại schema: `npm run generate:db-schema` (cập nhật `src/payload-generated-schema.ts`).
+    - Tạo migration: `scripts/db-migrations/20260916_016_create_patient_portal_settings_tables.mjs`.
+    - Seal schema contract: `npm run db:schema:seal -- 20260916_016_create_patient_portal_settings_tables`.
+    - Chạy migration: `npm run db:migrate:deploy` (16 applied, 0 pending).
+  - **4. Nâng cấp Component `PatientCareSubNav.tsx`**:
+    - Truy vấn danh sách tab từ Global `patient-portal-settings`.
+    - Tự động lọc các tab có `enabled !== false`.
+    - Có cơ chế fallback dữ liệu mặc định an toàn nếu CMS chưa có cấu hình.
+    - Đồng bộ tab tự động trên toàn bộ các trang con: `/khao-sat`, `/gop-y`, `/hoi-dap`, `/bieu-mau`, `/chat-luong-benh-vien`, `/lien-he`.
+  - **5. Nâng cấp Trang `src/app/(frontend)/danh-cho-nguoi-benh/page.tsx`**:
+    - Đọc toàn bộ cấu hình từ `patient-portal-settings` và hiển thị động theo đúng cài đặt Admin CMS.
+    - Hỗ trợ đầy đủ các tính năng: bật/tắt notice banner, căn lề, lọc dịch vụ theo tab, bật/tắt từng nhóm và thẻ dịch vụ, thay thế số hotline tự động trong CTA banner.
+- **Kiểm thử:**
+  - `npm run typecheck`: 0 errors.
+  - `npm run db:schema:check`: Valid contract.
+  - `npm run db:migrate:status`: 16/16 applied.
+
+
+- **Thời gian thực hiện:** 13:50 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Giải quyết trường hợp người bệnh / thân nhân không nhớ hoặc làm mất Mã tra cứu (`GY-2026-XXXX`).
+  2. Bổ sung các kênh liên hệ hỗ trợ trực tiếp khi cần cấp lại mã hoặc giải đáp khẩn cấp: Hotline CSKH, Zalo Official Account và Trang Fanpage Facebook chính thức của Bệnh viện.
+- **Nội dung thực hiện:**
+  - `src/app/(frontend)/api/feedback/route.ts`:
+    - Nâng cấp phương thức `GET`: Cho phép tra cứu linh hoạt khi không có tham số `code`.
+    - Khi người dùng chỉ nhập Số điện thoại, hệ thống tự động quét toàn bộ hồ sơ phản ánh đã gửi từ số điện thoại đó trên cả 2 collection (`feedback` & `feedbackCases`), hợp nhất và sắp xếp theo thứ tự mới nhất gửi về dạng danh sách.
+    - Khi có cả `code` và `phone`, trả về chi tiết hồ sơ cụ thể và dòng thời gian xử lý.
+  - `src/components/FeedbackLookup.tsx` & `FeedbackLookup.module.css`:
+    - Bổ sung thanh chuyển đổi (Tabs) trực quan giữa 2 chế độ:
+      - **"Tra cứu theo Mã tiếp nhận"**: Dành cho người có lưu mã tra cứu.
+      - **"Quên mã tra cứu? Tìm theo Số điện thoại"**: Dành cho người không nhớ mã, chỉ cần điền số điện thoại để xem toàn bộ lịch sử phản ánh của mình.
+    - Khi tìm theo số điện thoại, hệ thống liệt kê danh sách thẻ hồ sơ với mã định danh, ngày gửi, tiêu đề, trạng thái và nút *"Xem câu trả lời của Bệnh viện →"* để xem chi tiết từng hồ sơ.
+    - Bổ sung khối hỗ trợ trực tiếp: **"Bạn cần hỗ trợ cấp lại mã hoặc giải đáp trực tiếp?"** với 3 kênh chính thức:
+      - **Tổng đài CSKH (Hotline)**: Gọi điện thoại tức thì `02923 689 115`.
+      - **Zalo Bệnh viện**: Liên kết nhắn tin tư vấn trực tuyến.
+      - **Facebook Fanpage**: Trang Fanpage chính thức của Bệnh viện Đa khoa Khu vực Thới Lai.
+  - `src/app/(frontend)/gop-y/tra-cuu/page.tsx`:
+    - Lấy cấu hình hotline, link Zalo và Facebook từ Admin CMS (`SiteSettings`, `ContactSettings`, `SocialSettings`) truyền vào component tra cứu.
+- **Kiểm thử:**
+  - Chạy `npm run typecheck`: Hoàn tất 100% (0 errors).
+  - Kiểm thử API tra cứu theo số điện thoại không cần mã: HTTP 200 trả về danh sách hồ sơ đầy đủ.
+
+
+- **Thời gian thực hiện:** 13:30 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Kiểm tra quy trình Phản hồi người bệnh: Trong Admin trước đây chỉ có thông tin cơ bản và ô trạng thái ("Mới", "Đang xử lý", "Đã xử lý") nhưng không có chỗ ghi nhận biện pháp xử lý, ghi chú nội bộ và câu trả lời chính thức gửi người bệnh.
+  2. Khắc phục phần Tra cứu thông tin phản hồi (`/gop-y/tra-cuu`) chưa trả về đúng và đầy đủ thông tin (chưa hiển thị câu trả lời và cập nhật tiến độ tương ứng).
+- **Nguyên nhân kỹ thuật:**
+  - Collection `feedback` chỉ có các trường cơ bản (`name`, `phone`, `email`, `type`, `message`, `status`), thiếu hẳn các trường nghiệp vụ bệnh viện: `code`, `response`, `resolutionNote`, `handledBy`, `resolvedAt`.
+  - Chưa có cơ chế đồng bộ 2 chiều giữa collection `feedback` (quản trị tiếp nhận) và collection `feedbackCases` / `feedbackActions` (hồ sơ theo dõi dòng thời gian). Khi cán bộ cập nhật trạng thái hoặc câu trả lời trong `feedback`, hệ thống tra cứu `feedbackCases` không nhận được kết quả.
+  - Giao diện tra cứu `/gop-y/tra-cuu` chỉ hiển thị dạng văn bản thô sơ, chưa làm nổi bật thẻ phản hồi chính thức của Ban Giám đốc và chưa có hướng dẫn trạng thái trực quan.
+- **Nội dung thực hiện:**
+  - **1. Nâng cấp Collection `Feedback.ts`**:
+    - Bổ sung nhóm trường quản lý chuyên nghiệp trong Admin:
+      - `code`: Mã tra cứu phản ánh định danh duy nhất (ví dụ `GY-2026-XXXX`).
+      - `status`: Trạng thái xử lý rõ ràng (*Mới tiếp nhận*, *Đang xác minh & Xử lý*, *Đã giải quyết & Phản hồi*).
+      - `handledBy`: Cán bộ / Lãnh đạo phụ trách xử lý (liên kết bảng `users`).
+      - `resolvedAt`: Thời điểm hoàn tất giải quyết (tự động điền ngày giờ khi chọn "Đã giải quyết").
+      - `response`: Nội dung phản hồi chính thức gửi cho người bệnh (công khai khi tra cứu).
+      - `resolutionNote`: Ghi chú & biện pháp xử lý nghiệp vụ nội bộ (bảo mật nội bộ).
+    - Thêm hooks đồng bộ 2 chiều: Khi cán bộ xử lý hoặc nhập câu trả lời trong `feedback`, tự động cập nhật sang `feedbackCases` và tự động ghi nhật ký vào dòng thời gian `feedbackActions`.
+  - **2. Đồng bộ ngược trong `FeedbackCases.ts`**:
+    - Khi cập nhật trạng thái hoặc câu trả lời trong `feedbackCases`, tự động đồng bộ sang bản ghi tương ứng trong `feedback`.
+  - **3. Database Migration & Schema Contract (`20260916_015_enhance_feedback_workflow_fields`)**:
+    - Tạo migration an toàn bổ sung 5 cột mới vào bảng `feedback`: `code`, `response`, `resolution_note`, `handled_by_id`, `resolved_at` cùng index cho `code` và khóa ngoại `handled_by_id`.
+    - Sinh lại schema và seal contract: `npm run db:schema:seal -- 20260916_015_enhance_feedback_workflow_fields`.
+    - Triển khai và xác minh migration thành công: `npm run db:migrate:deploy`.
+  - **4. Nâng cấp API `src/app/(frontend)/api/feedback/route.ts`**:
+    - `POST`: Đồng bộ lưu mã tra cứu `code` vào cả `feedbackCases` và `feedback`.
+    - `GET`: Tra cứu đồng thời cả 2 nguồn, ưu tiên câu trả lời chính thức mới nhất, tự động liên kết dòng thời gian xử lý và trả về đầy đủ họ tên, tiêu đề, nội dung, thời gian giải quyết.
+  - **5. Nâng cấp Giao diện Tra cứu (`src/components/FeedbackLookup.tsx` & `FeedbackLookup.module.css`)**:
+    - Thiết kế giao diện y tế cao cấp, chuyên nghiệp:
+      - Ô nhập Mã tra cứu và Số điện thoại với nhãn rõ ràng, xác thực và xử lý lỗi chi tiết.
+      - Thẻ kết quả định danh: Mã hồ sơ nổi bật, Huy hiệu trạng thái phân biệt màu sắc (*Mới tiếp nhận*, *Đang xử lý & Xác minh*, *Đã giải quyết*).
+      - Hộp thông tin ý kiến người bệnh kèm thời gian gửi.
+      - **Khối Phản hồi chính thức từ Bệnh viện Đa khoa Khu vực Thới Lai**: Viền xanh y tế nổi bật, biểu tượng xác thực tích xanh và hiển thị đầy đủ văn bản giải đáp của bệnh viện.
+      - Dòng thời gian (Timeline) các mốc tiếp nhận, xử lý và phản hồi trực quan.
+- **Kiểm thử & Xác nhận:**
+  - Đã chạy kiểm tra tra cứu thử nghiệm với mã tiếp nhận thực tế qua API `GET /api/feedback`: Trả về chuẩn HTTP 200 đầy đủ thông tin người gửi, câu trả lời chính thức của Bệnh viện và mốc thời gian giải quyết.
+  - Chạy `npm run typecheck`: 100% đạt chuẩn (0 lỗi).
+
+
+- **Thời gian thực hiện:** 13:14 (Asia/Saigon)
+- **Yêu cầu:** Sửa lỗi khi người dùng điền form "Gửi ý kiến phản ánh & Góp ý" trên trang `/lien-he` bị báo lỗi đỏ *"Không thể xử lý yêu cầu"*.
+- **Nguyên nhân kỹ thuật:**
+  - Trong `src/app/(frontend)/api/feedback/route.ts`, khi form người dùng gửi không chọn nhóm phản ánh (`category` là chuỗi rỗng `""`), hàm `Number("")` trả về số `0`. Khi chèn vào PostgreSQL (`category_id = 0`), khóa ngoại (foreign key) liên kết tới bảng `feedback_categories` bị lỗi vi phạm ràng buộc toàn vẹn cơ sở dữ liệu (`foreign key violation`), khiến server trả về lỗi 500.
+- **Nội dung khắc phục:**
+  - `src/app/(frontend)/api/feedback/route.ts`:
+    - Chuẩn hóa kiểm tra `category`: chỉ gán `category_id` khi có giá trị số nguyên dương hợp lệ (`Number.isFinite(categoryID) && categoryID > 0`), ngược lại gán `undefined` để PostgreSQL nhận giá trị `NULL`.
+    - Đồng thời tự động đồng bộ bản ghi vào cả 2 collection: `feedbackCases` (để cấp mã tra cứu cho người bệnh theo dõi tiến độ) và `feedback` (để hiển thị tức thì trên Admin Dashboard, Hộp thư phản ánh và thanh cảnh báo khẩn).
+  - `src/components/FeedbackForm.tsx`:
+    - Khắc phục lỗi React SyntheticEvent `Cannot read properties of null (reading 'reset')`: Lưu tham chiếu `formElement = e.currentTarget` trước khi gọi `await fetch(...)` bất đồng bộ để reset form an toàn sau khi gửi thành công.
+  - Đã gửi request kiểm thử thành công: HTTP 200 `{ ok: true, code: "GY-2026-..." }`.
+  - TypeScript typecheck đạt 100% (0 errors).
+
+## [2026-09-16] - Cho phép di chuyển tùy ý các khối biểu đồ phân tích và Tách khoảng cách khối Phím tắt tạo mới & Điều hành nhanh
+
+- **Thời gian thực hiện:** 13:08 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Cho phép di chuyển tùy ý vị trí các khối biểu đồ & phân tích theo nhu cầu của người quản lý.
+  2. Sửa lỗi khối "Phác đồ điều trị vừa cập nhật" và "Ý kiến người bệnh chờ xử lý" bị dính sát vào khối "Phím tắt tạo mới & Điều hành nhanh", tạo khoảng cách rõ ràng, đẹp mắt.
+- **Nội dung thực hiện:**
+  - `src/components/admin/AdminDashboard.module.css`:
+    - Bổ sung khoảng cách tách biệt `margin-top: 20px` cho `.quickCommandsSection` (Phím tắt tạo mới & Điều hành nhanh) để tách rời hoàn toàn với 2 luồng hoạt động bên trên, đảm bảo bố cục thông thoáng, có nhịp điệu phân vùng rõ rệt.
+  - `src/components/admin/AdminDashboardCustomizer.tsx`:
+    - Bổ sung trường `chartOrder` vào cấu hình lưu trữ `ChartVisibility` và `localStorage`.
+    - Thêm cơ chế nút di chuyển lên/xuống (`▲` / `▼`) cho từng cụm khối biểu đồ & phân tích trong tab **"Biểu đồ phân tích"**:
+      - Khối Cơ cấu tài nguyên số & Quy trình CSKH
+      - Khối Xu hướng xuất bản tin bài & Phân bổ nhân lực khoa phòng
+      - Khối Chỉ số hài lòng người bệnh & Cam kết xử lý SLA
+      - Khối Tải lượng khám, cấp cứu 24/7 & Phân bổ phác đồ điều trị
+    - Hỗ trợ lưu trữ thứ tự tùy biến vào `localStorage` và khôi phục mặc định khi nhấn "Khôi phục mặc định".
+  - `src/components/admin/AdminCharts.tsx`:
+    - Chuyển đổi cơ chế render các khối biểu đồ sang dạng `rowNodesMap` và hiển thị theo thứ tự mảng `chartOrder` được người quản trị sắp xếp.
+  - `src/components/admin/AdminDashboardClient.tsx`:
+    - Truyền tham số `chartOrder={charts.chartOrder}` vào component `<AdminCharts />`.
+  - Kiểm tra kiểu dữ liệu TypeScript (`npm run typecheck`): Hoàn tất thành công 100% (0 errors).
+  - Dev server Next.js cập nhật trực tiếp.
+
+## [2026-09-16] - Bo viền khung độc lập cho từng ô tài nguyên & phản ánh, dãn cách khoảng cách và loại bỏ khối dữ liệu trùng lặp
+
+- **Thời gian thực hiện:** 12:59 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Thêm khung bo viền riêng (`border`, `border-radius`, `padding`, `background`) cho từng ô trong khối "Cơ cấu tài nguyên bệnh viện" và "Quy trình xử lý phản ánh" để các ô không bị dính sát vào nhau.
+  2. Rà soát toàn bộ Dashboard xem có thông tin nào bị trùng lặp không, nếu có thì loại bỏ để giao diện tinh gọn, không dư thừa.
+- **Nội dung thực hiện:**
+  - `src/components/admin/AdminCharts.module.css`:
+    - **Bo viền & Tách biệt từng ô trong "Cơ cấu tài nguyên bệnh viện"**: Cập nhật `.breakdownRow` thành dạng thẻ card độc lập với `background: #f8fafc`, `border: 1px solid #e2e8f0`, `border-radius: 10px`, khoảng đệm `padding: 10px 14px`, và tăng `gap: 8px` giữa các ô trong danh sách, kết hợp hiệu ứng hover chuyển màu nhẹ và dịch chuyển `translateX(2px)` khi rê chuột.
+    - **Bo viền & Dãn cách từng dòng trạng thái trong "Quy trình xử lý phản ánh"**: Cập nhật `.legendRow` thành dạng ô/thẻ riêng biệt với viền `1px solid #e2e8f0`, nền xám nhạt cao cấp `background: #f8fafc`, bo góc tròn `10px`, padding `10px 14px`, tăng khoảng trống giữa biểu đồ Donut và danh sách trạng thái phản ánh để không còn cảm giác chen chúc hay dính liền khối.
+  - `src/components/admin/AdminDashboard.tsx`:
+    - **Rà soát và loại bỏ trùng lặp thông tin**:
+      - Phát hiện khối *"Năng lực số bệnh viện & Dữ liệu cốt lõi"* (`masterGrid`) ở phần cuối trang bị trùng lặp 100% với 6 chỉ số đã có sẵn trên thanh **Live Metrics Command Bar** ở đầu trang (Phác đồ điều trị, Bác sĩ & Nhân sự, Dịch vụ kỹ thuật, Khoa phòng, Media, Audit Logs) và các thẻ phân hệ chi tiết.
+      - Tiến hành **loại bỏ hoàn toàn khối `masterGrid` trùng lặp**, giữ lại 2 dòng hoạt động thực tế mới nhất ("Phác đồ điều trị vừa cập nhật", "Ý kiến người bệnh chờ xử lý") cùng bảng phím tắt nhanh "Truy cập tác vụ nhanh" giúp giao diện trang quản trị ngắn gọn, khoa học và không bị thừa dữ liệu.
+  - Kiểm tra kiểu dữ liệu TypeScript (`npm run typecheck`): Hoàn tất thành công 100% (0 errors).
+  - Dev server Next.js phản hồi tức thì với giao diện mới.
+
+## [2026-09-16] - Đưa khối Cơ cấu tài nguyên & Quy trình phản ánh lên trên, Bổ sung tùy chọn thống kê và Nâng cấp thiết kế Phác đồ điều trị chuẩn
+
+- **Thời gian thực hiện:** 12:26 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Đưa 2 khối "Cơ cấu tài nguyên bệnh viện" và "Quy trình xử lý phản ánh" lên phía trên cùng khu vực biểu đồ.
+  2. Bổ sung tùy chọn bật/tắt 2 khối này vào bảng "Tùy chỉnh thống kê Dashboard".
+  3. Thiết kế lại phần "Phân bổ Phác đồ điều trị chuẩn" theo tiêu chuẩn thẩm mỹ y tế chuyên nghiệp, hiện đại.
+  4. Minh bạch và làm rõ nguồn số liệu thống kê của "Chỉ số hài lòng người bệnh" và "Cam kết xử lý phản ánh (SLA)".
+- **Nội dung thực hiện:**
+  - `src/components/admin/AdminCharts.tsx` & `src/components/admin/AdminCharts.module.css`:
+    - **Đưa 2 khối Bento lên cụm Biểu đồ trên**: Tích hợp trực tiếp 2 thẻ *"Cơ cấu tài nguyên bệnh viện"* (với thanh tiến trình phân bổ bài viết, phác đồ, văn bản...) và *"Quy trình xử lý phản ánh"* (với biểu đồ tròn donut, phân loại Mới - Đang xử lý - Đã giải quyết) vào Hàng 4 của `AdminCharts` phía trên các tab phân hệ quản trị.
+    - **Thiết kế lại hoàn toàn "Phân bổ Phác đồ điều trị chuẩn"**: Thay thế dạng danh sách text đơn điệu cũ bằng hệ thống thẻ card chuyên môn cao cấp (`.protocolCardNew`), bao gồm:
+      - Nhãn tag chuyên khoa định danh (Cấp cứu 24/7, Nội - Nhi, Phẫu thuật, Sản khoa, Đông y, Xét nghiệm).
+      - Thanh track tiến trình bo góc mượt mà (`.protocolTrackFill`) đồng bộ màu nhận diện của từng khối.
+      - Hiển thị song song số lượng phác đồ ban hành và tỷ trọng phần trăm chuẩn xác.
+  - `src/components/admin/AdminDashboard.tsx`:
+    - Loại bỏ việc hiển thị 2 thẻ Bento ở vị trí bên dưới phân hệ trong `bentoContentNode` để tránh trùng lặp.
+    - Chuyển tiếp các thông số `contentBreakdown`, `totalContent`, `totalFeedback`, `feedbackNew`, v.v. vào `AdminDashboardClient` để cung cấp cho `AdminCharts`.
+  - `src/components/admin/AdminDashboardClient.tsx`:
+    - Tiếp nhận props và truyền đầy đủ vào `<AdminCharts ... />` cùng các công tắc bật/tắt `showResourceStructure` và `showFeedbackDonut`.
+  - `src/components/admin/AdminDashboardCustomizer.tsx`:
+    - Mở rộng giao diện tùy biến với 2 công tắc gạt độc lập cho 2 khối này trong bảng "Tùy chỉnh thống kê Dashboard".
+  - Kiểm tra kiểu dữ liệu TypeScript (`npm run typecheck`): Hoàn tất thành công 100% (0 errors).
+  - Dev server Next.js đang chạy ổn định và cập nhật tức thì.
+
+- **Thời gian thực hiện:** 12:04 (Asia/Saigon)
+- **Yêu cầu:** Kiểm tra lại còn thiếu biểu đồ thống kê nào chưa có thì tạo thêm và lấy số liệu thống kê thật 100% từ cơ sở dữ liệu, không tự ý thêm dữ liệu ảo; đưa toàn bộ các biểu đồ thống kê lên phía trên trước các ô phân hệ.
+- **Nội dung thực hiện:**
+  - `src/components/admin/AdminDashboardClient.tsx`:
+    - Di chuyển component `AdminCharts` lên trên vị trí các tab phân hệ (`tabNavContainer`) và lưới thống kê (`statsGrid`). Người quản lý khi vừa mở trang sẽ thấy ngay toàn bộ biểu đồ trực quan xu hướng và năng lực bệnh viện trước khi đi vào từng phân hệ chi tiết.
+  - `src/components/admin/AdminDashboard.tsx`:
+    - Thay thế toàn bộ số liệu ước tính của biểu đồ phân bổ nhân lực khoa phòng bằng **số liệu thống kê thực tế 100%** truy vấn trực tiếp từ bảng `departments` và quan hệ của `doctors`.
+    - Tính toán chính xác tỷ lệ giải quyết phản ánh (SLA) dựa trên số lượng thư đã xử lý thực tế `feedbackDone / totalFeedback`.
+    - Tính toán cơ cấu phác đồ điều trị thực tế theo số lượng phác đồ chuẩn Bộ Y tế đã ban hành trong cơ sở dữ liệu.
+  - Kiểm tra TypeScript (`npm run typecheck`): Hoàn tất thành công 100% (0 errors).
+
+## [2026-09-16] - Mở rộng Trung tâm Cảnh báo & Tiếp nhận Xử lý nhanh trên đầu Admin Dashboard
+
+- **Thời gian thực hiện:** 11:55 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Hiển thị thêm thông báo phản hồi: Tư vấn trực tuyến, Đặt lịch khám tại cơ sở, Thư góp ý / Phản hồi người bệnh và các nội dung có cảnh báo để người quản lý có thể kiểm tra nhanh được.
+  2. Khắc phục cảnh báo React: `Each child in a list should have a unique "key" prop. Check the render method of AdminDashboardClient. It was passed a child from AdminDashboard`.
+- **Nội dung thực hiện:**
+  - `src/components/admin/AdminDashboard.tsx`:
+    - Bổ sung `key="pending-triage-banner-node"` vào phần tử gốc `div.pendingTriageBanner` khi truyền qua prop `pendingTriageNode` vào `AdminDashboardClient`, khắc phục hoàn toàn cảnh báo React key trong danh sách render.
+    - Tích hợp thêm truy vấn danh sách phiếu khám hẹn mới (`appointments` với trạng thái `pending`/`new`), thư phản ánh & khiếu nại mới (`feedback` với trạng thái `new`/`processing`), và câu hỏi tư vấn sức khỏe trực tuyến (`consultations` với trạng thái `new`/`processing`).
+    - Nâng cấp khối trên cùng thành **Trung tâm Cảnh báo & Tiếp nhận Xử lý nhanh** (`pendingTriageBanner`) hiển thị tổng hợp toàn bộ các đầu việc cần xử lý ngay (Bài viết chờ duyệt xuất bản, Lịch khám chờ gọi xác nhận, Phản ánh / khiếu nại của người bệnh, Câu hỏi tư vấn y tế trực tuyến).
+    - Từng ô mục tiêu hiển thị trực quan mức độ ưu tiên theo màu sắc (Đỏ: Khiếu nại/Phản ánh, Cam: Đặt lịch khám, Xanh: Tư vấn trực tuyến, Vàng: Bài viết chờ duyệt).
+  - `src/components/admin/AdminDashboard.module.css`:
+    - Bổ sung các class màu phân cấp mức độ cảnh báo: `.pendingTriageItemDanger`, `.pendingTriageItemUrgent`, `.pendingTriageItemInfo` với hiệu ứng viền, nền và nút bấm tương ứng.
+  - Kiểm tra kiểu dữ liệu TypeScript (`npm run typecheck`): Hoàn tất thành công 100% (0 errors).
+
+- **Thời gian thực hiện:** 11:39 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Cho phép bật/tắt phần "Nguồn bài viết" trong từng bài viết riêng biệt (độc lập giữa các bài).
+  2. Những bài viết chờ duyệt / đã gửi duyệt (`workflowState = 'submitted'`) thì hiển thị trực tiếp lên vị trí trên cùng đầu trang Admin CMS Dashboard để ban quản trị/lãnh đạo nhìn thấy tức thì và duyệt xuất bản nhanh.
+  3. Trong phần nội dung chi tiết kỹ thuật chuyên sâu (`/ky-thuat-chuyen-sau/[slug]`), sửa lỗi bị hiển thị 2 lần đường gạch ngang ở dưới trước nút quay lại.
+- **Nội dung thực hiện:**
+  - **1. Bật/tắt nguồn bài viết trong từng bài viết riêng biệt (`showSource`)**:
+    - `src/fields/common.ts`: Bổ sung helper field `showSourceField(defaultValue = true)` thuộc tab "Cài đặt & SEO".
+    - Tích hợp trường `showSource` vào tất cả các Collection bài viết:
+      - `src/collections/News.ts` (mặc định `true`)
+      - `src/collections/Notices.ts` (mặc định `true`)
+      - `src/collections/Procurement.ts` (mặc định `true`)
+      - `src/collections/CustomPosts.ts` (mặc định `true`)
+      - `src/collections/Recruitment.ts` (mặc định `true`)
+      - `src/collections/ScientificActivities.ts` (mặc định `true`)
+      - `src/collections/AdvancedTechniques.ts` (mặc định `false`, có thể bật lại tùy ý)
+    - Cập nhật logic hiển thị bài viết chi tiết tại:
+      - `src/app/(frontend)/tin-tuc/[slug]/page.tsx`
+      - `src/app/(frontend)/thong-bao/[slug]/page.tsx`
+      - `src/app/(frontend)/dau-thau-mua-sam/[slug]/page.tsx`
+      - `src/app/(frontend)/tuyen-dung/[slug]/page.tsx`
+      - `src/app/(frontend)/noi-dung/[sectionSlug]/[slug]/page.tsx`
+      - `src/app/(frontend)/hoat-dong-khoa-hoc/[slug]/page.tsx`
+      - `src/app/(frontend)/[...path]/page.tsx`
+      - `src/app/(frontend)/ky-thuat-chuyen-sau/[slug]/page.tsx`
+      - Ưu tiên công tắc riêng của từng bài: Nếu bài viết có cài đặt `showSource !== undefined`, website sẽ ưu tiên giá trị này; nếu chưa cấu hình thì dùng cấu hình chung `themeSettings`.
+    - **Database & Migration**:
+      - Tạo file migration chuẩn `scripts/db-migrations/20260916_014_add_per_post_show_source.mjs` thêm cột `show_source` vào 7 bảng và 7 bảng phiên bản (`_v`).
+      - Chạy `npm run generate:db-schema`, seal contract `20260916_014_add_per_post_show_source` và deploy thành công vào PostgreSQL.
+  - **2. Hiển thị thông báo và danh sách bài viết chờ duyệt trên Admin CMS Dashboard**:
+    - `src/components/admin/AdminDashboard.tsx`:
+      - Thêm truy vấn đếm và lấy danh sách các bài viết ở trạng thái chờ duyệt (`workflowState: 'submitted'`) từ các phân hệ: Tin tức, Thông báo, Đấu thầu, Tuyển dụng, Chuyên đề động, Sinh hoạt khoa học.
+      - Hiển thị khối thông báo nổi bật màu hổ phách (`pendingTriageBanner`) ngay phía trên Bento Grid điều hành khi có bài viết đang chờ duyệt, hiển thị rõ số lượng bài và danh sách bài viết kèm chuyên mục, tiêu đề, thời gian gửi và nút "Duyệt bài →" dẫn thẳng vào trang biên tập bài viết đó.
+      - Cập nhật huy hiệu (badge) trạng thái cảnh báo trên các thẻ chỉ số cốt lõi (`news`, `notices`, `procurement`, `recruitment` hiển thị "X chờ duyệt").
+  - **3. Khắc phục hiển thị 2 lần gạch ngang ở trang chi tiết kỹ thuật chuyên sâu**:
+    - `src/app/(frontend)/ky-thuat-chuyen-sau/[slug]/page.tsx`:
+      - Xóa bỏ thẻ `div` bọc ngoài có `borderTop` trùng lặp trước nút quay lại, vì component `ArticleDetailTemplate` đã có đường kẻ ngăn cách chuẩn.
+      - Xóa bỏ ký tự mũi tên lặp lại `←` trong label `backToListLabel`.
+  - **Files Modified:**
+    - `src/fields/common.ts`
+    - `src/collections/News.ts`
+    - `src/collections/Notices.ts`
+    - `src/collections/Procurement.ts`
+    - `src/collections/CustomPosts.ts`
+    - `src/collections/Recruitment.ts`
+    - `src/collections/ScientificActivities.ts`
+    - `src/collections/AdvancedTechniques.ts`
+    - `src/app/(frontend)/tin-tuc/[slug]/page.tsx`
+    - `src/app/(frontend)/thong-bao/[slug]/page.tsx`
+    - `src/app/(frontend)/dau-thau-mua-sam/[slug]/page.tsx`
+    - `src/app/(frontend)/tuyen-dung/[slug]/page.tsx`
+    - `src/app/(frontend)/noi-dung/[sectionSlug]/[slug]/page.tsx`
+    - `src/app/(frontend)/hoat-dong-khoa-hoc/[slug]/page.tsx`
+    - `src/app/(frontend)/[...path]/page.tsx`
+    - `src/app/(frontend)/ky-thuat-chuyen-sau/[slug]/page.tsx`
+    - `src/components/admin/AdminDashboard.tsx`
+    - `src/components/admin/AdminDashboard.module.css`
+    - `scripts/db-migrations/20260916_014_add_per_post_show_source.mjs`
+    - `scripts/db-schema-contract.json`
+    - `src/payload-generated-schema.ts`
+    - `src/payload-types.ts`
+    - `CHANGELOG.md`
+    - `CURRENT-TASK.md`
+
+
+- **Thời gian thực hiện:** 10:41 (Asia/Saigon)
+- **Yêu cầu:** Khắc phục cảnh báo SSL mode của PostgreSQL driver và lỗi `connect ENETUNREACH 2607:f8b0:4004:c06::6c:465 - Error verifying Nodemailer transport`.
+- **Nội dung thực hiện:**
+  - `payload.config.ts`:
+    - Thêm `skipVerify: true` vào cấu hình `nodemailerAdapter` để ngăn chặn Payload tự động gọi verify socket blocking lúc khởi động, loại bỏ hoàn toàn lỗi crash/warning khi mạng không hỗ trợ kết nối trực tiếp đến SMTP server.
+    - Bổ sung `family: 4` vào `transport` Nodemailer để ép buộc ưu tiên tuyệt đối giao thức IPv4 khi resolve domain `smtp.gmail.com`, giải quyết triệt để lỗi mạng `ENETUNREACH` trên các hạ tầng mạng chưa hỗ trợ định tuyến IPv6.
+- **Files Modified:**
+  - `payload.config.ts`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
 ## [2026-09-16] - Bổ sung công tắc bật/tắt độc lập từng khối nội dung bài viết chi tiết & Tắt nguồn bài viết Kỹ thuật chuyên sâu
 
 - **Thời gian thực hiện:** 09:54 (Asia/Saigon)

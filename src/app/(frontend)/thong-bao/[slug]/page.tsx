@@ -52,12 +52,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme] = await Promise.all([
+  const [{ item, related }, theme, siteSettings] = await Promise.all([
     getData(slug),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
+    getGlobal('site-settings').catch(() => null) as Promise<any>,
   ])
 
   if (!item) notFound()
+
+  const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
 
   const publishedDate = item.publishedAt
     ? new Date(item.publishedAt).toLocaleDateString('vi-VN')
@@ -98,6 +101,8 @@ export default async function Page({ params }: Props) {
       attachments={item.attachments}
       attachmentTitle="Tài liệu / Văn bản đính kèm"
       sourceName={item.source || undefined}
+      hospitalName={hospitalName}
+      showSource={item.showSource ?? undefined}
       adminConfig={theme?.detailLayout}
       sidebarTitle="Thông báo mới nhất"
       latestItems={mappedRelated}

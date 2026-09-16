@@ -401,6 +401,220 @@
   display: block;
 }
 
+.lockBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: #fff1f0;
+  color: #cf1322;
+  font-weight: 700;
+  font-size: 0.82rem;
+  border-radius: 6px;
+  border: 1px solid #ffa39e;
+}
+
+.securityLockedRow {
+  background: #fffbf0 !important;
+}
+
+.lockedTextNotice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  color: #d46b08;
+  font-weight: 600;
+}
+
+.btnUnlockModal {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: #d4380d;
+  color: #ffffff;
+  border: 1px solid #d4380d;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(212, 56, 13, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btnUnlockModal:hover {
+  background: #a82404;
+  border-color: #a82404;
+}
+
+/* Khung khóa bảo mật trình xem tài liệu */
+.lockedViewerCard {
+  margin-top: 24px;
+  padding: 48px 24px;
+  background: #ffffff;
+  border: 2px dashed #ffccc7;
+  border-radius: var(--site-radius-md, 14px);
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.lockedViewerInner {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.lockIconWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: #fff1f0;
+  color: #cf1322;
+  border-radius: 50%;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 14px rgba(207, 19, 34, 0.15);
+}
+
+.lockedTitle {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #820014;
+  margin-bottom: 10px;
+}
+
+.lockedDesc {
+  font-size: 0.95rem;
+  color: #595959;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.pinForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pinInputGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.pinInput {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px solid #d9d9d9;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.pinInput:focus {
+  border-color: var(--site-primary, #0878d1);
+  box-shadow: 0 0 0 3px rgba(8, 120, 209, 0.15);
+}
+
+.pinInputError {
+  border-color: #ff4d4f !important;
+}
+
+.btnSubmitPin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--site-primary, #0878d1);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnSubmitPin:hover {
+  background: #065fa8;
+}
+
+.pinErrorMsg {
+  color: #ff4d4f;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.pinHelp {
+  font-size: 0.85rem;
+  color: #8c8c8c;
+  line-height: 1.5;
+  margin-top: 14px;
+}
+
+/* Modal Popup Nhập PIN khi bấm nút Tải về */
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 460px;
+  padding: 28px 24px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.2s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modalCloseBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  color: #8c8c8c;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalCloseBtn:hover {
+  color: #1f2937;
+}
+
 @media (max-width: 768px) {
   .colLabel {
     width: 35%;
@@ -416,5 +630,8 @@
   }
   .frameContainer {
     height: 480px;
+  }
+  .pinInputGroup {
+    flex-direction: column;
   }
 }

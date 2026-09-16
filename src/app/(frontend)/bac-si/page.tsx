@@ -179,7 +179,8 @@ export default async function DoctorsPage({
                 const avatar = mediaUrl(doc.avatar)
                 const deptName = typeof doc.department === 'object' ? doc.department?.name : ''
                 const specialtyName = typeof doc.specialtyRef === 'object' ? doc.specialtyRef?.name : doc.specialty || ''
-                const subtitle = doc.title || deptName || specialtyName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
+                const defaultHospital = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
+                const subtitle = doc.title || deptName || specialtyName || defaultHospital
                 
                 // Kết hợp học vị + tên đầy đủ (VD: PGS.TS. Phan Thu Phương)
                 const prefix = doc.degree ? `${doc.degree}. ` : ''

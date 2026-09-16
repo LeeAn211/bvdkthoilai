@@ -3,6 +3,7 @@ import { PageHero } from '@/components/PageHero'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { ExaminationFlowView } from './ExaminationFlowView'
+import { PatientCareSubNav } from '@/components/PatientCareSubNav'
 import { getGlobal } from '@/lib/payload'
 import './quy-trinh-kham-benh.css'
 
@@ -48,6 +49,8 @@ export default async function ExaminationFlowPage() {
       />
       <main className="section">
         <div className="container">
+          <PatientCareSubNav activeKey="quy-trinh" />
+
           {flowSettings.showNoticeBanner && (flowSettings.noticeContent || flowSettings.noticeTitle) && (
             <div
               style={{

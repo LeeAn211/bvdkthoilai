@@ -77,10 +77,16 @@ export default async function OrganizationChartPage() {
   let chart: any = {}
   let allUnits: any[] = []
   let doctors: any[] = []
+  let siteSettings: any = null
 
   try {
-    const [settings, payload] = await Promise.all([getGlobal('organization-chart'), getCMS()])
+    const [settings, payload, siteRes] = await Promise.all([
+      getGlobal('organization-chart'),
+      getCMS(),
+      getGlobal('site-settings').catch(() => null),
+    ])
     chart = settings
+    siteSettings = siteRes
     const [unitsRes, docsRes] = await Promise.all([
       payload.find({ collection: 'departments', limit: 100, sort: ['order', 'name'], depth: 1 }),
       payload.find({ collection: 'doctors', where: { active: { equals: true } }, limit: 100, sort: ['order', 'name'], depth: 1 }),
@@ -88,6 +94,8 @@ export default async function OrganizationChartPage() {
     allUnits = unitsRes.docs as any[]
     doctors = docsRes.docs as any[]
   } catch {}
+
+  const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
 
   // Lọc Ban Giám đốc từ DB Bác sĩ
   const boardDoctors = doctors.filter((doc: any) => {
@@ -147,7 +155,7 @@ export default async function OrganizationChartPage() {
       <PageHero
         eyebrow="CƠ CẤU BỘ MÁY"
         title={chart?.pageTitle || 'Sơ đồ tổ chức Bệnh viện'}
-        description={chart?.description || 'Cơ cấu tổ chức bộ máy và hệ thống các khoa, phòng trực thuộc Bệnh viện Đa khoa Khu vực Thới Lai.'}
+        description={chart?.description || `Cơ cấu tổ chức bộ máy và hệ thống các khoa, phòng trực thuộc ${hospitalName}.`}
       />
       <main className="bmOrgPage">
         <div className="container">

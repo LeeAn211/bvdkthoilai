@@ -106,30 +106,45 @@ export default async function FormsHubPage() {
             </div>
           )}
 
-          {/* Khối tiện ích biểu mẫu */}
-          <div className="patientCareInfoGrid">
-            <div className="patientCareInfoBox">
-              <div className="patientCareInfoIcon">⚡</div>
-              <div>
-                <h3 className="patientCareInfoTitle">Tiết kiệm thời gian</h3>
-                <p className="patientCareInfoText">Điền trước thông tin từ điện thoại hoặc máy tính trước khi đến viện, giảm tối đa thời gian xếp hàng.</p>
+          {/* Khối tiện ích biểu mẫu (quản lý từ CMS) */}
+          {(() => {
+            const DEFAULT_FORM_BOXES = [
+              {
+                icon: '⚡',
+                title: 'Tiết kiệm thời gian',
+                desc: 'Điền trước thông tin từ điện thoại hoặc máy tính trước khi đến viện, giảm tối đa thời gian xếp hàng.',
+              },
+              {
+                icon: '📱',
+                title: 'Mã xác nhận điện tử',
+                desc: 'Sau khi gửi thành công, bạn sẽ nhận được mã tiếp nhận để nhân viên quầy tra cứu ngay lập tức.',
+              },
+              {
+                icon: '🔒',
+                title: 'Bảo mật thông tin bệnh nhân',
+                desc: 'Thông tin được lưu trữ và xử lý tuân thủ nghiêm ngặt quy chế bảo mật hồ sơ bệnh án.',
+              },
+            ]
+            const boxes = Array.isArray(formsConf.infoBoxes) && formsConf.infoBoxes.length > 0
+              ? formsConf.infoBoxes.filter((b: any) => b?.enabled !== false)
+              : DEFAULT_FORM_BOXES
+
+            if (boxes.length === 0) return null
+
+            return (
+              <div className="patientCareInfoGrid" style={{ marginBottom: '28px' }}>
+                {boxes.map((b: any, idx: number) => (
+                  <div className="patientCareInfoBox" key={idx}>
+                    <div className="patientCareInfoIcon">{b.icon || '⚡'}</div>
+                    <div>
+                      <h3 className="patientCareInfoTitle">{b.title}</h3>
+                      <p className="patientCareInfoText" style={{ whiteSpace: 'pre-line' }}>{b.desc}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-            <div className="patientCareInfoBox">
-              <div className="patientCareInfoIcon">📱</div>
-              <div>
-                <h3 className="patientCareInfoTitle">Mã xác nhận điện tử</h3>
-                <p className="patientCareInfoText">Sau khi gửi thành công, bạn sẽ nhận được mã tiếp nhận để nhân viên quầy tra cứu ngay lập tức.</p>
-              </div>
-            </div>
-            <div className="patientCareInfoBox">
-              <div className="patientCareInfoIcon">🔒</div>
-              <div>
-                <h3 className="patientCareInfoTitle">Bảo mật thông tin bệnh nhân</h3>
-                <p className="patientCareInfoText">Thông tin được lưu trữ và xử lý tuân thủ nghiêm ngặt quy chế bảo mật hồ sơ bệnh án.</p>
-              </div>
-            </div>
-          </div>
+            )
+          })()}
 
           <div style={{ marginBottom: '20px' }}>
             <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', margin: '0 0 6px' }}>

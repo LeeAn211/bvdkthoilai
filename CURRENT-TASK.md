@@ -1,22 +1,48 @@
-# CURRENT TASK
+# TÁC VỤ HIỆN TẠI (CURRENT TASK)
 
-## Mục tiêu
-
-1. Hỗ trợ bật/tắt độc lập từng ô thông tin (Granular Toggles) trên mẫu bài viết chi tiết chung `ArticleDetailTemplate`.
-2. Tắt dòng "Nguồn bài viết" cho Kỹ thuật chuyên sâu (`/ky-thuat-chuyen-sau/[slug]`), giữ bật các khối khác.
-3. Cung cấp nhóm cấu hình `techniqueOptions` và mở rộng `displayOptions` trong Admin CMS để người quản trị có thể bật/tắt tùy ý mọi khối nội dung.
+- **Mục tiêu**: Nâng cấp thanh điều hướng trên điện thoại di động (mobile) theo tiêu chuẩn y tế thẩm mỹ và trải nghiệm cao nhất: Thanh top bar 1 dòng 48px cố định (không trôi, không xô lệch) kết hợp Nút "DANH MỤC" mở bảng Drawer trượt với các nhóm Accordion đóng/mở êm ái.
+- **Trạng thái**: Đã hoàn thành (COMPLETED)
+- **Tập tin liên quan**:
+  - `src/components/MobileNavHeader.tsx`
+  - `src/components/SiteHeader.module.css`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+- **Kết quả xác minh**:
+  - Không còn hiện tượng cuộn ngang trôi dạt hay bẻ gãy 2-3 dòng thô kệch.
+  - Desktop giữ nguyên 100% giao diện truyền thống với menu dropdown thả xuống.
+  - Mobile sở hữu thanh điều hướng 1 dòng tinh gọn cùng bảng Drawer trượt mượt mà, đầy đủ các mục con phân cấp rõ ràng.
+  - `npm run typecheck`: 0 lỗi TypeScript.
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 09:54 ngày 2026-09-16 (Asia/Saigon).
+- **Hoàn thành** lúc 16:25 ngày 2026-09-16 (Asia/Saigon).
 - **Chi tiết đã xử lý:**
-  - `ThemeSettings.ts`: Bổ sung nhóm `techniqueOptions` cho Kỹ thuật chuyên sâu (mặc định `showSource = false`), mở rộng `displayOptions` dùng chung, thêm `applyAdvancedTechniques`.
-  - Migration `20260916_013_add_detail_layout_granular_toggles.mjs`: Thêm 25 cột vào `theme_settings` và `_theme_settings_v`. Đã seal contract và deploy (13/13 applied).
-  - `ArticleDetailTemplate.tsx`: Hỗ trợ toàn bộ props bật/tắt độc lập từng khối (Breadcrumb, Ngày, Lượt xem, Chuyên khoa, Highlights, Excerpt, Nguồn, Chia sẻ, Sidebar, Tin mới, Banner, Tin liên quan, Nút quay lại). Tự động co giãn layout grid khi tắt Sidebar hoặc Cột trái.
-  - `ky-thuat-chuyen-sau/[slug]/page.tsx`: Kết nối `techniqueOptions`, mặc định ẩn dòng "Nguồn bài viết", các khối khác giữ bật và có thể bật/tắt linh hoạt từ Admin CMS.
-  - `npm run db:schema:check`: Pass contract hợp lệ.
-  - `npm run db:migrate:status`: Pass 13/13 applied, 0 pending.
-  - `npm run typecheck`: Pass 100% (0 errors).
+  1. **Tạo Global `PatientPortalSettings` (`patient-portal-settings`)**:
+     - Cấu hình Hero & Notice Banner (tiêu đề, nội dung xuống dòng tự do, căn lề).
+     - Quản lý danh sách Tab Sub-Nav: bật/tắt `enabled`, label, href, icon, badge.
+     - Quản lý Khối cam kết phục vụ (`commitmentsSection`): bật/tắt toàn khối và từng cam kết.
+     - Quản lý Khối dịch vụ y tế (`serviceGroups` & `serviceItems`): bật/tắt từng nhóm chuyên mục và từng thẻ dịch vụ con, cho phép thêm nhóm/thẻ mới tùy ý.
+     - Quản lý Khối Banner kêu gọi hành động (`ctaSection`).
+  2. **Database Migration & Schema Contract (`20260916_016_create_patient_portal_settings_tables`)**:
+     - Bảng `patient_portal_settings` và các bảng con `pps_sub_tabs`, `pps_commits`, `pps_svc_groups`, `pps_svc_items`.
+     - Tên bảng và tên cột tuân thủ < 63 ký tự, khóa ngoại ON DELETE CASCADE.
+     - Schema contract đã được sealed (`npm run db:schema:seal`), chạy migration deploy thành công 16/16 applied.
+  3. **Cập nhật Frontend Components**:
+     - `src/components/PatientCareSubNav.tsx`: Tự động lấy cấu hình tab từ CMS, áp dụng đồng bộ cho toàn bộ các trang con.
+     - `src/app/(frontend)/danh-cho-nguoi-benh/page.tsx`: Render 100% động từ CMS với cơ chế fallback an toàn.
+  4. **Kiểm thử**:
+     - `npm run typecheck`: 0 errors.
+     - `npm run db:migrate:status`: 16 applied, 0 pending.
+
+- **Chi tiết đã xử lý:**
+  1. **Đưa toàn bộ Biểu đồ Thống kê lên trên các ô phân hệ**:
+     - Cập nhật vị trí render trong `AdminDashboardClient.tsx`: Biểu đồ `AdminCharts` được đặt ngay phía trên cụm Tab phân hệ (`tabNavContainer`) và lưới thẻ thống kê (`statsGrid`).
+     - Người quản lý và Ban Giám đốc khi đăng nhập sẽ thấy ngay toàn bộ biểu đồ xu hướng xuất bản, phân bổ nhân lực, chỉ số hài lòng và cam kết chất lượng bệnh viện.
+  2. **Đồng bộ số liệu THỰC TẾ 100% từ Database (không tự ý thêm ảo)**:
+     - Truy vấn trực tiếp danh sách khoa/phòng (`departments`) và quan hệ công tác của bác sĩ (`doctors`) để tính chính xác tỷ lệ và số lượng bác sĩ từng khoa.
+     - Tỷ lệ giải quyết phản ánh CSKH (SLA) được tính theo tỷ lệ thực tế giữa số thư đã xử lý và tổng số thư người bệnh gửi.
+     - Cơ cấu phác đồ điều trị tính toán theo số lượng phác đồ chuẩn Bộ Y tế thực tế trong hệ thống.
+  3. **Đã kiểm tra TypeScript (`npm run typecheck`)**: Hoàn tất 100% (0 errors).
 
 
 

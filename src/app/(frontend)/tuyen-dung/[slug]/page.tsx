@@ -57,14 +57,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function RecruitmentDetail({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme] = await Promise.all([
+  const [{ item, related }, theme, siteSettings] = await Promise.all([
     getData(slug),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
+    getGlobal('site-settings').catch(() => null) as Promise<any>,
   ])
 
   if (!item) notFound()
 
   const isBạchMaiLayout = theme?.detailLayout?.applyRecruitment !== false
+  const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
   const publishedDate = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : ''
   const expireDate = item.deadlineAt ? new Date(item.deadlineAt).toLocaleDateString('vi-VN') : undefined
 
@@ -83,9 +85,10 @@ export default async function RecruitmentDetail({ params }: Props) {
     const highlights = [
       { label: 'Số lượng tuyển', value: item.quantity ? `${item.quantity} chỉ tiêu` : 'Theo thông báo' },
       { label: 'Hạn nhận hồ sơ', value: expireDate || 'Không giới hạn' },
-      ...(item.department && typeof item.department === 'object'
-        ? [{ label: 'Khoa / Phòng', value: item.department.name }]
-        : []),
+      {
+        label: 'Khoa / Phòng',
+        value: (item.department && typeof item.department === 'object' ? item.department.name : null) || hospitalName,
+      },
     ]
 
     const mappedRelated = related.map((rel: any) => ({
@@ -112,6 +115,8 @@ export default async function RecruitmentDetail({ params }: Props) {
         attachments={allAttachments}
         attachmentTitle="Hồ sơ & Mẫu biểu tuyển dụng"
         sourceName={item.source || undefined}
+        hospitalName={hospitalName}
+        showSource={item.showSource ?? undefined}
         adminConfig={theme?.detailLayout}
         sidebarTitle="Tin tuyển dụng mới"
         latestItems={mappedRelated}

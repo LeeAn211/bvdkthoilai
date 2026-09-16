@@ -92,6 +92,15 @@ export const AdvancedTechniques: CollectionConfig = {
       },
     },
     {
+      name: 'showSource',
+      label: 'Hiển thị nguồn thông tin ở chân trang chi tiết',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Bật để hiển thị khối thông tin Nguồn / Đơn vị thực hiện dưới chân bài viết kỹ thuật. Mặc định tắt.',
+      },
+    },
+    {
       name: 'summary',
       label: 'Tóm tắt / Mô tả ngắn',
       type: 'textarea',

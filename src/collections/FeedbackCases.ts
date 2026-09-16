@@ -12,14 +12,56 @@ export const FeedbackCases: CollectionConfig = {
       return data
     }],
     afterChange: [async ({ doc, previousDoc, operation, req }) => {
-      if (operation !== 'update' || !previousDoc || doc?.status === previousDoc?.status) return doc
-      try {
-        await req.payload.create({ collection: 'feedbackActions', data: {
-          case: doc.id, action: doc.status === 'closed' ? 'closed' : 'status',
-          note: `Trạng thái chuyển từ ${previousDoc.status || 'chưa xác định'} sang ${doc.status || 'chưa xác định'}.`,
-          fromStatus: previousDoc.status, toStatus: doc.status, performedBy: req.user?.id, public: true,
-        }, overrideAccess: true, req })
-      } catch {}
+      if (operation !== 'update' || !doc) return doc
+      // Ghi nhật ký feedbackActions nếu đổi trạng thái
+      if (previousDoc && doc.status !== previousDoc.status) {
+        try {
+          await req.payload.create({ collection: 'feedbackActions', data: {
+            case: doc.id, action: doc.status === 'closed' ? 'closed' : 'status',
+            note: `Trạng thái chuyển từ ${previousDoc.status || 'chưa xác định'} sang ${doc.status || 'chưa xác định'}.`,
+            fromStatus: previousDoc.status, toStatus: doc.status, performedBy: req.user?.id, public: true,
+          }, overrideAccess: true, req })
+        } catch {}
+      }
+      // Ghi nhật ký nếu có cập nhật phản hồi công khai
+      if (previousDoc && doc.publicResponse && doc.publicResponse !== previousDoc.publicResponse) {
+        try {
+          await req.payload.create({ collection: 'feedbackActions', data: {
+            case: doc.id, action: 'response',
+            note: 'Bệnh viện cập nhật nội dung phản hồi chính thức.',
+            performedBy: req.user?.id, public: true,
+          }, overrideAccess: true, req })
+        } catch {}
+      }
+      // Đồng bộ sang feedback collection
+      if (doc.code) {
+        try {
+          const fbResults = await req.payload.find({
+            collection: 'feedback',
+            where: { code: { equals: doc.code } },
+            limit: 1,
+            depth: 0,
+            overrideAccess: true,
+            req,
+          })
+          if (fbResults.docs.length > 0) {
+            const fbDoc: any = fbResults.docs[0]
+            const mappedStatus = ['resolved', 'closed'].includes(doc.status) ? 'done' : doc.status === 'new' ? 'new' : 'processing'
+            const fbUpdate: any = {}
+            if (fbDoc.status !== mappedStatus) fbUpdate.status = mappedStatus
+            if (doc.publicResponse && fbDoc.response !== doc.publicResponse) fbUpdate.response = doc.publicResponse
+            if (Object.keys(fbUpdate).length > 0) {
+              await req.payload.update({
+                collection: 'feedback',
+                id: fbDoc.id,
+                data: fbUpdate,
+                overrideAccess: true,
+                req,
+              })
+            }
+          }
+        } catch {}
+      }
       return doc
     }],
   },

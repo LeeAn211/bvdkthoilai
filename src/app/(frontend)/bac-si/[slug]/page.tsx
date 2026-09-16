@@ -34,10 +34,11 @@ export default async function DoctorDetailPage({ params }: Props) {
   if (!d || d.active === false) notFound()
 
   const s: any = await getGlobal('site-settings').catch(() => null)
+  const hospitalName = s?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
 
   const deptObj = typeof d.department === 'object' ? d.department : null
   const deptId = deptObj?.id || d.department
-  const deptName = deptObj?.name || 'Bệnh viện Đa khoa Khu vực Thới Lai'
+  const deptName = deptObj?.name || hospitalName
   const specialtyName = typeof d.specialtyRef === 'object' ? d.specialtyRef?.name : d.specialty || ''
 
   // Lấy danh sách các bác sĩ cùng khoa hoặc chuyên khoa
@@ -248,7 +249,7 @@ export default async function DoctorDetailPage({ params }: Props) {
                           {fullDisplayName} tốt nghiệp bác sĩ chuyên khoa và có nhiều năm học tập, nâng cao nghiệp vụ chuyên môn tại các trường Đại học Y Dược uy tín trong cả nước.
                         </p>
                         <p>
-                          Hiện đang công tác và đảm nhiệm vị trí <strong>{d.title || 'Bác sĩ'}</strong> tại <strong>{deptName}</strong> - Bệnh viện Đa khoa Khu vực Thới Lai, luôn tận tâm phục vụ và chăm sóc sức khỏe người dân.
+                          Hiện đang công tác và đảm nhiệm vị trí <strong>{d.title || 'Bác sĩ'}</strong> tại <strong>{deptName}</strong> - {hospitalName}, luôn tận tâm phục vụ và chăm sóc sức khỏe người dân.
                         </p>
                       </>
                     )}

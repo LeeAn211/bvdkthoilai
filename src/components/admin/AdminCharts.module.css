@@ -367,6 +367,7 @@
   font-size: 9.5px;
   color: #059669;
   font-weight: 700;
+}
 /* 5. Weekly Workload & Emergency Intake Chart */
 .workloadStatsHeader {
   display: grid;
@@ -456,62 +457,357 @@
   margin-bottom: 14px;
 }
 
-.protocolCard {
+/* 6. Clinical Protocols Distribution Breakdown (Thiết kế y tế chuẩn mực cao cấp) */
+.protocolCardNew {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.protocolCardNew:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+  transform: translateY(-1px);
+}
+
+.protocolCardTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  transition: all 0.18s ease;
-}
-
-.protocolCard:hover {
-  background: #ffffff;
-  border-color: #cbd5e1;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .protocolCardLeft {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   min-width: 0;
 }
 
 .protocolDot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 999px;
   flex-shrink: 0;
 }
 
 .protocolName {
-  font-size: 12px;
-  font-weight: 700;
-  color: #1e293b;
+  font-size: 12.5px;
+  font-weight: 750;
+  color: #0f172a;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.protocolCount {
+.protocolBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.protocolTrackWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.protocolTrack {
+  flex: 1;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.protocolTrackFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.protocolMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
   font-size: 11px;
+}
+
+.protocolCount {
   color: #64748b;
-  margin-top: 1px;
+  font-weight: 550;
 }
 
 .protocolPercentPill {
   font-size: 11.5px;
   font-weight: 800;
   color: #0f172a;
-  background: #ffffff;
-  padding: 3px 8px;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
   font-feature-settings: 'tnum';
+}
+
+/* 7. Resource Structure & Feedback Operations Bento Cards */
+.countPill {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #f0fdfa;
+  border: 1px solid #ccfbf1;
+  color: #0f766e;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cardLink {
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.cardLink:hover {
+  color: #0d9488;
+  text-decoration: underline;
+}
+
+.breakdownList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.breakdownRow {
+  display: grid;
+  grid-template-columns: minmax(130px, 1fr) 1.2fr 45px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.breakdownRow:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateX(2px);
+}
+
+.rowInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.rowDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
   flex-shrink: 0;
+}
+
+.rowName {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.barContainer {
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.rowNum {
+  font-size: 13px;
+  font-weight: 750;
+  color: #0f172a;
+  text-align: right;
+  font-feature-settings: 'tnum';
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 11.5px;
+}
+
+.footerNote {
+  color: #94a3b8;
+}
+
+.csOverview {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 6px 0 14px;
+}
+
+.donutRing {
+  --done: 0%;
+  --processing: 0%;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #22c55e 0% var(--done),
+    #f59e0b var(--done) calc(var(--done) + var(--processing)),
+    #ef4444 calc(var(--done) + var(--processing)) 100%
+  );
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.donutCenter {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.donutTotal {
+  font-size: 22px;
+  font-weight: 850;
+  color: #0f172a;
+  line-height: 1;
+  font-feature-settings: 'tnum';
+}
+
+.donutSub {
+  font-size: 9px;
+  font-weight: 650;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.csLegend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  transition: all 0.15s ease;
+}
+
+.legendRow:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.legendBullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bgDanger { background: #ef4444; }
+.bgWarning { background: #f59e0b; }
+.bgSuccess { background: #22c55e; }
+
+.legendLabel {
+  color: #475569;
+  font-size: 12px;
+  flex: 1;
+}
+
+.legendVal {
+  font-weight: 800;
+  color: #0f172a;
+  font-feature-settings: 'tnum';
+}
+
+.feedbackBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+.bannerWarning {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  color: #92400e;
+}
+
+.bannerSuccess {
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  color: #166534;
+}
+
+.bannerIcon svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.bannerContent strong {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.bannerContent p {
+  margin: 0;
+  font-size: 11.5px;
+  opacity: 0.9;
 }
 
 /* Responsive */
@@ -532,5 +828,11 @@
   }
   .slaStats {
     grid-template-columns: 1fr;
+  }
+  .breakdownRow {
+    grid-template-columns: 1fr auto;
+  }
+  .barContainer {
+    display: none;
   }
 }

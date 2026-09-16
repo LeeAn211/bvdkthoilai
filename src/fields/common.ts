@@ -205,6 +205,16 @@ export const postSourceField: Field = {
   },
 }
 
+export const showSourceField = (defaultValue = true): Field => ({
+  name: 'showSource',
+  label: 'Hiển thị nguồn bài viết ở chân trang chi tiết',
+  type: 'checkbox',
+  defaultValue,
+  admin: {
+    description: 'Bật để hiển thị thông tin nguồn/tác giả dưới chân bài viết. Tắt nếu không muốn hiện nguồn cho bài viết này.',
+  },
+})
+
 export const imageDisplayFields: Field[] = [
   {
     name: 'coverFit',

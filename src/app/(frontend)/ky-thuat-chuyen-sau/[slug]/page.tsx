@@ -75,8 +75,8 @@ export default async function AdvancedTechniqueDetailPage({ params }: Props) {
   const showHighlights = techConfig.showHighlights !== false
   const showAdvantages = techConfig.showAdvantages !== false
   const showCover = item.showCoverInDetail === true || techConfig.showCoverInDetail === true
-  // Mặc định TẮT nguồn bài viết cho Kỹ thuật chuyên sâu theo yêu cầu của người dùng, nhưng có thể bật lại tùy ý trong Admin
-  const showSource = techConfig.showSource === true
+  // Cho phép bật/tắt nguồn ở từng bài riêng biệt, nếu không chọn thì theo cài đặt chung trong Admin ThemeSettings
+  const showSource = item.showSource !== undefined ? item.showSource : (techConfig.showSource === true)
   const sourceName = techConfig.sourceName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
   const showShareButtons = techConfig.showShareButtons !== false
   const showSidebar = techConfig.showSidebar !== false
@@ -174,9 +174,7 @@ export default async function AdvancedTechniqueDetailPage({ params }: Props) {
   )
 
   const customBodyBottom = showBackToList ? (
-    <div style={{ marginTop: '28px', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
-      <BackToList href="/#ky-thuat-chuyen-sau" label="← Xem thêm kỹ thuật chuyên sâu trên Trang chủ" />
-    </div>
+    <BackToList href="/#ky-thuat-chuyen-sau" label="Xem thêm kỹ thuật chuyên sâu trên Trang chủ" />
   ) : null
 
   const mappedRelated = related.map((rel: any) => ({

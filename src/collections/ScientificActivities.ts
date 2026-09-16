@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { contentDeleteAccess, moduleAccess, publicPublishedFor, workflowUpdateAccess } from '@/access'
-import { attachmentsField, imageDisplayFields, layoutTemplateField, postSourceField, seoFields, slugField, workflowFields } from '@/fields/common'
+import { attachmentsField, imageDisplayFields, layoutTemplateField, postSourceField, seoFields, showSourceField, slugField, workflowFields } from '@/fields/common'
 import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
 
@@ -72,6 +72,7 @@ export const ScientificActivities: CollectionConfig = {
     { name: 'featured', label: 'Ưu tiên hiển thị', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
     { name: 'publishedAt', label: 'Ngày đăng', type: 'date', admin: { position: 'sidebar' } },
     postSourceField,
+    showSourceField(true),
     layoutTemplateField,
     ...imageDisplayFields,
     ...workflowFields,

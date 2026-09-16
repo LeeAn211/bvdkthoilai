@@ -133,7 +133,7 @@ export default async function AboutHospitalPage() {
   const appearance = aboutData?.appearance || {}
   const eyebrow = hero.eyebrow || 'TỔNG QUAN BỆNH VIỆN'
   const tagline = hero.tagline || (siteSettings?.headerSlogan || 'Điều trị bằng trái tim – Chăm sóc bằng tấm lòng')
-  const intro = hero.intro || 'Bệnh viện Đa khoa Khu vực Thới Lai là cơ sở y tế đa khoa công lập trực thuộc Sở Y tế thành phố Cần Thơ, giữ vai trò khám chữa bệnh trọng điểm tại cửa ngõ phía Tây, không ngừng đổi mới chất lượng chuyên môn và phong cách phục vụ.'
+  const intro = hero.intro || `${hospitalName} là cơ sở y tế đa khoa công lập trực thuộc Sở Y tế thành phố Cần Thơ, giữ vai trò khám chữa bệnh trọng điểm tại cửa ngõ phía Tây, không ngừng đổi mới chất lượng chuyên môn và phong cách phục vụ.`
   
   const bannerImg = mediaUrl(hero.bannerImage) || '/banners/gioi-thieu-chung.jpg'
 

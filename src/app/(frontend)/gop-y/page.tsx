@@ -19,13 +19,47 @@ export default async function FeedbackPage() {
   const hotline = siteSettings?.hotline || '02923686115'
   const emergencyHotline = siteSettings?.emergencyHotline || '02923686115'
 
+  const fbPage = siteSettings?.feedbackPage || {}
+  const eyebrow = fbPage.eyebrow || 'CHĂM SÓC NGƯỜI BỆNH & TIẾP NHẬN Ý KIẾN'
+  const title = fbPage.title || 'Góp ý – Phản ánh Chất lượng'
+  const description =
+    fbPage.description ||
+    'Mọi ý kiến đóng góp, phản ánh hoặc khen ngợi của quý vị đều được Ban Giám đốc tiếp nhận trực tiếp và giải quyết minh bạch, có mã theo dõi tiến độ.'
+
+  const showNotice = fbPage.showNoticeBanner === true
+  const noticeTitle = fbPage.noticeTitle || 'Quy trình tiếp nhận phản ánh'
+  const noticeContent = fbPage.noticeContent || ''
+  const noticeAlign = fbPage.noticeAlign || 'left'
+
+  const DEFAULT_INFO_BOXES = [
+    {
+      icon: '📞',
+      title: 'Đường dây nóng 24/7',
+      desc: 'Trường hợp khẩn cấp, vui lòng gọi trực tiếp hotline: {{HOTLINE}} hoặc Cấp cứu: {{EMERGENCY_HOTLINE}}.',
+    },
+    {
+      icon: '🔍',
+      title: 'Cấp mã tra cứu minh bạch',
+      desc: 'Sau khi gửi ý kiến, bạn sẽ nhận được mã tiếp nhận để tra cứu tiến độ xử lý và phản hồi công khai từ bệnh viện.',
+    },
+    {
+      icon: '⚖️',
+      title: 'Bảo mật & Tôn trọng',
+      desc: 'Bệnh viện cam kết bảo mật danh tính người phản ánh theo đúng quy định của Luật Khám bệnh, chữa bệnh.',
+    },
+  ]
+
+  const rawBoxes = Array.isArray(fbPage.infoBoxes) && fbPage.infoBoxes.length > 0
+    ? fbPage.infoBoxes.filter((b: any) => b?.enabled !== false)
+    : DEFAULT_INFO_BOXES
+
   return (
     <>
       <SiteHeader />
       <PageHero
-        eyebrow="CHĂM SÓC NGƯỜI BỆNH & TIẾP NHẬN Ý KIẾN"
-        title="Góp ý – Phản ánh Chất lượng"
-        description="Mọi ý kiến đóng góp, phản ánh hoặc khen ngợi của quý vị đều được Ban Giám đốc tiếp nhận trực tiếp và giải quyết minh bạch, có mã theo dõi tiến độ."
+        eyebrow={eyebrow}
+        title={title}
+        description={description}
         breadcrumb="Góp ý – Phản ánh"
       />
 
@@ -33,29 +67,45 @@ export default async function FeedbackPage() {
         <div className="container">
           <PatientCareSubNav activeKey="gop-y" />
 
-          <div className="patientCareInfoGrid" style={{ marginBottom: '28px' }}>
-            <div className="patientCareInfoBox">
-              <div className="patientCareInfoIcon">📞</div>
-              <div>
-                <h3 className="patientCareInfoTitle">Đường dây nóng 24/7</h3>
-                <p className="patientCareInfoText">Trường hợp khẩn cấp, vui lòng gọi trực tiếp hotline: <strong style={{ color: '#0284c7' }}>{hotline}</strong> hoặc Cấp cứu: <strong style={{ color: '#ef4444' }}>{emergencyHotline}</strong>.</p>
+          {/* Banner thông báo nếu được bật */}
+          {showNotice && (noticeTitle || noticeContent) && (
+            <div className="patientCareNoticeBanner" style={{ textAlign: noticeAlign as any }}>
+              <div className="patientCareNoticeHeader" style={{ justifyContent: noticeAlign === 'center' ? 'center' : 'flex-start' }}>
+                <div className="patientCareNoticeIcon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                </div>
+                <h3 className="patientCareNoticeTitle">{noticeTitle}</h3>
               </div>
+              {noticeContent && (
+                <p className="patientCareNoticeContent" style={{ whiteSpace: 'pre-line' }}>
+                  {noticeContent}
+                </p>
+              )}
             </div>
-            <div className="patientCareInfoBox">
-              <div className="patientCareInfoIcon">🔍</div>
-              <div>
-                <h3 className="patientCareInfoTitle">Cấp mã tra cứu minh bạch</h3>
-                <p className="patientCareInfoText">Sau khi gửi ý kiến, bạn sẽ nhận được mã tiếp nhận để tra cứu tiến độ xử lý và phản hồi công khai từ bệnh viện.</p>
-              </div>
+          )}
+
+          {rawBoxes.length > 0 && (
+            <div className="patientCareInfoGrid" style={{ marginBottom: '28px' }}>
+              {rawBoxes.map((box: any, bIdx: number) => {
+                const formattedDesc = (box.desc || '')
+                  .replace(/\{\{HOTLINE\}\}/g, hotline)
+                  .replace(/\{\{EMERGENCY_HOTLINE\}\}/g, emergencyHotline)
+                return (
+                  <div className="patientCareInfoBox" key={bIdx}>
+                    <div className="patientCareInfoIcon">{box.icon || '📞'}</div>
+                    <div>
+                      <h3 className="patientCareInfoTitle">{box.title}</h3>
+                      <p className="patientCareInfoText" style={{ whiteSpace: 'pre-line' }}>{formattedDesc}</p>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
-            <div className="patientCareInfoBox">
-              <div className="patientCareInfoIcon">⚖️</div>
-              <div>
-                <h3 className="patientCareInfoTitle">Bảo mật & Tôn trọng</h3>
-                <p className="patientCareInfoText">Bệnh viện cam kết bảo mật danh tính người phản ánh theo đúng quy định của Luật Khám bệnh, chữa bệnh.</p>
-              </div>
-            </div>
-          </div>
+          )}
 
           <div style={{ maxWidth: '820px', margin: '0 auto' }}>
             <div style={{ background: '#ffffff', borderRadius: '20px', border: '1px solid #e2e8f0', padding: '32px', boxShadow: '0 4px 20px rgba(15, 23, 42, 0.05)' }}>

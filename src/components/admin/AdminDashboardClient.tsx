@@ -78,9 +78,18 @@ export interface AdminDashboardClientProps {
   slaResolvedPercent: number
   totalAppointments?: number
   clinicalProtocols?: number
+  contentBreakdown?: any[]
+  totalContent?: number
+  totalFeedback?: number
+  feedbackNew?: number
+  feedbackProcessing?: number
+  feedbackDone?: number
+  feedbackDonePercent?: string
+  feedbackProcessingPercent?: string
   accountSummaryNode: React.ReactNode
   commandBarNode: React.ReactNode
   bentoContentNode: React.ReactNode
+  pendingTriageNode?: React.ReactNode
 }
 
 export default function AdminDashboardClient({
@@ -93,9 +102,18 @@ export default function AdminDashboardClient({
   slaResolvedPercent,
   totalAppointments,
   clinicalProtocols,
+  contentBreakdown = [],
+  totalContent = 0,
+  totalFeedback = 0,
+  feedbackNew = 0,
+  feedbackProcessing = 0,
+  feedbackDone = 0,
+  feedbackDonePercent = '0%',
+  feedbackProcessingPercent = '0%',
   accountSummaryNode,
   commandBarNode,
   bentoContentNode,
+  pendingTriageNode,
 }: AdminDashboardClientProps) {
   const [cards, setCards] = useState<MetricCardConfig[]>(initialMetricCards)
   const [charts, setCharts] = useState<ChartVisibility>(initialCharts)
@@ -230,8 +248,40 @@ export default function AdminDashboardClient({
         </div>
       </header>
 
+      {/* 1.5. Pending Triage Banner (Placed at the very top for immediate visibility) */}
+      {pendingTriageNode}
+
       {/* 2. System Live Metrics Bar */}
       {commandBarNode}
+
+      {/* 2.2. Interactive Analytics & Performance Charts Hub (Đưa lên trên trước các phân hệ) */}
+      <AdminCharts
+        timeline={timelineData}
+        departmentStats={departmentStats}
+        satisfactionScore={satisfactionScore}
+        totalSurveys={surveyResponses || 120}
+        slaRate={slaResolvedPercent}
+        feedbackAvgHours={4.5}
+        totalAppointments={totalAppointments}
+        clinicalProtocols={clinicalProtocols}
+        showAreaChart={charts.showAreaChart}
+        showDepartmentBar={charts.showDepartmentBar}
+        showSatisfactionGauge={charts.showSatisfactionGauge}
+        showSlaStats={charts.showSlaStats}
+        showWeeklyWorkload={charts.showWeeklyWorkload !== false}
+        showProtocolDistribution={charts.showProtocolDistribution !== false}
+        showResourceStructure={charts.showResourceStructure !== false}
+        showFeedbackDonut={charts.showFeedbackDonut !== false}
+        chartOrder={charts.chartOrder}
+        contentBreakdown={contentBreakdown}
+        totalContent={totalContent}
+        totalFeedback={totalFeedback}
+        feedbackNew={feedbackNew}
+        feedbackProcessing={feedbackProcessing}
+        feedbackDone={feedbackDone}
+        feedbackDonePercent={feedbackDonePercent}
+        feedbackProcessingPercent={feedbackProcessingPercent}
+      />
 
       {/* 2.5. Modern Segmented Tab Navigation Hub */}
       <nav className={styles.tabNavContainer} aria-label="Bộ lọc phân hệ quản trị">
@@ -313,24 +363,6 @@ export default function AdminDashboardClient({
           </div>
         ))}
       </section>
-
-      {/* 3.5. Interactive Analytics & Performance Charts Hub */}
-      <AdminCharts
-        timeline={timelineData}
-        departmentStats={departmentStats}
-        satisfactionScore={satisfactionScore}
-        totalSurveys={surveyResponses || 120}
-        slaRate={slaResolvedPercent}
-        feedbackAvgHours={4.5}
-        totalAppointments={totalAppointments}
-        clinicalProtocols={clinicalProtocols}
-        showAreaChart={charts.showAreaChart}
-        showDepartmentBar={charts.showDepartmentBar}
-        showSatisfactionGauge={charts.showSatisfactionGauge}
-        showSlaStats={charts.showSlaStats}
-        showWeeklyWorkload={charts.showWeeklyWorkload !== false}
-        showProtocolDistribution={charts.showProtocolDistribution !== false}
-      />
 
       {/* 4, 5, 6, 7. Bento Grid, Activity Feeds & Commands */}
       {bentoContentNode}

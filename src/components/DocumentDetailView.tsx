@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from './DocumentDetailView.module.css'
 import { DocumentProtection } from './DocumentProtection'
 
@@ -20,6 +20,9 @@ export interface DocumentDetailData {
   fileName?: string
   fileSize?: string | number
   fileFormat?: string
+  accessMode?: 'public' | 'pin' | 'internal' | 'locked'
+  pinCode?: string
+  defaultPin?: string
   allowDownload?: boolean
   preventCopy?: boolean
   showViewer?: boolean
@@ -31,6 +34,30 @@ export interface DocumentDetailData {
 }
 
 export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
+  const isPinProtected = doc.accessMode === 'pin'
+  const isFullyLocked = doc.accessMode === 'locked'
+  const sessionKey = `doc_pin_unlocked_${doc.id}`
+
+  // Trạng thái đã mở khóa mã PIN hay chưa
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(false)
+  const [pinInput, setPinInput] = useState<string>('')
+  const [pinError, setPinError] = useState<string>('')
+  const [showPinModal, setShowPinModal] = useState<boolean>(false)
+
+  // Đọc trạng thái đã mở khóa từ sessionStorage khi vào trang
+  useEffect(() => {
+    if (!isPinProtected) {
+      setIsUnlocked(true)
+      return
+    }
+    try {
+      const saved = sessionStorage.getItem(sessionKey)
+      if (saved === 'true') {
+        setIsUnlocked(true)
+      }
+    } catch {}
+  }, [isPinProtected, sessionKey])
+
   const [activeViewer, setActiveViewer] = useState<boolean>(doc.showViewer !== false && Boolean(doc.fileUrl))
   const [fullscreen, setFullscreen] = useState<boolean>(false)
 
@@ -39,18 +66,62 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
     (doc.fileFormat || '').toLowerCase().includes(ext) || (doc.fileUrl || '').toLowerCase().includes(`.${ext}`)
   )
 
-  // Link viewer: nếu là Office doc hoặc môi trường cần proxy, dùng Google Docs Viewer. Nếu là PDF thì có thể nhúng trực tiếp hoặc qua Viewer.
-  const embedViewerUrl = doc.fileUrl
+  // Mã PIN hợp lệ: lấy mã riêng nếu có, nếu không lấy mã chung của viện (mặc định BVTL2026)
+  const requiredPin = (doc.pinCode || doc.defaultPin || 'BVTL2026').trim().toLowerCase()
+
+  // Hàm xử lý kiểm tra mã PIN
+  const handleVerifyPin = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    setPinError('')
+    const inputClean = pinInput.trim().toLowerCase()
+    if (!inputClean) {
+      setPinError('Vui lòng nhập mã bảo mật.')
+      return
+    }
+
+    if (inputClean === requiredPin) {
+      setIsUnlocked(true)
+      setShowPinModal(false)
+      setPinError('')
+      try {
+        sessionStorage.setItem(sessionKey, 'true')
+      } catch {}
+    } else {
+      setPinError('Mã xác thực không chính xác. Vui lòng kiểm tra lại.')
+    }
+  }
+
+  // Quyền thao tác thực tế: Nếu là PIN thì phải đã unlock, nếu là locked thì luôn cấm
+  const canAccessDocument = (!isPinProtected || isUnlocked) && !isFullyLocked
+  const canDownload = canAccessDocument && doc.allowDownload !== false
+
+  // Link viewer: nếu chưa unlock thì tuyệt đối không tải url file vào iframe
+  const embedViewerUrl = (canAccessDocument && doc.fileUrl)
     ? isPdf
-      ? `${doc.fileUrl}#toolbar=${doc.allowDownload !== false ? '1' : '0'}&navpanes=0`
+      ? `${doc.fileUrl}#toolbar=${canDownload ? '1' : '0'}&navpanes=0`
       : `https://docs.google.com/viewer?embedded=true&url=${encodeURIComponent(doc.fileUrl)}`
     : ''
 
   return (
-    <DocumentProtection preventCopy={Boolean(doc.preventCopy)}>
+    <DocumentProtection
+      preventCopy={Boolean(doc.preventCopy) || (isPinProtected && !isUnlocked)}
+      preventPrint={isPinProtected && !isUnlocked}
+    >
       <article className={styles.container}>
-        {/* Banner cảnh báo bảo mật nếu preventCopy = true */}
-        {doc.preventCopy && (
+        {/* Banner cảnh báo bảo mật nếu có mã PIN hoặc preventCopy = true */}
+        {isPinProtected && !isUnlocked && (
+          <div className={styles.protectionNotice} style={{ background: '#fff2f0', borderColor: '#ffccc7', color: '#a8071a' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>
+              <strong>Tài liệu giới hạn lưu hành nội bộ:</strong> Toàn bộ trình xem trước, tải file và in PDF đã được bảo vệ. Vui lòng nhập mã xác thực do Bệnh viện Đa khoa Khu vực Thới Lai cung cấp để mở khóa.
+            </span>
+          </div>
+        )}
+
+        {(!isPinProtected || isUnlocked) && doc.preventCopy && (
           <div className={styles.protectionNotice}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -67,6 +138,20 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
           <div className={`${styles.badgeGroup} ${doc.textAlign === 'center' ? styles.justifyCenter : doc.textAlign === 'right' ? styles.justifyEnd : ''}`}>
             <span className={styles.docBadge}>{doc.documentType || 'Văn bản – Tài liệu'}</span>
             {doc.category && <span className={styles.categoryBadge}>{doc.category}</span>}
+            {isPinProtected && (
+              <span className={styles.lockBadge}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>{isUnlocked ? 'Đã mở khóa nội bộ' : 'Yêu cầu mã xác thực'}</span>
+              </span>
+            )}
+            {isFullyLocked && (
+              <span className={styles.lockBadge} style={{ background: '#f5f5f5', color: '#595959', borderColor: '#d9d9d9' }}>
+                <span>Chỉ xem trích yếu</span>
+              </span>
+            )}
           </div>
           <h1 className={`${styles.title} ${styles[`titleColor_${doc.titleColor || 'default'}`] || ''} ${styles[`titleSize_${doc.titleSize || 'normal'}`] || ''}`}>
             {doc.title}
@@ -131,7 +216,7 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
                   <td className={styles.colValue}>{doc.signer}</td>
                 </tr>
               )}
-              <tr className={styles.docAttachmentRow}>
+              <tr className={`${styles.docAttachmentRow} ${isPinProtected && !isUnlocked ? styles.securityLockedRow : ''}`}>
                 <td className={styles.colLabel}>Tài liệu đính kèm</td>
                 <td className={styles.colValue}>
                   {doc.fileUrl ? (
@@ -144,43 +229,74 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
                       </div>
 
                       <div className={styles.actionButtonGroup}>
-                        {/* Nút xem trực tiếp */}
-                        <button
-                          type="button"
-                          className={styles.btnView}
-                          onClick={() => setActiveViewer(prev => !prev)}
-                        >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                          </svg>
-                          <span>{activeViewer ? 'Thu gọn xem' : 'Xem trực tiếp'}</span>
-                        </button>
-
-                        {/* Nút tải về: chỉ hiển thị khi allowDownload !== false */}
-                        {doc.allowDownload !== false ? (
-                          <a
-                            href={doc.fileUrl}
-                            download={doc.fileName || true}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles.btnDownload}
-                          >
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                              <polyline points="7 10 12 15 17 10"></polyline>
-                              <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            <span>Tải về</span>
-                          </a>
-                        ) : (
+                        {/* Khi tài liệu được bảo vệ bằng PIN và chưa mở khóa */}
+                        {isPinProtected && !isUnlocked ? (
+                          <>
+                            <button
+                              type="button"
+                              className={styles.btnUnlockModal}
+                              onClick={() => setShowPinModal(true)}
+                              title="Nhập mã xác thực để mở khóa tài liệu"
+                            >
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                              </svg>
+                              <span>Nhập mã để xem & tải</span>
+                            </button>
+                            <span className={styles.lockedTextNotice}>
+                              🔒 Đã khóa xem & tải về
+                            </span>
+                          </>
+                        ) : isFullyLocked ? (
                           <span className={styles.downloadLocked} title="Chỉ cho phép đọc trực tuyến theo quy định">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                             </svg>
-                            <span>Chỉ xem trực tuyến</span>
+                            <span>Chỉ xem trích yếu</span>
                           </span>
+                        ) : (
+                          <>
+                            {/* Nút xem trực tiếp */}
+                            <button
+                              type="button"
+                              className={styles.btnView}
+                              onClick={() => setActiveViewer(prev => !prev)}
+                            >
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                              </svg>
+                              <span>{activeViewer ? 'Thu gọn xem' : 'Xem trực tiếp'}</span>
+                            </button>
+
+                            {/* Nút tải về: chỉ hiển thị khi canDownload === true */}
+                            {canDownload ? (
+                              <a
+                                href={doc.fileUrl}
+                                download={doc.fileName || true}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.btnDownload}
+                              >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                  <polyline points="7 10 12 15 17 10"></polyline>
+                                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span>Tải về</span>
+                              </a>
+                            ) : (
+                              <span className={styles.downloadLocked} title="Chỉ cho phép đọc trực tuyến theo quy định">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <span>Chỉ xem trực tuyến</span>
+                              </span>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>
@@ -193,8 +309,53 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
           </table>
         </div>
 
-        {/* Khung nhúng xem tài liệu trực tiếp (Document Viewer tương tự Sở Y tế Cần Thơ) */}
-        {activeViewer && doc.fileUrl && (
+        {/* Khung khóa bảo mật khi tài liệu có PIN nhưng chưa mở khóa */}
+        {isPinProtected && !isUnlocked && (
+          <div className={styles.lockedViewerCard}>
+            <div className={styles.lockedViewerInner}>
+              <div className={styles.lockIconWrap} aria-hidden="true">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+              <h3 className={styles.lockedTitle}>Tài liệu lưu hành nội bộ đã được khóa</h3>
+              <p className={styles.lockedDesc}>
+                Để xem trực tuyến, tải tệp hoặc in tài liệu này, vui lòng nhập mã xác thực do Bệnh viện Đa khoa Khu vực Thới Lai cấp.
+              </p>
+              <form onSubmit={handleVerifyPin} className={styles.pinForm}>
+                <div className={styles.pinInputGroup}>
+                  <input
+                    type="password"
+                    autoComplete="off"
+                    value={pinInput}
+                    onChange={(e) => {
+                      setPinInput(e.target.value)
+                      setPinError('')
+                    }}
+                    placeholder="Nhập mã PIN bảo mật..."
+                    className={`${styles.pinInput} ${pinError ? styles.pinInputError : ''}`}
+                    aria-label="Mã PIN bảo mật tài liệu"
+                  />
+                  <button type="submit" className={styles.btnSubmitPin}>
+                    <span>Mở khóa tài liệu</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </button>
+                </div>
+                {pinError && <p className={styles.pinErrorMsg}>{pinError}</p>}
+                <p className={styles.pinHelp}>
+                  Bác sĩ và Cán bộ nhân viên liên hệ Phòng Kế hoạch tổng hợp hoặc xem thông báo nội bộ để nhận mã xác thực.
+                </p>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Khung nhúng xem tài liệu trực tiếp khi ĐÃ MỞ KHÓA */}
+        {canAccessDocument && activeViewer && doc.fileUrl && (
           <section className={`${styles.viewerSection} ${fullscreen ? styles.viewerFullscreen : ''}`}>
             <div className={styles.viewerToolbar}>
               <div className={styles.viewerTitle}>
@@ -208,7 +369,7 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
                 <span>Trình đọc tài liệu trực tiếp</span>
               </div>
               <div className={styles.toolbarActions}>
-                {doc.allowDownload !== false && (
+                {canDownload && (
                   <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className={styles.toolbarBtn} title="Mở trong tab mới">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -256,7 +417,56 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
             </div>
           </section>
         )}
+
+        {/* Modal Popup Nhập mã PIN bảo mật khi bấm nút thao tác */}
+        {showPinModal && (
+          <div className={styles.modalBackdrop} onClick={() => setShowPinModal(false)}>
+            <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+              <button
+                type="button"
+                className={styles.modalCloseBtn}
+                onClick={() => setShowPinModal(false)}
+                title="Đóng hộp thoại"
+              >
+                ✕
+              </button>
+              <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                <div className={styles.lockIconWrap} style={{ width: 54, height: 54, margin: '0 auto 12px' }}>
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#820014', margin: '0 0 8px' }}>
+                  Xác thực mã bảo mật nội bộ
+                </h3>
+                <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0, lineHeight: 1.5 }}>
+                  Vui lòng nhập mã PIN do Bệnh viện ĐKKV Thới Lai cấp để mở khóa xem và tải file <strong>{doc.fileName || 'tài liệu'}</strong>:
+                </p>
+              </div>
+
+              <form onSubmit={handleVerifyPin} className={styles.pinForm}>
+                <input
+                  type="password"
+                  autoFocus
+                  value={pinInput}
+                  onChange={(e) => {
+                    setPinInput(e.target.value)
+                    setPinError('')
+                  }}
+                  placeholder="Nhập mã PIN..."
+                  className={`${styles.pinInput} ${pinError ? styles.pinInputError : ''}`}
+                />
+                {pinError && <p className={styles.pinErrorMsg} style={{ margin: 0 }}>{pinError}</p>}
+                <button type="submit" className={styles.btnSubmitPin} style={{ width: '100%', marginTop: 6 }}>
+                  <span>Xác nhận & Mở khóa ngay</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </article>
     </DocumentProtection>
   )
 }
+

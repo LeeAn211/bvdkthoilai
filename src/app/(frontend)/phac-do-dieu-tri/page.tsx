@@ -2,23 +2,23 @@ import type { Metadata } from 'next'
 import { PageHero } from '@/components/PageHero'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
-import { SearchFilter } from '@/components/SearchFilter'
+import { DocumentDirectoryView, type DocumentDirectoryItem } from '@/components/DocumentDirectoryView'
 import { getCMS } from '@/lib/payload'
-import { mediaUrl } from '@/lib/media'
+import { mediaFormat, mediaLabel, mediaUrl } from '@/lib/media'
 import { categoryName, getDefaultContentMedia } from '@/lib/defaultMedia'
 
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: 'Phác đồ điều trị',
-  description: 'Tra cứu các phác đồ điều trị, quy trình chuyên môn kỹ thuật và hướng dẫn chẩn đoán của Bệnh viện Đa khoa Khu vực Thới Lai.',
+  title: 'Phác đồ điều trị – Hướng dẫn chuyên môn y khoa',
+  description: 'Tra cứu các phác đồ điều trị, quy trình chuyên môn kỹ thuật và hướng dẫn chẩn đoán chuẩn Bộ Y tế của Bệnh viện Đa khoa Khu vực Thới Lai.',
 }
 
 export default async function Page() {
-  let items: any[] = []
+  let items: DocumentDirectoryItem[] = []
   try {
     const payload = await getCMS()
-    const [cpRes, docRes, defaults] = await Promise.all([
+    const [cpRes, docRes, defaults, settings] = await Promise.all([
       payload.find({
         collection: 'clinical-protocols' as any,
         sort: '-issuedAt',
@@ -32,27 +32,44 @@ export default async function Page() {
         depth: 2,
       }).catch(() => ({ docs: [] })),
       getDefaultContentMedia(),
+      payload.findGlobal({ slug: 'site-settings' as any }).catch(() => null) as any,
     ])
 
-    const cpDocs = (cpRes.docs as any[]).map((x: any) => {
+    const defaultIssuer = settings?.hospitalName || 'BVĐK Khu vực Thới Lai'
+
+    const cpDocs: DocumentDirectoryItem[] = (cpRes.docs as any[]).map((x: any) => {
       const fileUrl = mediaUrl(x.file)
       const detailHref = x.slug ? `/phac-do-dieu-tri/${x.slug}` : (fileUrl || '#')
       const spec = typeof x.specialty === 'object' && x.specialty?.name ? x.specialty.name : ''
-      const cat = spec || x.documentType || 'Phác đồ điều trị'
+      const cat = spec ? `Khoa ${spec}` : (x.documentType || 'Phác đồ điều trị')
+      const dateStr = x.issuedAt ? new Date(x.issuedAt).toLocaleDateString('vi-VN') : ''
+
       return {
-        ...x,
+        id: `cp-${x.id}`,
+        title: x.title,
+        slug: x.slug,
+        number: x.code,
         category: cat,
-        coverUrl: mediaUrl(x.cover || x.seoImage) || defaults.documents,
-        date: x.issuedAt ? new Date(x.issuedAt).toLocaleDateString('vi-VN') : '',
-        meta: [x.code, x.issuer || 'BVĐK Thới Lai'].filter(Boolean).join(' · '),
+        issuer: x.issuer || defaultIssuer,
+        signer: x.signer,
+        issuedAt: x.issuedAt,
+        date: dateStr,
+        documentType: 'Phác đồ điều trị',
+        summary: x.summary,
         excerpt: x.summary || 'Phác đồ điều trị và hướng dẫn chẩn đoán chuyên môn của bệnh viện.',
+        fileUrl,
+        fileName: mediaLabel(x.file),
+        fileFormat: mediaFormat(x.file),
+        coverUrl: mediaUrl(x.cover || x.seoImage) || defaults.documents,
         href: detailHref,
-        actionLabel: 'Xem chi tiết',
-        external: false,
+        accessMode: x.accessMode || 'public',
+        allowDownload: x.allowDownload !== false,
+        preventCopy: Boolean(x.preventCopy),
+        showViewer: x.showViewer !== false,
       }
     })
 
-    const otherDocs = (docRes.docs as any[])
+    const otherDocs: DocumentDirectoryItem[] = (docRes.docs as any[])
       .filter((x: any) => {
         const c = (categoryName(x) || x.category || '').toLowerCase()
         const t = (x.documentType || '').toLowerCase()
@@ -62,20 +79,39 @@ export default async function Page() {
       .map((x: any) => {
         const fileUrl = mediaUrl(x.file)
         const detailHref = x.slug ? `/van-ban/${x.slug}` : (fileUrl || '#')
+        const cat = categoryName(x) || x.category || 'Phác đồ điều trị'
+        const dateStr = x.issuedAt ? new Date(x.issuedAt).toLocaleDateString('vi-VN') : ''
+
         return {
-          ...x,
-          category: categoryName(x) || x.category || 'Phác đồ điều trị',
-          coverUrl: mediaUrl(x.cover || x.seoImage) || defaults.documents,
-          date: x.issuedAt ? new Date(x.issuedAt).toLocaleDateString('vi-VN') : '',
-          meta: [x.number, x.issuer || 'BVĐK Thới Lai'].filter(Boolean).join(' · '),
+          id: `doc-${x.id}`,
+          title: x.title,
+          slug: x.slug,
+          number: x.number,
+          category: cat,
+          issuer: x.issuer || 'BVĐK Khu vực Thới Lai',
+          signer: x.signer,
+          issuedAt: x.issuedAt,
+          date: dateStr,
+          documentType: 'Phác đồ điều trị',
+          summary: x.summary,
           excerpt: x.summary || 'Phác đồ điều trị và hướng dẫn chẩn đoán chuyên môn của bệnh viện.',
+          fileUrl,
+          fileName: mediaLabel(x.file),
+          fileFormat: mediaFormat(x.file),
+          coverUrl: mediaUrl(x.cover || x.seoImage) || defaults.documents,
           href: detailHref,
-          actionLabel: 'Xem chi tiết',
-          external: false,
+          accessMode: x.accessMode || 'public',
+          allowDownload: x.allowDownload !== false,
+          preventCopy: Boolean(x.preventCopy),
+          showViewer: x.showViewer !== false,
         }
       })
 
-    items = [...cpDocs, ...otherDocs]
+    items = [...cpDocs, ...otherDocs].sort((a, b) => {
+      const timeA = a.issuedAt ? new Date(a.issuedAt).getTime() : 0
+      const timeB = b.issuedAt ? new Date(b.issuedAt).getTime() : 0
+      return timeB - timeA
+    })
   } catch {}
 
   return (
@@ -83,12 +119,17 @@ export default async function Page() {
       <SiteHeader />
       <PageHero
         eyebrow="CHUYÊN MÔN KỸ THUẬT"
-        title="Phác đồ điều trị"
-        description="Tra cứu phác đồ điều trị, hướng dẫn chẩn đoán và quy trình kỹ thuật chuyên môn chuẩn của Bệnh viện Đa khoa Khu vực Thới Lai."
+        title="Danh mục Phác đồ điều trị"
+        description="Hệ thống tra cứu hướng dẫn chẩn đoán, phác đồ điều trị chuẩn y khoa và quy trình kỹ thuật chuyên môn của Bệnh viện Đa khoa Khu vực Thới Lai."
       />
-      <main className="section">
+      <main className="section" style={{ background: '#f8fafc', minHeight: '80vh', padding: '32px 0 60px' }}>
         <div className="container">
-          <SearchFilter items={items} kind="document" initialCategory="all" />
+          <DocumentDirectoryView
+            items={items}
+            title="Danh mục Phác đồ điều trị"
+            eyebrow="PHÁC ĐỒ ĐIỀU TRỊ CHUẨN"
+            emptyText="Chưa có phác đồ điều trị nào phù hợp."
+          />
         </div>
       </main>
       <SiteFooter />

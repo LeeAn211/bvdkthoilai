@@ -196,6 +196,7 @@ export interface Config {
     'hospital-history': HospitalHistory;
     'about-page': AboutPage;
     'working-hours-settings': WorkingHoursSetting;
+    'patient-portal-settings': PatientPortalSetting;
     'upload-settings': UploadSetting;
     'default-media-settings': DefaultMediaSetting;
     'seo-settings': SeoSetting;
@@ -218,6 +219,7 @@ export interface Config {
     'hospital-history': HospitalHistorySelect<false> | HospitalHistorySelect<true>;
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'working-hours-settings': WorkingHoursSettingsSelect<false> | WorkingHoursSettingsSelect<true>;
+    'patient-portal-settings': PatientPortalSettingsSelect<false> | PatientPortalSettingsSelect<true>;
     'upload-settings': UploadSettingsSelect<false> | UploadSettingsSelect<true>;
     'default-media-settings': DefaultMediaSettingsSelect<false> | DefaultMediaSettingsSelect<true>;
     'seo-settings': SeoSettingsSelect<false> | SeoSettingsSelect<true>;
@@ -581,6 +583,10 @@ export interface News {
    */
   source?: string | null;
   /**
+   * Bật để hiển thị thông tin nguồn/tác giả dưới chân bài viết. Tắt nếu không muốn hiện nguồn cho riêng bài viết này.
+   */
+  showSource?: boolean | null;
+  /**
    * Tùy chọn cách hiển thị để ảnh không bị cắt mất chữ hoặc chi tiết quan trọng: Chọn "Vừa vặn khung" để ảnh luôn hiển thị trọn vẹn 100% không bị cắt; hoặc chọn "Lấp đầy khung" để phủ kín toàn bộ thẻ.
    */
   coverFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill') | null;
@@ -721,6 +727,10 @@ export interface Notice {
    */
   source?: string | null;
   /**
+   * Bật để hiển thị thông tin nguồn dưới chân thông báo. Tắt nếu không muốn hiện nguồn cho riêng bài này.
+   */
+  showSource?: boolean | null;
+  /**
    * Tùy chọn cách hiển thị để ảnh không bị cắt mất chữ hoặc chi tiết quan trọng: Chọn "Vừa vặn khung" để ảnh luôn hiển thị trọn vẹn 100% không bị cắt; hoặc chọn "Lấp đầy khung" để phủ kín toàn bộ thẻ.
    */
   coverFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill') | null;
@@ -856,6 +866,10 @@ export interface Procurement {
   layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
   source?: string | null;
   /**
+   * Bật để hiển thị nguồn thông tin dưới chân bài viết gói thầu. Tắt nếu không muốn hiện nguồn cho riêng bài này.
+   */
+  showSource?: boolean | null;
+  /**
    * Nếu ảnh bị cắt mất chữ, chọn “Vừa vặn toàn bộ ảnh” để hiển thị đầy đủ không bị xén.
    */
   coverFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill') | null;
@@ -958,6 +972,14 @@ export interface Document {
     [k: string]: unknown;
   } | null;
   /**
+   * Nếu chọn Mã PIN: Trình xem file, nút Tải về và lệnh In PDF sẽ bị chặn 100% cho đến khi người dùng nhập đúng mã PIN.
+   */
+  accessMode?: ('public' | 'pin' | 'internal' | 'locked') | null;
+  /**
+   * Đặt mã PIN riêng cho văn bản này. Nếu để trống, hệ thống tự động áp dụng Mã PIN mặc định trong Cài đặt Hệ thống.
+   */
+  pinCode?: string | null;
+  /**
    * Nếu tắt, nút Tải về sẽ bị ẩn và link tải trực tiếp bị khóa để chỉ cho phép xem trực tuyến.
    */
   allowDownload?: boolean | null;
@@ -1041,6 +1063,14 @@ export interface ClinicalProtocol {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Nếu chọn Mã PIN: Trình xem file, nút Tải về và lệnh In PDF sẽ bị chặn 100% cho đến khi người dùng nhập đúng mã PIN.
+   */
+  accessMode?: ('public' | 'pin' | 'internal' | 'locked') | null;
+  /**
+   * Đặt mã PIN riêng cho phác đồ này. Nếu để trống, hệ thống tự động áp dụng Mã PIN mặc định trong Cài đặt Hệ thống.
+   */
+  pinCode?: string | null;
   /**
    * Bật: hiển thị nút Tải về. Tắt: chỉ cho phép xem trực tuyến trên website.
    */
@@ -1875,6 +1905,10 @@ export interface Recruitment {
   layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
   source?: string | null;
   /**
+   * Bật để hiển thị thông tin nguồn dưới chân tin tuyển dụng. Tắt nếu không muốn hiện nguồn cho riêng bài này.
+   */
+  showSource?: boolean | null;
+  /**
    * Tùy chọn cách hiển thị để ảnh không bị cắt mất chữ hoặc chi tiết quan trọng: Chọn "Vừa vặn khung" để ảnh luôn hiển thị trọn vẹn 100% không bị cắt; hoặc chọn "Lấp đầy khung" để phủ kín toàn bộ thẻ.
    */
   coverFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill') | null;
@@ -2060,12 +2094,32 @@ export interface Page {
  */
 export interface Feedback {
   id: number;
+  /**
+   * Mã hồ sơ định danh duy nhất cấp cho người bệnh để tra cứu tiến độ trực tuyến.
+   */
+  code?: string | null;
   name: string;
   phone: string;
   email?: string | null;
   type: 'Góp ý' | 'Khen ngợi' | 'Khiếu nại' | 'Khác';
+  /**
+   * Chi tiết thông tin ý kiến, đóng góp hoặc khiếu nại do người bệnh gửi.
+   */
   message: string;
-  status?: ('new' | 'processing' | 'done') | null;
+  status: 'new' | 'processing' | 'done';
+  handledBy?: (number | null) | User;
+  /**
+   * Tự động cập nhật khi chuyển sang Đã xử lý hoặc chọn thủ công.
+   */
+  resolvedAt?: string | null;
+  /**
+   * Văn bản trả lời chính thức của Bệnh viện Đa khoa Khu vực Thới Lai. Người bệnh sẽ đọc được câu trả lời này khi tra cứu bằng mã hồ sơ.
+   */
+  response?: string | null;
+  /**
+   * Ghi chú nghiệp vụ, chỉ đạo của Ban Giám đốc hoặc biên bản xác minh nội bộ (Không hiển thị ra ngoài cho người bệnh).
+   */
+  resolutionNote?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2601,6 +2655,10 @@ export interface CustomPost {
   layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
   source?: string | null;
   /**
+   * Bật để hiển thị thông tin nguồn dưới chân bài viết. Tắt nếu không muốn hiện nguồn cho riêng bài này.
+   */
+  showSource?: boolean | null;
+  /**
    * Để trống sẽ tự động lấy Tiêu đề bài viết.
    */
   seoTitle?: string | null;
@@ -2679,6 +2737,10 @@ export interface AdvancedTechnique {
    * Mặc định là TẮT để đầu bài viết chi tiết gọn gàng, không bị lặp lại ảnh đại diện lớn.
    */
   showCoverInDetail?: boolean | null;
+  /**
+   * Bật để hiển thị khối thông tin Nguồn / Đơn vị thực hiện dưới chân bài viết kỹ thuật. Mặc định tắt.
+   */
+  showSource?: boolean | null;
   /**
    * Giới thiệu khái quát về kỹ thuật và ưu điểm nổi bật.
    */
@@ -2898,6 +2960,10 @@ export interface ScientificActivity {
    * Nguồn bài viết. Nếu để trống, hệ thống sẽ tự động hiển thị Nguồn mặc định cài trong Mẫu giao diện.
    */
   source?: string | null;
+  /**
+   * Bật để hiển thị thông tin nguồn/tác giả dưới chân bài viết. Tắt nếu không muốn hiện nguồn cho bài viết này.
+   */
+  showSource?: boolean | null;
   /**
    * Chọn mẫu giao diện trang chi tiết cho bài viết này.
    */
@@ -3343,6 +3409,7 @@ export interface NewsSelect<T extends boolean = true> {
       };
   layoutTemplate?: T;
   source?: T;
+  showSource?: T;
   coverFit?: T;
   coverPosition?: T;
   seoTitle?: T;
@@ -3381,6 +3448,7 @@ export interface NoticesSelect<T extends boolean = true> {
       };
   layoutTemplate?: T;
   source?: T;
+  showSource?: T;
   coverFit?: T;
   coverPosition?: T;
   seoTitle?: T;
@@ -3432,6 +3500,7 @@ export interface ProcurementSelect<T extends boolean = true> {
       };
   layoutTemplate?: T;
   source?: T;
+  showSource?: T;
   coverFit?: T;
   coverPosition?: T;
   seoTitle?: T;
@@ -3468,6 +3537,8 @@ export interface DocumentsSelect<T extends boolean = true> {
   file?: T;
   cover?: T;
   content?: T;
+  accessMode?: T;
+  pinCode?: T;
   allowDownload?: T;
   preventCopy?: T;
   showViewer?: T;
@@ -3502,6 +3573,8 @@ export interface ClinicalProtocolsSelect<T extends boolean = true> {
   effectiveAt?: T;
   summary?: T;
   content?: T;
+  accessMode?: T;
+  pinCode?: T;
   allowDownload?: T;
   preventCopy?: T;
   showViewer?: T;
@@ -3936,6 +4009,7 @@ export interface RecruitmentSelect<T extends boolean = true> {
   attachment?: T;
   layoutTemplate?: T;
   source?: T;
+  showSource?: T;
   coverFit?: T;
   seoTitle?: T;
   canonicalUrl?: T;
@@ -4055,12 +4129,17 @@ export interface CategoriesSelect<T extends boolean = true> {
  * via the `definition` "feedback_select".
  */
 export interface FeedbackSelect<T extends boolean = true> {
+  code?: T;
   name?: T;
   phone?: T;
   email?: T;
   type?: T;
   message?: T;
   status?: T;
+  handledBy?: T;
+  resolvedAt?: T;
+  response?: T;
+  resolutionNote?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -4439,6 +4518,7 @@ export interface CustomPostsSelect<T extends boolean = true> {
       };
   layoutTemplate?: T;
   source?: T;
+  showSource?: T;
   seoTitle?: T;
   canonicalUrl?: T;
   seoDescription?: T;
@@ -4467,6 +4547,7 @@ export interface AdvancedTechniquesSelect<T extends boolean = true> {
   enableLink?: T;
   customUrl?: T;
   showCoverInDetail?: T;
+  showSource?: T;
   summary?: T;
   content?: T;
   advantages?:
@@ -4559,6 +4640,7 @@ export interface ScientificActivitiesSelect<T extends boolean = true> {
   featured?: T;
   publishedAt?: T;
   source?: T;
+  showSource?: T;
   layoutTemplate?: T;
   coverFit?: T;
   coverPosition?: T;
@@ -4954,6 +5036,53 @@ export interface SiteSetting {
     showChecklist?: boolean | null;
     showPriority?: boolean | null;
     showSupportBanner?: boolean | null;
+    /**
+     * Tùy chỉnh bật/tắt từng tab quy trình (Khám BHYT, Khám Dịch vụ, Cấp cứu 24/24...) và chỉnh sửa chi tiết các bước trong mỗi tab.
+     */
+    flowTabs?:
+      | {
+          enabled?: boolean | null;
+          id: string;
+          label: string;
+          badgeText?: string | null;
+          title: string;
+          summary: string;
+          steps?:
+            | {
+                enabled?: boolean | null;
+                step: number;
+                title: string;
+                location: string;
+                timeEstimate?: string | null;
+                desc: string;
+                actions?: string | null;
+                note?: string | null;
+                isHighlight?: boolean | null;
+                isEmergency?: boolean | null;
+                id?: string | null;
+              }[]
+            | null;
+        }[]
+      | null;
+    /**
+     * Tùy chỉnh bật/tắt hoặc chỉnh sửa nội dung từng loại giấy tờ cần mang theo.
+     */
+    checklists?:
+      | {
+          enabled?: boolean | null;
+          title: string;
+          desc: string;
+          icon?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    priorities?:
+      | {
+          enabled?: boolean | null;
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và cấu hình hiển thị trên trang /chat-luong-benh-vien.
@@ -4970,6 +5099,45 @@ export interface SiteSetting {
     showDimensions?: boolean | null;
     showPrograms?: boolean | null;
     showFeedbackBox?: boolean | null;
+    /**
+     * Tùy chỉnh số liệu, đơn vị và nhãn của 4 thẻ thống kê chất lượng.
+     */
+    statCards?:
+      | {
+          enabled?: boolean | null;
+          val: string;
+          unit?: string | null;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Chỉnh sửa điểm số, tỷ lệ % và mô tả từng phần tiêu chuẩn (Phần A -> E).
+     */
+    dimensions?:
+      | {
+          enabled?: boolean | null;
+          code: string;
+          title: string;
+          desc: string;
+          score: string;
+          percent: number;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Chỉnh sửa biểu tượng, tiêu đề, mô tả và các gạch đầu dòng điểm nổi bật.
+     */
+    programs?:
+      | {
+          enabled?: boolean | null;
+          iconType?: ('blue' | 'green' | 'amber') | null;
+          title: string;
+          desc: string;
+          highlights?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /khao-sat.
@@ -4982,6 +5150,18 @@ export interface SiteSetting {
     noticeTitle?: string | null;
     noticeContent?: string | null;
     noticeAlign?: ('left' | 'center' | 'justify') | null;
+    /**
+     * Tùy chỉnh bật/tắt, biểu tượng, tiêu đề và mô tả của 3 ô thông tin trên trang /khao-sat.
+     */
+    infoBoxes?:
+      | {
+          enabled?: boolean | null;
+          icon?: string | null;
+          title: string;
+          desc: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /hoi-dap.
@@ -5006,6 +5186,18 @@ export interface SiteSetting {
     noticeTitle?: string | null;
     noticeContent?: string | null;
     noticeAlign?: ('left' | 'center' | 'justify') | null;
+    /**
+     * Tùy chỉnh bật/tắt, biểu tượng, tiêu đề và mô tả của 3 ô thông tin trên trang /bieu-mau.
+     */
+    infoBoxes?:
+      | {
+          enabled?: boolean | null;
+          icon?: string | null;
+          title: string;
+          desc: string;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /danh-cho-nguoi-benh.
@@ -5018,6 +5210,127 @@ export interface SiteSetting {
     noticeTitle?: string | null;
     noticeContent?: string | null;
     noticeAlign?: ('left' | 'center' | 'justify') | null;
+  };
+  /**
+   * Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và 3 ô thông tin hotline/tra cứu/bảo mật trên trang /gop-y và /gop-y/tra-cuu.
+   */
+  feedbackPage?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    description?: string | null;
+    showNoticeBanner?: boolean | null;
+    noticeTitle?: string | null;
+    noticeContent?: string | null;
+    noticeAlign?: ('left' | 'center' | 'justify') | null;
+    infoBoxes?:
+      | {
+          enabled?: boolean | null;
+          icon?: string | null;
+          title: string;
+          desc: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Tùy chỉnh tiêu đề, mô tả, thông báo, các bước nhập viện, đồ dùng cần mang, giờ thăm bệnh và chế độ dinh dưỡng trên trang /dieu-tri-noi-tru.
+   */
+  inpatientPage?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    description?: string | null;
+    showNoticeBanner?: boolean | null;
+    noticeTitle?: string | null;
+    noticeContent?: string | null;
+    noticeAlign?: ('left' | 'center' | 'justify') | null;
+    admissionSteps?:
+      | {
+          enabled?: boolean | null;
+          step: number;
+          title: string;
+          location: string;
+          desc: string;
+          note?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    visitingHours?:
+      | {
+          enabled?: boolean | null;
+          session: string;
+          timeRange: string;
+          note?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    belongingsChecklist?:
+      | {
+          enabled?: boolean | null;
+          icon?: string | null;
+          category: string;
+          title: string;
+          desc: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Tùy chỉnh tiêu đề, mô tả, thông báo và danh sách các gói khám sức khỏe trên trang /goi-kham.
+   */
+  checkupPackagesPage?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    description?: string | null;
+    showNoticeBanner?: boolean | null;
+    noticeTitle?: string | null;
+    noticeContent?: string | null;
+    noticeAlign?: ('left' | 'center' | 'justify') | null;
+    packages?:
+      | {
+          enabled?: boolean | null;
+          badge?: string | null;
+          title: string;
+          targetUser: string;
+          priceText: string;
+          desc: string;
+          features: string;
+          buttonText?: string | null;
+          buttonLink?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Tùy chỉnh tiêu đề, mô tả, thông báo, sơ đồ phân tầng và các khu vực tiện ích công cộng trên trang /so-do-benh-vien.
+   */
+  hospitalMapPage?: {
+    eyebrow?: string | null;
+    title?: string | null;
+    description?: string | null;
+    showNoticeBanner?: boolean | null;
+    noticeTitle?: string | null;
+    noticeContent?: string | null;
+    noticeAlign?: ('left' | 'center' | 'justify') | null;
+    floors?:
+      | {
+          enabled?: boolean | null;
+          floorName: string;
+          overview: string;
+          rooms: string;
+          id?: string | null;
+        }[]
+      | null;
+    facilities?:
+      | {
+          enabled?: boolean | null;
+          icon?: string | null;
+          name: string;
+          location: string;
+          hours?: string | null;
+          desc?: string | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   /**
    * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /lich-truc.
@@ -5135,6 +5448,10 @@ export interface SiteSetting {
     fromAddress?: string | null;
     fromName?: string | null;
   };
+  /**
+   * Mã PIN này được dùng khi tài liệu chọn chế độ "Mã PIN bảo mật" nhưng không đặt mã PIN riêng. Cung cấp mã này cho Bác sĩ / Cán bộ nhân viên viện khi cần tải phác đồ.
+   */
+  defaultDocumentPin?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -6673,6 +6990,86 @@ export interface WorkingHoursSetting {
   createdAt?: string | null;
 }
 /**
+ * Quản lý 100% giao diện trang /danh-cho-nguoi-benh: thanh điều hướng các tab dịch vụ (Sub-Nav), khối 3 cam kết, các nhóm danh mục dịch vụ (thẻ card tiện ích) và banner hotline.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "patient-portal-settings".
+ */
+export interface PatientPortalSetting {
+  id: number;
+  hero: {
+    eyebrow?: string | null;
+    title: string;
+    description?: string | null;
+    showNoticeBanner?: boolean | null;
+    noticeTitle?: string | null;
+    noticeContent?: string | null;
+    noticeAlign?: ('left' | 'center' | 'justify') | null;
+  };
+  /**
+   * Tùy chỉnh bật/tắt hiển thị từng tab, đổi tên tab, liên kết URL, biểu tượng icon hoặc thêm các tab mới khi bệnh viện mở rộng dịch vụ.
+   */
+  subNavTabs?:
+    | {
+        enabled?: boolean | null;
+        /**
+         * Ví dụ: danh-cho-nguoi-benh, khao-sat, gop-y, tra-cuu...
+         */
+        key: string;
+        label: string;
+        href: string;
+        icon?: string | null;
+        badge?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  commitmentsSection?: {
+    enabled?: boolean | null;
+    items?:
+      | {
+          enabled?: boolean | null;
+          icon?: string | null;
+          title: string;
+          desc: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Tùy chỉnh bật/tắt nhóm, đổi tiêu đề nhóm, thêm dịch vụ con hoặc thêm nhóm danh mục hoàn toàn mới theo nhu cầu thực tế của bệnh viện.
+   */
+  serviceGroups?:
+    | {
+        enabled?: boolean | null;
+        categoryTitle: string;
+        items?:
+          | {
+              enabled?: boolean | null;
+              title: string;
+              desc: string;
+              href: string;
+              icon?: string | null;
+              badge?: string | null;
+              badgeType?: ('active' | 'periodic' | 'closed') | null;
+              buttonText?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  ctaSection?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    description?: string | null;
+    primaryBtnText?: string | null;
+    secondaryBtnText?: string | null;
+    secondaryBtnLink?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * Cấu hình giới hạn upload theo Baseline V1.1. Giai đoạn Foundation tạo nguồn cấu hình tập trung; middleware enforcement sẽ hoàn thiện ở System hardening.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -7223,6 +7620,47 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         showChecklist?: T;
         showPriority?: T;
         showSupportBanner?: T;
+        flowTabs?:
+          | T
+          | {
+              enabled?: T;
+              id?: T;
+              label?: T;
+              badgeText?: T;
+              title?: T;
+              summary?: T;
+              steps?:
+                | T
+                | {
+                    enabled?: T;
+                    step?: T;
+                    title?: T;
+                    location?: T;
+                    timeEstimate?: T;
+                    desc?: T;
+                    actions?: T;
+                    note?: T;
+                    isHighlight?: T;
+                    isEmergency?: T;
+                    id?: T;
+                  };
+            };
+        checklists?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              desc?: T;
+              icon?: T;
+              id?: T;
+            };
+        priorities?:
+          | T
+          | {
+              enabled?: T;
+              text?: T;
+              id?: T;
+            };
       };
   qualityPage?:
     | T
@@ -7238,6 +7676,36 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         showDimensions?: T;
         showPrograms?: T;
         showFeedbackBox?: T;
+        statCards?:
+          | T
+          | {
+              enabled?: T;
+              val?: T;
+              unit?: T;
+              label?: T;
+              id?: T;
+            };
+        dimensions?:
+          | T
+          | {
+              enabled?: T;
+              code?: T;
+              title?: T;
+              desc?: T;
+              score?: T;
+              percent?: T;
+              id?: T;
+            };
+        programs?:
+          | T
+          | {
+              enabled?: T;
+              iconType?: T;
+              title?: T;
+              desc?: T;
+              highlights?: T;
+              id?: T;
+            };
       };
   surveyPage?:
     | T
@@ -7249,6 +7717,15 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         noticeTitle?: T;
         noticeContent?: T;
         noticeAlign?: T;
+        infoBoxes?:
+          | T
+          | {
+              enabled?: T;
+              icon?: T;
+              title?: T;
+              desc?: T;
+              id?: T;
+            };
       };
   faqPage?:
     | T
@@ -7271,6 +7748,15 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         noticeTitle?: T;
         noticeContent?: T;
         noticeAlign?: T;
+        infoBoxes?:
+          | T
+          | {
+              enabled?: T;
+              icon?: T;
+              title?: T;
+              desc?: T;
+              id?: T;
+            };
       };
   patientPortalPage?:
     | T
@@ -7282,6 +7768,123 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         noticeTitle?: T;
         noticeContent?: T;
         noticeAlign?: T;
+      };
+  feedbackPage?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        showNoticeBanner?: T;
+        noticeTitle?: T;
+        noticeContent?: T;
+        noticeAlign?: T;
+        infoBoxes?:
+          | T
+          | {
+              enabled?: T;
+              icon?: T;
+              title?: T;
+              desc?: T;
+              id?: T;
+            };
+      };
+  inpatientPage?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        showNoticeBanner?: T;
+        noticeTitle?: T;
+        noticeContent?: T;
+        noticeAlign?: T;
+        admissionSteps?:
+          | T
+          | {
+              enabled?: T;
+              step?: T;
+              title?: T;
+              location?: T;
+              desc?: T;
+              note?: T;
+              id?: T;
+            };
+        visitingHours?:
+          | T
+          | {
+              enabled?: T;
+              session?: T;
+              timeRange?: T;
+              note?: T;
+              id?: T;
+            };
+        belongingsChecklist?:
+          | T
+          | {
+              enabled?: T;
+              icon?: T;
+              category?: T;
+              title?: T;
+              desc?: T;
+              id?: T;
+            };
+      };
+  checkupPackagesPage?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        showNoticeBanner?: T;
+        noticeTitle?: T;
+        noticeContent?: T;
+        noticeAlign?: T;
+        packages?:
+          | T
+          | {
+              enabled?: T;
+              badge?: T;
+              title?: T;
+              targetUser?: T;
+              priceText?: T;
+              desc?: T;
+              features?: T;
+              buttonText?: T;
+              buttonLink?: T;
+              id?: T;
+            };
+      };
+  hospitalMapPage?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        showNoticeBanner?: T;
+        noticeTitle?: T;
+        noticeContent?: T;
+        noticeAlign?: T;
+        floors?:
+          | T
+          | {
+              enabled?: T;
+              floorName?: T;
+              overview?: T;
+              rooms?: T;
+              id?: T;
+            };
+        facilities?:
+          | T
+          | {
+              enabled?: T;
+              icon?: T;
+              name?: T;
+              location?: T;
+              hours?: T;
+              desc?: T;
+              id?: T;
+            };
       };
   lichTrucPage?:
     | T
@@ -7369,6 +7972,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         fromAddress?: T;
         fromName?: T;
       };
+  defaultDocumentPin?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -8355,6 +8959,81 @@ export interface WorkingHoursSettingsSelect<T extends boolean = true> {
               textSize?: T;
               id?: T;
             };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "patient-portal-settings_select".
+ */
+export interface PatientPortalSettingsSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        title?: T;
+        description?: T;
+        showNoticeBanner?: T;
+        noticeTitle?: T;
+        noticeContent?: T;
+        noticeAlign?: T;
+      };
+  subNavTabs?:
+    | T
+    | {
+        enabled?: T;
+        key?: T;
+        label?: T;
+        href?: T;
+        icon?: T;
+        badge?: T;
+        id?: T;
+      };
+  commitmentsSection?:
+    | T
+    | {
+        enabled?: T;
+        items?:
+          | T
+          | {
+              enabled?: T;
+              icon?: T;
+              title?: T;
+              desc?: T;
+              id?: T;
+            };
+      };
+  serviceGroups?:
+    | T
+    | {
+        enabled?: T;
+        categoryTitle?: T;
+        items?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              desc?: T;
+              href?: T;
+              icon?: T;
+              badge?: T;
+              badgeType?: T;
+              buttonText?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  ctaSection?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        description?: T;
+        primaryBtnText?: T;
+        secondaryBtnText?: T;
+        secondaryBtnLink?: T;
       };
   updatedAt?: T;
   createdAt?: T;

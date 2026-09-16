@@ -57,14 +57,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme] = await Promise.all([
+  const [{ item, related }, theme, siteSettings] = await Promise.all([
     getData(slug),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
+    getGlobal('site-settings').catch(() => null) as Promise<any>,
   ])
 
   if (!item) notFound()
 
   const isBạchMaiLayout = theme?.detailLayout?.applyProcurement !== false
+  const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
   const publishedDate = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : ''
 
   const statusLabel =
@@ -92,7 +94,7 @@ export default async function Page({ params }: Props) {
         value: item.deadlineAt ? new Date(item.deadlineAt).toLocaleDateString('vi-VN') : 'Không thời hạn',
       },
       ...(item.referenceCode ? [{ label: 'Mã tham chiếu', value: item.referenceCode }] : []),
-      ...(item.contactUnit ? [{ label: 'Đơn vị phụ trách', value: item.contactUnit }] : []),
+      { label: 'Đơn vị phụ trách', value: item.contactUnit || hospitalName },
     ]
 
     const mappedRelated = related.map((rel: any) => ({
@@ -118,6 +120,8 @@ export default async function Page({ params }: Props) {
         attachments={item.attachments}
         attachmentTitle="Hồ sơ – Tài liệu mời thầu"
         sourceName={item.source || undefined}
+        hospitalName={hospitalName}
+        showSource={item.showSource ?? undefined}
         adminConfig={theme?.detailLayout}
         sidebarTitle="Gói thầu mới nhất"
         latestItems={mappedRelated}

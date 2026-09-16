@@ -1055,6 +1055,7 @@
 
 /* 7. Quick Launch Commands (Shadcn Keyboard Style) */
 .quickCommandsSection {
+  margin-top: 20px;
   padding: 22px 24px;
   background: #ffffff;
   border: 1px solid var(--border-card);
@@ -1174,4 +1175,230 @@
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* Pending Review & Approval Triage Hub */
+.pendingTriageBanner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 14px -3px rgba(217, 119, 6, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.pendingTriageBanner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+}
+
+.pendingTriageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.pendingTriageTitleGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pendingTriageIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #f59e0b;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
+}
+
+.pendingTriageIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pendingTriageHeading {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 750;
+  color: #92400e;
+}
+
+.pendingTriageSubtext {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: #b45309;
+}
+
+.pendingTriageBadge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #fcd34d;
+  color: #b45309;
+  font-size: 12px;
+  font-weight: 750;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.pendingTriageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.pendingTriageItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #fef3c7;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+.pendingTriageItem:hover {
+  border-color: #f59e0b;
+  background: #fffdf5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -2px rgba(217, 119, 6, 0.15);
+}
+
+/* Variant Danger / Red (Phản ánh / Khiếu nại, Khẩn) */
+.pendingTriageItemDanger {
+  border-color: #fecaca;
+  background: #ffffff;
+}
+.pendingTriageItemDanger:hover {
+  border-color: #ef4444;
+  background: #fff8f8;
+  box-shadow: 0 4px 10px -2px rgba(239, 68, 68, 0.18);
+}
+.pendingTriageItemDanger .pendingTriageItemType {
+  color: #dc2626;
+}
+.pendingTriageItemDanger .pendingTriageItemAction {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.pendingTriageItemDanger:hover .pendingTriageItemAction {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+/* Variant Urgent / High Warning (Đặt lịch khám) */
+.pendingTriageItemUrgent {
+  border-color: #fed7aa;
+  background: #ffffff;
+}
+.pendingTriageItemUrgent:hover {
+  border-color: #f97316;
+  background: #fffaf5;
+  box-shadow: 0 4px 10px -2px rgba(249, 115, 22, 0.18);
+}
+.pendingTriageItemUrgent .pendingTriageItemType {
+  color: #ea580c;
+}
+.pendingTriageItemUrgent .pendingTriageItemAction {
+  background: #ffedd5;
+  color: #9a3412;
+}
+.pendingTriageItemUrgent:hover .pendingTriageItemAction {
+  background: #f97316;
+  color: #ffffff;
+}
+
+/* Variant Info / Cyan (Tư vấn trực tuyến) */
+.pendingTriageItemInfo {
+  border-color: #bae6fd;
+  background: #ffffff;
+}
+.pendingTriageItemInfo:hover {
+  border-color: #0284c7;
+  background: #f0f9ff;
+  box-shadow: 0 4px 10px -2px rgba(2, 132, 199, 0.18);
+}
+.pendingTriageItemInfo .pendingTriageItemType {
+  color: #0284c7;
+}
+.pendingTriageItemInfo .pendingTriageItemAction {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+.pendingTriageItemInfo:hover .pendingTriageItemAction {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.pendingTriageItemMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pendingTriageItemType {
+  font-size: 10.5px;
+  font-weight: 750;
+  color: #d97706;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.pendingTriageItemTitle {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pendingTriageItemMeta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.pendingTriageItemAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 11.5px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: background 0.12s ease;
+}
+
+.pendingTriageItem:hover .pendingTriageItemAction {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+.pendingTriageItemAction svg {
+  width: 13px;
+  height: 13px;
 }

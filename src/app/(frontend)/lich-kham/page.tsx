@@ -31,9 +31,10 @@ export default async function Page({ searchParams }: PageProps) {
   }
 
   let schedSettings: any = {}
+  let siteSettings: any = {}
   try {
     const payload = await getCMS()
-    const [result, defaults, schedConfig] = await Promise.all([
+    const [result, defaults, schedConfig, siteConfig] = await Promise.all([
       payload.find({
         collection: 'schedules',
         where: { active: { equals: true } },
@@ -43,8 +44,10 @@ export default async function Page({ searchParams }: PageProps) {
       }),
       getDefaultContentMedia(),
       payload.findGlobal({ slug: 'schedule-settings' }).catch(() => null),
+      payload.findGlobal({ slug: 'site-settings' as any }).catch(() => null),
     ])
     schedSettings = schedConfig || {}
+    siteSettings = siteConfig || {}
     items = (result.docs as any[]).map((x) => {
       const isEmergency = x.mode === 'emergency'
       const isWeekly = x.mode === 'weekly'
@@ -108,9 +111,10 @@ export default async function Page({ searchParams }: PageProps) {
   const rawNotes = Array.isArray(notes?.items) ? notes.items : []
   const activeNotes = rawNotes.filter((n: any) => n?.enabled !== false && (n?.content?.trim() || n?.boldPrefix?.trim()))
 
+  const defaultHospital = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
   const heroEyebrow = hero?.eyebrow || 'KHÁM CHỮA BỆNH & TRỰC BỆNH VIỆN'
   const heroTitle = hero?.title || 'Lịch khám & Lịch trực bệnh viện'
-  const heroDesc = hero?.description || 'Tra cứu lịch khám bệnh, lịch trực cấp cứu và lịch công tác của Bệnh viện Đa khoa Khu vực Thới Lai.'
+  const heroDesc = hero?.description || `Tra cứu lịch khám bệnh, lịch trực cấp cứu và lịch công tác của ${defaultHospital}.`
 
   return (
     <>

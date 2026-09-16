@@ -97,9 +97,10 @@ export default async function RedirectResolver({ params }: Props) {
   if (path.length === 2) {
     const section = await findSection(path[0]).catch(() => null)
     if (section) {
-      const [item, theme, relatedRes] = await Promise.all([
+      const [item, theme, siteSettings, relatedRes] = await Promise.all([
         findPost(section.id, path[1]).catch(() => null),
         getGlobal('theme-settings').catch(() => null) as Promise<any>,
+        getGlobal('site-settings').catch(() => null) as Promise<any>,
         getCMS().then((p) =>
           p.find({
             collection: 'custom-posts',
@@ -119,6 +120,7 @@ export default async function RedirectResolver({ params }: Props) {
 
       if (item) {
         let isBạchMaiLayout = true
+        const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
         const customSlugsText = String(theme?.detailLayout?.customSlugsText || '')
         const slugList = customSlugsText
           .split(',')
@@ -168,6 +170,8 @@ export default async function RedirectResolver({ params }: Props) {
               attachments={item.attachments}
               attachmentTitle="Tài liệu đính kèm"
               sourceName={item.source || undefined}
+              hospitalName={hospitalName}
+              showSource={item.showSource ?? undefined}
               adminConfig={theme?.detailLayout}
               sidebarTitle="Bài viết mới"
               latestItems={mappedRelated}

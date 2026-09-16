@@ -17,6 +17,9 @@ export interface ChartVisibility {
   showSlaStats: boolean
   showWeeklyWorkload?: boolean
   showProtocolDistribution?: boolean
+  showResourceStructure?: boolean
+  showFeedbackDonut?: boolean
+  chartOrder?: string[]
 }
 
 interface AdminDashboardCustomizerProps {
@@ -36,6 +39,9 @@ export default function AdminDashboardCustomizer({
   const [cards, setCards] = useState<CardItem[]>(initialCards)
   const [charts, setCharts] = useState<ChartVisibility>(initialCharts)
 
+  const defaultChartOrder = ['rowResourcesFeedback', 'rowTrendsStaff', 'rowSatisfactionSla', 'rowWorkloadProtocols']
+  const [chartOrder, setChartOrder] = useState<string[]>(initialCharts.chartOrder || defaultChartOrder)
+
   // Đóng modal bằng phím ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -54,6 +60,21 @@ export default function AdminDashboardCustomizer({
     newCards[index] = newCards[targetIndex]
     newCards[targetIndex] = temp
     setCards(newCards)
+  }
+
+  // Di chuyển thứ tự khối biểu đồ
+  const moveChart = (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1
+    if (targetIndex < 0 || targetIndex >= chartOrder.length) return
+    const newOrder = [...chartOrder]
+    const temp = newOrder[index]
+    newOrder[index] = newOrder[targetIndex]
+    newOrder[targetIndex] = temp
+    setChartOrder(newOrder)
+    setCharts((prev) => ({
+      ...prev,
+      chartOrder: newOrder,
+    }))
   }
 
   // Bật/tắt thẻ số liệu
@@ -81,9 +102,13 @@ export default function AdminDashboardCustomizer({
       showSlaStats: true,
       showWeeklyWorkload: true,
       showProtocolDistribution: true,
+      showResourceStructure: true,
+      showFeedbackDonut: true,
+      chartOrder: defaultChartOrder,
     }
     setCards(resetCards)
     setCharts(resetCharts)
+    setChartOrder(defaultChartOrder)
     try {
       localStorage.removeItem('thoilai_admin_dashboard_cards')
       localStorage.removeItem('thoilai_admin_dashboard_charts')
@@ -94,13 +119,14 @@ export default function AdminDashboardCustomizer({
 
   // Lưu cấu hình
   const handleSave = () => {
+    const finalCharts = { ...charts, chartOrder }
     try {
       localStorage.setItem('thoilai_admin_dashboard_cards', JSON.stringify(cards))
-      localStorage.setItem('thoilai_admin_dashboard_charts', JSON.stringify(charts))
+      localStorage.setItem('thoilai_admin_dashboard_charts', JSON.stringify(finalCharts))
     } catch {
       // ignore
     }
-    onUpdate(cards, charts)
+    onUpdate(cards, finalCharts)
     onClose()
   }
 
@@ -135,7 +161,7 @@ export default function AdminDashboardCustomizer({
             className={`${styles.tabBtn} ${activeTab === 'charts' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('charts')}
           >
-            Khối biểu đồ & Phân tích ({Object.values(charts).filter(Boolean).length}/4)
+            Khối biểu đồ & Phân tích ({Object.values(charts).filter(Boolean).length}/8)
           </button>
         </div>
 
@@ -150,7 +176,7 @@ export default function AdminDashboardCustomizer({
             <span>
               {activeTab === 'cards'
                 ? 'Dùng nút mũi tên ▲ ▼ để đổi vị trí, gạt công tắc để ẩn bớt các mục không cần thiết.'
-                : 'Bật/tắt các biểu đồ xu hướng, năng suất và chỉ số hài lòng người bệnh.'}
+                : 'Bật/tắt các biểu đồ xu hướng, năng suất, cơ cấu tài nguyên và quy trình CSKH.'}
             </span>
           </div>
 
@@ -206,97 +232,264 @@ export default function AdminDashboardCustomizer({
 
           {activeTab === 'charts' && (
             <div className={styles.sectionGroup}>
-              <span className={styles.sectionLabel}>Các khối biểu đồ phân tích:</span>
+              <div className={styles.helpTip}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+                <span>Sử dụng nút ▲ / ▼ để di chuyển thứ tự các khối biểu đồ & phân tích theo ý muốn. Bật/tắt công tắc bên phải để ẩn/hiện.</span>
+              </div>
+
+              <span className={styles.sectionLabel}>Thứ tự các khối biểu đồ phân tích & Quản trị vận hành:</span>
               <div className={styles.itemList}>
-                <div className={`${styles.itemRow} ${!charts.showAreaChart ? styles.itemRowDisabled : ''}`}>
-                  <div>
-                    <div className={styles.itemTitle}>Biểu đồ xu hướng xuất bản tin bài</div>
-                    <div className={styles.itemDesc}>Biểu đồ dạng vùng theo dõi số lượng tin tức, thông báo, thầu qua từng tháng.</div>
-                  </div>
-                  <label className={styles.switchWrap}>
-                    <input
-                      type="checkbox"
-                      checked={charts.showAreaChart}
-                      onChange={() => toggleChart('showAreaChart')}
-                    />
-                    <span className={styles.slider} />
-                  </label>
-                </div>
+                {chartOrder.map((groupKey, idx) => {
+                  if (groupKey === 'rowResourcesFeedback') {
+                    return (
+                      <React.Fragment key={groupKey}>
+                        <div className={`${styles.itemRow} ${charts.showResourceStructure === false ? styles.itemRowDisabled : ''}`}>
+                          <div className={styles.itemLeft}>
+                            <div className={styles.itemOrderBtns}>
+                              <button
+                                type="button"
+                                className={styles.orderBtn}
+                                disabled={idx === 0}
+                                onClick={() => moveChart(idx, 'up')}
+                                title="Chuyển cụm lên trên"
+                              >
+                                ▲
+                              </button>
+                              <button
+                                type="button"
+                                className={styles.orderBtn}
+                                disabled={idx === chartOrder.length - 1}
+                                onClick={() => moveChart(idx, 'down')}
+                                title="Chuyển cụm xuống dưới"
+                              >
+                                ▼
+                              </button>
+                            </div>
+                            <div>
+                              <div className={styles.itemTitle}>Cơ cấu tài nguyên số bệnh viện</div>
+                              <div className={styles.itemDesc}>Tỷ lệ phân bổ dữ liệu phác đồ, tin tức, thông báo, văn bản, thầu và tuyển dụng.</div>
+                            </div>
+                          </div>
+                          <label className={styles.switchWrap}>
+                            <input
+                              type="checkbox"
+                              checked={charts.showResourceStructure !== false}
+                              onChange={() => toggleChart('showResourceStructure')}
+                            />
+                            <span className={styles.slider} />
+                          </label>
+                        </div>
 
-                <div className={`${styles.itemRow} ${!charts.showDepartmentBar ? styles.itemRowDisabled : ''}`}>
-                  <div>
-                    <div className={styles.itemTitle}>Biểu đồ phân bổ nhân lực khoa phòng</div>
-                    <div className={styles.itemDesc}>Tỷ lệ bác sĩ, nhân viên trực tại các khoa phòng mũi nhọn.</div>
-                  </div>
-                  <label className={styles.switchWrap}>
-                    <input
-                      type="checkbox"
-                      checked={charts.showDepartmentBar}
-                      onChange={() => toggleChart('showDepartmentBar')}
-                    />
-                    <span className={styles.slider} />
-                  </label>
-                </div>
+                        <div className={`${styles.itemRow} ${charts.showFeedbackDonut === false ? styles.itemRowDisabled : ''}`}>
+                          <div className={styles.itemLeft}>
+                            <div style={{ width: 22 }} />
+                            <div>
+                              <div className={styles.itemTitle}>Quy trình & Tiến độ xử lý phản ánh (CSKH)</div>
+                              <div className={styles.itemDesc}>Biểu đồ Donut tỷ lệ ý kiến mới, đang xử lý và đã giải quyết của người bệnh.</div>
+                            </div>
+                          </div>
+                          <label className={styles.switchWrap}>
+                            <input
+                              type="checkbox"
+                              checked={charts.showFeedbackDonut !== false}
+                              onChange={() => toggleChart('showFeedbackDonut')}
+                            />
+                            <span className={styles.slider} />
+                          </label>
+                        </div>
+                      </React.Fragment>
+                    )
+                  }
 
-                <div className={`${styles.itemRow} ${!charts.showSatisfactionGauge ? styles.itemRowDisabled : ''}`}>
-                  <div>
-                    <div className={styles.itemTitle}>Đồng hồ chỉ số hài lòng người bệnh</div>
-                    <div className={styles.itemDesc}>Tổng hợp điểm khảo sát trải nghiệm dịch vụ theo chuẩn Bộ Y tế.</div>
-                  </div>
-                  <label className={styles.switchWrap}>
-                    <input
-                      type="checkbox"
-                      checked={charts.showSatisfactionGauge}
-                      onChange={() => toggleChart('showSatisfactionGauge')}
-                    />
-                    <span className={styles.slider} />
-                  </label>
-                </div>
+                  if (groupKey === 'rowTrendsStaff') {
+                    return (
+                      <React.Fragment key={groupKey}>
+                        <div className={`${styles.itemRow} ${!charts.showAreaChart ? styles.itemRowDisabled : ''}`}>
+                          <div className={styles.itemLeft}>
+                            <div className={styles.itemOrderBtns}>
+                              <button
+                                type="button"
+                                className={styles.orderBtn}
+                                disabled={idx === 0}
+                                onClick={() => moveChart(idx, 'up')}
+                                title="Chuyển cụm lên trên"
+                              >
+                                ▲
+                              </button>
+                              <button
+                                type="button"
+                                className={styles.orderBtn}
+                                disabled={idx === chartOrder.length - 1}
+                                onClick={() => moveChart(idx, 'down')}
+                                title="Chuyển cụm xuống dưới"
+                              >
+                                ▼
+                              </button>
+                            </div>
+                            <div>
+                              <div className={styles.itemTitle}>Biểu đồ xu hướng xuất bản tin bài</div>
+                              <div className={styles.itemDesc}>Biểu đồ dạng vùng theo dõi số lượng tin tức, thông báo, thầu qua từng tháng.</div>
+                            </div>
+                          </div>
+                          <label className={styles.switchWrap}>
+                            <input
+                              type="checkbox"
+                              checked={charts.showAreaChart}
+                              onChange={() => toggleChart('showAreaChart')}
+                            />
+                            <span className={styles.slider} />
+                          </label>
+                        </div>
 
-                <div className={`${styles.itemRow} ${!charts.showSlaStats ? styles.itemRowDisabled : ''}`}>
-                  <div>
-                    <div className={styles.itemTitle}>Bảng hiệu suất cam kết xử lý SLA</div>
-                    <div className={styles.itemDesc}>Tỷ lệ giải quyết góp ý đúng hẹn và thời gian phản hồi trung bình.</div>
-                  </div>
-                  <label className={styles.switchWrap}>
-                    <input
-                      type="checkbox"
-                      checked={charts.showSlaStats}
-                      onChange={() => toggleChart('showSlaStats')}
-                    />
-                    <span className={styles.slider} />
-                  </label>
-                </div>
+                        <div className={`${styles.itemRow} ${!charts.showDepartmentBar ? styles.itemRowDisabled : ''}`}>
+                          <div className={styles.itemLeft}>
+                            <div style={{ width: 22 }} />
+                            <div>
+                              <div className={styles.itemTitle}>Biểu đồ phân bổ nhân lực khoa phòng</div>
+                              <div className={styles.itemDesc}>Tỷ lệ bác sĩ, nhân viên trực tại các khoa phòng mũi nhọn.</div>
+                            </div>
+                          </div>
+                          <label className={styles.switchWrap}>
+                            <input
+                              type="checkbox"
+                              checked={charts.showDepartmentBar}
+                              onChange={() => toggleChart('showDepartmentBar')}
+                            />
+                            <span className={styles.slider} />
+                          </label>
+                        </div>
+                      </React.Fragment>
+                    )
+                  }
 
-                <div className={`${styles.itemRow} ${charts.showWeeklyWorkload === false ? styles.itemRowDisabled : ''}`}>
-                  <div>
-                    <div className={styles.itemTitle}>Biểu đồ tải lượng khám & Cấp cứu 24/7 tuần</div>
-                    <div className={styles.itemDesc}>Lượt khám ngoại trú & ca tiếp nhận cấp cứu qua các ngày trong tuần.</div>
-                  </div>
-                  <label className={styles.switchWrap}>
-                    <input
-                      type="checkbox"
-                      checked={charts.showWeeklyWorkload !== false}
-                      onChange={() => toggleChart('showWeeklyWorkload')}
-                    />
-                    <span className={styles.slider} />
-                  </label>
-                </div>
+                  if (groupKey === 'rowSatisfactionSla') {
+                    return (
+                      <React.Fragment key={groupKey}>
+                        <div className={`${styles.itemRow} ${!charts.showSatisfactionGauge ? styles.itemRowDisabled : ''}`}>
+                          <div className={styles.itemLeft}>
+                            <div className={styles.itemOrderBtns}>
+                              <button
+                                type="button"
+                                className={styles.orderBtn}
+                                disabled={idx === 0}
+                                onClick={() => moveChart(idx, 'up')}
+                                title="Chuyển cụm lên trên"
+                              >
+                                ▲
+                              </button>
+                              <button
+                                type="button"
+                                className={styles.orderBtn}
+                                disabled={idx === chartOrder.length - 1}
+                                onClick={() => moveChart(idx, 'down')}
+                                title="Chuyển cụm xuống dưới"
+                              >
+                                ▼
+                              </button>
+                            </div>
+                            <div>
+                              <div className={styles.itemTitle}>Đồng hồ chỉ số hài lòng người bệnh</div>
+                              <div className={styles.itemDesc}>Tổng hợp điểm khảo sát trải nghiệm dịch vụ theo chuẩn Bộ Y tế.</div>
+                            </div>
+                          </div>
+                          <label className={styles.switchWrap}>
+                            <input
+                              type="checkbox"
+                              checked={charts.showSatisfactionGauge}
+                              onChange={() => toggleChart('showSatisfactionGauge')}
+                            />
+                            <span className={styles.slider} />
+                          </label>
+                        </div>
 
-                <div className={`${styles.itemRow} ${charts.showProtocolDistribution === false ? styles.itemRowDisabled : ''}`}>
-                  <div>
-                    <div className={styles.itemTitle}>Biểu đồ phân bổ phác đồ điều trị chuẩn</div>
-                    <div className={styles.itemDesc}>Cơ cấu phác đồ điều trị theo 6 khối chuyên môn theo chuẩn Bộ Y tế.</div>
-                  </div>
-                  <label className={styles.switchWrap}>
-                    <input
-                      type="checkbox"
-                      checked={charts.showProtocolDistribution !== false}
-                      onChange={() => toggleChart('showProtocolDistribution')}
-                    />
-                    <span className={styles.slider} />
-                  </label>
-                </div>
+                        <div className={`${styles.itemRow} ${!charts.showSlaStats ? styles.itemRowDisabled : ''}`}>
+                          <div className={styles.itemLeft}>
+                            <div style={{ width: 22 }} />
+                            <div>
+                              <div className={styles.itemTitle}>Bảng hiệu suất cam kết xử lý SLA</div>
+                              <div className={styles.itemDesc}>Tỷ lệ giải quyết góp ý đúng hẹn và thời gian phản hồi trung bình.</div>
+                            </div>
+                          </div>
+                          <label className={styles.switchWrap}>
+                            <input
+                              type="checkbox"
+                              checked={charts.showSlaStats}
+                              onChange={() => toggleChart('showSlaStats')}
+                            />
+                            <span className={styles.slider} />
+                          </label>
+                        </div>
+                      </React.Fragment>
+                    )
+                  }
+
+                  if (groupKey === 'rowWorkloadProtocols') {
+                    return (
+                      <React.Fragment key={groupKey}>
+                        <div className={`${styles.itemRow} ${charts.showWeeklyWorkload === false ? styles.itemRowDisabled : ''}`}>
+                          <div className={styles.itemLeft}>
+                            <div className={styles.itemOrderBtns}>
+                              <button
+                                type="button"
+                                className={styles.orderBtn}
+                                disabled={idx === 0}
+                                onClick={() => moveChart(idx, 'up')}
+                                title="Chuyển cụm lên trên"
+                              >
+                                ▲
+                              </button>
+                              <button
+                                type="button"
+                                className={styles.orderBtn}
+                                disabled={idx === chartOrder.length - 1}
+                                onClick={() => moveChart(idx, 'down')}
+                                title="Chuyển cụm xuống dưới"
+                              >
+                                ▼
+                              </button>
+                            </div>
+                            <div>
+                              <div className={styles.itemTitle}>Biểu đồ tải lượng khám & Cấp cứu 24/7 tuần</div>
+                              <div className={styles.itemDesc}>Lượt khám ngoại trú & ca tiếp nhận cấp cứu qua các ngày trong tuần.</div>
+                            </div>
+                          </div>
+                          <label className={styles.switchWrap}>
+                            <input
+                              type="checkbox"
+                              checked={charts.showWeeklyWorkload !== false}
+                              onChange={() => toggleChart('showWeeklyWorkload')}
+                            />
+                            <span className={styles.slider} />
+                          </label>
+                        </div>
+
+                        <div className={`${styles.itemRow} ${charts.showProtocolDistribution === false ? styles.itemRowDisabled : ''}`}>
+                          <div className={styles.itemLeft}>
+                            <div style={{ width: 22 }} />
+                            <div>
+                              <div className={styles.itemTitle}>Biểu đồ phân bổ phác đồ điều trị chuẩn</div>
+                              <div className={styles.itemDesc}>Cơ cấu phác đồ điều trị theo 6 khối chuyên môn theo chuẩn Bộ Y tế.</div>
+                            </div>
+                          </div>
+                          <label className={styles.switchWrap}>
+                            <input
+                              type="checkbox"
+                              checked={charts.showProtocolDistribution !== false}
+                              onChange={() => toggleChart('showProtocolDistribution')}
+                            />
+                            <span className={styles.slider} />
+                          </label>
+                        </div>
+                      </React.Fragment>
+                    )
+                  }
+
+                  return null
+                })}
               </div>
             </div>
           )}

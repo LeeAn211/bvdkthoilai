@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260916_013_add_detail_layout_granular_toggles",
-  "schemaSha256": "d61541d769c4c6f2c744f0c092483c5c7f70b6209738d5e4b4fe221348060661"
+  "migrationId": "20260916_019_add_document_security_pin_fields",
+  "schemaSha256": "92020335fc9bce49af89f0142800708d16c93c879eaa25b89498fabcf8cc4fe2"
 }

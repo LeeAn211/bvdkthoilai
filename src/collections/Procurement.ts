@@ -197,6 +197,15 @@ export const Procurement: CollectionConfig = {
               ],
             },
             {
+              name: 'showSource',
+              label: 'Hiển thị nguồn thông tin ở chân trang chi tiết',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: {
+                description: 'Bật để hiển thị nguồn thông tin dưới chân bài viết gói thầu. Tắt nếu không muốn hiện nguồn cho riêng bài này.',
+              },
+            },
+            {
               type: 'row',
               fields: [
                 {
