@@ -176,7 +176,7 @@ export default async function AdvancedTechniqueDetailPage({ params }: Props) {
       categoryName={catName}
       categoryHref={department?.slug ? `/khoa-phong/${department.slug}` : '/#ky-thuat-chuyen-sau'}
       highlights={highlights.length > 0 ? highlights : undefined}
-      excerpt={item.summary}
+      showExcerpt={false}
       content={item.content}
       customBodyTop={customBodyTop}
       customBodyBottom={customBodyBottom}

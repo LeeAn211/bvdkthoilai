@@ -45,6 +45,7 @@ export interface ArticleDetailTemplateProps {
 
   // Content
   excerpt?: string
+  showExcerpt?: boolean
   content: any
   customBodyTop?: React.ReactNode
   customBodyBottom?: React.ReactNode
@@ -107,6 +108,7 @@ export interface ArticleDetailTemplateProps {
       showRelatedSection?: boolean
       relatedSectionTitle?: string
       defaultSourceName?: string
+      showExcerpt?: boolean
     }
   }
 
@@ -130,6 +132,7 @@ export function ArticleDetailTemplate({
   expireDate,
   highlights,
   excerpt,
+  showExcerpt = false,
   content,
   customBodyTop,
   customBodyBottom,
@@ -148,6 +151,7 @@ export function ArticleDetailTemplate({
   const bannerConfig = adminConfig?.sidebarBanner
   const displayConfig = adminConfig?.displayOptions
 
+  const isExcerptVisible = showExcerpt === true || displayConfig?.showExcerpt === true
   const showViews = displayConfig?.showViews !== false
   const showDate = displayConfig?.showDate !== false
   const showCategory = displayConfig?.showCategory !== false
@@ -418,8 +422,8 @@ export function ArticleDetailTemplate({
               </div>
             )}
 
-            {/* Đoạn trích dẫn Sapo nổi bật */}
-            {excerpt && <div className={styles.postDetailExcerpt}>{excerpt}</div>}
+            {/* Đoạn trích dẫn Sapo nổi bật (chỉ hiển thị khi có cấu hình bật showExcerpt) */}
+            {isExcerptVisible && excerpt && <div className={styles.postDetailExcerpt}>{excerpt}</div>}
 
             {/* Khối tùy chỉnh trên nội dung (ảnh đại diện chi tiết, khối ưu điểm...) */}
             {customBodyTop}

@@ -12,8 +12,8 @@
   - `SiteSettings.ts`: Thêm trường `text` ("Nội dung chữ chạy trên website") trực tiếp vào nhóm `tickerAppearance` ("Cài đặt thanh chữ chạy - Marquee").
   - `SiteHeader.tsx`: Cập nhật logic đọc `tickerSettings.text || settings?.slogan || ...`.
   - Migration `20260916_012_add_ticker_appearance_text.mjs`: Thêm cột `ticker_appearance_text` vào `site_settings` và `version_ticker_appearance_text` vào `_site_settings_v`. Đã chạy migration (12/12 applied) và seal schema contract.
-  - `ArticleDetailTemplate.tsx`: Bổ sung các slot tùy biến `customBodyTop`, `customBodyBottom`, `children`.
-  - `ky-thuat-chuyen-sau/[slug]/page.tsx`: Chuyển đổi sang `ArticleDetailTemplate` với Breadcrumbs, highlights (Khoa/Phòng, Bác sĩ, Chỉ định), khối ưu điểm, sidebar kỹ thuật khác và banner tiện ích.
+  - `ArticleDetailTemplate.tsx`: Bổ sung các slot tùy biến `customBodyTop`, `customBodyBottom`, `children`, và ẩn lặp lại khối Tóm tắt / Mô tả ngắn trong bài viết chi tiết (`showExcerpt: false`).
+  - `ky-thuat-chuyen-sau/[slug]/page.tsx`: Chuyển đổi sang `ArticleDetailTemplate` với Breadcrumbs, highlights (Khoa/Phòng, Bác sĩ, Chỉ định), khối ưu điểm, sidebar kỹ thuật khác và banner tiện ích, không hiển thị lại tóm tắt.
   - `npm run db:schema:check`: Pass contract hợp lệ.
   - `npm run db:migrate:status`: Pass 12/12 applied, 0 pending.
   - `npm run typecheck`: Pass 100% (0 errors).

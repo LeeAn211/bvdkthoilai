@@ -22,6 +22,7 @@
       - Cột Sidebar bên phải: Khối "Kỹ thuật chuyên sâu khác" và hệ thống banner tiện ích đặt lịch khám Medpro, bảng giá, tiêm chủng đồng bộ từ `theme-settings`.
       - Khối "Kỹ thuật cùng chuyên mục" dưới chân trang giúp tăng khả năng giữ chân người đọc.
       - Nút quay lại trang chủ / danh sách kỹ thuật (`BackToList`).
+      - **Ẩn khối Tóm tắt / Mô tả ngắn trong bài viết chi tiết**: Khối trích dẫn Sapo (`postDetailExcerpt`) mặc định không hiển thị lặp lại trong nội dung bài viết (`showExcerpt: false`), đảm bảo phần tóm tắt chỉ dành cho thẻ xem trước/mạng xã hội và bài viết bắt đầu trực tiếp vào nội dung chính.
   - **Kiểm tra**:
     - `npm run db:schema:check`: Pass contract hợp lệ (`20260916_012_add_ticker_appearance_text`).
     - `npm run db:migrate:status`: Pass 12 applied / 0 pending.
