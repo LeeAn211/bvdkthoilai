@@ -79,7 +79,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     '--section-global-heading-gap': `${theme?.sectionGlobal?.headingGap ?? 18}px`,
   } as CSSProperties
   return (
-    <html lang="vi">
+    <html lang="vi" data-scroll-behavior="smooth">
       <body style={bodyStyle}>
         {gaID && <><Script src={`https://www.googletagmanager.com/gtag/js?id=${gaID}`} strategy="afterInteractive"/><Script id="ga4" strategy="afterInteractive">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','${gaID}',{anonymize_ip:true});`}</Script></>}
         {children}

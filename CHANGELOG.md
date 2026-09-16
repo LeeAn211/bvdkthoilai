@@ -1,5 +1,15 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-16] - Khắc phục cảnh báo Next.js missing-data-scroll-behavior trên thẻ <html>
+
+- **Thời gian thực hiện:** 07:51 (Asia/Saigon)
+- **Yêu cầu:** Khắc phục cảnh báo browser console: `Detected scroll-behavior: smooth on the <html> element. To disable smooth scrolling during route transitions, add data-scroll-behavior="smooth" to your <html> element.`
+- **Nội dung thực hiện:**
+  - Bổ sung thuộc tính `data-scroll-behavior="smooth"` vào thẻ `<html lang="vi">` trong `src/app/(frontend)/layout.tsx` theo chuẩn Next.js App Router, giúp điều hướng trang (route transitions) mượt mà và không gây giật cuộn ngoài ý muốn.
+- **Files Modified:**
+  - `src/app/(frontend)/layout.tsx`
+  - `CHANGELOG.md`
+
 ## [2026-09-16] - Hiển thị 4 ô cho Chuyên gia của chúng tôi & Kỹ thuật chuyên sâu trên Desktop, giữ nguyên mặc định Mobile
 
 - **Thời gian thực hiện:** 07:41 (Asia/Saigon)
