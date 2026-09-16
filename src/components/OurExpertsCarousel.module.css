@@ -204,37 +204,6 @@
   margin-top: 24px;
 }
 
-/* Dots pagination */
-.expertDots {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 200px;
-}
-
-.expertDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #c8dff0;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease, width 0.2s ease;
-  flex-shrink: 0;
-}
-
-.expertDotActive {
-  background-color: #0878d1;
-  width: 22px;
-  border-radius: 4px;
-  transform: none;
-}
-
-
-
 .expertNavBtn {
   width: 36px;
   height: 36px;

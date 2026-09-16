@@ -188,20 +188,6 @@ export function OurExpertsCarousel({
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
-
-          {/* Dots indicator */}
-          <div className={styles.expertDots} aria-hidden="true">
-            {safeItems.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                className={`${styles.expertDot}${i === currentIndex ? ` ${styles.expertDotActive}` : ''}`}
-                onClick={() => setCurrentIndex(i)}
-                aria-label={`Chuyển đến chuyên gia ${i + 1}`}
-              />
-            ))}
-          </div>
-
           <button
             type="button"
             className={styles.expertNavBtn}

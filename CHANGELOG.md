@@ -1,5 +1,14 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-16] - Đồng bộ cụm nút chuyển qua lại Chuyên gia của chúng tôi giống Kỹ thuật chuyên sâu
+
+- **Thời gian thực hiện:** 21:55 (Asia/Saigon)
+- **Yêu cầu:** Đồng bộ hóa nút chuyển qua lại giữa các nội dung của khối "Chuyên gia của chúng tôi" trên điện thoại theo đúng mẫu của khối "Kỹ thuật chuyên sâu" (cặp nút mũi tên trước/sau tròn viền xanh tinh gọn, kích thước chuẩn, khoảng cách đều).
+- **Nội dung thực hiện:**
+  - `src/components/OurExpertsCarousel.tsx`: Căn chỉnh cấu trúc JSX cụm nút điều hướng `expertCarouselControls` bao gồm 2 nút chuyển `expertNavBtn` (trước / sau) với icon mũi tên chuẩn y tế `#0878d1`, giống hệt như khối `AdvancedTechniquesCarousel`.
+  - `src/components/OurExpertsCarousel.module.css`: Đồng bộ quy cách hiển thị, kích thước và hiệu ứng hover/active của nút chuyển trên cả mobile và desktop.
+- **Kiểm thử & Xác nhận:** `npx tsc --noEmit` đạt 0 lỗi, giao diện phản hồi mượt mà.
+
 ## [2026-09-16] - Bổ sung Nút chuyển Carousel Chuyên gia trên Mobile & Thanh Bottom Navigation Chuẩn Medpro
 
 - **Thời gian thực hiện:** 21:15 (Asia/Saigon)
