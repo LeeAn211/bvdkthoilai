@@ -5585,6 +5585,7 @@ export interface ThemeSetting {
    */
   detailLayout?: {
     applyNews?: boolean | null;
+    applyAdvancedTechniques?: boolean | null;
     applyProcurement?: boolean | null;
     applyRecruitment?: boolean | null;
     applyCustomPosts?: boolean | null;
@@ -5660,14 +5661,43 @@ export interface ThemeSetting {
       extraBannersJson?: string | null;
     };
     displayOptions?: {
-      showViews?: boolean | null;
+      showBreadcrumbs?: boolean | null;
       showDate?: boolean | null;
+      showViews?: boolean | null;
       showCategory?: boolean | null;
+      showHighlights?: boolean | null;
+      showExcerpt?: boolean | null;
+      showSource?: boolean | null;
+      defaultSourceName?: string | null;
+      showSidebar?: boolean | null;
       showSidebarLatest?: boolean | null;
       sidebarLatestTitle?: string | null;
+      showSidebarBanners?: boolean | null;
       showRelatedSection?: boolean | null;
       relatedSectionTitle?: string | null;
-      defaultSourceName?: string | null;
+      showBackToList?: boolean | null;
+    };
+    /**
+     * Cho phép bật/tắt độc lập từng ô thông tin trên trang chi tiết Kỹ thuật chuyên sâu mà không ảnh hưởng đến Tin tức.
+     */
+    techniqueOptions?: {
+      showBreadcrumbs?: boolean | null;
+      showDate?: boolean | null;
+      showViews?: boolean | null;
+      showCategory?: boolean | null;
+      showHighlights?: boolean | null;
+      showAdvantages?: boolean | null;
+      showCoverInDetail?: boolean | null;
+      showSource?: boolean | null;
+      sourceName?: string | null;
+      showShareButtons?: boolean | null;
+      showSidebar?: boolean | null;
+      showSidebarLatest?: boolean | null;
+      sidebarLatestTitle?: string | null;
+      showSidebarBanners?: boolean | null;
+      showRelatedSection?: boolean | null;
+      relatedSectionTitle?: string | null;
+      showBackToList?: boolean | null;
     };
   };
   updatedAt?: string | null;
@@ -7571,6 +7601,7 @@ export interface ThemeSettingsSelect<T extends boolean = true> {
     | T
     | {
         applyNews?: T;
+        applyAdvancedTechniques?: T;
         applyProcurement?: T;
         applyRecruitment?: T;
         applyCustomPosts?: T;
@@ -7622,14 +7653,42 @@ export interface ThemeSettingsSelect<T extends boolean = true> {
         displayOptions?:
           | T
           | {
-              showViews?: T;
+              showBreadcrumbs?: T;
               showDate?: T;
+              showViews?: T;
               showCategory?: T;
+              showHighlights?: T;
+              showExcerpt?: T;
+              showSource?: T;
+              defaultSourceName?: T;
+              showSidebar?: T;
               showSidebarLatest?: T;
               sidebarLatestTitle?: T;
+              showSidebarBanners?: T;
               showRelatedSection?: T;
               relatedSectionTitle?: T;
-              defaultSourceName?: T;
+              showBackToList?: T;
+            };
+        techniqueOptions?:
+          | T
+          | {
+              showBreadcrumbs?: T;
+              showDate?: T;
+              showViews?: T;
+              showCategory?: T;
+              showHighlights?: T;
+              showAdvantages?: T;
+              showCoverInDetail?: T;
+              showSource?: T;
+              sourceName?: T;
+              showShareButtons?: T;
+              showSidebar?: T;
+              showSidebarLatest?: T;
+              sidebarLatestTitle?: T;
+              showSidebarBanners?: T;
+              showRelatedSection?: T;
+              relatedSectionTitle?: T;
+              showBackToList?: T;
             };
       };
   updatedAt?: T;

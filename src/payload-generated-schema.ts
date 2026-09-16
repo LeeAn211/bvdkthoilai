@@ -10721,6 +10721,9 @@ export const theme_settings = pgTable(
       mode: "number",
     }).default(18),
     detailLayout_applyNews: boolean("detail_layout_apply_news").default(true),
+    detailLayout_applyAdvancedTechniques: boolean(
+      "detail_layout_apply_advanced_techniques",
+    ).default(true),
     detailLayout_applyProcurement: boolean(
       "detail_layout_apply_procurement",
     ).default(true),
@@ -10857,14 +10860,32 @@ export const theme_settings = pgTable(
     detailLayout_sidebarBanner_extraBannersJson: varchar(
       "detail_layout_sidebar_banner_extra_banners_json",
     ),
-    detailLayout_displayOptions_showViews: boolean(
-      "detail_layout_display_options_show_views",
+    detailLayout_displayOptions_showBreadcrumbs: boolean(
+      "detail_layout_display_options_show_breadcrumbs",
     ).default(true),
     detailLayout_displayOptions_showDate: boolean(
       "detail_layout_display_options_show_date",
     ).default(true),
+    detailLayout_displayOptions_showViews: boolean(
+      "detail_layout_display_options_show_views",
+    ).default(true),
     detailLayout_displayOptions_showCategory: boolean(
       "detail_layout_display_options_show_category",
+    ).default(true),
+    detailLayout_displayOptions_showHighlights: boolean(
+      "detail_layout_display_options_show_highlights",
+    ).default(true),
+    detailLayout_displayOptions_showExcerpt: boolean(
+      "detail_layout_display_options_show_excerpt",
+    ).default(false),
+    detailLayout_displayOptions_showSource: boolean(
+      "detail_layout_display_options_show_source",
+    ).default(true),
+    detailLayout_displayOptions_defaultSourceName: varchar(
+      "detail_layout_display_options_default_source_name",
+    ).default("Bệnh viện Đa khoa Khu vực Thới Lai"),
+    detailLayout_displayOptions_showSidebar: boolean(
+      "detail_layout_display_options_show_sidebar",
     ).default(true),
     detailLayout_displayOptions_showSidebarLatest: boolean(
       "detail_layout_display_options_show_sidebar_latest",
@@ -10872,15 +10893,69 @@ export const theme_settings = pgTable(
     detailLayout_displayOptions_sidebarLatestTitle: varchar(
       "detail_layout_display_options_sidebar_latest_title",
     ).default("Tin mới nhất"),
+    detailLayout_displayOptions_showSidebarBanners: boolean(
+      "detail_layout_display_options_show_sidebar_banners",
+    ).default(true),
     detailLayout_displayOptions_showRelatedSection: boolean(
       "detail_layout_display_options_show_related_section",
     ).default(true),
     detailLayout_displayOptions_relatedSectionTitle: varchar(
       "detail_layout_display_options_related_section_title",
     ).default("Tin tức cùng chuyên mục"),
-    detailLayout_displayOptions_defaultSourceName: varchar(
-      "detail_layout_display_options_default_source_name",
+    detailLayout_displayOptions_showBackToList: boolean(
+      "detail_layout_display_options_show_back_to_list",
+    ).default(true),
+    detailLayout_techniqueOptions_showBreadcrumbs: boolean(
+      "detail_layout_technique_options_show_breadcrumbs",
+    ).default(true),
+    detailLayout_techniqueOptions_showDate: boolean(
+      "detail_layout_technique_options_show_date",
+    ).default(true),
+    detailLayout_techniqueOptions_showViews: boolean(
+      "detail_layout_technique_options_show_views",
+    ).default(true),
+    detailLayout_techniqueOptions_showCategory: boolean(
+      "detail_layout_technique_options_show_category",
+    ).default(true),
+    detailLayout_techniqueOptions_showHighlights: boolean(
+      "detail_layout_technique_options_show_highlights",
+    ).default(true),
+    detailLayout_techniqueOptions_showAdvantages: boolean(
+      "detail_layout_technique_options_show_advantages",
+    ).default(true),
+    detailLayout_techniqueOptions_showCoverInDetail: boolean(
+      "detail_layout_technique_options_show_cover_in_detail",
+    ).default(false),
+    detailLayout_techniqueOptions_showSource: boolean(
+      "detail_layout_technique_options_show_source",
+    ).default(false),
+    detailLayout_techniqueOptions_sourceName: varchar(
+      "detail_layout_technique_options_source_name",
     ).default("Bệnh viện Đa khoa Khu vực Thới Lai"),
+    detailLayout_techniqueOptions_showShareButtons: boolean(
+      "detail_layout_technique_options_show_share_buttons",
+    ).default(true),
+    detailLayout_techniqueOptions_showSidebar: boolean(
+      "detail_layout_technique_options_show_sidebar",
+    ).default(true),
+    detailLayout_techniqueOptions_showSidebarLatest: boolean(
+      "detail_layout_technique_options_show_sidebar_latest",
+    ).default(true),
+    detailLayout_techniqueOptions_sidebarLatestTitle: varchar(
+      "detail_layout_technique_options_sidebar_latest_title",
+    ).default("Kỹ thuật chuyên sâu khác"),
+    detailLayout_techniqueOptions_showSidebarBanners: boolean(
+      "detail_layout_technique_options_show_sidebar_banners",
+    ).default(true),
+    detailLayout_techniqueOptions_showRelatedSection: boolean(
+      "detail_layout_technique_options_show_related_section",
+    ).default(true),
+    detailLayout_techniqueOptions_relatedSectionTitle: varchar(
+      "detail_layout_technique_options_related_section_title",
+    ).default("Kỹ thuật cùng chuyên mục"),
+    detailLayout_techniqueOptions_showBackToList: boolean(
+      "detail_layout_technique_options_show_back_to_list",
+    ).default(true),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -11023,6 +11098,9 @@ export const _theme_settings_v = pgTable(
     version_detailLayout_applyNews: boolean(
       "version_detail_layout_apply_news",
     ).default(true),
+    version_detailLayout_applyAdvancedTechniques: boolean(
+      "version_detail_layout_apply_advanced_techniques",
+    ).default(true),
     version_detailLayout_applyProcurement: boolean(
       "version_detail_layout_apply_procurement",
     ).default(true),
@@ -11161,14 +11239,32 @@ export const _theme_settings_v = pgTable(
     version_detailLayout_sidebarBanner_extraBannersJson: varchar(
       "version_detail_layout_sidebar_banner_extra_banners_json",
     ),
-    version_detailLayout_displayOptions_showViews: boolean(
-      "version_detail_layout_display_options_show_views",
+    version_detailLayout_displayOptions_showBreadcrumbs: boolean(
+      "version_detail_layout_display_options_show_breadcrumbs",
     ).default(true),
     version_detailLayout_displayOptions_showDate: boolean(
       "version_detail_layout_display_options_show_date",
     ).default(true),
+    version_detailLayout_displayOptions_showViews: boolean(
+      "version_detail_layout_display_options_show_views",
+    ).default(true),
     version_detailLayout_displayOptions_showCategory: boolean(
       "version_detail_layout_display_options_show_category",
+    ).default(true),
+    version_detailLayout_displayOptions_showHighlights: boolean(
+      "version_detail_layout_display_options_show_highlights",
+    ).default(true),
+    version_detailLayout_displayOptions_showExcerpt: boolean(
+      "version_detail_layout_display_options_show_excerpt",
+    ).default(false),
+    version_detailLayout_displayOptions_showSource: boolean(
+      "version_detail_layout_display_options_show_source",
+    ).default(true),
+    version_detailLayout_displayOptions_defaultSourceName: varchar(
+      "version_detail_layout_display_options_default_source_name",
+    ).default("Bệnh viện Đa khoa Khu vực Thới Lai"),
+    version_detailLayout_displayOptions_showSidebar: boolean(
+      "version_detail_layout_display_options_show_sidebar",
     ).default(true),
     version_detailLayout_displayOptions_showSidebarLatest: boolean(
       "version_detail_layout_display_options_show_sidebar_latest",
@@ -11176,15 +11272,69 @@ export const _theme_settings_v = pgTable(
     version_detailLayout_displayOptions_sidebarLatestTitle: varchar(
       "version_detail_layout_display_options_sidebar_latest_title",
     ).default("Tin mới nhất"),
+    version_detailLayout_displayOptions_showSidebarBanners: boolean(
+      "version_detail_layout_display_options_show_sidebar_banners",
+    ).default(true),
     version_detailLayout_displayOptions_showRelatedSection: boolean(
       "version_detail_layout_display_options_show_related_section",
     ).default(true),
     version_detailLayout_displayOptions_relatedSectionTitle: varchar(
       "version_detail_layout_display_options_related_section_title",
     ).default("Tin tức cùng chuyên mục"),
-    version_detailLayout_displayOptions_defaultSourceName: varchar(
-      "version_detail_layout_display_options_default_source_name",
+    version_detailLayout_displayOptions_showBackToList: boolean(
+      "version_detail_layout_display_options_show_back_to_list",
+    ).default(true),
+    version_detailLayout_techniqueOptions_showBreadcrumbs: boolean(
+      "version_detail_layout_technique_options_show_breadcrumbs",
+    ).default(true),
+    version_detailLayout_techniqueOptions_showDate: boolean(
+      "version_detail_layout_technique_options_show_date",
+    ).default(true),
+    version_detailLayout_techniqueOptions_showViews: boolean(
+      "version_detail_layout_technique_options_show_views",
+    ).default(true),
+    version_detailLayout_techniqueOptions_showCategory: boolean(
+      "version_detail_layout_technique_options_show_category",
+    ).default(true),
+    version_detailLayout_techniqueOptions_showHighlights: boolean(
+      "version_detail_layout_technique_options_show_highlights",
+    ).default(true),
+    version_detailLayout_techniqueOptions_showAdvantages: boolean(
+      "version_detail_layout_technique_options_show_advantages",
+    ).default(true),
+    version_detailLayout_techniqueOptions_showCoverInDetail: boolean(
+      "version_detail_layout_technique_options_show_cover_in_detail",
+    ).default(false),
+    version_detailLayout_techniqueOptions_showSource: boolean(
+      "version_detail_layout_technique_options_show_source",
+    ).default(false),
+    version_detailLayout_techniqueOptions_sourceName: varchar(
+      "version_detail_layout_technique_options_source_name",
     ).default("Bệnh viện Đa khoa Khu vực Thới Lai"),
+    version_detailLayout_techniqueOptions_showShareButtons: boolean(
+      "version_detail_layout_technique_options_show_share_buttons",
+    ).default(true),
+    version_detailLayout_techniqueOptions_showSidebar: boolean(
+      "version_detail_layout_technique_options_show_sidebar",
+    ).default(true),
+    version_detailLayout_techniqueOptions_showSidebarLatest: boolean(
+      "version_detail_layout_technique_options_show_sidebar_latest",
+    ).default(true),
+    version_detailLayout_techniqueOptions_sidebarLatestTitle: varchar(
+      "version_detail_layout_technique_options_sidebar_latest_title",
+    ).default("Kỹ thuật chuyên sâu khác"),
+    version_detailLayout_techniqueOptions_showSidebarBanners: boolean(
+      "version_detail_layout_technique_options_show_sidebar_banners",
+    ).default(true),
+    version_detailLayout_techniqueOptions_showRelatedSection: boolean(
+      "version_detail_layout_technique_options_show_related_section",
+    ).default(true),
+    version_detailLayout_techniqueOptions_relatedSectionTitle: varchar(
+      "version_detail_layout_technique_options_related_section_title",
+    ).default("Kỹ thuật cùng chuyên mục"),
+    version_detailLayout_techniqueOptions_showBackToList: boolean(
+      "version_detail_layout_technique_options_show_back_to_list",
+    ).default(true),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,

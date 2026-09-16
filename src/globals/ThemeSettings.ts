@@ -280,6 +280,12 @@ export const ThemeSettings: GlobalConfig = {
           defaultValue: true,
         },
         {
+          name: 'applyAdvancedTechniques',
+          label: 'Áp dụng cho Kỹ thuật chuyên sâu (/ky-thuat-chuyen-sau/[slug])',
+          type: 'checkbox',
+          defaultValue: true,
+        },
+        {
           name: 'applyProcurement',
           label: 'Áp dụng cho Đấu thầu – Mua sắm (/dau-thau-mua-sam/[slug])',
           type: 'checkbox',
@@ -474,20 +480,56 @@ export const ThemeSettings: GlobalConfig = {
           ],
         },
 
-        // --- 4. TÙY CHỈNH HIỂN THỊ TIN TỨC LIÊN QUAN & NGUỒN BÀI VIẾT ---
+        // --- 4. TÙY CHỈNH HIỂN THỊ NỘI DUNG & CHÂN TRANG (DÙNG CHUNG) ---
         {
           name: 'displayOptions',
-          label: 'Tùy chọn hiển thị nội dung & chân trang',
+          label: 'Tùy chọn hiển thị nội dung & chân trang (Dùng chung)',
           type: 'group',
           fields: [
-            { name: 'showViews', label: 'Hiển thị lượt xem bài viết', type: 'checkbox', defaultValue: true },
+            { name: 'showBreadcrumbs', label: 'Hiển thị thanh đường dẫn (Breadcrumbs)', type: 'checkbox', defaultValue: true },
             { name: 'showDate', label: 'Hiển thị ngày đăng', type: 'checkbox', defaultValue: true },
+            { name: 'showViews', label: 'Hiển thị lượt xem bài viết', type: 'checkbox', defaultValue: true },
             { name: 'showCategory', label: 'Hiển thị chuyên mục', type: 'checkbox', defaultValue: true },
+            { name: 'showHighlights', label: 'Hiển thị khối tóm tắt nổi bật (Highlights)', type: 'checkbox', defaultValue: true },
+            { name: 'showExcerpt', label: 'Hiển thị đoạn trích dẫn tóm tắt (Sapo) đầu bài', type: 'checkbox', defaultValue: false },
+            { name: 'showSource', label: 'Hiển thị Nguồn bài viết ở cuối bài', type: 'checkbox', defaultValue: true },
+            { name: 'defaultSourceName', label: 'Tên nguồn mặc định cuối bài', type: 'text', defaultValue: 'Bệnh viện Đa khoa Khu vực Thới Lai' },
+            { name: 'showSidebar', label: 'Hiển thị toàn bộ cột Sidebar bên phải', type: 'checkbox', defaultValue: true },
             { name: 'showSidebarLatest', label: 'Hiển thị mục "Tin mới nhất" ở Sidebar', type: 'checkbox', defaultValue: true },
             { name: 'sidebarLatestTitle', label: 'Tiêu đề danh sách ở Sidebar', type: 'text', defaultValue: 'Tin mới nhất' },
+            { name: 'showSidebarBanners', label: 'Hiển thị các Banner tiện ích ở Sidebar', type: 'checkbox', defaultValue: true },
             { name: 'showRelatedSection', label: 'Hiển thị khối "Tin liên quan" dưới chân bài', type: 'checkbox', defaultValue: true },
             { name: 'relatedSectionTitle', label: 'Tiêu đề khối tin liên quan', type: 'text', defaultValue: 'Tin tức cùng chuyên mục' },
-            { name: 'defaultSourceName', label: 'Tên nguồn mặc định cuối bài', type: 'text', defaultValue: 'Bệnh viện Đa khoa Khu vực Thới Lai' },
+            { name: 'showBackToList', label: 'Hiển thị nút quay lại danh mục / trang chủ', type: 'checkbox', defaultValue: true },
+          ],
+        },
+
+        // --- 5. TÙY CHỌN BẬT/TẮT TỪNG KHỐI RIÊNG CHO KỸ THUẬT CHUYÊN SÂU ---
+        {
+          name: 'techniqueOptions',
+          label: 'Cài đặt hiển thị riêng cho Kỹ thuật chuyên sâu (/ky-thuat-chuyen-sau/[slug])',
+          type: 'group',
+          admin: {
+            description: 'Cho phép bật/tắt độc lập từng ô thông tin trên trang chi tiết Kỹ thuật chuyên sâu mà không ảnh hưởng đến Tin tức.',
+          },
+          fields: [
+            { name: 'showBreadcrumbs', label: 'Hiển thị thanh đường dẫn (Breadcrumbs)', type: 'checkbox', defaultValue: true },
+            { name: 'showDate', label: 'Hiển thị ngày cập nhật', type: 'checkbox', defaultValue: true },
+            { name: 'showViews', label: 'Hiển thị lượt xem bài viết', type: 'checkbox', defaultValue: true },
+            { name: 'showCategory', label: 'Hiển thị chuyên khoa phụ trách', type: 'checkbox', defaultValue: true },
+            { name: 'showHighlights', label: 'Hiển thị khối thông tin nổi bật (Khoa/Phòng, Bác sĩ, Chỉ định)', type: 'checkbox', defaultValue: true },
+            { name: 'showAdvantages', label: 'Hiển thị khối Ưu điểm vượt trội của kỹ thuật', type: 'checkbox', defaultValue: true },
+            { name: 'showCoverInDetail', label: 'Hiển thị ảnh đại diện lên đầu bài viết', type: 'checkbox', defaultValue: false },
+            { name: 'showSource', label: 'Hiển thị Nguồn bài viết ở cuối trang (Mặc định: TẮT cho Kỹ thuật chuyên sâu)', type: 'checkbox', defaultValue: false },
+            { name: 'sourceName', label: 'Tên nguồn (nếu bật)', type: 'text', defaultValue: 'Bệnh viện Đa khoa Khu vực Thới Lai' },
+            { name: 'showShareButtons', label: 'Hiển thị thanh chia sẻ mạng xã hội (Facebook, Zalo...)', type: 'checkbox', defaultValue: true },
+            { name: 'showSidebar', label: 'Hiển thị cột Sidebar bên phải', type: 'checkbox', defaultValue: true },
+            { name: 'showSidebarLatest', label: 'Hiển thị danh sách Kỹ thuật khác ở Sidebar', type: 'checkbox', defaultValue: true },
+            { name: 'sidebarLatestTitle', label: 'Tiêu đề danh sách ở Sidebar', type: 'text', defaultValue: 'Kỹ thuật chuyên sâu khác' },
+            { name: 'showSidebarBanners', label: 'Hiển thị Banner tiện ích ở Sidebar (Medpro, Tiêm chủng, Bảng giá...)', type: 'checkbox', defaultValue: true },
+            { name: 'showRelatedSection', label: 'Hiển thị khối Kỹ thuật cùng chuyên mục ở chân trang', type: 'checkbox', defaultValue: true },
+            { name: 'relatedSectionTitle', label: 'Tiêu đề khối kỹ thuật liên quan', type: 'text', defaultValue: 'Kỹ thuật cùng chuyên mục' },
+            { name: 'showBackToList', label: 'Hiển thị nút quay lại danh sách trên Trang chủ', type: 'checkbox', defaultValue: true },
           ],
         },
       ],

@@ -2,20 +2,20 @@
 
 ## Mục tiêu
 
-1. Thêm trường quản trị nội dung dòng chữ chạy ngang (ticker marquee) vào Admin CMS để người quản trị có thể thay đổi trực tiếp.
-2. Thiết kế lại trang bài viết chi tiết của Kỹ thuật chuyên sâu (`/ky-thuat-chuyen-sau/[slug]`) đồng bộ và chuyên nghiệp giống như trang chi tiết Tin tức (`/tin-tuc/[slug]`).
+1. Hỗ trợ bật/tắt độc lập từng ô thông tin (Granular Toggles) trên mẫu bài viết chi tiết chung `ArticleDetailTemplate`.
+2. Tắt dòng "Nguồn bài viết" cho Kỹ thuật chuyên sâu (`/ky-thuat-chuyen-sau/[slug]`), giữ bật các khối khác.
+3. Cung cấp nhóm cấu hình `techniqueOptions` và mở rộng `displayOptions` trong Admin CMS để người quản trị có thể bật/tắt tùy ý mọi khối nội dung.
 
 ## Trạng thái
 
-- **Hoàn thành** lúc 07:58 ngày 2026-09-16 (Asia/Saigon).
+- **Hoàn thành** lúc 09:54 ngày 2026-09-16 (Asia/Saigon).
 - **Chi tiết đã xử lý:**
-  - `SiteSettings.ts`: Thêm trường `text` ("Nội dung chữ chạy trên website") trực tiếp vào nhóm `tickerAppearance` ("Cài đặt thanh chữ chạy - Marquee").
-  - `SiteHeader.tsx`: Cập nhật logic đọc `tickerSettings.text || settings?.slogan || ...`.
-  - Migration `20260916_012_add_ticker_appearance_text.mjs`: Thêm cột `ticker_appearance_text` vào `site_settings` và `version_ticker_appearance_text` vào `_site_settings_v`. Đã chạy migration (12/12 applied) và seal schema contract.
-  - `ArticleDetailTemplate.tsx`: Bổ sung các slot tùy biến `customBodyTop`, `customBodyBottom`, `children`, và ẩn lặp lại khối Tóm tắt / Mô tả ngắn trong bài viết chi tiết (`showExcerpt: false`).
-  - `ky-thuat-chuyen-sau/[slug]/page.tsx`: Chuyển đổi sang `ArticleDetailTemplate` với Breadcrumbs, highlights (Khoa/Phòng, Bác sĩ, Chỉ định), khối ưu điểm, sidebar kỹ thuật khác và banner tiện ích, không hiển thị lại tóm tắt.
+  - `ThemeSettings.ts`: Bổ sung nhóm `techniqueOptions` cho Kỹ thuật chuyên sâu (mặc định `showSource = false`), mở rộng `displayOptions` dùng chung, thêm `applyAdvancedTechniques`.
+  - Migration `20260916_013_add_detail_layout_granular_toggles.mjs`: Thêm 25 cột vào `theme_settings` và `_theme_settings_v`. Đã seal contract và deploy (13/13 applied).
+  - `ArticleDetailTemplate.tsx`: Hỗ trợ toàn bộ props bật/tắt độc lập từng khối (Breadcrumb, Ngày, Lượt xem, Chuyên khoa, Highlights, Excerpt, Nguồn, Chia sẻ, Sidebar, Tin mới, Banner, Tin liên quan, Nút quay lại). Tự động co giãn layout grid khi tắt Sidebar hoặc Cột trái.
+  - `ky-thuat-chuyen-sau/[slug]/page.tsx`: Kết nối `techniqueOptions`, mặc định ẩn dòng "Nguồn bài viết", các khối khác giữ bật và có thể bật/tắt linh hoạt từ Admin CMS.
   - `npm run db:schema:check`: Pass contract hợp lệ.
-  - `npm run db:migrate:status`: Pass 12/12 applied, 0 pending.
+  - `npm run db:migrate:status`: Pass 13/13 applied, 0 pending.
   - `npm run typecheck`: Pass 100% (0 errors).
 
 

@@ -1,5 +1,43 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-16] - Bổ sung công tắc bật/tắt độc lập từng khối nội dung bài viết chi tiết & Tắt nguồn bài viết Kỹ thuật chuyên sâu
+
+- **Thời gian thực hiện:** 09:54 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Sử dụng mẫu thiết kế chung (`ArticleDetailTemplate`), nhưng cho phép người quản trị bật/tắt tùy ý từng khối nội dung trên bài viết chi tiết (Granular Toggles).
+  2. Cụ thể: Tắt dòng "Nguồn bài viết" cho Kỹ thuật chuyên sâu, trong khi các phần khác vẫn bật bình thường.
+  3. Áp dụng khả năng bật/tắt độc lập này cho tất cả các khối khác (Breadcrumb, Ngày đăng, Lượt xem, Chuyên khoa/Khoa phòng, Highlights, Ưu điểm, Sidebar, Banner, Tin liên quan, Nút quay lại...).
+- **Nội dung thực hiện:**
+  - **Admin CMS (`ThemeSettings.ts`)**:
+    - Bổ sung nhóm `techniqueOptions` (Cài đặt hiển thị riêng cho Kỹ thuật chuyên sâu):
+      - `showSource`: Mặc định **TẮT** (`false`) cho Kỹ thuật chuyên sâu theo đúng yêu cầu người dùng, có thể bật lại tùy ý.
+      - Hỗ trợ công tắc độc lập cho: `showBreadcrumbs`, `showDate`, `showViews`, `showCategory`, `showHighlights`, `showAdvantages`, `showCoverInDetail`, `showShareButtons`, `showSidebar`, `showSidebarLatest`, `showSidebarBanners`, `showRelatedSection`, `showBackToList`, `sourceName`, `sidebarLatestTitle`, `relatedSectionTitle`.
+    - Mở rộng nhóm `displayOptions` (Dùng chung toàn hệ thống) với đầy đủ công tắc cho từng khối.
+    - Thêm `applyAdvancedTechniques` vào phạm vi cấu hình giao diện.
+  - **Database & Schema Contract**:
+    - Tạo và thực thi Migration `20260916_013_add_detail_layout_granular_toggles.mjs` thêm 25 cột vào `theme_settings` và 25 cột vào `_theme_settings_v`.
+    - Đã seal contract và deploy migration thành công (13/13 applied, 0 pending).
+  - **Component `ArticleDetailTemplate`**:
+    - Bổ sung các props granular: `showBreadcrumbs`, `showDate`, `showViews`, `showCategory`, `showHighlights`, `showExcerpt`, `showSource`, `showShareButtons`, `showSidebar`, `showSidebarLatest`, `showSidebarBanners`, `showRelatedSection`, `showBackToList`.
+    - Tự động điều chỉnh layout CSS (`postDetailLayoutFull`, `postDetailLayoutNoRight`, `postDetailLayoutNoLeft`) khi tắt Sidebar hoặc tắt cột chia sẻ.
+  - **Trang Kỹ thuật chuyên sâu (`ky-thuat-chuyen-sau/[slug]/page.tsx`)**:
+    - Kết nối với `techniqueOptions` từ `theme-settings`. Mặc định `showSource = false` (không hiển thị dòng "Nguồn: Bệnh viện..." ở cuối bài kỹ thuật chuyên sâu), các khối khác hiển thị đầy đủ và có thể bật/tắt linh hoạt từ Admin CMS.
+  - **Kiểm tra**:
+    - `npm run db:schema:check`: Pass contract hợp lệ (`20260916_013_add_detail_layout_granular_toggles`).
+    - `npm run db:migrate:status`: Pass 13/13 applied, 0 pending.
+    - `npm run typecheck`: Pass 100% (0 errors).
+- **Files Modified:**
+  - `src/globals/ThemeSettings.ts`
+  - `src/components/ArticleDetailTemplate.tsx`
+  - `src/components/ArticleDetailTemplate.module.css`
+  - `src/app/(frontend)/ky-thuat-chuyen-sau/[slug]/page.tsx`
+  - `scripts/db-migrations/20260916_013_add_detail_layout_granular_toggles.mjs`
+  - `src/payload-generated-schema.ts`
+  - `scripts/db-schema-contract.json`
+  - `src/payload-types.ts`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
 ## [2026-09-16] - Đưa nội dung chữ chạy vào Admin CMS & Thiết kế lại trang chi tiết Kỹ thuật chuyên sâu
 
 - **Thời gian thực hiện:** 07:58 (Asia/Saigon)

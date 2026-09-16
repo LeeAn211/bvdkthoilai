@@ -30,7 +30,8 @@ export interface HighlightMetaItem {
 
 export interface ArticleDetailTemplateProps {
   // Breadcrumbs
-  breadcrumbs: ArticleBreadcrumb[]
+  breadcrumbs?: ArticleBreadcrumb[]
+  showBreadcrumbs?: boolean
 
   // Header meta & title
   title: string
@@ -40,8 +41,13 @@ export interface ArticleDetailTemplateProps {
   categoryHref?: string
   expireDate?: string
 
-  // Thông tin tóm tắt đặc thù (VD: Đấu thầu: Trạng thái, Hạn nhận; Tuyển dụng: Số lượng tuyển...)
+  showDate?: boolean
+  showViews?: boolean
+  showCategory?: boolean
+
+  // Highlights
   highlights?: HighlightMetaItem[]
+  showHighlights?: boolean
 
   // Content
   excerpt?: string
@@ -50,9 +56,33 @@ export interface ArticleDetailTemplateProps {
   customBodyTop?: React.ReactNode
   customBodyBottom?: React.ReactNode
   children?: React.ReactNode
+
+  // Attachments
   attachments?: any[]
   attachmentTitle?: string
+  showAttachments?: boolean
+
+  // Source (Nguồn bài viết)
   sourceName?: string
+  showSource?: boolean
+
+  // Share
+  showShareButtons?: boolean
+
+  // Sidebar
+  showSidebar?: boolean
+  sidebarTitle?: string
+  latestItems?: RelatedArticle[]
+  showSidebarLatest?: boolean
+  showSidebarBanners?: boolean
+
+  // Related
+  relatedTitle?: string
+  relatedItems?: RelatedArticle[]
+  showRelatedSection?: boolean
+
+  // Back button
+  showBackToList?: boolean
 
   // Sidebar & Layout Config (Lấy từ Admin ThemeSettings)
   adminConfig?: {
@@ -100,37 +130,41 @@ export interface ArticleDetailTemplateProps {
       extraBannersJson?: string
     }
     displayOptions?: {
+      showBreadcrumbs?: boolean
       showViews?: boolean
       showDate?: boolean
       showCategory?: boolean
+      showHighlights?: boolean
+      showExcerpt?: boolean
+      showSource?: boolean
+      showSidebar?: boolean
       showSidebarLatest?: boolean
       sidebarLatestTitle?: string
+      showSidebarBanners?: boolean
       showRelatedSection?: boolean
       relatedSectionTitle?: string
       defaultSourceName?: string
-      showExcerpt?: boolean
+      showBackToList?: boolean
     }
   }
 
-  // Sidebar
-  sidebarTitle?: string
-  latestItems?: RelatedArticle[]
-
-  // Bottom related
-  relatedTitle?: string
-  relatedItems?: RelatedArticle[]
-  baseHref: string // ví dụ: "/thong-bao", "/tin-tuc", "/dau-thau-mua-sam"
+  baseHref: string // ví dụ: "/thong-bao", "/tin-tuc", "/dau-thau-mua-sam", "/ky-thuat-chuyen-sau"
 }
 
 export function ArticleDetailTemplate({
   breadcrumbs,
+  showBreadcrumbs,
   title,
   publishedDate,
   views = 128,
   categoryName,
   categoryHref,
   expireDate,
+  showDate,
+  showViews,
+  showCategory,
   highlights,
+  showHighlights,
   excerpt,
   showExcerpt = false,
   content,
@@ -139,31 +173,58 @@ export function ArticleDetailTemplate({
   children,
   attachments,
   attachmentTitle = 'Tài liệu / Văn bản đính kèm',
+  showAttachments,
   sourceName,
-  adminConfig,
+  showSource,
+  showShareButtons,
+  showSidebar,
   sidebarTitle = 'Tin mới nhất',
   latestItems = [],
+  showSidebarLatest,
+  showSidebarBanners,
   relatedTitle = 'Tin tức cùng chuyên mục',
   relatedItems = [],
+  showRelatedSection,
+  showBackToList,
+  adminConfig,
   baseHref,
 }: ArticleDetailTemplateProps) {
   const shareConfig = adminConfig?.shareSettings
   const bannerConfig = adminConfig?.sidebarBanner
   const displayConfig = adminConfig?.displayOptions
 
+  // Tính toán quyền bật/tắt độc lập từng ô thông tin (Granular Toggles)
+  const isBreadcrumbsVisible = showBreadcrumbs !== undefined ? showBreadcrumbs : (displayConfig?.showBreadcrumbs !== false)
+  const isDateVisible = showDate !== undefined ? showDate : (displayConfig?.showDate !== false)
+  const isViewsVisible = showViews !== undefined ? showViews : (displayConfig?.showViews !== false)
+  const isCategoryVisible = showCategory !== undefined ? showCategory : (displayConfig?.showCategory !== false)
+  const isHighlightsVisible = showHighlights !== undefined ? showHighlights : (displayConfig?.showHighlights !== false)
   const isExcerptVisible = showExcerpt === true || displayConfig?.showExcerpt === true
-  const showViews = displayConfig?.showViews !== false
-  const showDate = displayConfig?.showDate !== false
-  const showCategory = displayConfig?.showCategory !== false
-  const showSidebarLatest = displayConfig?.showSidebarLatest !== false
+  const isSourceVisible = showSource !== undefined ? showSource : (displayConfig?.showSource !== false)
+  const isShareEnabled = showShareButtons !== undefined ? showShareButtons : (shareConfig?.enabled !== false)
+  const isAttachmentsVisible = showAttachments !== false
+  const isSidebarVisible = showSidebar !== undefined ? showSidebar : (displayConfig?.showSidebar !== false)
+  const isSidebarLatestVisible = showSidebarLatest !== undefined ? showSidebarLatest : (displayConfig?.showSidebarLatest !== false)
+  const isSidebarBannersVisible = showSidebarBanners !== undefined ? showSidebarBanners : (displayConfig?.showSidebarBanners !== false && bannerConfig?.enabled !== false)
+  const isRelatedVisible = showRelatedSection !== undefined ? showRelatedSection : (displayConfig?.showRelatedSection !== false)
+
   const finalSidebarTitle = displayConfig?.sidebarLatestTitle || sidebarTitle
-  const showRelatedSection = displayConfig?.showRelatedSection !== false
   const finalRelatedTitle = displayConfig?.relatedSectionTitle || relatedTitle
   const finalSourceName = sourceName || displayConfig?.defaultSourceName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
 
   // Vị trí thanh chia sẻ: 'left' | 'right' | 'top' | 'bottom'
   const sharePosition = shareConfig?.position || 'left'
-  const isShareEnabled = shareConfig?.enabled !== false
+  const isLeftShare = isShareEnabled && sharePosition === 'left'
+
+  // Xác định class grid của layout theo trạng thái bật/tắt cột trái và sidebar phải
+  let layoutGridClass = styles.postDetailLayout
+  if (!isLeftShare && !isSidebarVisible) {
+    layoutGridClass = `${styles.postDetailLayout} ${styles.postDetailLayoutFull}`
+  } else if (!isLeftShare && isSidebarVisible) {
+    layoutGridClass = `${styles.postDetailLayout} ${styles.postDetailLayoutNoLeft}`
+  } else if (isLeftShare && !isSidebarVisible) {
+    layoutGridClass = `${styles.postDetailLayout} ${styles.postDetailLayoutNoRight}`
+  }
 
   // Danh sách banners
   const bannerList: Array<{
@@ -175,7 +236,7 @@ export function ArticleDetailTemplate({
     imageUrl?: string | null
   }> = []
 
-  if (bannerConfig?.enabled !== false) {
+  if (isSidebarBannersVisible) {
     // Banner 1
     const b1Img = bannerConfig?.customBannerImage ? mediaUrl(bannerConfig.customBannerImage) : null
     bannerList.push({
@@ -283,9 +344,9 @@ export function ArticleDetailTemplate({
     )
   }
 
-  // Component render Tin mới nhất Sidebar
+  // Component render Danh sách bài viết mới ở Sidebar
   const renderSidebarLatest = () => {
-    if (!showSidebarLatest || !latestItems || latestItems.length === 0) return null
+    if (!isSidebarLatestVisible || !latestItems || latestItems.length === 0) return null
     return (
       <div className={styles.sidebarBox}>
         <h3 className={styles.sidebarBoxTitle}>
@@ -321,14 +382,12 @@ export function ArticleDetailTemplate({
     )
   }
 
-  const isLeftShare = isShareEnabled && sharePosition === 'left'
-
   return (
     <>
       <SiteHeader />
       <main className={`container ${styles.postDetailContainer}`}>
         {/* Breadcrumb điều hướng */}
-        {breadcrumbs && breadcrumbs.length > 0 && (
+        {isBreadcrumbsVisible && breadcrumbs && breadcrumbs.length > 0 && (
           <nav className={styles.postDetailBreadcrumb} aria-label="Đường dẫn">
             {breadcrumbs.map((crumb, idx) => (
               <React.Fragment key={idx}>
@@ -340,7 +399,7 @@ export function ArticleDetailTemplate({
         )}
 
         {/* Layout bài viết */}
-        <div className={`${styles.postDetailLayout} ${!isLeftShare ? styles.postDetailLayoutNoLeft : ''}`}>
+        <div className={layoutGridClass}>
           {/* Vị trí 1: Cột trái (Mặc định) */}
           {isLeftShare && <ShareButtons title={title} config={shareConfig} />}
 
@@ -350,68 +409,70 @@ export function ArticleDetailTemplate({
             <h1 className={styles.postDetailTitle}>{title}</h1>
 
             {/* Dòng metadata: Ngày đăng | Lượt xem | Chuyên mục */}
-            <div className={styles.postDetailMetaTop}>
-              {showDate && publishedDate && (
-                <div className={styles.postDetailMetaItem}>
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className={styles.metaIconGold}
-                  >
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                  </svg>
-                  <span>{publishedDate}</span>
-                </div>
-              )}
-              {showDate && publishedDate && showViews && <span className={styles.metaDivider}>|</span>}
-              {showViews && (
-                <div className={styles.postDetailMetaItem}>
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className={styles.metaIconGold}
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                  <span>{views} lượt xem</span>
-                </div>
-              )}
-              {showCategory && categoryName && (
-                <>
-                  <span className={styles.metaDivider}>|</span>
-                  {categoryHref ? (
-                    <Link href={categoryHref} className={styles.metaCategoryLink}>
-                      {categoryName}
-                    </Link>
-                  ) : (
-                    <span className={styles.metaCategoryLink}>{categoryName}</span>
-                  )}
-                </>
-              )}
-              {expireDate && <span className={styles.metaExpire}>(Hạn: {expireDate})</span>}
-            </div>
+            {(isDateVisible || isViewsVisible || isCategoryVisible || expireDate) && (
+              <div className={styles.postDetailMetaTop}>
+                {isDateVisible && publishedDate && (
+                  <div className={styles.postDetailMetaItem}>
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={styles.metaIconGold}
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>{publishedDate}</span>
+                  </div>
+                )}
+                {isDateVisible && publishedDate && isViewsVisible && <span className={styles.metaDivider}>|</span>}
+                {isViewsVisible && (
+                  <div className={styles.postDetailMetaItem}>
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={styles.metaIconGold}
+                    >
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span>{views} lượt xem</span>
+                  </div>
+                )}
+                {isCategoryVisible && categoryName && (
+                  <>
+                    {(isDateVisible || isViewsVisible) && <span className={styles.metaDivider}>|</span>}
+                    {categoryHref ? (
+                      <Link href={categoryHref} className={styles.metaCategoryLink}>
+                        {categoryName}
+                      </Link>
+                    ) : (
+                      <span className={styles.metaCategoryLink}>{categoryName}</span>
+                    )}
+                  </>
+                )}
+                {expireDate && <span className={styles.metaExpire}>(Hạn: {expireDate})</span>}
+              </div>
+            )}
 
             {/* Vị trí 2: Thanh chia sẻ nằm ngay dưới tiêu đề */}
             {isShareEnabled && sharePosition === 'top' && (
               <ShareButtons title={title} horizontal config={shareConfig} />
             )}
 
-            {/* Thông tin nổi bật (dành cho đấu thầu, tuyển dụng...) */}
-            {highlights && highlights.length > 0 && (
+            {/* Thông tin nổi bật (dành cho đấu thầu, tuyển dụng, kỹ thuật...) */}
+            {isHighlightsVisible && highlights && highlights.length > 0 && (
               <div className={styles.metaHighlightBox}>
                 {highlights.map((item, idx) => (
                   <div key={idx} className={styles.metaHighlightItem}>
@@ -438,7 +499,7 @@ export function ArticleDetailTemplate({
             {children}
 
             {/* Danh sách đính kèm tệp */}
-            {attachments && attachments.length > 0 && (
+            {isAttachmentsVisible && attachments && attachments.length > 0 && (
               <div style={{ marginTop: '28px' }}>
                 <AttachmentList items={attachments} title={attachmentTitle} />
               </div>
@@ -449,8 +510,8 @@ export function ArticleDetailTemplate({
               <ShareButtons title={title} horizontal config={shareConfig} />
             )}
 
-            {/* Nguồn bài viết */}
-            {finalSourceName && (
+            {/* Nguồn bài viết (cho phép tắt độc lập) */}
+            {isSourceVisible && finalSourceName && (
               <div className={styles.postDetailAuthor}>
                 <span>Nguồn: {finalSourceName}</span>
               </div>
@@ -458,31 +519,33 @@ export function ArticleDetailTemplate({
           </article>
 
           {/* Cột phải: Sidebar */}
-          <aside className={styles.postDetailSidebar}>
-            {/* Vị trí 4: Thanh chia sẻ đặt ở đầu Sidebar cột phải */}
-            {isShareEnabled && sharePosition === 'right' && (
-              <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-                <ShareButtons title={title} horizontal config={shareConfig} />
-              </div>
-            )}
+          {isSidebarVisible && (
+            <aside className={styles.postDetailSidebar}>
+              {/* Vị trí 4: Thanh chia sẻ đặt ở đầu Sidebar cột phải */}
+              {isShareEnabled && sharePosition === 'right' && (
+                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                  <ShareButtons title={title} horizontal config={shareConfig} />
+                </div>
+              )}
 
-            {/* Thứ tự Banner so với Tin mới nhất (aboveLatest hoặc belowLatest) */}
-            {bannerConfig?.position === 'belowLatest' ? (
-              <>
-                {renderSidebarLatest()}
-                {renderBanners()}
-              </>
-            ) : (
-              <>
-                {renderBanners()}
-                {renderSidebarLatest()}
-              </>
-            )}
-          </aside>
+              {/* Thứ tự Banner so với Tin mới nhất (aboveLatest hoặc belowLatest) */}
+              {bannerConfig?.position === 'belowLatest' ? (
+                <>
+                  {renderSidebarLatest()}
+                  {renderBanners()}
+                </>
+              ) : (
+                <>
+                  {renderBanners()}
+                  {renderSidebarLatest()}
+                </>
+              )}
+            </aside>
+          )}
         </div>
 
         {/* Khối bài viết cùng chuyên mục phía dưới chân trang */}
-        {showRelatedSection && relatedItems && relatedItems.length > 0 && (
+        {isRelatedVisible && relatedItems && relatedItems.length > 0 && (
           <section className={styles.relatedSection}>
             <h2 className={styles.relatedSectionHeading}>
               <span>{finalRelatedTitle}</span>

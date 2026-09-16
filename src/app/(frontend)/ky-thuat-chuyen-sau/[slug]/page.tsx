@@ -66,6 +66,27 @@ export default async function AdvancedTechniqueDetailPage({ params }: Props) {
   const catName = department?.name || 'Kỹ thuật chuyên sâu'
   const publishedDate = item.createdAt ? new Date(item.createdAt).toLocaleDateString('vi-VN') : ''
 
+  // Cấu hình bật/tắt từng khối từ Admin ThemeSettings (techniqueOptions):
+  const techConfig = theme?.detailLayout?.techniqueOptions || {}
+  const showBreadcrumbs = techConfig.showBreadcrumbs !== false
+  const showDate = techConfig.showDate !== false
+  const showViews = techConfig.showViews !== false
+  const showCategory = techConfig.showCategory !== false
+  const showHighlights = techConfig.showHighlights !== false
+  const showAdvantages = techConfig.showAdvantages !== false
+  const showCover = item.showCoverInDetail === true || techConfig.showCoverInDetail === true
+  // Mặc định TẮT nguồn bài viết cho Kỹ thuật chuyên sâu theo yêu cầu của người dùng, nhưng có thể bật lại tùy ý trong Admin
+  const showSource = techConfig.showSource === true
+  const sourceName = techConfig.sourceName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
+  const showShareButtons = techConfig.showShareButtons !== false
+  const showSidebar = techConfig.showSidebar !== false
+  const showSidebarLatest = techConfig.showSidebarLatest !== false
+  const sidebarTitle = techConfig.sidebarLatestTitle || 'Kỹ thuật chuyên sâu khác'
+  const showSidebarBanners = techConfig.showSidebarBanners !== false
+  const showRelatedSection = techConfig.showRelatedSection !== false
+  const relatedTitle = techConfig.relatedSectionTitle || 'Kỹ thuật cùng chuyên mục'
+  const showBackToList = techConfig.showBackToList !== false
+
   const breadcrumbs = [
     { label: 'Trang chủ', href: '/' },
     { label: 'Kỹ thuật chuyên sâu', href: '/#ky-thuat-chuyen-sau' },
@@ -107,7 +128,7 @@ export default async function AdvancedTechniqueDetailPage({ params }: Props) {
   // Khối tùy chỉnh trước nội dung bài viết
   const customBodyTop = (
     <>
-      {coverUrl && item.showCoverInDetail === true && (
+      {coverUrl && showCover && (
         <div
           style={{
             margin: '0 0 24px',
@@ -129,7 +150,7 @@ export default async function AdvancedTechniqueDetailPage({ params }: Props) {
         </div>
       )}
 
-      {Array.isArray(item.advantages) && item.advantages.length > 0 && (
+      {showAdvantages && Array.isArray(item.advantages) && item.advantages.length > 0 && (
         <div
           style={{
             margin: '0 0 24px',
@@ -152,11 +173,11 @@ export default async function AdvancedTechniqueDetailPage({ params }: Props) {
     </>
   )
 
-  const customBodyBottom = (
+  const customBodyBottom = showBackToList ? (
     <div style={{ marginTop: '28px', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
       <BackToList href="/#ky-thuat-chuyen-sau" label="← Xem thêm kỹ thuật chuyên sâu trên Trang chủ" />
     </div>
-  )
+  ) : null
 
   const mappedRelated = related.map((rel: any) => ({
     id: rel.id,
@@ -170,24 +191,36 @@ export default async function AdvancedTechniqueDetailPage({ params }: Props) {
   return (
     <ArticleDetailTemplate
       breadcrumbs={breadcrumbs}
+      showBreadcrumbs={showBreadcrumbs}
       title={item.title}
       publishedDate={publishedDate}
       views={item.views || 188}
       categoryName={catName}
       categoryHref={department?.slug ? `/khoa-phong/${department.slug}` : '/#ky-thuat-chuyen-sau'}
+      showDate={showDate}
+      showViews={showViews}
+      showCategory={showCategory}
       highlights={highlights.length > 0 ? highlights : undefined}
+      showHighlights={showHighlights}
       showExcerpt={false}
       content={item.content}
       customBodyTop={customBodyTop}
       customBodyBottom={customBodyBottom}
       attachments={item.attachments}
       attachmentTitle="Tài liệu / Quy trình kỹ thuật đính kèm"
-      sourceName="Bệnh viện Đa khoa Khu vực Thới Lai"
-      adminConfig={theme?.detailLayout}
-      sidebarTitle="Kỹ thuật chuyên sâu khác"
+      sourceName={sourceName}
+      showSource={showSource}
+      showShareButtons={showShareButtons}
+      showSidebar={showSidebar}
+      sidebarTitle={sidebarTitle}
       latestItems={mappedRelated}
-      relatedTitle="Kỹ thuật cùng chuyên mục"
+      showSidebarLatest={showSidebarLatest}
+      showSidebarBanners={showSidebarBanners}
+      relatedTitle={relatedTitle}
       relatedItems={mappedRelated}
+      showRelatedSection={showRelatedSection}
+      showBackToList={showBackToList}
+      adminConfig={theme?.detailLayout}
       baseHref="/ky-thuat-chuyen-sau"
     />
   )

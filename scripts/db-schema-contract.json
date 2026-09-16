@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260916_012_add_ticker_appearance_text",
-  "schemaSha256": "42dfe7938a72b5651404d76d0026e1ba72cfddbe0aee01b006ca4e6b8532ed97"
+  "migrationId": "20260916_013_add_detail_layout_granular_toggles",
+  "schemaSha256": "d61541d769c4c6f2c744f0c092483c5c7f70b6209738d5e4b4fe221348060661"
 }

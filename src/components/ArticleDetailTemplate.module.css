@@ -39,6 +39,14 @@
   grid-template-columns: minmax(0, 1fr) 320px;
 }
 
+.postDetailLayoutNoRight {
+  grid-template-columns: 56px minmax(0, 1fr);
+}
+
+.postDetailLayoutFull {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 /* 1. Cột chia sẻ bên trái (Sticky Social Share) */
 .postDetailShareCol {
   position: sticky;
