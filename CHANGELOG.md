@@ -4962,3 +4962,16 @@ Tài liệu này lưu trữ toàn bộ các thay đổi về mã nguồn, cấu 
 - Menu panel: .mobileMenuPanel slide xuống từ top bar, có quick actions (Lịch khám / Đặt khám / Cấp cứu) + danh sách nav accordion
 - Không thay đổi database
 
+
+## [2026-09-16] Fix mobile: logo/tên BV bị hiển thị khung trắng trên các trang khác
+
+**Vấn đề:** SiteHeader.module.css có @media (max-width: 900px) riêng override lại, làm mainHeader sticky + mobileBarRow hiển thị → tạo "khung trắng canh giữa" với logo/tên BV trên các trang không phải trang chủ.
+
+**Root cause:** CSS Modules (.root :global()) có độ ưu tiên cao hơn mobile-medpro.css, nên phần ẩn header trong mobile-medpro.css bị override bởi module.
+
+**Fix:**
+- src/components/SiteHeader.module.css: Xóa toàn bộ old mobile block (300+ dòng), thay bằng block mới ẩn .utilityBar, .hospitalMasthead, .mainHeader, .scrollingNotice, .mobileBarRow bằng display: none !important + height: 0 !important + isibility: hidden !important trên < 900px.
+
+**Files Modified:**
+- src/components/SiteHeader.module.css — Rewrote mobile override block
+
