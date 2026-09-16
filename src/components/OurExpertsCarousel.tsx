@@ -41,8 +41,8 @@ export function OurExpertsCarousel({
   const touchStartX = useRef<number | null>(null)
 
   const total = safeItems.length
-  const targetPerView = itemsPerView || 4
-  const maxPerView = total >= targetPerView ? targetPerView : (total >= 3 ? targetPerView : (total || 1))
+  const targetPerView = itemsPerView && itemsPerView >= 4 ? itemsPerView : 4
+  const maxPerView = total >= targetPerView ? targetPerView : (total >= 1 ? targetPerView : 1)
 
   useEffect(() => {
     if (total <= 1 || !autoplaySeconds || autoplaySeconds <= 0 || isPaused) return
@@ -153,7 +153,7 @@ export function OurExpertsCarousel({
             </div>
           )
 
-          const key = item.id || `expert-${item.originalIndex}-${idx}`
+          const key = `${item.id ?? 'expert'}-slot-${idx}`
           if (item.url) {
             return (
               <a

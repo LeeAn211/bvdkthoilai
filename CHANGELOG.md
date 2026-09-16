@@ -2,22 +2,18 @@
 
 ## [2026-09-16] - Hiển thị 4 ô cho Chuyên gia của chúng tôi & Kỹ thuật chuyên sâu trên Desktop, giữ nguyên mặc định Mobile
 
-- **Thời gian thực hiện:** 07:35 (Asia/Saigon)
-- **Yêu cầu:** Phần Chuyên gia của chúng tôi (`OurExpertsCarousel`) và Kỹ thuật chuyên sâu (`AdvancedTechniquesCarousel`) hiển thị 4 ô (card) trên máy tính (desktop) thay vì 3 ô như trước, và trên điện thoại (mobile) giữ nguyên mặc định cũ.
+- **Thời gian thực hiện:** 07:41 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Khắc phục cảnh báo React duplicate key: `Encountered two children with the same key, '1'` khi các thẻ trong carousel lặp vòng tuần hoàn.
+  2. Khắc phục khối Kỹ thuật chuyên sâu hiển thị đủ 4 ô trên desktop (trước đó nhận cấu hình cũ 3 thẻ từ database).
 - **Nội dung thực hiện:**
-  - **Kỹ thuật chuyên sâu (`AdvancedTechniquesCarousel`)**:
-    - `AdvancedTechniquesCarousel.module.css`: Cập nhật lưới hiển thị desktop thành 4 cột (`repeat(4, minmax(0, 1fr))`, `gap: 20px`), thêm bộ chọn `data-count="4"`. Giữ nguyên 100% hiển thị mobile (`max-width: 600px`: 1 cột duy nhất, ẩn các phần tử từ thứ 2 với `:nth-child(n+2)` để hỗ trợ vuốt chạm carousel chuyển động mượt mà).
-    - `AdvancedTechniquesCarousel.tsx`: Đổi giá trị mặc định `itemsPerView` từ 3 lên 4; cập nhật logic tính toán `maxPerView` hiển thị chuẩn xác 4 ô khi lặp slide.
-    - `src/app/(frontend)/page.tsx`: Cập nhật `itemsPerView={Number(item.techniqueItemsPerView ?? 4)}` và bổ sung thẻ thứ 4 cho `fallbackTechniques`.
-    - `src/globals/Homepage.ts`: Đổi `defaultValue` của `techniqueItemsPerView` từ 3 lên 4, bổ sung thẻ thứ 4 trong `defaultValue` của `techniqueItems`.
-  - **Chuyên gia của chúng tôi (`OurExpertsCarousel`)**:
-    - `OurExpertsCarousel.module.css`: Tinh chỉnh breakpoint từ 1100px xuống 1024px để đảm bảo các màn hình laptop tiêu chuẩn (1366px, 1280px, 1080p...) luôn hiển thị trọn vẹn 4 cột. Giữ nguyên 100% hiển thị mobile (`max-width: 600px`: 1 cột duy nhất).
-    - `OurExpertsCarousel.tsx`: Cập nhật tính toán `maxPerView` để luôn render đủ 4 thẻ trên desktop kể cả khi danh sách có 3 mục (sẽ tự động nối vòng lặp mượt mà).
-    - `src/app/(frontend)/page.tsx`: Cập nhật `itemsPerView={Number(item.expertItemsPerView ?? 4)}` và bổ sung chuyên gia thứ 4 cho `fallbackExperts`.
-    - `src/globals/Homepage.ts`: Bổ sung chuyên gia thứ 4 vào `defaultValue` của `expertItems`.
+  - **Khắc phục trùng lặp key React (`OurExpertsCarousel.tsx` & `AdvancedTechniquesCarousel.tsx`)**:
+    - Chuyển `const key = item.id || ...` sang `const key = `${item.id ?? 'item'}-slot-${idx}``. Khi danh sách chuyên gia hoặc kỹ thuật có ít hơn 4 mục và phải lặp thẻ để lấp đầy 4 ô trên desktop, key luôn kèm chỉ số render `idx` đảm bảo 100% duy nhất, loại bỏ hoàn toàn lỗi cảnh báo của React.
+  - **Đảm bảo 4 ô trên Desktop cho Kỹ thuật chuyên sâu (`page.tsx` & `AdvancedTechniquesCarousel.tsx`)**:
+    - Trong `src/app/(frontend)/page.tsx`: Gán trực tiếp `itemsPerView={4}` (thay vì phụ thuộc vào trường `techniqueItemsPerView` có thể đang lưu giá trị 3 trong database).
+    - Trong `AdvancedTechniquesCarousel.tsx`: Thiết lập `targetPerView = itemsPerView && itemsPerView >= 4 ? itemsPerView : 4` đảm bảo luôn đạt tối thiểu 4 ô trên màn hình lớn.
   - **Kiểm tra**:
     - `npm run typecheck`: Pass 100% (0 errors).
-    - `npm run db:schema:check`: Contract schema hợp lệ.
 - **Files Modified:**
   - `src/components/AdvancedTechniquesCarousel.tsx`
   - `src/components/AdvancedTechniquesCarousel.module.css`

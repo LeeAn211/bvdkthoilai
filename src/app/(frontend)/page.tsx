@@ -870,7 +870,7 @@ export default async function HomePage() {
                   <AdvancedTechniquesCarousel
                     items={techniqueSlides}
                     autoplaySeconds={Number(item.techniqueAutoplaySeconds ?? 5)}
-                    itemsPerView={Number(item.techniqueItemsPerView ?? 4)}
+                    itemsPerView={4}
                     cardBarBgColor={finalCardBg}
                     cardBarTextColor={finalCardText}
                   />
@@ -1140,7 +1140,7 @@ export default async function HomePage() {
                   <OurExpertsCarousel
                     items={rawSortedExperts}
                     autoplaySeconds={Number(item.expertAutoplaySeconds ?? 5)}
-                    itemsPerView={Number(item.expertItemsPerView ?? 4)}
+                    itemsPerView={4}
                     cardBarBgColor={finalCardBg}
                     cardBarTextColor={finalCardText}
                   />
