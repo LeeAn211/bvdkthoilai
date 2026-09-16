@@ -5,6 +5,7 @@ import type { CSSProperties, ReactNode } from 'react'
 import { SocialBrandIcon } from './SocialBrandIcon'
 import { CurrentWeekdayTime } from './CurrentWeekdayTime'
 import { MobileNavHeader } from './MobileNavHeader'
+import { MobileTopBar } from './MobileTopBar'
 
 function ContactIcon({ type = 'phone', customUrl, iconSize }: { type?: string; customUrl?: string; iconSize?: number }) {
   const iconPixelSize = iconSize ? `${iconSize}px` : undefined
@@ -348,6 +349,8 @@ export async function SiteHeader() {
 
   const animClass = `anim-${menuApp.animationStyle || 'slide-down'}`
 
+  const medproUrl = settings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'
+
   return (
     <div className="siteHeaderRoot" style={shellStyle}>
       {settings?.headerShowUtilityBar !== false && <div className="utilityBar" style={utilityStyle}>
@@ -448,6 +451,15 @@ export async function SiteHeader() {
           </div>}
         </div>
       </div>
+
+      {/* Mobile Top Bar — only visible on < 900px */}
+      <MobileTopBar
+        logoUrl={logo || undefined}
+        hospitalName={hospitalName}
+        hotline={hotline}
+        items={items}
+        medproUrl={medproUrl}
+      />
 
       <header className={`mainHeader ${settings?.headerStickyMenu === false ? 'notSticky' : ''} ${animClass}`} style={menuStyle}>
         <div className="container headerInner">

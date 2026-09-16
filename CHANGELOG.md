@@ -4946,3 +4946,19 @@ Tài liệu này lưu trữ toàn bộ các thay đổi về mã nguồn, cấu 
 
 ### 3. Thay đổi Database/Schema:
 - Không thay đổi schema cơ sở dữ liệu.
+
+## [2026-09-16] Mobile Menu - Thiết kế lại kiểu medpro.vn (Hamburger Top Bar)
+
+**Yêu cầu:** Thiết kế lại menu mobile có dấu 3 gạch (☰) trên góc, bấm vào hiển thị toàn bộ menu, tham khảo medpro.vn.
+
+**Files Modified:**
+- src/components/MobileTopBar.tsx [NEW] — Component top bar mobile: logo + tên BV (trái) + nút gọi + hamburger ☰ (phải). Bấm hamburger mở panel menu slide-down.
+- src/components/SiteHeader.tsx — Import và render MobileTopBar (ngoài mainHeader), truyền props logo/hospitalName/hotline/items/medproUrl.
+- src/app/styles/mobile-medpro.css — Viết lại hoàn toàn: top bar cố định 56px, menu panel slide-down từ top bar, ẩn toàn bộ desktop header trên mobile, bỏ bottom action bar cũ.
+
+**Thay đổi thiết kế:**
+- Ẩn: utilityBar, hospitalMasthead, mainHeader, scrollingNotice, mobileActionBar trên < 900px
+- Hiện: .mobileTopBar (fixed, 56px, gradient xanh)
+- Menu panel: .mobileMenuPanel slide xuống từ top bar, có quick actions (Lịch khám / Đặt khám / Cấp cứu) + danh sách nav accordion
+- Không thay đổi database
+
