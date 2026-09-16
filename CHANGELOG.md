@@ -1,5 +1,34 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-16] - Bổ sung Nút chuyển Carousel Chuyên gia trên Mobile & Thanh Bottom Navigation Chuẩn Medpro
+
+- **Thời gian thực hiện:** 21:15 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Thêm nút chuyển qua lại (Next / Prev) và chỉ báo vị trí (dots pagination) cho phần "Chuyên gia của chúng tôi" trên điện thoại giúp người dùng dễ thao tác lướt xem từng bác sĩ.
+  2. Thêm thanh menu điều hướng ở dưới cuối màn hình (Bottom Navigation Bar) cố định chuẩn phong cách Medpro.vn:
+     - Tab **Trang chủ**: Về trang chủ bệnh viện.
+     - Tab **Lịch khám**: Xem lịch khám, lịch trực của bệnh viện.
+     - Tab **Đặt khám**: Nút tròn FAB nổi bật ở trung tâm dẫn tới hệ thống đặt khám trực tuyến Medpro.
+     - Tab **Cấp cứu**: Nút màu đỏ nổi bật gọi trực tiếp số điện thoại cấp cứu khẩn cấp 24/7.
+- **Nội dung thực hiện:**
+  - `src/components/OurExpertsCarousel.tsx`:
+    - Bổ sung cụm chỉ báo chấm tròn (dots indicator) bên dưới carousel, hiển thị trực quan vị trí thẻ bác sĩ đang xem và cho phép bấm trực tiếp vào chấm để chuyển đến thẻ đó.
+  - `src/components/OurExpertsCarousel.module.css`:
+    - Tối ưu nút Prev/Next trên mobile (< 600px) với kích thước lớn hơn (46px), bo tròn, đổ bóng nổi bật, khoảng cách chạm thoải mái.
+    - Tạo hiệu ứng active mượt mà cho chấm indicator.
+  - `src/components/MobileBottomNav.tsx` (MỚI):
+    - Component thanh điều hướng đáy màn hình gồm 4 tab tiện ích chuẩn y tế: Trang chủ, Lịch khám, Đặt khám (FAB nổi bật), Cấp cứu 24/7.
+    - Sử dụng `next/link` cho điều hướng nội bộ mượt mà, nhận diện tab active dựa trên `usePathname()`.
+  - `src/app/styles/mobile-medpro.css`:
+    - Định vị thanh `mobileBottomNav` cố định (`position: fixed; bottom: 0; z-index: 8900`) trên màn hình < 900px, tự động ẩn trên desktop.
+    - Hỗ trợ `safe-area-inset-bottom` cho các dòng iPhone đời mới và tự động bổ sung `padding-bottom` cho `body` tránh bị che khuất nội dung.
+  - `src/app/(frontend)/layout.tsx`:
+    - Tích hợp `MobileBottomNav` vào layout toàn trang với dữ liệu `hotline` và `medproUrl` lấy tự động từ `SiteSettings`.
+- **Thay đổi Database/Collections/Schema:** Không có thay đổi schema.
+- **Kiểm thử & Xác nhận:**
+  - `npx tsc --noEmit`: 0 lỗi.
+  - `GET /`: Trả về mã HTTP 200 OK.
+
 ## [2026-09-16] - Thiết kế Tối ưu Trải nghiệm Mobile Chuẩn Medpro.vn: Clean Header & Bottom Action Bar 5 Tab
 
 - **Thời gian thực hiện:** 20:05 (Asia/Saigon)

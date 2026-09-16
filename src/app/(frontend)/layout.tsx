@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import React, { type CSSProperties } from 'react'
 import Script from 'next/script'
 import { WebsiteAssistant } from '@/components/WebsiteAssistant'
+import { MobileBottomNav } from '@/components/MobileBottomNav'
 import { getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
 import '../globals.css'
@@ -101,6 +102,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           fallbackLinkUrl={assistant.fallbackLinkUrl || '/lien-he'}
           quickTopics={Array.isArray(assistant.quickTopics) ? assistant.quickTopics : undefined}
           customAnswers={Array.isArray(assistant.customAnswers) ? assistant.customAnswers : undefined}
+        />
+        <MobileBottomNav
+          hotline={settings?.hotline || settings?.emergencyHotline || process.env.NEXT_PUBLIC_HOTLINE || '02923686115'}
+          medproUrl={settings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'}
         />
       </body>
     </html>
