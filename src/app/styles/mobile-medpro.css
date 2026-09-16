@@ -1,0 +1,387 @@
+/* ==========================================================================
+   MOBILE MEDPRO UX STYLES (< 900px)
+   Bệnh viện Đa khoa Khu vực Thới Lai
+   Đồng bộ giao diện ứng dụng y tế di động chuẩn Medpro:
+   1. Ẩn thanh menu ngang và thanh điều hướng thô kệch ở đầu trang
+   2. Giữ nguyên masthead logo + tên bệnh viện + hotline sạch sẽ
+   3. Điều hướng chính qua Bottom Action Bar 5 tab (Trang chủ, Lịch khám, Đặt khám FAB, Danh mục, Cấp cứu)
+   4. Bảng Drawer danh mục trượt mượt mà có accordion đa tầng
+   ========================================================================== */
+
+/* 1. Desktop default: Ẩn thanh Action Bar dưới đáy */
+.mobileActionBar {
+  display: none !important;
+}
+
+/* 2. Responsive di động (< 900px) */
+@media (max-width: 900px) {
+  /* TUYỆT ĐỐI ẨN THANH MENU DÀN NGANG Ở HEADER TRÊN MOBILE (chống đè lấn banner/ticker) */
+  .mainHeader,
+  html body .mainHeader,
+  .siteHeaderRoot .mainHeader {
+    display: none !important;
+  }
+
+  /* Ẩn dòng mobileBarRow nếu có */
+  .mobileBarRow {
+    display: none !important;
+  }
+
+  /* Thêm khoảng đệm chân trang để nội dung không bị che khuất bởi Bottom Bar */
+  body {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* 3. THANH ĐIỀU HƯỚNG DƯỚI ĐÁY CHUẨN MEDPRO (5 TABS) */
+  .mobileActionBar {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 9999 !important;
+    height: 60px !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    align-items: center !important;
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
+    box-shadow: 0 -4px 20px rgba(7, 43, 76, 0.08) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    margin: 0 !important;
+  }
+
+  /* Từng tab thường trong Bottom Bar */
+  .mobileActionItem {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    height: 100% !important;
+    color: #557082 !important;
+    text-decoration: none !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 6px 0 !important;
+    cursor: pointer !important;
+    transition: color 0.2s ease, transform 0.15s ease !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .mobileActionItem:active {
+    transform: scale(0.94);
+    color: #0878d1 !important;
+  }
+
+  .mobileActionItem svg {
+    width: 22px !important;
+    height: 22px !important;
+    stroke: currentColor !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mobileActionItem span {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+    letter-spacing: 0.1px !important;
+    color: inherit !important;
+  }
+
+  /* Nút Cấp cứu nổi bật màu đỏ */
+  .mobileActionItem.mobileEmergency {
+    color: #dc2626 !important;
+  }
+  .mobileActionItem.mobileEmergency svg {
+    stroke: #dc2626 !important;
+  }
+
+  /* 4. NÚT ĐẶT KHÁM TRUNG TÂM (ELEVATED FAB MEDPRO STYLE) */
+  .mobileActionBar .mobileBooking {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    height: 100% !important;
+    position: relative !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .mobileBookingInner {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, #0754a8 0%, #0878d1 100%) !important;
+    color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 14px rgba(8, 120, 209, 0.42), 0 0 0 3px #ffffff !important;
+    margin-top: -16px !important;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  }
+
+  .mobileBooking:active .mobileBookingInner {
+    transform: scale(0.92);
+  }
+
+  .mobileBookingInner svg {
+    width: 24px !important;
+    height: 24px !important;
+    stroke: #ffffff !important;
+    fill: none !important;
+  }
+
+  .mobileBookingLabel {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    color: #0754a8 !important;
+    line-height: 1.1 !important;
+    margin-top: 2px !important;
+  }
+
+  /* ==========================================================================
+     DRAWER DANH MỤC ĐIỀU HƯỚNG DI ĐỘNG (PRESTIGE SLIDE-IN FROM RIGHT)
+     ========================================================================== */
+  .mobileDrawerBackdrop {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(7, 34, 58, 0.6) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 100000 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: opacity 0.28s ease, visibility 0.28s ease !important;
+  }
+
+  .mobileDrawerBackdrop.drawerActive {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  .mobileDrawerWrap {
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: min(340px, 86vw) !important;
+    background: #ffffff !important;
+    box-shadow: -8px 0 32px rgba(7, 43, 76, 0.25) !important;
+    z-index: 100001 !important;
+    transform: translateX(100%) !important;
+    visibility: hidden !important;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s ease !important;
+  }
+
+  .mobileDrawerWrap.drawerActive {
+    transform: translateX(0) !important;
+    visibility: visible !important;
+  }
+
+  .mobileDrawerHeader {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 16px 18px !important;
+    background: linear-gradient(135deg, #072b4c 0%, #0754a8 100%) !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  }
+
+  .mobileDrawerTitle {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    letter-spacing: 0.2px !important;
+  }
+
+  .mobileDrawerCloseBtn {
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.16) !important;
+    color: #ffffff !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: background 0.2s ease !important;
+  }
+
+  .mobileDrawerCloseBtn:active {
+    background: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  .mobileDrawerBody {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 12px 12px 24px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  .drawerItemLink {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
+    background: #f8fafc !important;
+    color: #0f2e47 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    text-decoration: none !important;
+    border: 1px solid #eef3f7 !important;
+    transition: all 0.18s ease !important;
+  }
+
+  .drawerItemLink:active,
+  .drawerItemLink:hover {
+    background: #f0f7ff !important;
+    color: #0878d1 !important;
+    border-color: #d0e5fc !important;
+  }
+
+  .drawerItemHome {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%) !important;
+    color: #0369a1 !important;
+    border-color: #7dd3fc !important;
+  }
+
+  .drawerItemIcon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #0284c7 !important;
+  }
+
+  .drawerBullet {
+    color: #0878d1 !important;
+    font-size: 11px !important;
+    line-height: 1 !important;
+  }
+
+  .drawerGroup {
+    border-radius: 10px !important;
+    border: 1px solid #eef3f7 !important;
+    background: #f8fafc !important;
+    overflow: hidden !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .drawerGroup.groupExpanded {
+    border-color: #bae6fd !important;
+    background: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(8, 120, 209, 0.08) !important;
+  }
+
+  .drawerGroupBtn {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 12px 14px !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    text-align: left !important;
+    font-family: inherit !important;
+  }
+
+  .drawerGroupTitle {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #0f2e47 !important;
+  }
+
+  .drawerToggleIcon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #64748b !important;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .drawerToggleIcon.iconRotated {
+    transform: rotate(180deg) !important;
+    color: #0878d1 !important;
+  }
+
+  .drawerSubList {
+    display: none !important;
+    padding: 4px 10px 10px 24px !important;
+    background: #f8fafc !important;
+    border-top: 1px dashed #e2e8f0 !important;
+  }
+
+  .drawerSubList.subListVisible {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+
+  .drawerSubLink {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+    color: #334155 !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+  }
+
+  .drawerSubLink:active,
+  .drawerSubLink:hover {
+    color: #0878d1 !important;
+    background: #e0f2fe !important;
+  }
+
+  .drawerSubLink i {
+    font-style: normal !important;
+    font-size: 15px !important;
+    color: #94a3b8 !important;
+  }
+
+  .mobileDrawerFooter {
+    padding: 12px 14px !important;
+    background: #f8fafc !important;
+    border-top: 1px solid #e2e8f0 !important;
+  }
+
+  .drawerEmergencyBtn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding: 11px 14px !important;
+    border-radius: 10px !important;
+    background: #dc2626 !important;
+    color: #ffffff !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    letter-spacing: 0.3px !important;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.28) !important;
+  }
+}

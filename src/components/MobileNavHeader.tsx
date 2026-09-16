@@ -50,6 +50,23 @@ export function MobileNavHeader({ items }: MobileNavProps) {
     }
   }, [isDrawerOpen])
 
+  // Listen to open/toggle events from Mobile Bottom Action Bar (Medpro style)
+  useEffect(() => {
+    const handleToggleEvent = () => setIsDrawerOpen((prev) => !prev)
+    const handleOpenEvent = () => setIsDrawerOpen(true)
+    const handleCloseEvent = () => setIsDrawerOpen(false)
+
+    window.addEventListener('toggle-mobile-drawer', handleToggleEvent)
+    window.addEventListener('open-mobile-drawer', handleOpenEvent)
+    window.addEventListener('close-mobile-drawer', handleCloseEvent)
+
+    return () => {
+      window.removeEventListener('toggle-mobile-drawer', handleToggleEvent)
+      window.removeEventListener('open-mobile-drawer', handleOpenEvent)
+      window.removeEventListener('close-mobile-drawer', handleCloseEvent)
+    }
+  }, [])
+
   return (
     <>
       {/* Mobile Top Bar Quick Links (< 900px) */}

@@ -1,6 +1,35 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-16] - Nâng cấp Thanh Điều Hướng Mobile Chuẩn Y Tế: Top Bar Tinh Gọn + Bảng Menu Drawer Trượt
+## [2026-09-16] - Thiết kế Tối ưu Trải nghiệm Mobile Chuẩn Medpro.vn: Clean Header & Bottom Action Bar 5 Tab
+
+- **Thời gian thực hiện:** 20:05 (Asia/Saigon)
+- **Yêu cầu:** 
+  1. Khắc phục dứt điểm hiện tượng lỗi giao diện trên điện thoại hiển thị thanh menu và thanh "Danh mục điều hướng" bị đè lấn chồng chéo lên banner và dải thông báo chạy chữ.
+  2. Tái cấu trúc chuẩn trải nghiệm người dùng theo mô hình ứng dụng y tế thông minh Medpro.vn trên điện thoại:
+     - **Phần Header đầu trang**: Ẩn triệt để thanh menu ngang cồng kềnh trên mobile (`max-width: 900px`), giữ lại phần Masthead nhận diện thương hiệu bệnh viện sạch sẽ, trang nhã.
+     - **Thanh Bottom Action Bar cố định dưới đáy**: Nâng cấp lên layout 5 tab chuẩn Medpro:
+       1. **Trang chủ**: Về trang chủ bệnh viện.
+       2. **Lịch khám**: Xem lịch khám, lịch trực bác sĩ.
+       3. **Đặt khám**: Nút FAB nổi bật ở trung tâm với vòng tròn xanh gradient và icon dấu `+`, dẫn trực tiếp đến cổng đặt khám Medpro.
+       4. **Danh mục**: Nút icon ☰ mở bảng Drawer trượt mượt mà chứa đầy đủ toàn bộ hệ thống menu, khoa phòng, dịch vụ với Accordion đa tầng.
+       5. **Cấp cứu**: Nút đỏ gọi trực tiếp số điện thoại cấp cứu 24/7 của bệnh viện.
+- **Nội dung thực hiện:**
+  - `src/components/MobileBottomBar.tsx` (MỚI):
+    - Client component 5 tab chuẩn phong cách Medpro.vn, tích hợp nút FAB Đặt khám nhô cao và nút Danh mục phát sự kiện tùy biến `toggle-mobile-drawer`.
+  - `src/components/SiteFooter.tsx`:
+    - Thay thế thanh action bar cũ bằng `MobileBottomBar`, truyền động URL đặt khám Medpro và số hotline cấp cứu.
+  - `src/components/MobileNavHeader.tsx`:
+    - Bổ sung Event Listener lắng nghe các sự kiện `toggle-mobile-drawer`, `open-mobile-drawer`, `close-mobile-drawer` để điều khiển Drawer đóng/mở mượt mà từ Bottom Bar.
+  - `src/app/styles/mobile-medpro.css` (MỚI):
+    - Ẩn hoàn toàn `.mainHeader` trên màn hình nhỏ (< 900px) để loại bỏ mọi xung đột hiển thị.
+    - Định kiểu thanh 5 tab cố định dưới đáy, nút FAB Đặt khám, và toàn bộ Drawer trượt từ cạnh phải có backdrop blur cao cấp.
+  - `src/app/(frontend)/layout.tsx`:
+    - Tích hợp `mobile-medpro.css` vào hệ thống styles của toàn bộ website.
+- **Kiểm thử & Xác nhận:**
+  - `npm run typecheck`: Đạt 0 lỗi TypeScript.
+  - Giao diện mobile chuẩn mực, sạch đẹp, không còn lỗi chồng lấn, mang lại trải nghiệm giống hoàn toàn ứng dụng Medpro.
+
+
 
 - **Thời gian thực hiện:** 19:30 (Asia/Saigon)
 - **Yêu cầu:** 

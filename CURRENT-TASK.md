@@ -1,16 +1,19 @@
 # TÁC VỤ HIỆN TẠI (CURRENT TASK)
 
-- **Mục tiêu**: Nâng cấp thanh điều hướng trên điện thoại di động (mobile) theo tiêu chuẩn y tế thẩm mỹ và trải nghiệm cao nhất: Thanh top bar 1 dòng 48px cố định (không trôi, không xô lệch) kết hợp Nút "DANH MỤC" mở bảng Drawer trượt với các nhóm Accordion đóng/mở êm ái.
+- **Mục tiêu**: Tái cấu trúc và thiết kế chuẩn giao diện di động theo mô hình ứng dụng Medpro.vn: Ẩn thanh menu ngang header trên mobile (< 900px) chống đè lấn banner/thông báo; chuyển toàn bộ điều hướng di động xuống Bottom Action Bar 5 tab cố định (Trang chủ, Lịch khám, Đặt khám FAB nhô cao, Danh mục mở Drawer trượt, Cấp cứu 24/7).
 - **Trạng thái**: Đã hoàn thành (COMPLETED)
 - **Tập tin liên quan**:
+  - `src/components/MobileBottomBar.tsx` (Mới)
+  - `src/components/SiteFooter.tsx`
   - `src/components/MobileNavHeader.tsx`
-  - `src/components/SiteHeader.module.css`
+  - `src/app/styles/mobile-medpro.css` (Mới)
+  - `src/app/(frontend)/layout.tsx`
   - `CHANGELOG.md`
   - `CURRENT-TASK.md`
 - **Kết quả xác minh**:
-  - Không còn hiện tượng cuộn ngang trôi dạt hay bẻ gãy 2-3 dòng thô kệch.
-  - Desktop giữ nguyên 100% giao diện truyền thống với menu dropdown thả xuống.
-  - Mobile sở hữu thanh điều hướng 1 dòng tinh gọn cùng bảng Drawer trượt mượt mà, đầy đủ các mục con phân cấp rõ ràng.
+  - Loại bỏ hoàn toàn lỗi thanh menu bị đè lấn lên banner và ticker chạy chữ.
+  - Header điện thoại sạch sẽ, trang nhã: Giữ nguyên masthead logo + tên bệnh viện + hotline.
+  - Thanh Bottom Action Bar 5 tab chuẩn Medpro: Bấm "Danh mục" mở trượt Drawer đa tầng trơn tru, nút "Đặt khám" nổi bật ở trung tâm.
   - `npm run typecheck`: 0 lỗi TypeScript.
 
 ## Trạng thái
