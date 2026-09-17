@@ -214,6 +214,7 @@ export interface Config {
     'schedule-settings': ScheduleSetting;
     'appointment-settings': AppointmentSetting;
     'quick-links-settings': QuickLinksSetting;
+    'display-settings': DisplaySetting;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -246,6 +247,7 @@ export interface Config {
     'schedule-settings': ScheduleSettingsSelect<false> | ScheduleSettingsSelect<true>;
     'appointment-settings': AppointmentSettingsSelect<false> | AppointmentSettingsSelect<true>;
     'quick-links-settings': QuickLinksSettingsSelect<false> | QuickLinksSettingsSelect<true>;
+    'display-settings': DisplaySettingsSelect<false> | DisplaySettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -7937,6 +7939,146 @@ export interface QuickLinksSetting {
   createdAt?: string | null;
 }
 /**
+ * Quản lý tập trung toàn diện các khối hiển thị và các nút Đặt lịch / Hành động trên website theo từng thiết bị (Máy tính Desktop / Điện thoại Mobile / Cả hai / Tắt).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "display-settings".
+ */
+export interface DisplaySetting {
+  id: number;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  articleBreadcrumbs?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  articleDate?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  articleViews?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  articleCategory?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Trên máy tính là cột cố định bên trái, trên điện thoại là thanh ngang dưới tiêu đề.
+   */
+  articleShare?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  articleHighlights?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Mặc định ẩn, bật lên nếu muốn hiển thị đoạn sapo in đậm đầu bài.
+   */
+  articleExcerpt?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  articleSource?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  articleDefaultSourceName?: string | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  articleBackToList?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Nếu tắt trên Mobile, cột sidebar sẽ ẩn hoàn toàn giúp bài viết gọn gàng.
+   */
+  articleSidebar?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  articleSidebarLatest?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  articleSidebarLatestTitle?: string | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  articleSidebarBanners?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  articleRelated?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  articleRelatedTitle?: string | null;
+  /**
+   * Hiển thị nút to nổi bật bên dưới ảnh chân dung của bác sĩ.
+   */
+  doctorBookingBtn?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Ô viền xanh với nội dung hướng dẫn người bệnh.
+   */
+  doctorBookingNotice?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  doctorBookingDefaultText?: string | null;
+  doctorBookingDefaultUrl?: string | null;
+  /**
+   * Cho phép người bệnh bấm vào để chuyển nhanh sang trang đặt lịch hẹn.
+   */
+  doctorCardBookingBtn?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Nút liên kết đến hệ thống Medpro / Đặt lịch bệnh viện.
+   */
+  scheduleBookingBtn?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  scheduleHotlineBtn?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  scheduleNotes?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Mặc định chỉ hiện trên máy tính Desktop vì điện thoại ít khi kết nối máy in.
+   */
+  emergencyPrintBtn?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  emergencyContacts?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  emergencyGeneralNote?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Thanh cố định trên đầu trang khi xem trên màn hình nhỏ < 900px.
+   */
+  mobileTopBar?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  mobileTopSearch?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  mobileTopSocials?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Thanh 4 nút bấm cố định sát đáy màn hình điện thoại.
+   */
+  mobileBottomNav?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  mobileBottomBookingBtn?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  mobileBottomEmergencyBtn?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  floatingAssistant?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Chọn thiết bị được phép hiển thị mục này.
+   */
+  floatingBackToTop?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  /**
+   * Tùy chọn ẩn trên điện thoại nếu muốn tiết kiệm diện tích màn hình.
+   */
+  scrollingTicker?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -10161,6 +10303,51 @@ export interface QuickLinksSettingsSelect<T extends boolean = true> {
         id?: T;
       };
   _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "display-settings_select".
+ */
+export interface DisplaySettingsSelect<T extends boolean = true> {
+  articleBreadcrumbs?: T;
+  articleDate?: T;
+  articleViews?: T;
+  articleCategory?: T;
+  articleShare?: T;
+  articleHighlights?: T;
+  articleExcerpt?: T;
+  articleSource?: T;
+  articleDefaultSourceName?: T;
+  articleBackToList?: T;
+  articleSidebar?: T;
+  articleSidebarLatest?: T;
+  articleSidebarLatestTitle?: T;
+  articleSidebarBanners?: T;
+  articleRelated?: T;
+  articleRelatedTitle?: T;
+  doctorBookingBtn?: T;
+  doctorBookingNotice?: T;
+  doctorBookingDefaultText?: T;
+  doctorBookingDefaultUrl?: T;
+  doctorCardBookingBtn?: T;
+  scheduleBookingBtn?: T;
+  scheduleHotlineBtn?: T;
+  scheduleNotes?: T;
+  emergencyPrintBtn?: T;
+  emergencyContacts?: T;
+  emergencyGeneralNote?: T;
+  mobileTopBar?: T;
+  mobileTopSearch?: T;
+  mobileTopSocials?: T;
+  mobileBottomNav?: T;
+  mobileBottomBookingBtn?: T;
+  mobileBottomEmergencyBtn?: T;
+  floatingAssistant?: T;
+  floatingBackToTop?: T;
+  scrollingTicker?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -4,8 +4,10 @@ import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { RichText } from '@/components/RichText'
 import { AttachmentList } from '@/components/AttachmentList'
+import { BackToList } from '@/components/BackToList'
 import { ShareButtons } from '@/app/(frontend)/thong-bao/[slug]/ShareButtons'
 import { mediaUrl } from '@/lib/media'
+import { getVisibilityClass, shouldRender } from '@/lib/deviceVisibility'
 import styles from './ArticleDetailTemplate.module.css'
 
 export interface ArticleBreadcrumb {
@@ -148,6 +150,9 @@ export interface ArticleDetailTemplateProps {
     }
   }
 
+  // Cấu hình hiển thị đa thiết bị từ Global DisplaySettings (Desktop / Mobile / Cả hai / Tắt)
+  displaySettings?: any
+
   baseHref: string // ví dụ: "/thong-bao", "/tin-tuc", "/dau-thau-mua-sam", "/ky-thuat-chuyen-sau"
 }
 
@@ -188,30 +193,47 @@ export function ArticleDetailTemplate({
   showRelatedSection,
   showBackToList,
   adminConfig,
+  displaySettings,
   baseHref,
 }: ArticleDetailTemplateProps) {
   const shareConfig = adminConfig?.shareSettings
   const bannerConfig = adminConfig?.sidebarBanner
   const displayConfig = adminConfig?.displayOptions
 
-  // Tính toán quyền bật/tắt độc lập từng ô thông tin (Granular Toggles)
-  const isBreadcrumbsVisible = showBreadcrumbs !== undefined ? showBreadcrumbs : (displayConfig?.showBreadcrumbs !== false)
-  const isDateVisible = showDate !== undefined ? showDate : (displayConfig?.showDate !== false)
-  const isViewsVisible = showViews !== undefined ? showViews : (displayConfig?.showViews !== false)
-  const isCategoryVisible = showCategory !== undefined ? showCategory : (displayConfig?.showCategory !== false)
-  const isHighlightsVisible = showHighlights !== undefined ? showHighlights : (displayConfig?.showHighlights !== false)
-  const isExcerptVisible = showExcerpt === true || displayConfig?.showExcerpt === true
-  const isSourceVisible = showSource !== undefined ? showSource : (displayConfig?.showSource !== false)
-  const isShareEnabled = showShareButtons !== undefined ? showShareButtons : (shareConfig?.enabled !== false)
-  const isAttachmentsVisible = showAttachments !== false
-  const isSidebarVisible = showSidebar !== undefined ? showSidebar : (displayConfig?.showSidebar !== false)
-  const isSidebarLatestVisible = showSidebarLatest !== undefined ? showSidebarLatest : (displayConfig?.showSidebarLatest !== false)
-  const isSidebarBannersVisible = showSidebarBanners !== undefined ? showSidebarBanners : (displayConfig?.showSidebarBanners !== false && bannerConfig?.enabled !== false)
-  const isRelatedVisible = showRelatedSection !== undefined ? showRelatedSection : (displayConfig?.showRelatedSection !== false)
+  // Chế độ hiển thị đa thiết bị từ Global displaySettings ('both' | 'desktop_only' | 'mobile_only' | 'hidden')
+  const dsBreadcrumbs = displaySettings?.articleBreadcrumbs || 'both'
+  const dsDate = displaySettings?.articleDate || 'both'
+  const dsViews = displaySettings?.articleViews || 'both'
+  const dsCategory = displaySettings?.articleCategory || 'both'
+  const dsHighlights = displaySettings?.articleHighlights || 'both'
+  const dsExcerpt = displaySettings?.articleExcerpt !== undefined ? displaySettings.articleExcerpt : (displayConfig?.showExcerpt ? 'both' : 'hidden')
+  const dsSource = displaySettings?.articleSource || 'both'
+  const dsShare = displaySettings?.articleShare || 'both'
+  const dsSidebar = displaySettings?.articleSidebar || 'both'
+  const dsSidebarLatest = displaySettings?.articleSidebarLatest || 'both'
+  const dsSidebarBanners = displaySettings?.articleSidebarBanners || 'both'
+  const dsRelated = displaySettings?.articleRelated || 'both'
+  const dsBackToList = displaySettings?.articleBackToList || 'both'
 
-  const finalSidebarTitle = displayConfig?.sidebarLatestTitle || sidebarTitle
-  const finalRelatedTitle = displayConfig?.relatedSectionTitle || relatedTitle
-  const finalSourceName = sourceName || hospitalName || displayConfig?.defaultSourceName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
+  // Tính toán quyền bật/tắt (Granular Toggles kết hợp DisplaySettings)
+  const isBreadcrumbsVisible = showBreadcrumbs !== undefined ? showBreadcrumbs : (displayConfig?.showBreadcrumbs !== false && shouldRender(dsBreadcrumbs))
+  const isDateVisible = showDate !== undefined ? showDate : (displayConfig?.showDate !== false && shouldRender(dsDate))
+  const isViewsVisible = showViews !== undefined ? showViews : (displayConfig?.showViews !== false && shouldRender(dsViews))
+  const isCategoryVisible = showCategory !== undefined ? showCategory : (displayConfig?.showCategory !== false && shouldRender(dsCategory))
+  const isHighlightsVisible = showHighlights !== undefined ? showHighlights : (displayConfig?.showHighlights !== false && shouldRender(dsHighlights))
+  const isExcerptVisible = (showExcerpt === true || displayConfig?.showExcerpt === true || dsExcerpt !== 'hidden') && shouldRender(dsExcerpt)
+  const isSourceVisible = showSource !== undefined ? showSource : (displayConfig?.showSource !== false && shouldRender(dsSource))
+  const isShareEnabled = showShareButtons !== undefined ? showShareButtons : (shareConfig?.enabled !== false && shouldRender(dsShare))
+  const isAttachmentsVisible = showAttachments !== false
+  const isSidebarVisible = showSidebar !== undefined ? showSidebar : (displayConfig?.showSidebar !== false && shouldRender(dsSidebar))
+  const isSidebarLatestVisible = showSidebarLatest !== undefined ? showSidebarLatest : (displayConfig?.showSidebarLatest !== false && shouldRender(dsSidebarLatest))
+  const isSidebarBannersVisible = showSidebarBanners !== undefined ? showSidebarBanners : (displayConfig?.showSidebarBanners !== false && bannerConfig?.enabled !== false && shouldRender(dsSidebarBanners))
+  const isRelatedVisible = showRelatedSection !== undefined ? showRelatedSection : (displayConfig?.showRelatedSection !== false && shouldRender(dsRelated))
+  const isBackToListVisible = showBackToList !== undefined ? showBackToList : (displayConfig?.showBackToList !== false && shouldRender(dsBackToList))
+
+  const finalSidebarTitle = displaySettings?.articleSidebarLatestTitle || displayConfig?.sidebarLatestTitle || sidebarTitle
+  const finalRelatedTitle = displaySettings?.articleRelatedTitle || displayConfig?.relatedSectionTitle || relatedTitle
+  const finalSourceName = sourceName || hospitalName || displaySettings?.articleDefaultSourceName || displayConfig?.defaultSourceName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
 
   // Vị trí thanh chia sẻ: 'left' | 'right' | 'top' | 'bottom'
   const sharePosition = shareConfig?.position || 'left'
@@ -389,7 +411,7 @@ export function ArticleDetailTemplate({
       <main className={`container ${styles.postDetailContainer}`}>
         {/* Breadcrumb điều hướng */}
         {isBreadcrumbsVisible && breadcrumbs && breadcrumbs.length > 0 && (
-          <nav className={styles.postDetailBreadcrumb} aria-label="Đường dẫn">
+          <nav className={`${styles.postDetailBreadcrumb} ${getVisibilityClass(dsBreadcrumbs)}`} aria-label="Đường dẫn">
             {breadcrumbs.map((crumb, idx) => (
               <React.Fragment key={idx}>
                 {idx > 0 && <span>›</span>}
@@ -402,7 +424,11 @@ export function ArticleDetailTemplate({
         {/* Layout bài viết */}
         <div className={layoutGridClass}>
           {/* Vị trí 1: Cột trái (Mặc định) */}
-          {isLeftShare && <ShareButtons title={title} config={shareConfig} />}
+          {isLeftShare && (
+            <div className={getVisibilityClass(dsShare)}>
+              <ShareButtons title={title} config={shareConfig} />
+            </div>
+          )}
 
           {/* Cột giữa: Nội dung chính */}
           <article className={styles.postDetailMainCol}>
@@ -413,7 +439,7 @@ export function ArticleDetailTemplate({
             {(isDateVisible || isViewsVisible || isCategoryVisible || expireDate) && (
               <div className={styles.postDetailMetaTop}>
                 {isDateVisible && publishedDate && (
-                  <div className={styles.postDetailMetaItem}>
+                  <div className={`${styles.postDetailMetaItem} ${getVisibilityClass(dsDate)}`}>
                     <svg
                       width="15"
                       height="15"
@@ -433,7 +459,7 @@ export function ArticleDetailTemplate({
                 )}
                 {isDateVisible && publishedDate && isViewsVisible && <span className={styles.metaDivider}>|</span>}
                 {isViewsVisible && (
-                  <div className={styles.postDetailMetaItem}>
+                  <div className={`${styles.postDetailMetaItem} ${getVisibilityClass(dsViews)}`}>
                     <svg
                       width="15"
                       height="15"
@@ -452,7 +478,7 @@ export function ArticleDetailTemplate({
                   </div>
                 )}
                 {isCategoryVisible && categoryName && (
-                  <>
+                  <div className={getVisibilityClass(dsCategory)} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
                     {(isDateVisible || isViewsVisible) && <span className={styles.metaDivider}>|</span>}
                     {categoryHref ? (
                       <Link href={categoryHref} className={styles.metaCategoryLink}>
@@ -461,7 +487,7 @@ export function ArticleDetailTemplate({
                     ) : (
                       <span className={styles.metaCategoryLink}>{categoryName}</span>
                     )}
-                  </>
+                  </div>
                 )}
                 {expireDate && <span className={styles.metaExpire}>(Hạn: {expireDate})</span>}
               </div>
@@ -469,19 +495,21 @@ export function ArticleDetailTemplate({
 
             {/* Vị trí 2: Thanh chia sẻ nằm ngay dưới tiêu đề */}
             {isShareEnabled && sharePosition === 'top' && (
-              <ShareButtons title={title} horizontal config={shareConfig} />
+              <div className={getVisibilityClass(dsShare)}>
+                <ShareButtons title={title} horizontal config={shareConfig} />
+              </div>
             )}
 
             {/* Trên Mobile: Khi sharePosition === 'left', cột sticky trái bị ẩn theo responsive, tự động hiển thị thanh chia sẻ ngang gọn gàng ở đây */}
             {isShareEnabled && sharePosition === 'left' && (
-              <div className={styles.postDetailShareMobileOnly}>
+              <div className={`${styles.postDetailShareMobileOnly} ${getVisibilityClass(dsShare)}`}>
                 <ShareButtons title={title} horizontal config={shareConfig} />
               </div>
             )}
 
             {/* Thông tin nổi bật (dành cho đấu thầu, tuyển dụng, kỹ thuật...) */}
             {isHighlightsVisible && highlights && highlights.length > 0 && (
-              <div className={styles.metaHighlightBox}>
+              <div className={`${styles.metaHighlightBox} ${getVisibilityClass(dsHighlights)}`}>
                 {highlights.map((item, idx) => (
                   <div key={idx} className={styles.metaHighlightItem}>
                     <span>{item.label}: </span>
@@ -492,7 +520,11 @@ export function ArticleDetailTemplate({
             )}
 
             {/* Đoạn trích dẫn Sapo nổi bật (chỉ hiển thị khi có cấu hình bật showExcerpt) */}
-            {isExcerptVisible && excerpt && <div className={styles.postDetailExcerpt}>{excerpt}</div>}
+            {isExcerptVisible && excerpt && (
+              <div className={`${styles.postDetailExcerpt} ${getVisibilityClass(dsExcerpt)}`}>
+                {excerpt}
+              </div>
+            )}
 
             {/* Khối tùy chỉnh trên nội dung (ảnh đại diện chi tiết, khối ưu điểm...) */}
             {customBodyTop}
@@ -515,23 +547,32 @@ export function ArticleDetailTemplate({
 
             {/* Vị trí 3: Thanh chia sẻ nằm ngang ở cuối bài viết */}
             {isShareEnabled && sharePosition === 'bottom' && (
-              <ShareButtons title={title} horizontal config={shareConfig} />
+              <div className={getVisibilityClass(dsShare)}>
+                <ShareButtons title={title} horizontal config={shareConfig} />
+              </div>
             )}
 
             {/* Nguồn bài viết (cho phép tắt độc lập) */}
             {isSourceVisible && finalSourceName && (
-              <div className={styles.postDetailAuthor}>
+              <div className={`${styles.postDetailAuthor} ${getVisibilityClass(dsSource)}`}>
                 <span>Nguồn: {finalSourceName}</span>
+              </div>
+            )}
+
+            {/* Nút quay lại danh sách bài viết */}
+            {isBackToListVisible && (
+              <div className={getVisibilityClass(dsBackToList)} style={{ marginTop: '28px' }}>
+                <BackToList href={baseHref} label="Trở lại danh sách trước" />
               </div>
             )}
           </article>
 
           {/* Cột phải: Sidebar */}
           {isSidebarVisible && (
-            <aside className={styles.postDetailSidebar}>
+            <aside className={`${styles.postDetailSidebar} ${getVisibilityClass(dsSidebar)}`}>
               {/* Vị trí 4: Thanh chia sẻ đặt ở đầu Sidebar cột phải */}
               {isShareEnabled && sharePosition === 'right' && (
-                <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                <div className={getVisibilityClass(dsShare)} style={{ background: '#f8fafc', padding: '16px', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
                   <ShareButtons title={title} horizontal config={shareConfig} />
                 </div>
               )}
@@ -539,13 +580,13 @@ export function ArticleDetailTemplate({
               {/* Thứ tự Banner so với Tin mới nhất (aboveLatest hoặc belowLatest) */}
               {bannerConfig?.position === 'belowLatest' ? (
                 <>
-                  {renderSidebarLatest()}
-                  {renderBanners()}
+                  <div className={getVisibilityClass(dsSidebarLatest)}>{renderSidebarLatest()}</div>
+                  <div className={getVisibilityClass(dsSidebarBanners)}>{renderBanners()}</div>
                 </>
               ) : (
                 <>
-                  {renderBanners()}
-                  {renderSidebarLatest()}
+                  <div className={getVisibilityClass(dsSidebarBanners)}>{renderBanners()}</div>
+                  <div className={getVisibilityClass(dsSidebarLatest)}>{renderSidebarLatest()}</div>
                 </>
               )}
             </aside>
@@ -554,7 +595,7 @@ export function ArticleDetailTemplate({
 
         {/* Khối bài viết cùng chuyên mục phía dưới chân trang */}
         {isRelatedVisible && relatedItems && relatedItems.length > 0 && (
-          <section className={styles.relatedSection}>
+          <section className={`${styles.relatedSection} ${getVisibilityClass(dsRelated)}`}>
             <h2 className={styles.relatedSectionHeading}>
               <span>{finalRelatedTitle}</span>
             </h2>

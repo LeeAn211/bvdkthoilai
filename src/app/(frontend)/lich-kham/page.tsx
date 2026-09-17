@@ -5,6 +5,7 @@ import { SearchFilter } from '@/components/SearchFilter'
 import { getCMS } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
 import { getDefaultContentMedia } from '@/lib/defaultMedia'
+import { getVisibilityClass, shouldRender } from '@/lib/deviceVisibility'
 import '../lich-lam-viec/lich-lam-viec.css'
 
 export const revalidate = 60
@@ -32,9 +33,10 @@ export default async function Page({ searchParams }: PageProps) {
 
   let schedSettings: any = {}
   let siteSettings: any = {}
+  let displaySettings: any = {}
   try {
     const payload = await getCMS()
-    const [result, defaults, schedConfig, siteConfig] = await Promise.all([
+    const [result, defaults, schedConfig, siteConfig, dispConfig] = await Promise.all([
       payload.find({
         collection: 'schedules',
         where: { active: { equals: true } },
@@ -45,9 +47,11 @@ export default async function Page({ searchParams }: PageProps) {
       getDefaultContentMedia(),
       payload.findGlobal({ slug: 'schedule-settings' }).catch(() => null),
       payload.findGlobal({ slug: 'site-settings' as any }).catch(() => null),
+      payload.findGlobal({ slug: 'display-settings' as any }).catch(() => null),
     ])
     schedSettings = schedConfig || {}
     siteSettings = siteConfig || {}
+    displaySettings = dispConfig || {}
     items = (result.docs as any[]).map((x) => {
       const isEmergency = x.mode === 'emergency'
       const isWeekly = x.mode === 'weekly'
@@ -116,6 +120,9 @@ export default async function Page({ searchParams }: PageProps) {
   const heroTitle = hero?.title || 'Lịch khám & Lịch trực bệnh viện'
   const heroDesc = hero?.description || `Tra cứu lịch khám bệnh, lịch trực cấp cứu và lịch công tác của ${defaultHospital}.`
 
+  const schedHotlineVis = displaySettings?.scheduleHotlineBtn || 'both'
+  const schedNotesVis = displaySettings?.scheduleNotes || 'both'
+
   return (
     <>
       <SiteHeader />
@@ -159,9 +166,10 @@ export default async function Page({ searchParams }: PageProps) {
                     </p>
                   )}
                 </div>
-                {notice?.hotline && (
+                {notice?.hotline && shouldRender(schedHotlineVis) && (
                   <a
                     href={`tel:${notice.hotline.replace(/\s+/g, '')}`}
+                    className={getVisibilityClass(schedHotlineVis)}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
@@ -186,8 +194,8 @@ export default async function Page({ searchParams }: PageProps) {
           <SearchFilter items={items} kind="schedule" initialCategory={initialCategory} />
 
           {/* KHỐI LƯU Ý DÀNH CHO NGƯỜI BỆNH NẾU BẬT */}
-          {notes?.enabled !== false && activeNotes.length > 0 && (
-            <div className="whNotesBox" style={{ marginTop: 40 }}>
+          {notes?.enabled !== false && activeNotes.length > 0 && shouldRender(schedNotesVis) && (
+            <div className={`whNotesBox ${getVisibilityClass(schedNotesVis)}`} style={{ marginTop: 40 }}>
               <div className="whNotesTitle">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" />

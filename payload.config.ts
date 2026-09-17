@@ -88,6 +88,7 @@ import { SurveyPageSettings } from './src/globals/SurveyPageSettings'
 import { FaqPageSettings } from './src/globals/FaqPageSettings'
 import { FormsPageSettings } from './src/globals/FormsPageSettings'
 import { FeedbackPageSettings } from './src/globals/FeedbackPageSettings'
+import { DisplaySettings } from './src/globals/DisplaySettings'
 import { withAudit, withGlobalAudit } from './src/lib/audit'
 import { hospitalEditor } from './src/editor/hospitalEditor'
 import { hasModulePermission } from './src/access'
@@ -332,6 +333,7 @@ export default buildConfig({
   globals: [
     SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, WorkingHoursSettings, PatientPortalSettings,
     ExaminationFlowSettings, InpatientGuideSettings, CheckupPackagesSettings, HospitalMapSettings, HospitalQualitySettings, SurveyPageSettings, FaqPageSettings, FormsPageSettings, FeedbackPageSettings,
-    UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings
+    UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings,
+    DisplaySettings
   ].map((global) => withGlobalAudit(applyGlobalPermissionVisibility(global)))
 })

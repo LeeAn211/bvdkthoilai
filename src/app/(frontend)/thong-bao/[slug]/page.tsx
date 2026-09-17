@@ -52,10 +52,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme, siteSettings] = await Promise.all([
+  const [{ item, related }, theme, siteSettings, displaySettings] = await Promise.all([
     getData(slug),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
     getGlobal('site-settings').catch(() => null) as Promise<any>,
+    getGlobal('display-settings').catch(() => null) as Promise<any>,
   ])
 
   if (!item) notFound()
@@ -104,6 +105,7 @@ export default async function Page({ params }: Props) {
       hospitalName={hospitalName}
       showSource={item.showSource ?? undefined}
       adminConfig={theme?.detailLayout}
+      displaySettings={displaySettings}
       sidebarTitle="Thông báo mới nhất"
       latestItems={mappedRelated}
       relatedTitle="Tin tức cùng chuyên mục"

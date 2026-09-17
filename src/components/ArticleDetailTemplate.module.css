@@ -446,3 +446,21 @@
     margin-bottom: 18px;
   }
 }
+
+/* ── ĐIỀU KHIỂN HIỂN THỊ ĐA THIẾT BỊ ── */
+.hideOnAllDevices {
+  display: none !important;
+}
+
+@media (max-width: 1024px) {
+  .showOnDesktopOnly {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .showOnMobileOnly {
+    display: none !important;
+  }
+}
+

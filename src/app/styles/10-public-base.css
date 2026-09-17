@@ -27,3 +27,21 @@ img { max-width: 100%; }
   white-space: nowrap !important;
   border: 0 !important;
 }
+
+/* ── ĐIỀU KHIỂN HIỂN THỊ ĐA THIẾT BỊ (DESKTOP / MOBILE) ── */
+.hideOnAllDevices {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .showOnDesktopOnly {
+    display: none !important;
+  }
+}
+
+@media (min-width: 901px) {
+  .showOnMobileOnly {
+    display: none !important;
+  }
+}
+

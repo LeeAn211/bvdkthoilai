@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useMemo, useState, useEffect } from 'react'
+import { getVisibilityClass, shouldRender } from '@/lib/deviceVisibility'
 
 export type DeptSlot = {
   deptName?: string
@@ -27,6 +28,7 @@ type Props = {
   excelUrl?: string
   generalNote?: string
   contacts?: Array<{ name: string; phone: string; type?: string; note?: string }>
+  displaySettings?: any
 }
 
 const DAY_KEYS = ['2', '3', '4', '5', '6', '7', '8'] as const
@@ -178,7 +180,11 @@ export function EmergencyMatrixView({
   excelUrl,
   generalNote,
   contacts,
+  displaySettings,
 }: Props) {
+  const printBtnVis = displaySettings?.emergencyPrintBtn || 'desktop_only'
+  const contactsVis = displaySettings?.emergencyContacts || 'both'
+  const generalNoteVis = displaySettings?.emergencyGeneralNote || 'both'
   // todayDayKey: chỉ set trên client để tránh SSR/hydration mismatch với new Date()
   const [todayDayKey, setTodayDayKey] = useState<string | null>(null)
   useEffect(() => {
@@ -488,16 +494,18 @@ export function EmergencyMatrixView({
         </div>
 
         {/* Nút in nhanh tiện ích */}
-        <div className="emergMastheadTools">
-          <button type="button" onClick={handlePrint} className="emergPrintBtnQuick">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-              <polyline points="6 9 6 2 18 2 18 9" />
-              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-              <rect x="6" y="14" width="12" height="8" />
-            </svg>
-            <span>In lịch trực</span>
-          </button>
-        </div>
+        {shouldRender(printBtnVis) && (
+          <div className={`emergMastheadTools ${getVisibilityClass(printBtnVis)}`}>
+            <button type="button" onClick={handlePrint} className="emergPrintBtnQuick">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <polyline points="6 9 6 2 18 2 18 9" />
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                <rect x="6" y="14" width="12" height="8" />
+              </svg>
+              <span>In lịch trực</span>
+            </button>
+          </div>
+        )}
       </header>
 
       {/* ── 2. BẢNG MA TRẬN PHÂN CÔNG CHÍNH QUY ── */}
@@ -692,8 +700,8 @@ export function EmergencyMatrixView({
       </div>
 
       {/* ── 3. GHI CHÚ ĐIỀU ĐỘNG & CÔNG TÁC (Nếu có) ── */}
-      {generalNote && (
-        <div className="emergNoteBox">
+      {shouldRender(generalNoteVis) && generalNote && (
+        <div className={`emergNoteBox ${getVisibilityClass(generalNoteVis)}`}>
           <div className="emergNoteTitle">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
               <circle cx="12" cy="12" r="10" />
@@ -707,8 +715,8 @@ export function EmergencyMatrixView({
       )}
 
       {/* ── 4. DANH BẠ LIÊN LẠC NỘI BỘ & CẤP CỨU LIÊN VIỆN (Nếu có) ── */}
-      {Array.isArray(contacts) && contacts.length > 0 && (
-        <div className="emergContactsBox">
+      {shouldRender(contactsVis) && Array.isArray(contacts) && contacts.length > 0 && (
+        <div className={`emergContactsBox ${getVisibilityClass(contactsVis)}`}>
           <div className="emergContactsTitle">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2.2">
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />

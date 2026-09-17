@@ -1842,6 +1842,130 @@ export const enum__quick_links_settings_v_version_status = pgEnum(
   "enum__quick_links_settings_v_version_status",
   ["draft", "published"],
 );
+export const enum_display_settings_article_breadcrumbs = pgEnum(
+  "enum_display_settings_article_breadcrumbs",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_date = pgEnum(
+  "enum_display_settings_article_date",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_views = pgEnum(
+  "enum_display_settings_article_views",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_category = pgEnum(
+  "enum_display_settings_article_category",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_share = pgEnum(
+  "enum_display_settings_article_share",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_highlights = pgEnum(
+  "enum_display_settings_article_highlights",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_excerpt = pgEnum(
+  "enum_display_settings_article_excerpt",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_source = pgEnum(
+  "enum_display_settings_article_source",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_back_to_list = pgEnum(
+  "enum_display_settings_article_back_to_list",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_sidebar = pgEnum(
+  "enum_display_settings_article_sidebar",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_sidebar_latest = pgEnum(
+  "enum_display_settings_article_sidebar_latest",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_sidebar_banners = pgEnum(
+  "enum_display_settings_article_sidebar_banners",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_article_related = pgEnum(
+  "enum_display_settings_article_related",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_doctor_booking_btn = pgEnum(
+  "enum_display_settings_doctor_booking_btn",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_doctor_booking_notice = pgEnum(
+  "enum_display_settings_doctor_booking_notice",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_doctor_card_booking_btn = pgEnum(
+  "enum_display_settings_doctor_card_booking_btn",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_schedule_booking_btn = pgEnum(
+  "enum_display_settings_schedule_booking_btn",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_schedule_hotline_btn = pgEnum(
+  "enum_display_settings_schedule_hotline_btn",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_schedule_notes = pgEnum(
+  "enum_display_settings_schedule_notes",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_emergency_print_btn = pgEnum(
+  "enum_display_settings_emergency_print_btn",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_emergency_contacts = pgEnum(
+  "enum_display_settings_emergency_contacts",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_emergency_general_note = pgEnum(
+  "enum_display_settings_emergency_general_note",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_mobile_top_bar = pgEnum(
+  "enum_display_settings_mobile_top_bar",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_mobile_top_search = pgEnum(
+  "enum_display_settings_mobile_top_search",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_mobile_top_socials = pgEnum(
+  "enum_display_settings_mobile_top_socials",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_mobile_bottom_nav = pgEnum(
+  "enum_display_settings_mobile_bottom_nav",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_mobile_bottom_booking_btn = pgEnum(
+  "enum_display_settings_mobile_bottom_booking_btn",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_mobile_bottom_emergency_btn = pgEnum(
+  "enum_display_settings_mobile_bottom_emergency_btn",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_floating_assistant = pgEnum(
+  "enum_display_settings_floating_assistant",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_floating_back_to_top = pgEnum(
+  "enum_display_settings_floating_back_to_top",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
+export const enum_display_settings_scrolling_ticker = pgEnum(
+  "enum_display_settings_scrolling_ticker",
+  ["both", "desktop_only", "mobile_only", "hidden"],
+);
 
 export const users_permissions_actions = pgTable(
   "users_permissions_actions",
@@ -17098,6 +17222,126 @@ export const _quick_links_settings_v = pgTable(
   ],
 );
 
+export const display_settings = pgTable("display_settings", {
+  id: serial("id").primaryKey(),
+  articleBreadcrumbs: enum_display_settings_article_breadcrumbs(
+    "article_breadcrumbs",
+  ).default("both"),
+  articleDate:
+    enum_display_settings_article_date("article_date").default("both"),
+  articleViews:
+    enum_display_settings_article_views("article_views").default("both"),
+  articleCategory:
+    enum_display_settings_article_category("article_category").default("both"),
+  articleShare:
+    enum_display_settings_article_share("article_share").default("both"),
+  articleHighlights:
+    enum_display_settings_article_highlights("article_highlights").default(
+      "both",
+    ),
+  articleExcerpt:
+    enum_display_settings_article_excerpt("article_excerpt").default("hidden"),
+  articleSource:
+    enum_display_settings_article_source("article_source").default("both"),
+  articleDefaultSourceName: varchar("article_default_source_name").default(
+    "Bệnh viện Đa khoa Khu vực Thới Lai",
+  ),
+  articleBackToList: enum_display_settings_article_back_to_list(
+    "article_back_to_list",
+  ).default("both"),
+  articleSidebar:
+    enum_display_settings_article_sidebar("article_sidebar").default("both"),
+  articleSidebarLatest: enum_display_settings_article_sidebar_latest(
+    "article_sidebar_latest",
+  ).default("both"),
+  articleSidebarLatestTitle: varchar("article_sidebar_latest_title").default(
+    "Tin mới nhất",
+  ),
+  articleSidebarBanners: enum_display_settings_article_sidebar_banners(
+    "article_sidebar_banners",
+  ).default("both"),
+  articleRelated:
+    enum_display_settings_article_related("article_related").default("both"),
+  articleRelatedTitle: varchar("article_related_title").default(
+    "Tin tức cùng chuyên mục",
+  ),
+  doctorBookingBtn:
+    enum_display_settings_doctor_booking_btn("doctor_booking_btn").default(
+      "both",
+    ),
+  doctorBookingNotice: enum_display_settings_doctor_booking_notice(
+    "doctor_booking_notice",
+  ).default("both"),
+  doctorBookingDefaultText: varchar("doctor_booking_default_text").default(
+    "Đặt lịch khám",
+  ),
+  doctorBookingDefaultUrl: varchar("doctor_booking_default_url").default(
+    "/dat-lich-kham",
+  ),
+  doctorCardBookingBtn: enum_display_settings_doctor_card_booking_btn(
+    "doctor_card_booking_btn",
+  ).default("both"),
+  scheduleBookingBtn: enum_display_settings_schedule_booking_btn(
+    "schedule_booking_btn",
+  ).default("both"),
+  scheduleHotlineBtn: enum_display_settings_schedule_hotline_btn(
+    "schedule_hotline_btn",
+  ).default("both"),
+  scheduleNotes:
+    enum_display_settings_schedule_notes("schedule_notes").default("both"),
+  emergencyPrintBtn: enum_display_settings_emergency_print_btn(
+    "emergency_print_btn",
+  ).default("desktop_only"),
+  emergencyContacts:
+    enum_display_settings_emergency_contacts("emergency_contacts").default(
+      "both",
+    ),
+  emergencyGeneralNote: enum_display_settings_emergency_general_note(
+    "emergency_general_note",
+  ).default("both"),
+  mobileTopBar:
+    enum_display_settings_mobile_top_bar("mobile_top_bar").default(
+      "mobile_only",
+    ),
+  mobileTopSearch:
+    enum_display_settings_mobile_top_search("mobile_top_search").default(
+      "mobile_only",
+    ),
+  mobileTopSocials:
+    enum_display_settings_mobile_top_socials("mobile_top_socials").default(
+      "mobile_only",
+    ),
+  mobileBottomNav:
+    enum_display_settings_mobile_bottom_nav("mobile_bottom_nav").default(
+      "mobile_only",
+    ),
+  mobileBottomBookingBtn: enum_display_settings_mobile_bottom_booking_btn(
+    "mobile_bottom_booking_btn",
+  ).default("mobile_only"),
+  mobileBottomEmergencyBtn: enum_display_settings_mobile_bottom_emergency_btn(
+    "mobile_bottom_emergency_btn",
+  ).default("mobile_only"),
+  floatingAssistant:
+    enum_display_settings_floating_assistant("floating_assistant").default(
+      "both",
+    ),
+  floatingBackToTop: enum_display_settings_floating_back_to_top(
+    "floating_back_to_top",
+  ).default("both"),
+  scrollingTicker:
+    enum_display_settings_scrolling_ticker("scrolling_ticker").default("both"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
 export const relations_users_permissions_actions = relations(
   users_permissions_actions,
   ({ one }) => ({
@@ -21872,6 +22116,10 @@ export const relations__quick_links_settings_v = relations(
     }),
   }),
 );
+export const relations_display_settings = relations(
+  display_settings,
+  () => ({}),
+);
 
 type DatabaseSchema = {
   enum_users_permissions_actions: typeof enum_users_permissions_actions;
@@ -22207,6 +22455,37 @@ type DatabaseSchema = {
   enum__quick_links_settings_v_version_items_icon: typeof enum__quick_links_settings_v_version_items_icon;
   enum__quick_links_settings_v_version_items_image_fit: typeof enum__quick_links_settings_v_version_items_image_fit;
   enum__quick_links_settings_v_version_status: typeof enum__quick_links_settings_v_version_status;
+  enum_display_settings_article_breadcrumbs: typeof enum_display_settings_article_breadcrumbs;
+  enum_display_settings_article_date: typeof enum_display_settings_article_date;
+  enum_display_settings_article_views: typeof enum_display_settings_article_views;
+  enum_display_settings_article_category: typeof enum_display_settings_article_category;
+  enum_display_settings_article_share: typeof enum_display_settings_article_share;
+  enum_display_settings_article_highlights: typeof enum_display_settings_article_highlights;
+  enum_display_settings_article_excerpt: typeof enum_display_settings_article_excerpt;
+  enum_display_settings_article_source: typeof enum_display_settings_article_source;
+  enum_display_settings_article_back_to_list: typeof enum_display_settings_article_back_to_list;
+  enum_display_settings_article_sidebar: typeof enum_display_settings_article_sidebar;
+  enum_display_settings_article_sidebar_latest: typeof enum_display_settings_article_sidebar_latest;
+  enum_display_settings_article_sidebar_banners: typeof enum_display_settings_article_sidebar_banners;
+  enum_display_settings_article_related: typeof enum_display_settings_article_related;
+  enum_display_settings_doctor_booking_btn: typeof enum_display_settings_doctor_booking_btn;
+  enum_display_settings_doctor_booking_notice: typeof enum_display_settings_doctor_booking_notice;
+  enum_display_settings_doctor_card_booking_btn: typeof enum_display_settings_doctor_card_booking_btn;
+  enum_display_settings_schedule_booking_btn: typeof enum_display_settings_schedule_booking_btn;
+  enum_display_settings_schedule_hotline_btn: typeof enum_display_settings_schedule_hotline_btn;
+  enum_display_settings_schedule_notes: typeof enum_display_settings_schedule_notes;
+  enum_display_settings_emergency_print_btn: typeof enum_display_settings_emergency_print_btn;
+  enum_display_settings_emergency_contacts: typeof enum_display_settings_emergency_contacts;
+  enum_display_settings_emergency_general_note: typeof enum_display_settings_emergency_general_note;
+  enum_display_settings_mobile_top_bar: typeof enum_display_settings_mobile_top_bar;
+  enum_display_settings_mobile_top_search: typeof enum_display_settings_mobile_top_search;
+  enum_display_settings_mobile_top_socials: typeof enum_display_settings_mobile_top_socials;
+  enum_display_settings_mobile_bottom_nav: typeof enum_display_settings_mobile_bottom_nav;
+  enum_display_settings_mobile_bottom_booking_btn: typeof enum_display_settings_mobile_bottom_booking_btn;
+  enum_display_settings_mobile_bottom_emergency_btn: typeof enum_display_settings_mobile_bottom_emergency_btn;
+  enum_display_settings_floating_assistant: typeof enum_display_settings_floating_assistant;
+  enum_display_settings_floating_back_to_top: typeof enum_display_settings_floating_back_to_top;
+  enum_display_settings_scrolling_ticker: typeof enum_display_settings_scrolling_ticker;
   users_permissions_actions: typeof users_permissions_actions;
   users_permissions: typeof users_permissions;
   users_sessions: typeof users_sessions;
@@ -22519,6 +22798,7 @@ type DatabaseSchema = {
   quick_links_settings: typeof quick_links_settings;
   _quick_links_settings_v_version_items: typeof _quick_links_settings_v_version_items;
   _quick_links_settings_v: typeof _quick_links_settings_v;
+  display_settings: typeof display_settings;
   relations_users_permissions_actions: typeof relations_users_permissions_actions;
   relations_users_permissions: typeof relations_users_permissions;
   relations_users_sessions: typeof relations_users_sessions;
@@ -22831,6 +23111,7 @@ type DatabaseSchema = {
   relations_quick_links_settings: typeof relations_quick_links_settings;
   relations__quick_links_settings_v_version_items: typeof relations__quick_links_settings_v_version_items;
   relations__quick_links_settings_v: typeof relations__quick_links_settings_v;
+  relations_display_settings: typeof relations_display_settings;
 };
 
 declare module "@payloadcms/db-postgres" {

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { isExternalUrl, resolveMenuUrl } from '@/lib/navigation'
+import { getVisibilityClass, shouldRender } from '@/lib/deviceVisibility'
 
 interface SocialLink {
   platform?: string
@@ -14,6 +15,9 @@ interface MobileTopBarProps {
   items: any[]
   medproUrl?: string
   socialLinks?: SocialLink[]
+  topBarVisibility?: string
+  searchVisibility?: string
+  socialsVisibility?: string
 }
 
 function SocialIcon({ platform }: { platform: string }) {
@@ -61,6 +65,9 @@ export function MobileTopBar({
   items,
   medproUrl = 'https://medpro.vn/',
   socialLinks = [],
+  topBarVisibility = 'mobile_only',
+  searchVisibility = 'mobile_only',
+  socialsVisibility = 'mobile_only',
 }: MobileTopBarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [expandedItem, setExpandedItem] = useState<number | null>(null)
@@ -85,47 +92,51 @@ export function MobileTopBar({
     setExpandedItem(prev => prev === index ? null : index)
   }
 
+  if (!shouldRender(topBarVisibility)) return null
+
   const visibleSocials = socialLinks.slice(0, 3)
   const cleanPhone = hotline.replace(/[^\d+]/g, '') || '02923686115'
 
   return (
     <>
-      <div className="mobileTopBar" role="banner">
-        <form
-          className="mobileTopSearch"
-          action="/tim-kiem"
-          method="get"
-          role="search"
-          onSubmit={handleClose}
-        >
-          <svg
-            className="mobileTopSearchIcon"
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
+      <div className={`mobileTopBar ${getVisibilityClass(topBarVisibility)}`} role="banner">
+        {shouldRender(searchVisibility) && (
+          <form
+            className={`mobileTopSearch ${getVisibilityClass(searchVisibility)}`}
+            action="/tim-kiem"
+            method="get"
+            role="search"
+            onSubmit={handleClose}
           >
-            <circle cx="11" cy="11" r="7" />
-            <line x1="16.5" y1="16.5" x2="22" y2="22" />
-          </svg>
-          <input
-            name="q"
-            type="search"
-            className="mobileTopSearchInput"
-            placeholder="Tìm kiếm dịch vụ, bác sĩ..."
-            minLength={2}
-            maxLength={100}
-            aria-label="Tìm kiếm trên website bệnh viện"
-          />
-        </form>
+            <svg
+              className="mobileTopSearchIcon"
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <line x1="16.5" y1="16.5" x2="22" y2="22" />
+            </svg>
+            <input
+              name="q"
+              type="search"
+              className="mobileTopSearchInput"
+              placeholder="Tìm kiếm dịch vụ, bác sĩ..."
+              minLength={2}
+              maxLength={100}
+              aria-label="Tìm kiếm trên website bệnh viện"
+            />
+          </form>
+        )}
 
-        {visibleSocials.length > 0 && (
-          <div className="mobileTopSocials" aria-label="Mạng xã hội">
+        {shouldRender(socialsVisibility) && visibleSocials.length > 0 && (
+          <div className={`mobileTopSocials ${getVisibilityClass(socialsVisibility)}`} aria-label="Mạng xã hội">
             {visibleSocials.map((s, i) => (
               <a
                 key={i}

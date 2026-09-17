@@ -48,11 +48,17 @@ export default async function ScheduleDetailPage({ params }: Props) {
   let item: any
   let medpro = process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'
   let emergencyPhone = '0292 3686 115'
+  let displaySettings: any = null
 
   try {
-    const [payload, settings] = await Promise.all([getCMS(), getGlobal('site-settings')])
+    const [payload, settings, dispConfig] = await Promise.all([
+      getCMS(),
+      getGlobal('site-settings'),
+      getGlobal('display-settings').catch(() => null),
+    ])
     medpro = (settings as any)?.medproUrl || medpro
     emergencyPhone = (settings as any)?.emergencyHotline || (settings as any)?.phone || emergencyPhone
+    displaySettings = dispConfig
     item = await payload.findByID({ collection: 'schedules', id, depth: 2 })
   } catch {
     notFound()
@@ -579,6 +585,7 @@ export default async function ScheduleDetailPage({ params }: Props) {
             excelUrl={excelUrl}
             generalNote={item.emergencyGeneralNote}
             contacts={item.emergencyContacts}
+            displaySettings={displaySettings}
           />
         )}
 

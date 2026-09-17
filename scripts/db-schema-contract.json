@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260917_022_create_independent_patient_care_globals_tables",
-  "schemaSha256": "7d3c011fcf9f25a8b7eda73d53b7a9968cea4134eed35b11a29b0f2c491a2af8"
+  "migrationId": "20260917_023_create_display_settings_table",
+  "schemaSha256": "4eb0cb417a4bb873613dbc3629dc1c4b4234c76d4657df756bd1dfcaf181002f"
 }

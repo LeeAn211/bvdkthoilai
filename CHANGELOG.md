@@ -1,5 +1,64 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-17] - Xây Dựng Mục Quản Trị Bố Cục & Hiển Thị Đa Thiết Bị Độc Lập (DisplaySettings)
+
+- **Thời gian thực hiện:** 21:00 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Tạo mục quản trị riêng biệt trong Admin CMS (`Bố cục & Hiển thị Đa thiết bị`, slug: `display-settings`) thuộc nhóm `🌐 Trang chủ & Giao diện Website`, không gộp vào các mục cài đặt khác.
+  - Cho phép quản trị viên chủ động bật/tắt từng khối hiển thị ở chi tiết bài viết, các nút Đặt lịch (chuyên gia bác sĩ, lịch khám, lịch trực), thanh tiện ích mobile và các khối có cùng nhu cầu với 4 trạng thái tùy chọn linh hoạt:
+    1. `both`: Hiển thị trên CẢ HAI (Máy tính Desktop & Điện thoại Mobile).
+    2. `desktop_only`: Chỉ hiển thị trên Máy tính (Ẩn trên Điện thoại).
+    3. `mobile_only`: Chỉ hiển thị trên Điện thoại (Ẩn trên Máy tính).
+    4. `hidden`: Tắt hoàn toàn trên CẢ HAI.
+- **Các nội dung & tính năng đã thực hiện:**
+  1. **Global Schema Độc Lập `DisplaySettings` (`src/globals/DisplaySettings.ts`):**
+     - Đăng ký vào `payload.config.ts`, bố trí 4 tabs nghiệp vụ rõ ràng:
+       - **Tab 1: 📑 Chi tiết Bài viết & Tin tức:** Cấu hình bật/tắt Breadcrumbs, Ngày đăng, Lượt xem, Chuyên mục, Thanh chia sẻ MXH (cột trái desktop / dải ngang mobile), Tóm tắt nổi bật Highlights, Sapo đầu bài, Nguồn bài viết, Nút quay lại, Toàn bộ Sidebar, Khối tin mới Sidebar, Khối Banner tiện ích Sidebar, Khối tin cùng chuyên mục.
+       - **Tab 2: 🩺 Chuyên gia & Bác sĩ:** Nút Đặt lịch khám của Bác sĩ, Hộp ghi chú tiếp đón ưu tiên, chữ/link mặc định nút đặt lịch, Nút đặt lịch trên thẻ bác sĩ.
+       - **Tab 3: 📅 Lịch khám & Lịch trực:** Nút Đặt lịch khám trang lịch khám, Nút gọi Hotline tiếp đón, Khối Lưu ý người bệnh, Nút In lịch trực tuần (mặc định desktop_only), Khối Danh bạ đường dây nóng trực ban, Khối Ghi chú điều động công tác.
+       - **Tab 4: 📱 Đầu trang & Chân trang Mobile:** Thanh Mobile Top Bar, Ô tìm kiếm Top Bar, Cụm MXH Top Bar, Thanh Mobile Bottom Nav, Nút Đặt khám tròn ở giữa, Nút Cấp cứu gọi ngay, Trợ lý ảo bệnh viện, Nút cuộn lên đầu trang (Back to top), Chữ chạy Ticker khẩn cấp.
+  2. **Tiện ích Điều Khiển Thiết Bị (`src/lib/deviceVisibility.ts` & CSS Utility):**
+     - Tạo hàm `getVisibilityClass(visibility)` sinh class tương ứng: `.showOnDesktopOnly`, `.showOnMobileOnly`, `.hideOnAllDevices`.
+     - Tạo hàm `shouldRender(visibility)` tránh render code HTML không cần thiết khi chọn `hidden`.
+     - Tích hợp CSS breakpoint chuẩn y tế `@media (max-width: 900px)` và `@media (min-width: 901px)`.
+  3. **Kết Nối Toàn Diện Dữ Liệu Vào Frontend:**
+     - `src/components/ArticleDetailTemplate.tsx`: Tích hợp prop `displaySettings`, áp dụng cho tất cả các phần tử đầu trang, thân bài, sidebar và chân bài.
+     - `src/app/(frontend)/tin-tuc/[slug]/page.tsx`, `thong-bao/[slug]/page.tsx`, `ky-thuat-chuyen-sau/[slug]/page.tsx`: Nạp song song `display-settings` và truyền vào template.
+     - `src/app/(frontend)/bac-si/[slug]/page.tsx`: Kết nối nút Đặt lịch bác sĩ và Hộp ghi chú tiếp đón.
+     - `src/app/(frontend)/lich-kham/page.tsx`: Kết nối nút Hotline và khối Lưu ý quan trọng.
+     - `src/app/(frontend)/lich-kham/[id]/page.tsx` & `src/components/EmergencyMatrixView.tsx`: Kết nối nút In lịch trực, danh bạ khẩn cấp và ghi chú điều động.
+     - `src/components/SiteHeader.tsx` & `src/components/MobileTopBar.tsx`: Kết nối MobileTopBar, thanh search, social và ticker chữ chạy.
+     - `src/app/(frontend)/layout.tsx` & `src/components/MobileBottomNav.tsx` & `src/components/WebsiteAssistant.tsx`: Kết nối MobileBottomNav, nút tròn Đặt khám, nút Cấp cứu, Trợ lý ảo bệnh viện và Nút cuộn lên đầu trang.
+  4. **Đóng Gói & Đồng Bộ Database Migration PostgreSQL:**
+     - Đã sinh lại schema và tạo migration `scripts/db-migrations/20260917_023_create_display_settings_table.mjs`.
+     - Đã chạy deploy thành công vào database PostgreSQL local (`23 applied, 0 pending`).
+     - Đã seal schema contract `npm run db:schema:seal -- 20260917_023_create_display_settings_table` và verify `npm run db:schema:check` đạt 100% hợp lệ.
+- **Tệp tin chỉnh sửa & tạo mới:**
+  - `src/globals/DisplaySettings.ts` [NEW]
+  - `src/lib/deviceVisibility.ts` [NEW]
+  - `scripts/db-migrations/20260917_023_create_display_settings_table.mjs` [NEW]
+  - `payload.config.ts` [MODIFY]
+  - `src/lib/payload.ts` [MODIFY]
+  - `src/app/styles/10-public-base.css` [MODIFY]
+  - `src/components/ArticleDetailTemplate.tsx` [MODIFY]
+  - `src/components/ArticleDetailTemplate.module.css` [MODIFY]
+  - `src/app/(frontend)/tin-tuc/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/thong-bao/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/ky-thuat-chuyen-sau/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/bac-si/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/lich-kham/page.tsx` [MODIFY]
+  - `src/app/(frontend)/lich-kham/[id]/page.tsx` [MODIFY]
+  - `src/components/EmergencyMatrixView.tsx` [MODIFY]
+  - `src/components/SiteHeader.tsx` [MODIFY]
+  - `src/components/MobileTopBar.tsx` [MODIFY]
+  - `src/components/MobileBottomNav.tsx` [MODIFY]
+  - `src/components/WebsiteAssistant.tsx` [MODIFY]
+  - `src/app/(frontend)/layout.tsx` [MODIFY]
+  - `scripts/db-schema-contract.json` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+  - `CURRENT-TASK.md` [MODIFY]
+- **Kiểm tra chất lượng:** `npx tsc --noEmit` hoàn thành `0` lỗi.
+
 ## [2026-09-17] - Đồng Bộ Toàn Diện Giao Diện Chi Tiết Bài Viết & Chuyên Gia Trên Điện Thoại Theo Chuẩn Desktop
 
 - **Thời gian thực hiện:** 20:15 (Asia/Saigon)
@@ -5632,3 +5691,13 @@ Tài liệu này lưu trữ toàn bộ các thay đổi về mã nguồn, cấu 
 **Files Modified:**
 - src/components/SiteHeader.module.css — Rewrote mobile override block
 
+
+## [2026-09-17] - Mobile Top Bar: Th�m khung logo + t�n don v? n?i b?t
+
+### Y�u c?u
+Ph�n khung � ch?a logo v� t�n don v? (n?n tr?ng) tr�ng v?i n?n header, l�m cho khung n?i b?t hon v?i du?ng vi?n r� r�ng.
+
+### Files Modified
+- `src/components/MobileTopBar.tsx`: Th�m props `logo`, `hospitalName`; th�m element `.mobileTopBrand` (card n?i b?t, link v? trang ch?) v�o d?u top bar.
+- `src/components/SiteHeader.tsx`: Truy?n `logo` v� `hospitalName` xu?ng MobileTopBar.
+- `src/app/styles/mobile-medpro.css`: Th�m CSS cho `.mobileTopBrand`, `.mobileTopBrandLogo`, `.mobileTopBrandLogoImg`, `.mobileTopBrandName` � n?n tr?ng, vi?n xanh `rgba(7, 84, 168, 0.22)`, border-radius 10px, box-shadow tinh t?.

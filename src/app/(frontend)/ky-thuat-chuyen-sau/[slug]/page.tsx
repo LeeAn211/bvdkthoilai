@@ -54,9 +54,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function AdvancedTechniqueDetailPage({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme] = await Promise.all([
+  const [{ item, related }, theme, displaySettings] = await Promise.all([
     getData(slug),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
+    getGlobal('display-settings').catch(() => null) as Promise<any>,
   ])
 
   if (!item) notFound()
@@ -219,6 +220,7 @@ export default async function AdvancedTechniqueDetailPage({ params }: Props) {
       showRelatedSection={showRelatedSection}
       showBackToList={showBackToList}
       adminConfig={theme?.detailLayout}
+      displaySettings={displaySettings}
       baseHref="/ky-thuat-chuyen-sau"
     />
   )

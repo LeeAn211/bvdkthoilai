@@ -6,6 +6,7 @@ import { SocialBrandIcon } from './SocialBrandIcon'
 import { CurrentWeekdayTime } from './CurrentWeekdayTime'
 import { MobileNavHeader } from './MobileNavHeader'
 import { MobileTopBar } from './MobileTopBar'
+import { getVisibilityClass, shouldRender } from '@/lib/deviceVisibility'
 
 function ContactIcon({ type = 'phone', customUrl, iconSize }: { type?: string; customUrl?: string; iconSize?: number }) {
   const iconPixelSize = iconSize ? `${iconSize}px` : undefined
@@ -71,6 +72,7 @@ export async function SiteHeader() {
   let contact: any = {}
   let social: any = {}
   let theme: any = {}
+  let displaySettings: any = {}
 
   try {
     settings = await getGlobal('site-settings')
@@ -78,6 +80,7 @@ export async function SiteHeader() {
     try { contact = await getGlobal('contact-settings') } catch {}
     try { social = await getGlobal('social-settings') } catch {}
     try { theme = await getGlobal('theme-settings') } catch {}
+    try { displaySettings = await getGlobal('display-settings') } catch {}
   } catch {}
 
   const hotline = contact?.hotline || settings?.hotline || process.env.NEXT_PUBLIC_HOTLINE || '02923686115'
@@ -458,6 +461,9 @@ export async function SiteHeader() {
         items={items}
         medproUrl={medproUrl}
         socialLinks={socialLinks}
+        topBarVisibility={displaySettings?.mobileTopBar || 'mobile_only'}
+        searchVisibility={displaySettings?.mobileTopSearch || 'mobile_only'}
+        socialsVisibility={displaySettings?.mobileTopSocials || 'mobile_only'}
       />
 
       <header className={`mainHeader ${settings?.headerStickyMenu === false ? 'notSticky' : ''} ${animClass}`} style={menuStyle}>
@@ -466,8 +472,8 @@ export async function SiteHeader() {
         </div>
       </header>
 
-      {tickerSettings.enabled !== false && (
-        <div className="scrollingNotice" role="status" aria-label={tickerText} style={tickerStyle}>
+      {tickerSettings.enabled !== false && shouldRender(displaySettings?.scrollingTicker || 'both') && (
+        <div className={`scrollingNotice ${getVisibilityClass(displaySettings?.scrollingTicker || 'both')}`} role="status" aria-label={tickerText} style={tickerStyle}>
           <div className="scrollingNoticeTrack">
             <span className="scrollingNoticeItem">✦ {tickerText}</span>
             <span className="scrollingNoticeItem" aria-hidden="true">✦ {tickerText}</span>

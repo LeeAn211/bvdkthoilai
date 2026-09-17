@@ -6,6 +6,7 @@ import { SiteFooter } from '@/components/SiteFooter'
 import { RichText } from '@/components/RichText'
 import { getCMS, getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
+import { getVisibilityClass, shouldRender } from '@/lib/deviceVisibility'
 import './doctor-detail.css'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -33,7 +34,10 @@ export default async function DoctorDetailPage({ params }: Props) {
   const d: any = r.docs[0]
   if (!d || d.active === false) notFound()
 
-  const s: any = await getGlobal('site-settings').catch(() => null)
+  const [s, displaySettings]: [any, any] = await Promise.all([
+    getGlobal('site-settings').catch(() => null),
+    getGlobal('display-settings').catch(() => null),
+  ])
   const hospitalName = s?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
 
   const deptObj = typeof d.department === 'object' ? d.department : null
@@ -86,10 +90,13 @@ export default async function DoctorDetailPage({ params }: Props) {
 
   const avatarUrl = mediaUrl(d.avatar)
   const fullDisplayName = `${d.degree ? `${d.degree}. ` : ''}${d.name}`
-  const bookingBtnText = (d.bookingBtnText || '').trim() || 'Đặt lịch khám'
-  const bookingBtnUrl = (d.bookingBtnUrl || '').trim() || '/dat-lich-kham'
+  const bookingBtnText = (d.bookingBtnText || '').trim() || (displaySettings?.doctorBookingDefaultText || '').trim() || 'Đặt lịch khám'
+  const bookingBtnUrl = (d.bookingBtnUrl || '').trim() || (displaySettings?.doctorBookingDefaultUrl || '').trim() || '/dat-lich-kham'
   const bookingOpenNewTab = Boolean(d.bookingBtnOpenNewTab)
   const bookingNoticeText = d.bookingNoticeText !== undefined ? d.bookingNoticeText : 'Đăng ký hẹn khám trực tuyến tiếp đón ưu tiên tại viện.'
+
+  const bookingBtnVis = displaySettings?.doctorBookingBtn || 'both'
+  const bookingNoticeVis = displaySettings?.doctorBookingNotice || 'both'
 
   // Kiểm tra có dữ liệu đào tạo/kinh nghiệm/chuyên môn hay không
   const hasEducation = Boolean(d.education)
@@ -140,22 +147,24 @@ export default async function DoctorDetailPage({ params }: Props) {
                 )}
               </div>
 
-              <Link
-                href={bookingBtnUrl}
-                className="docBookingBtn"
-                {...(bookingOpenNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                <span>{bookingBtnText}</span>
-              </Link>
+              {shouldRender(bookingBtnVis) && (
+                <Link
+                  href={bookingBtnUrl}
+                  className={`docBookingBtn ${getVisibilityClass(bookingBtnVis)}`}
+                  {...(bookingOpenNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                  <span>{bookingBtnText}</span>
+                </Link>
+              )}
 
-              {bookingNoticeText && (
-                <div className="docContactNotice">
+              {shouldRender(bookingNoticeVis) && bookingNoticeText && (
+                <div className={`docContactNotice ${getVisibilityClass(bookingNoticeVis)}`}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="12" cy="12" r="10" />
                     <line x1="12" y1="16" x2="12" y2="12" />

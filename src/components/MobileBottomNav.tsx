@@ -4,6 +4,8 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { getVisibilityClass, shouldRender } from '@/lib/deviceVisibility'
+
 /**
  * Thanh điều hướng dưới cùng cố định trên mobile (< 900px)
  * Kiểu medpro.vn — 4 tab: Trang chủ | Lịch khám | Đặt khám | Cấp cứu
@@ -12,20 +14,26 @@ export function MobileBottomNav({
   enabled = true,
   hotline = '02923686115',
   medproUrl = 'https://medpro.vn/',
+  navVisibility = 'mobile_only',
+  bookingBtnVisibility = 'mobile_only',
+  emergencyBtnVisibility = 'mobile_only',
 }: {
   enabled?: boolean
   hotline?: string
   medproUrl?: string
+  navVisibility?: string
+  bookingBtnVisibility?: string
+  emergencyBtnVisibility?: string
 }) {
   const pathname = usePathname()
-  if (enabled === false) return null
+  if (enabled === false || !shouldRender(navVisibility)) return null
   const cleanPhone = hotline.replace(/[^\d+]/g, '') || '02923686115'
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
 
   return (
-    <nav className="mobileBottomNav" aria-label="Điều hướng nhanh dưới màn hình">
+    <nav className={`mobileBottomNav ${getVisibilityClass(navVisibility)}`} aria-label="Điều hướng nhanh dưới màn hình">
       {/* Trang chủ */}
       <Link
         href="/"
@@ -57,34 +65,38 @@ export function MobileBottomNav({
       </Link>
 
       {/* Đặt khám — nút nổi bật ở giữa */}
-      <a
-        href={medproUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="mbnTab mbnBooking"
-        aria-label="Đặt khám trực tuyến"
-      >
-        <span className="mbnBookingCircle">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-        </span>
-        <span className="mbnLabel">Đặt khám</span>
-      </a>
+      {shouldRender(bookingBtnVisibility) && (
+        <a
+          href={medproUrl}
+          target="_blank"
+          rel="noreferrer"
+          className={`mbnTab mbnBooking ${getVisibilityClass(bookingBtnVisibility)}`}
+          aria-label="Đặt khám trực tuyến"
+        >
+          <span className="mbnBookingCircle">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </span>
+          <span className="mbnLabel">Đặt khám</span>
+        </a>
+      )}
 
       {/* Cấp cứu */}
-      <a
-        href={`tel:${cleanPhone}`}
-        className="mbnTab mbnEmergency"
-        aria-label={`Gọi cấp cứu ${hotline}`}
-      >
-        <span className="mbnIcon">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M7.4 3.6 10 7.3 8.3 9.1c1.1 2.3 3.1 4.3 5.4 5.4l1.8-1.7 3.7 2.6-.6 3.4c-.2 1-1.1 1.7-2.1 1.6C9.3 19.5 4.5 14.7 3.6 7.5c-.1-1 .6-1.9 1.6-2.1l2.2-.4Z" />
-          </svg>
-        </span>
-        <span className="mbnLabel">Cấp cứu</span>
-      </a>
+      {shouldRender(emergencyBtnVisibility) && (
+        <a
+          href={`tel:${cleanPhone}`}
+          className={`mbnTab mbnEmergency ${getVisibilityClass(emergencyBtnVisibility)}`}
+          aria-label={`Gọi cấp cứu ${hotline}`}
+        >
+          <span className="mbnIcon">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M7.4 3.6 10 7.3 8.3 9.1c1.1 2.3 3.1 4.3 5.4 5.4l1.8-1.7 3.7 2.6-.6 3.4c-.2 1-1.1 1.7-2.1 1.6C9.3 19.5 4.5 14.7 3.6 7.5c-.1-1 .6-1.9 1.6-2.1l2.2-.4Z" />
+            </svg>
+          </span>
+          <span className="mbnLabel">Cấp cứu</span>
+        </a>
+      )}
     </nav>
   )
 }

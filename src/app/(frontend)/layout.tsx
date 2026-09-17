@@ -39,11 +39,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   let chatbotSettings: any = {}
   let theme: any = {}
   let footer: any = {}
+  let displaySettings: any = {}
   const gaID = process.env.NEXT_PUBLIC_GA_ID
   try { settings = await getGlobal('site-settings') } catch {}
   try { chatbotSettings = await getGlobal('chatbot-settings') } catch {}
   try { theme = await getGlobal('theme-settings') } catch {}
   try { footer = await getGlobal('footer') } catch {}
+  try { displaySettings = await getGlobal('display-settings') } catch {}
   const assistant = { ...(settings?.websiteAssistant || {}), ...(chatbotSettings || {}) }
   const fontFamily = theme?.fontFamily === 'arial' ? 'Arial, sans-serif' : theme?.fontFamily === 'tahoma' ? 'Tahoma, sans-serif' : '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif'
   const fontScale = Math.max(0.9, Math.min(1.4, Number(theme?.fontScale || 115) / 100))
@@ -91,6 +93,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <WebsiteAssistant
           enabled={assistant.enabled !== false}
           backToTopEnabled={assistant.backToTopEnabled !== false}
+          assistantVisibility={displaySettings?.floatingAssistant || 'both'}
+          backToTopVisibility={displaySettings?.floatingBackToTop || 'both'}
           assistantName={assistant.assistantName || 'Trợ lý Thới Lai'}
           statusText={assistant.statusText || 'Đang trực tuyến'}
           greeting={assistant.greeting}
@@ -110,6 +114,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           enabled={footer?.showMobileBar !== false}
           hotline={settings?.hotline || settings?.emergencyHotline || process.env.NEXT_PUBLIC_HOTLINE || '02923686115'}
           medproUrl={settings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'}
+          navVisibility={displaySettings?.mobileBottomNav || 'mobile_only'}
+          bookingBtnVisibility={displaySettings?.mobileBottomBookingBtn || 'mobile_only'}
+          emergencyBtnVisibility={displaySettings?.mobileBottomEmergencyBtn || 'mobile_only'}
         />
       </body>
     </html>

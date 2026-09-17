@@ -1,6 +1,7 @@
 'use client'
 
 import { FormEvent, useEffect, useRef, useState } from 'react'
+import { getVisibilityClass, shouldRender } from '@/lib/deviceVisibility'
 
 type Message = {
   id: number
@@ -18,6 +19,8 @@ type Message = {
 type AssistantProps = {
   enabled?: boolean
   backToTopEnabled?: boolean
+  assistantVisibility?: string
+  backToTopVisibility?: string
   assistantName?: string
   statusText?: string
   greeting?: string
@@ -126,7 +129,9 @@ function normalize(value: string) {
 export function WebsiteAssistant({
   enabled = true,
   backToTopEnabled = true,
-  assistantName = 'Trợ lý Thới Lai',
+  assistantVisibility = 'both',
+  backToTopVisibility = 'both',
+  assistantName = 'Trợ lý ảo BVĐK Thới Lai',
   statusText = 'Đang trực tuyến',
   greeting = 'Xin chào! Tôi có thể hỗ trợ bạn tra cứu lịch khám bác sĩ, thủ tục BHYT, bảng giá dịch vụ và hướng dẫn chuyên khoa.',
   logoUrl,
@@ -479,15 +484,15 @@ export function WebsiteAssistant({
 
   return (
     <div className="websiteAssistant" style={{ '--assistant-color': primaryColor } as React.CSSProperties}>
-      {backToTopEnabled && showBackToTop && !open && (
-        <button className="backToTopButton" type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Lên đầu trang" title="Lên đầu trang">
+      {backToTopEnabled && showBackToTop && !open && shouldRender(backToTopVisibility) && (
+        <button className={`backToTopButton ${getVisibilityClass(backToTopVisibility)}`} type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Lên đầu trang" title="Lên đầu trang">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6" /></svg>
           <span>Lên đầu</span>
         </button>
       )}
 
-      {enabled && open && (
-        <section className="assistantPanel" role="dialog" aria-label={assistantName}>
+      {enabled && open && shouldRender(assistantVisibility) && (
+        <section className={`assistantPanel ${getVisibilityClass(assistantVisibility)}`} role="dialog" aria-label={assistantName}>
           <header className="assistantHeader">
             <span className={`assistantAvatar ${logoUrl ? 'hasLogo' : ''}`}>
               {logoUrl ? <img src={logoUrl} alt="Logo bệnh viện" /> : '✚'}
@@ -566,9 +571,9 @@ export function WebsiteAssistant({
         </section>
       )}
 
-      {enabled && (
+      {enabled && shouldRender(assistantVisibility) && (
         <button
-          className={`assistantToggle ${open ? 'isOpen' : ''}`}
+          className={`assistantToggle ${open ? 'isOpen' : ''} ${getVisibilityClass(assistantVisibility)}`}
           type="button"
           onClick={() => setOpen((value) => !value)}
           aria-label={open ? 'Đóng trợ lý' : 'Mở trợ lý hỗ trợ'}
