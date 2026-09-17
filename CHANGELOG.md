@@ -1,6 +1,29 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-17] - Thiết Lập Chế Độ Chỉ Xem Trực Tuyến, Chống Sao Chép, Tải Về Và In Ấn Cho Tài Liệu/Phác Đồ Khóa Mật Khẩu PIN
+## [2026-09-17] - Đồng Bộ Toàn Diện Giao Diện Chân Trang (Footer) Trên Điện Thoại & Hệ Thống CMS
+
+- **Thời gian thực hiện:** 18:15 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Kiểm tra toàn bộ Footer trên giao diện điện thoại (mobile responsive), xử lý các điểm chưa đồng bộ layout, thẩm mỹ và dữ liệu cấu hình từ Admin CMS.
+- **Các điểm đã kiểm tra và khắc phục triệt để:**
+  1. **Đồng bộ Layout cụm 3 nút Quick Action ở đầu Footer:**
+     - Trên màn hình di động (`<= 768px`), nút chính **"Đặt khám trực tuyến"** được cấu hình chiếm trọn toàn bộ chiều rộng (`grid-column: 1 / -1`), 2 nút phụ **"Quy trình khám"** và **"Góp ý & Liên hệ"** chia đều 2 cột `1fr 1fr` cân xứng, không còn tình trạng nút thứ 3 rớt xuống nửa màn hình gây trống trải mất thẩm mỹ.
+  2. **Chống che khuất bản quyền bởi thanh Mobile Bottom Nav:**
+     - Bổ sung `padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important` cho thanh cuối Footer (`.footerBottomBar`), đảm bảo dòng chữ bản quyền và chứng nhận Cổng thông tin không bao giờ bị thanh tiện ích cố định ở đáy che khuất.
+  3. **Chuẩn hóa căn lề các cột liên kết trên Mobile:**
+     - Thiết lập căn lề trái tự nhiên (`text-align: left !important`, `align-items: flex-start !important`) cho tất cả các cột liên kết trên điện thoại, ngăn hiện tượng cột bị căn phải (nếu admin vô tình chỉnh `right` trong CMS) gây lệch hàng với các cột khác.
+  4. **Đồng bộ Hotline mặc định & Slogan Chân trang:**
+     - Cập nhật số hotline mặc định từ `'02920000000'` thành chuẩn hệ thống `'02923686115'`.
+     - Đồng bộ dòng slogan phụ chân trang theo trường `headerSlogan` trong Admin CMS (`SiteSettings.ts`), đảm bảo thông điệp nhận diện thương hiệu nhất quán toàn viện.
+  5. **Kết nối công tắc `showMobileBar` từ CMS Footer với Layout:**
+     - Trong `Footer.ts` CMS có trường checkbox `showMobileBar` (Hiển thị thanh tiện ích mobile), đã kết nối trực tiếp vào `layout.tsx` và `MobileBottomNav.tsx`. Khi quản trị viên tắt công tắc này trong CMS, thanh điều hướng đáy trên mobile sẽ tự động ẩn theo đúng cấu hình.
+- **Tệp tin chỉnh sửa:**
+  - `src/components/SiteFooter.module.css` [MODIFY]
+  - `src/components/SiteFooter.tsx` [MODIFY]
+  - `src/components/MobileBottomNav.tsx` [MODIFY]
+  - `src/app/(frontend)/layout.tsx` [MODIFY]
+- **Database / Schema:** Không thay đổi schema (dùng trường `showMobileBar`, `headerSlogan` và `hotline` đã có sẵn).
+- **Kiểm tra chất lượng:** `npx tsc --noEmit` hoàn thành không có bất kỳ cảnh báo/lỗi TypeScript nào.
 
 - **Thời gian thực hiện:** 17:35 (Asia/Saigon)
 - **Yêu cầu & Mục tiêu:**

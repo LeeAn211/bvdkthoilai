@@ -508,15 +508,15 @@
 
 @media (max-width: 768px) {
   .footerMain {
-    padding: 40px 0 32px;
+    padding: 36px 0 28px;
   }
   .footerQuickBar {
-    padding: 16px 0;
+    padding: 14px 0;
   }
   .footerQuickBarInner {
     flex-direction: column;
     align-items: stretch;
-    gap: 14px;
+    gap: 12px;
   }
   .footerEmergencyCard {
     width: 100%;
@@ -525,17 +525,44 @@
   .footerActionButtons {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 10px;
     width: 100%;
   }
-  .footerBookingBtn,
+  .footerBookingBtn {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 13.5px;
+  }
   .footerGuideBtn {
     justify-content: center;
-    padding: 10px 14px;
+    padding: 10px 12px;
     font-size: 12.5px;
   }
   .footerGrid {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 28px;
+  }
+  /* On mobile, align all navigation columns cleanly to the left for consistent reading */
+  .navColumn {
+    text-align: left !important;
+    align-items: flex-start !important;
+  }
+  .columnHeading {
+    text-align: left !important;
+  }
+  .columnHeading::after {
+    left: 0 !important;
+    right: auto !important;
+    transform: none !important;
+  }
+  .navLinkList {
+    align-items: flex-start !important;
+  }
+  .footerBottomBar {
+    /* Extra padding at bottom so MobileBottomNav does not cover footer copyright */
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
   }
   .footerBottomInner {
     flex-direction: column;

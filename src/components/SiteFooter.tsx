@@ -52,7 +52,7 @@ export async function SiteFooter() {
 
   if (footer?.enabled === false) return null
 
-  const hotline = contact?.hotline || settings?.hotline || process.env.NEXT_PUBLIC_HOTLINE || '02920000000'
+  const hotline = contact?.hotline || settings?.hotline || process.env.NEXT_PUBLIC_HOTLINE || '02923686115'
   const emergencyHotline = contact?.emergencyHotline || settings?.emergencyHotline || hotline
   const email = contact?.email || settings?.email || ''
   const workingHours = contact?.workingHours || settings?.workingHours || ''
@@ -163,7 +163,9 @@ export async function SiteFooter() {
                       {settings?.hospitalName || 'BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI'}
                     </div>
                   )}
-                  <span className={styles.hospitalSubtitle}>Tận tâm cứu chữa – Vững vàng chuyên môn</span>
+                  <span className={styles.hospitalSubtitle}>
+                    {settings?.headerSlogan || settings?.slogan || 'Tận tâm cứu chữa – Vững vàng chuyên môn'}
+                  </span>
                 </div>
               </div>
 

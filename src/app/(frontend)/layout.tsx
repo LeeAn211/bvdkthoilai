@@ -38,10 +38,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   let settings: any = {}
   let chatbotSettings: any = {}
   let theme: any = {}
+  let footer: any = {}
   const gaID = process.env.NEXT_PUBLIC_GA_ID
   try { settings = await getGlobal('site-settings') } catch {}
   try { chatbotSettings = await getGlobal('chatbot-settings') } catch {}
   try { theme = await getGlobal('theme-settings') } catch {}
+  try { footer = await getGlobal('footer') } catch {}
   const assistant = { ...(settings?.websiteAssistant || {}), ...(chatbotSettings || {}) }
   const fontFamily = theme?.fontFamily === 'arial' ? 'Arial, sans-serif' : theme?.fontFamily === 'tahoma' ? 'Tahoma, sans-serif' : '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif'
   const fontScale = Math.max(0.9, Math.min(1.4, Number(theme?.fontScale || 115) / 100))
@@ -105,6 +107,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           customAnswers={Array.isArray(assistant.customAnswers) ? assistant.customAnswers : undefined}
         />
         <MobileBottomNav
+          enabled={footer?.showMobileBar !== false}
           hotline={settings?.hotline || settings?.emergencyHotline || process.env.NEXT_PUBLIC_HOTLINE || '02923686115'}
           medproUrl={settings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'}
         />

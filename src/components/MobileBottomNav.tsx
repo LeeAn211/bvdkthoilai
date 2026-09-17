@@ -9,13 +9,16 @@ import { usePathname } from 'next/navigation'
  * Kiểu medpro.vn — 4 tab: Trang chủ | Lịch khám | Đặt khám | Cấp cứu
  */
 export function MobileBottomNav({
+  enabled = true,
   hotline = '02923686115',
   medproUrl = 'https://medpro.vn/',
 }: {
+  enabled?: boolean
   hotline?: string
   medproUrl?: string
 }) {
   const pathname = usePathname()
+  if (enabled === false) return null
   const cleanPhone = hotline.replace(/[^\d+]/g, '') || '02923686115'
 
   const isActive = (href: string) =>
