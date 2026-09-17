@@ -81,7 +81,7 @@ export default function OutpatientSurveyForm() {
     gender: 'Nam',
     ageGroup: '30-45',
     insurance: 'Có BHYT',
-    area: 'Huyện Thới Lai',
+    area: '',
     department: 'Phòng khám Đa khoa / Nội',
     respondentType: 'Người bệnh trực tiếp',
   })
@@ -325,18 +325,40 @@ export default function OutpatientSurveyForm() {
           </div>
 
           <div className="opsGrid2">
-            {/* Nơi cư trú */}
+            {/* Nơi cư trú / Địa chỉ chi tiết */}
             <div className="opsFieldGroup">
-              <label className="opsLabel">Nơi cư trú / Khoảng cách di chuyển</label>
-              <select
-                className="opsSelect"
+              <label className="opsLabel">Nơi cư trú (Địa chỉ / Xã, Huyện, Tỉnh)</label>
+              <input
+                type="text"
+                className="opsInput"
                 value={demographics.area}
                 onChange={e => setDemographics(p => ({ ...p, area: e.target.value }))}
-              >
-                <option value="Huyện Thới Lai">Tại huyện Thới Lai (Dưới 10km)</option>
-                <option value="Quận/Huyện lân cận tại Cần Thơ">Quận/Huyện khác thuộc TP. Cần Thơ (Ô Môn, Cờ Đỏ, Thốt Nốt...)</option>
-                <option value="Tỉnh/Thành phố khác">Tỉnh lân cận (Hậu Giang, Kiên Giang, An Giang, Đồng Tháp...)</option>
-              </select>
+                placeholder="Nhập địa chỉ, ấp/khu vực, xã/thị trấn (VD: TT. Thới Lai, Huyện Thới Lai, Cần Thơ)..."
+                list="area-suggestions"
+              />
+              <datalist id="area-suggestions">
+                <option value="Thị trấn Thới Lai, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Thới Thạnh, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Thới Tân, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Tân Thạnh, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Xuân Thắng, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Đông Bình, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Đông Thuận, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Trường Thành, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Trường Thắng, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Trường Xuân, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Trường Xuân A, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Trường Xuân B, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Định Môn, Huyện Thới Lai, TP. Cần Thơ" />
+                <option value="Huyện Cờ Đỏ, TP. Cần Thơ" />
+                <option value="Quận Ô Môn, TP. Cần Thơ" />
+                <option value="Quận Thốt Nốt, TP. Cần Thơ" />
+                <option value="Quận Bình Thủy, TP. Cần Thơ" />
+                <option value="Quận Ninh Kiều, TP. Cần Thơ" />
+                <option value="Quận Cái Răng, TP. Cần Thơ" />
+                <option value="Huyện Phong Điền, TP. Cần Thơ" />
+                <option value="Huyện Vĩnh Thạnh, TP. Cần Thơ" />
+              </datalist>
             </div>
 
             {/* Khu vực phòng khám đã đến */}

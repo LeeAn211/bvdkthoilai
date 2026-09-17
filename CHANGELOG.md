@@ -1,6 +1,17 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-17] - Thiết kế Mẫu Khảo sát Ý kiến & Sự hài lòng Nhân viên Y tế chuẩn Bộ Y tế (Mẫu số 3)
+## [2026-09-17] - Chuyển trường Nơi cư trú của Khảo sát Ngoại trú & Nội trú sang dạng Nhập tay
+
+- **Thời gian thực hiện:** 10:32 (Asia/Saigon)
+- **Yêu cầu:** Cho phép người bệnh hoặc thân nhân tự do nhập tay địa chỉ cụ thể (ấp/khu vực, xã/thị trấn, quận/huyện, tỉnh) tại trường "Nơi cư trú" trên cả mẫu khảo sát ngoại trú và nội trú thay vì chỉ chọn vài tùy chọn chung chung, giúp bệnh viện nắm bắt chính xác địa bàn người bệnh sinh sống.
+- **Nội dung thực hiện:**
+  - `src/components/OutpatientSurveyForm.tsx`:
+    - Chuyển trường `area` (Nơi cư trú) từ `select` cố định sang `input type="text"` cho phép gõ tay tự do chi tiết đến ấp, xã, phường, huyện, tỉnh.
+    - Bổ sung `datalist` thông minh gợi ý sẵn các xã/thị trấn thuộc huyện Thới Lai và các quận/huyện lân cận tại TP. Cần Thơ để người dùng chọn nhanh nếu muốn.
+    - Khởi tạo giá trị mặc định trống (`""`) để người bệnh nhập địa chỉ thực tế.
+  - `src/components/InpatientSurveyForm.tsx`:
+    - Tương tự, chuyển trường `area` (Nơi cư trú) của khảo sát nội trú sang `input type="text"` kết hợp gợi ý `datalist` chi tiết.
+- **Kiểm thử & Xác nhận:** Cả 2 trang `/khao-sat/ngoai-tru` và `/khao-sat/noi-tru` tải thành công HTTP 200 OK, người dùng có thể nhập địa chỉ chính xác hoặc chọn từ gợi ý mượt mà.
 
 - **Thời gian thực hiện:** 10:25 (Asia/Saigon)
 - **Yêu cầu:** Thiết kế bổ sung mẫu khảo sát ý kiến và sự hài lòng của nhân viên y tế theo chuẩn Mẫu số 3 của Bộ Y tế (theo Quyết định 3869/QĐ-BYT), giao diện chuyên nghiệp, trực quan và dễ thao tác trên cả điện thoại di động và máy tính, phục vụ cán bộ nhân viên Bệnh viện Đa khoa Khu vực Thới Lai.
