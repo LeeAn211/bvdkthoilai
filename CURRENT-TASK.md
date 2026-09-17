@@ -1,21 +1,26 @@
 # CURRENT-TASK
 
 ## Mục tiêu
-1. Thêm nút chuyển qua lại (Next / Prev) và dots pagination cho phần "Chuyên gia của chúng tôi" trên điện thoại.
-2. Thêm thanh menu điều hướng ở dưới cuối màn hình (Bottom Navigation Bar) kiểu medpro.vn trên điện thoại.
+1. Thiết kế trang và mẫu khảo sát ý kiến người bệnh ngoại trú theo Mẫu số 2 của Bộ Y tế (https://hailong.chatluongbenhvien.vn/nguoi-benh-ngoai-tru-v2).
+2. Thiết kế trang và mẫu khảo sát ý kiến người bệnh nội trú theo Mẫu số 1 của Bộ Y tế (https://hailong.chatluongbenhvien.vn/nguoi-benh-noi-tru-v2).
 
 ## Trạng thái: HOÀN THÀNH
 
 ## Files liên quan
-- src/components/OurExpertsCarousel.tsx
-- src/components/OurExpertsCarousel.module.css
-- src/components/MobileBottomNav.tsx [NEW]
-- src/app/(frontend)/layout.tsx
-- src/app/styles/mobile-medpro.css
-- CHANGELOG.md
+- `src/components/OutpatientSurveyForm.tsx` [NEW]
+- `src/components/InpatientSurveyForm.tsx` [NEW]
+- `src/app/(frontend)/khao-sat/ngoai-tru/page.tsx` [NEW]
+- `src/app/(frontend)/khao-sat/noi-tru/page.tsx` [NEW]
+- `src/app/(frontend)/khao-sat/[slug]/page.tsx` [MODIFY]
+- `src/app/(frontend)/khao-sat/page.tsx` [MODIFY]
+- `src/app/(frontend)/api/surveys/outpatient/route.ts` [NEW]
+- `src/app/(frontend)/api/surveys/inpatient/route.ts` [NEW]
+- `src/app/styles/outpatient-survey.css` [NEW]
+- `src/app/(frontend)/layout.tsx` [MODIFY]
+- `CHANGELOG.md` [MODIFY]
 
-## Kết quả
-- Carousel "Chuyên gia của chúng tôi" trên mobile có nút Prev/Next cỡ 46px dễ bấm, đi kèm dải chấm tròn chỉ báo (dots pagination) hiển thị slide hiện tại và hỗ trợ bấm chọn slide trực tiếp.
-- Thanh Bottom Navigation Bar cố định ở đáy màn hình trên mobile (< 900px) gồm 4 tab tiện ích chuẩn Medpro: Trang chủ, Lịch khám, Đặt khám (nút FAB nổi bật ở giữa), Cấp cứu 24/7.
-- Tự động bù trừ khoảng đệm chân trang (`body padding-bottom` + `safe-area-inset-bottom`) để nội dung không bị che khuất.
-- TypeScript typecheck đạt 0 lỗi, dev server phản hồi HTTP 200 OK.
+## Kết quả đạt được
+- **Khảo sát Ngoại trú (Mẫu 2 BYT - `/khao-sat/ngoai-tru`)**: 19 câu hỏi thuộc 5 nhóm A-E, thông tin chung phòng khám, thanh đo %, Likert 1-5 sao/emoji, đánh giá thang điểm 10, cấp mã `KS-NT-2026-XXXX`.
+- **Khảo sát Nội trú (Mẫu 1 BYT - `/khao-sat/noi-tru`)**: 20 câu hỏi thuộc 5 nhóm A-E (tiếp cận, buồng bệnh, thuốc/viện phí, điều dưỡng chăm sóc, kết quả điều trị), thông tin số ngày nằm viện và khoa điều trị nội trú, thanh đo %, Likert 1-5 sao/emoji, đánh giá thang điểm 10, cấp mã `KS-NOITRU-2026-XXXX`.
+- Cả hai trang đều tương thích hoàn hảo trên điện thoại và máy tính, bảo mật 100% ẩn danh, hỗ trợ nút đánh giá nhanh tiện dụng.
+- Cả 2 endpoint API và 2 route trang đều trả về HTTP 200 OK.

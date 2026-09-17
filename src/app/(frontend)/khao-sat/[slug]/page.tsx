@@ -30,7 +30,51 @@ export default async function SurveyDetailPage({
   })
 
   const campaign: any = result.docs[0]
-  if (!campaign) return notFound()
+  if (!campaign) {
+    if (slug === 'ngoai-tru' || slug === 'nguoi-benh-ngoai-tru') {
+      const OutpatientSurveyForm = (await import('@/components/OutpatientSurveyForm')).default
+      return (
+        <>
+          <SiteHeader />
+          <PageHero
+            eyebrow="CHĂM SÓC NGƯỜI BỆNH & KHẢO SÁT"
+            title="Khảo sát Sự hài lòng Người bệnh Ngoại trú"
+            description="Mẫu số 2 ban hành theo Quyết định của Bộ Y tế. Ý kiến phản hồi chân thực từ Quý người bệnh là cơ sở quan trọng nhất để Bệnh viện Đa khoa Khu vực Thới Lai không ngừng cải tiến và nâng cao chất lượng phục vụ."
+            breadcrumb="Khảo sát Ngoại trú"
+          />
+          <main className="patientCareSection">
+            <div className="container">
+              <PatientCareSubNav activeKey="khao-sat" />
+              <OutpatientSurveyForm />
+            </div>
+          </main>
+          <SiteFooter />
+        </>
+      )
+    }
+    if (slug === 'noi-tru' || slug === 'nguoi-benh-noi-tru') {
+      const InpatientSurveyForm = (await import('@/components/InpatientSurveyForm')).default
+      return (
+        <>
+          <SiteHeader />
+          <PageHero
+            eyebrow="CHĂM SÓC NGƯỜI BỆNH & KHẢO SÁT"
+            title="Khảo sát Sự hài lòng Người bệnh Nội trú"
+            description="Mẫu số 1 ban hành theo Quyết định của Bộ Y tế. Ý kiến đóng góp chân thực từ Quý người bệnh và thân nhân là thước đo quan trọng nhất để Bệnh viện Đa khoa Khu vực Thới Lai không ngừng cải tiến y đức, tinh thần chăm sóc và điều kiện cơ sở vật chất buồng bệnh."
+            breadcrumb="Khảo sát Nội trú"
+          />
+          <main className="patientCareSection">
+            <div className="container">
+              <PatientCareSubNav activeKey="khao-sat" />
+              <InpatientSurveyForm />
+            </div>
+          </main>
+          <SiteFooter />
+        </>
+      )
+    }
+    return notFound()
+  }
 
   const now = Date.now()
   if (campaign.startAt && new Date(campaign.startAt).getTime() > now) return notFound()

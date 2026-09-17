@@ -1,0 +1,612 @@
+/* ==========================================================================
+   MẪU SỐ 2 - KHẢO SÁT HÀI LÒNG NGƯỜI BỆNH NGOẠI TRÚ (BỘ Y TẾ)
+   Bệnh viện Đa khoa Khu vực Thới Lai
+   ========================================================================== */
+
+.opsContainer {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+/* 1. Header Banner & Progress Bar */
+.opsHeaderCard {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.opsHeaderCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #0284c7, #0ea5e9, #38bdf8);
+}
+
+.opsBadgeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.opsGovBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 4px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+}
+
+.opsSecurityBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #15803d;
+  background: #dcfce7;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.opsTitle {
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.35;
+  margin: 0 0 10px;
+  text-wrap: balance;
+}
+
+.opsDesc {
+  color: #475569;
+  font-size: 14.5px;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+/* Floating Sticky Progress Tracker */
+.opsProgressWrapper {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-top: 14px;
+}
+
+.opsProgressInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.opsProgressBar {
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.opsProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7 0%, #10b981 100%);
+  border-radius: 999px;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 2. Form Section Accordion/Card */
+.opsSectionCard {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.opsSectionHeader {
+  padding: 20px 28px;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.opsSectionHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.opsSectionTag {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #0284c7;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(2, 132, 199, 0.25);
+}
+
+.opsSectionTag.green {
+  background: #10b981;
+  box-shadow: 0 3px 8px rgba(16, 185, 129, 0.25);
+}
+
+.opsSectionTitleText h3 {
+  font-size: 16.5px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.opsSectionTitleText p {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 3px 0 0;
+}
+
+.opsSectionBody {
+  padding: 24px 28px;
+}
+
+/* 3. Demographic Form Controls (Section I) */
+.opsGrid2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.opsGrid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 768px) {
+  .opsGrid2, .opsGrid3 {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+
+.opsFieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.opsLabel {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.opsReq {
+  color: #ef4444;
+}
+
+.opsInput,
+.opsSelect {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1.5px solid #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.opsInput:focus,
+.opsSelect:focus {
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.opsRadioGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.opsRadioPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1.5px solid #cbd5e1;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: #334155;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.opsRadioPill:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.opsRadioPill.checked {
+  background: #eff6ff;
+  border-color: #0284c7;
+  color: #0369a1;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
+}
+
+.opsRadioPill input {
+  margin: 0;
+  accent-color: #0284c7;
+}
+
+/* 4. Question Item & 5-Star / Emoji Likert Scale */
+.opsQuestionItem {
+  padding: 18px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.opsQuestionItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.opsQuestionTitle {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.opsQuestionNumber {
+  color: #0284c7;
+  font-weight: 800;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.opsLikertGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 680px) {
+  .opsLikertGrid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+}
+
+.opsLikertCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 6px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  position: relative;
+  user-select: none;
+}
+
+.opsLikertCard:hover {
+  background: #ffffff;
+  border-color: #93c5fd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+}
+
+.opsLikertEmoji {
+  font-size: 24px;
+  margin-bottom: 4px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.opsLikertCard:hover .opsLikertEmoji {
+  transform: scale(1.18);
+}
+
+.opsLikertScore {
+  font-size: 15px;
+  font-weight: 800;
+  color: #334155;
+  margin-bottom: 2px;
+}
+
+.opsLikertLabel {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.25;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  .opsLikertCard {
+    padding: 8px 4px;
+    border-radius: 10px;
+  }
+  .opsLikertEmoji {
+    font-size: 20px;
+    margin-bottom: 2px;
+  }
+  .opsLikertScore {
+    font-size: 13px;
+  }
+  .opsLikertLabel {
+    display: none; /* Ẩn chữ trên điện thoại nhỏ để tránh chật chội, điểm số và emoji đủ rõ */
+  }
+}
+
+/* Checked state color accents based on 1 to 5 */
+.opsLikertCard.selected-1 {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+.opsLikertCard.selected-1 .opsLikertScore { color: #b91c1c; }
+
+.opsLikertCard.selected-2 {
+  background: #fff7ed;
+  border-color: #f97316;
+  color: #c2410c;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+.opsLikertCard.selected-2 .opsLikertScore { color: #c2410c; }
+
+.opsLikertCard.selected-3 {
+  background: #fefce8;
+  border-color: #eab308;
+  color: #a16207;
+  box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.15);
+}
+.opsLikertCard.selected-3 .opsLikertScore { color: #a16207; }
+
+.opsLikertCard.selected-4 {
+  background: #f0fdf4;
+  border-color: #22c55e;
+  color: #15803d;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+.opsLikertCard.selected-4 .opsLikertScore { color: #15803d; }
+
+.opsLikertCard.selected-5 {
+  background: #eff6ff;
+  border-color: #0284c7;
+  color: #0369a1;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+.opsLikertCard.selected-5 .opsLikertScore { color: #0369a1; }
+.opsLikertCard.selected-5 .opsLikertEmoji { transform: scale(1.15); }
+
+/* Quick select all row buttons (tiện ích chọn nhanh) */
+.opsQuickRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.opsQuickBtn {
+  background: none;
+  border: 1px dashed #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.opsQuickBtn:hover {
+  background: #f1f5f9;
+  border-color: #0284c7;
+  color: #0284c7;
+}
+
+/* 5. Section Overall 10-point scale */
+.opsScore10Grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+  margin: 14px 0 10px;
+}
+
+@media (max-width: 640px) {
+  .opsScore10Grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+}
+
+.opsScore10Card {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1.5px solid #cbd5e1;
+  background: #f8fafc;
+  font-weight: 800;
+  font-size: 15px;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.opsScore10Card:hover {
+  background: #eff6ff;
+  border-color: #0284c7;
+  color: #0284c7;
+  transform: translateY(-2px);
+}
+
+.opsScore10Card.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+/* 6. Form Footer Actions & Security */
+.opsFooterCard {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  padding: 24px 28px;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.opsFooterNote {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #64748b;
+  max-width: 440px;
+}
+
+.opsFooterNoteIcon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.opsSubmitBtn {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 34px;
+  font-size: 15.5px;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+  transition: all 0.2s ease;
+}
+
+.opsSubmitBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+}
+
+.opsSubmitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 7. Success Card */
+.opsSuccessCard {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #bbf7d0;
+  padding: 44px 32px;
+  text-align: center;
+  max-width: 680px;
+  margin: 30px auto;
+  box-shadow: 0 10px 30px rgba(22, 163, 74, 0.08);
+}
+
+.opsSuccessIcon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin: 0 auto 20px;
+}
+
+.opsReceiptBox {
+  background: #f8fafc;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin: 24px auto;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.opsReceiptLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.opsReceiptCode {
+  font-family: monospace, ui-monospace;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0284c7;
+  letter-spacing: 1px;
+}

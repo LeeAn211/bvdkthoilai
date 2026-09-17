@@ -212,8 +212,8 @@ export default async function SurveyHubPage() {
                     </div>
                   </div>
                   <div className="patientCareCardActions">
-                    <Link href="/gop-y" className="btnCarePrimary">
-                      Gửi ý kiến đóng góp →
+                    <Link href={`/khao-sat/${camp.slug}`} className="btnCarePrimary">
+                      Làm khảo sát ngay →
                     </Link>
                     <Link href="/chat-luong-benh-vien" className="btnCareSecondary">
                       Xem kết quả

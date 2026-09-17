@@ -11,6 +11,7 @@ import '../styles/10-public-base.css'
 import '../styles/30-home-editorial.css'
 import '../styles/daily-schedule.css'
 import '../styles/patient-care.css'
+import '../styles/outpatient-survey.css'
 import '../styles/mobile-medpro.css'
 import '../styles/90-css-policy.css'
 

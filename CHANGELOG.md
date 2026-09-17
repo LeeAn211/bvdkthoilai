@@ -1,6 +1,61 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-17] - Khắc phục triệt để lỗi thừa nút Danh mục và bảng Drawer trên giao diện Desktop
+## [2026-09-17] - Thiết kế Mẫu Khảo sát Ý kiến Người bệnh Nội trú chuẩn Bộ Y tế (Mẫu số 1)
+
+- **Thời gian thực hiện:** 10:18 (Asia/Saigon)
+- **Yêu cầu:** Thiết kế bổ sung mẫu khảo sát sự hài lòng người bệnh điều trị nội trú theo chuẩn Mẫu số 1 của Bộ Y tế (từ mẫu chuẩn https://hailong.chatluongbenhvien.vn/nguoi-benh-noi-tru-v2 theo Quyết định 3869/QĐ-BYT & QĐ 56/QĐ-BYT 2024), giao diện chuyên nghiệp, trực quan và dễ thao tác trên cả điện thoại di động và máy tính.
+- **Nội dung thực hiện:**
+  - `src/components/InpatientSurveyForm.tsx` (MỚI):
+    - **Header & Thanh tiến độ:** Hiển thị huy hiệu Bộ Y tế Mẫu số 1, cam kết bảo mật 100% ẩn danh, thanh đo % hoàn thành câu hỏi thời gian thực.
+    - **Phần I: Thông tin chung người bệnh nội trú:** Giới tính, nhóm tuổi, số ngày nằm viện điều trị (1-2 ngày, 3-5 ngày, 6-10 ngày, >10 ngày), loại thẻ BHYT, nơi cư trú và khoa điều trị nội trú (Nội tổng hợp, Ngoại, Sản, Nhi, Hồi sức cấp cứu, YHCT...).
+    - **Phần II: 5 Nhóm tiêu chí đánh giá chuẩn Bộ Y tế (20 câu hỏi):**
+      - *Phần A:* Khả năng tiếp cận & Thủ tục nhập viện (Biển báo, thủ tục hồ sơ, bố trí buồng/giường, phổ biến nội quy).
+      - *Phần B:* Sự minh bạch thông tin & Chi phí điều trị (Giải thích bệnh tật, phác đồ, công khai đơn thuốc/viện phí BHYT, thanh toán khi ra viện).
+      - *Phần C:* Cơ sở vật chất & Tiện nghi buồng bệnh (Buồng bệnh thoáng mát, giường nệm sạch sẽ, nhà vệ sinh sạch sẽ, chuông gọi điều dưỡng, an ninh trật tự).
+      - *Phần D:* Thái độ ứng xử & Năng lực chăm sóc của nhân viên y tế (Bác sĩ thăm khám hàng ngày, điều dưỡng tiêm truyền ân cần, có mặt kịp thời khi bấm chuông, không vòi vĩnh).
+      - *Phần E:* Kết quả điều trị & Niềm tin (Bệnh thuyên giảm, dặn dò khi xuất viện, niềm tin vào bệnh viện).
+    - **Thang điểm 5 mức Likert trực quan:** Thẻ chọn Likert 1-5 sao kèm emoji biểu cảm (`😞 Rất không hài lòng`, `🙁 Không hài lòng`, `😐 Bình thường`, `🙂 Hài lòng`, `😄 Rất hài lòng`), nút "Đánh giá nhanh toàn phần" (Tất cả 5★ / Tất cả 4★) tiện lợi.
+    - **Phần III: Đánh giá chung & Góp ý:**
+      - Thang điểm 10 đánh giá sự hài lòng chung toàn bộ quá trình nằm viện.
+      - Câu hỏi về khả năng quay lại hoặc giới thiệu người thân.
+      - Vùng nhập ý kiến góp ý, khen ngợi tự do.
+    - **Bảo mật & Biên nhận:** Tích hợp Cloudflare Turnstile, honeypot chống bot, xuất mã biên nhận định danh duy nhất (VD: `KS-NOITRU-2026-XXXX`).
+  - `src/app/(frontend)/api/surveys/inpatient/route.ts` (MỚI): Endpoint tiếp nhận phiếu khảo sát nội trú, tính điểm trung bình, tự động phân loại và lưu trữ an toàn vào CMS `feedbackCases` và `feedback`.
+  - `src/app/(frontend)/khao-sat/noi-tru/page.tsx` (MỚI): Trang khảo sát nội trú chuyên dụng với PageHero chuẩn thương hiệu bệnh viện.
+  - `src/app/(frontend)/khao-sat/[slug]/page.tsx`: Tự động nhận diện slug `noi-tru` và tải giao diện Khảo sát nội trú.
+- **Kiểm thử & Xác nhận:**
+  - Trang `/khao-sat/noi-tru` trả về mã HTTP 200 OK.
+  - Test API gửi thành công và trả về mã biên nhận `KS-NOITRU-2026-XXXX` kèm điểm trung bình.
+  - Giao diện thân thiện và mượt mà trên cả desktop và mobile.
+
+- **Thời gian thực hiện:** 10:05 (Asia/Saigon)
+- **Yêu cầu:** Thiết kế mẫu khảo sát sự hài lòng người bệnh ngoại trú theo chuẩn Mẫu số 2 của Bộ Y tế (từ mẫu chuẩn https://hailong.chatluongbenhvien.vn/nguoi-benh-ngoai-tru-v2 theo Quyết định 3869/QĐ-BYT & QĐ 56/QĐ-BYT 2024), giao diện chuyên nghiệp, trực quan và dễ thao tác trên cả điện thoại di động và máy tính.
+- **Nội dung thực hiện:**
+  - `src/components/OutpatientSurveyForm.tsx` (MỚI):
+    - **Header & Thanh đo tiến độ:** Hiển thị huy hiệu chuẩn Bộ Y tế, bảo mật ẩn danh 100%, thanh tiến độ hoàn thành % câu hỏi trực quan.
+    - **Phần I: Thông tin chung người bệnh:** Giới tính, độ tuổi, loại thẻ BHYT, nơi cư trú và khu vực phòng khám đã đến.
+    - **Phần II: 5 Nhóm tiêu chí đánh giá chuẩn Bộ Y tế (19 câu hỏi):**
+      - *Phần A:* Khả năng tiếp cận bệnh viện (Biển báo, sơ đồ, bàn tiếp đón, website tra cứu).
+      - *Phần B:* Sự minh bạch thông tin & thủ tục khám (Bảng giá viện phí, quyền lợi BHYT, màn hình gọi số, cận lâm sàng).
+      - *Phần C:* Cơ sở vật chất & phương tiện phục vụ (Phòng chờ, ghế ngồi, nước uống, nhà vệ sinh sạch sẽ, máy móc y tế).
+      - *Phần D:* Thái độ ứng xử & năng lực nhân viên y tế (Bác sĩ thăm khám, điều dưỡng ân cần, dược sĩ cấp phát thuốc).
+      - *Phần E:* Kết quả cung cấp dịch vụ & niềm tin (Bệnh thuyên giảm, sự an tâm, chi phí tương xứng).
+    - **Thang điểm 5 mức Likert trực quan:** Thẻ chọn Likert 1-5 sao kèm emoji biểu cảm (`😞 Rất không hài lòng`, `🙁 Không hài lòng`, `😐 Bình thường`, `🙂 Hài lòng`, `😄 Rất hài lòng`), chạm mượt mà, đổi màu trạng thái sinh động. Tích hợp nút tiện ích "Đánh giá nhanh toàn phần" (Tất cả 5★ / Tất cả 4★) giúp người bệnh tiết kiệm thời gian.
+    - **Phần III: Đánh giá tổng thể & Ý kiến đóng góp:**
+      - Chấm điểm tổng thể thang điểm 10 dạng lưới nút số to rõ ràng.
+      - Câu hỏi về khả năng quay lại hoặc giới thiệu người thân.
+      - Vùng nhập ý kiến góp ý, khen ngợi tự do.
+    - **Bảo mật & Biên nhận:** Tích hợp Cloudflare Turnstile, honeypot chống bot tự động, xuất mã biên nhận định danh duy nhất (VD: `KS-NT-2026-XXXX`).
+  - `src/app/styles/outpatient-survey.css` (MỚI): Bộ quy chuẩn kiểu dáng CSS chuyên biệt cho khảo sát ngoại trú, responsive tối ưu trên điện thoại và máy tính.
+  - `src/app/(frontend)/api/surveys/outpatient/route.ts` (MỚI): Endpoint tiếp nhận phiếu khảo sát, tính điểm trung bình, tự động phân loại và lưu trữ an toàn vào CMS `feedbackCases` và `feedback`.
+  - `src/app/(frontend)/khao-sat/ngoai-tru/page.tsx` (MỚI): Trang khảo sát ngoại trú chuyên dụng với PageHero chuẩn thương hiệu bệnh viện.
+  - `src/app/(frontend)/khao-sat/[slug]/page.tsx`: Hỗ trợ tự động chuyển tải giao diện Khảo sát ngoại trú khi truy cập `/khao-sat/ngoai-tru`.
+  - `src/app/(frontend)/khao-sat/page.tsx`: Cập nhật thẻ khảo sát Ngoại trú trên Hub dẫn thẳng tới trang làm khảo sát.
+  - `src/app/(frontend)/layout.tsx`: Nạp stylesheet `outpatient-survey.css`.
+- **Kiểm thử & Xác nhận:**
+  - Trang `/khao-sat/ngoai-tru` tải thành công HTTP 200 OK.
+  - Test API gửi thành công và trả về mã biên nhận `KS-NT-2026-XXXX` kèm điểm trung bình.
+  - Giao diện thân thiện và mượt mà trên cả desktop và mobile.
 
 - **Thời gian thực hiện:** 09:50 (Asia/Saigon)
 - **Yêu cầu:** Loại bỏ phần nút "Trang chủ / DANH MỤC" và khung bảng trượt "Danh mục điều hướng" bị hiển thị thừa/đè lấn trên giao diện máy tính (Desktop), chỉ giữ lại thanh menu ngang chuẩn mực (`mainMenu`) trên màn hình máy tính.
