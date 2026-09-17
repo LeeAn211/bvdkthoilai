@@ -5701,3 +5701,17 @@ Phân khung ô ch?a logo và tên don v? (n?n tr?ng) trùng v?i n?n header, làm cho k
 - `src/components/MobileTopBar.tsx`: Thêm props `logo`, `hospitalName`; thêm element `.mobileTopBrand` (card n?i b?t, link v? trang ch?) vào d?u top bar.
 - `src/components/SiteHeader.tsx`: Truy?n `logo` và `hospitalName` xu?ng MobileTopBar.
 - `src/app/styles/mobile-medpro.css`: Thêm CSS cho `.mobileTopBrand`, `.mobileTopBrandLogo`, `.mobileTopBrandLogoImg`, `.mobileTopBrandName` — n?n tr?ng, vi?n xanh `rgba(7, 84, 168, 0.22)`, border-radius 10px, box-shadow tinh t?.
+
+## [2026-09-17] - Thi?t k? l?i trang Khoa Phòng (/khoa-phong)
+
+### Yêu c?u
+Thi?t k? l?i trang khoa phòng theo hu?ng Card Grid nhóm theo lo?i don v? - ph? bi?n trên website b?nh vi?n hi?n d?i.
+
+### Files Modified
+- `src/app/(frontend)/khoa-phong/page.tsx`: Vi?t l?i hoàn toàn — nhóm departments theo classifyUnit(), render filter tab bar (URL param ?kind=), sections riêng bi?t v?i màu accent khác nhau, cards có icon gradient/badge/arrow.
+- `src/app/(frontend)/khoa-phong/khoa-phong.css` (NEW): CSS m?i cho trang — filter bar, section headers (border trái màu), grid 3?2?1 c?t, card hover animation (translateY + border accent + arrow).
+
+### Thi?t k?
+- 4 nhóm: Lãnh d?o (vàng), Phòng ch?c nang (tím), Khoa lâm sàng (xanh lá), Khoa c?n lâm sàng (xanh duong)
+- Filter tabs: URL-param based, server-side (ho?t d?ng không c?n JS)
+- Responsive: 3 c?t desktop ? 2 c?t tablet ? 1 c?t mobile
