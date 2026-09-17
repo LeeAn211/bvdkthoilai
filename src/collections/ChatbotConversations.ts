@@ -4,7 +4,7 @@ import { moduleAccess } from '@/access'
 export const ChatbotConversations: CollectionConfig = {
   slug: 'chatbotConversations',
   labels: { singular: 'Hội thoại Chatbot', plural: 'Hội thoại Chatbot' },
-  admin: { useAsTitle: 'sessionId', group: '💬 Chăm sóc người bệnh & Khảo sát', defaultColumns: ['sessionId', 'lastMessageAt', 'handoffRequested', 'createdAt'] },
+  admin: { useAsTitle: 'sessionId', group: '🤖 Trợ lý ảo & Chatbot', defaultColumns: ['sessionId', 'lastMessageAt', 'handoffRequested', 'createdAt'] },
   access: { read: moduleAccess('chatbot', 'view'), create: moduleAccess('chatbot', 'create'), update: moduleAccess('chatbot', 'edit'), delete: moduleAccess('chatbot', 'delete') },
   fields: [
     { name: 'sessionId', label: 'Phiên', type: 'text', required: true, index: true },

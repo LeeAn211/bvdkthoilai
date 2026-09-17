@@ -57,12 +57,15 @@ export default async function SurveyHubPage() {
   let siteSettings: any = {}
   let activeCampaigns: any[] = []
 
+  let surveyConf: any = {}
   try {
-    const [settings, payload] = await Promise.all([
+    const [specSurvey, settings, payload] = await Promise.all([
+      getGlobal('survey-page-settings' as any).catch(() => null),
       getGlobal('site-settings' as any).catch(() => ({})),
       getCMS().catch(() => null),
     ])
     siteSettings = settings || {}
+    surveyConf = (specSurvey && Object.keys(specSurvey).length > 0) ? specSurvey : (siteSettings?.surveyPage || {})
 
     if (payload) {
       const now = new Date().toISOString()
@@ -81,8 +84,6 @@ export default async function SurveyHubPage() {
       activeCampaigns = res.docs || []
     }
   } catch {}
-
-  const surveyConf = siteSettings?.surveyPage || {}
   const eyebrow = surveyConf.eyebrow || 'CHĂM SÓC NGƯỜI BỆNH & KHẢO SÁT'
   const title = surveyConf.title || 'Khảo sát Ý kiến & Sự hài lòng'
   const description = surveyConf.description || 'Bệnh viện Đa khoa Khu vực Thới Lai trân trọng từng ý kiến đóng góp của người bệnh và thân nhân để không ngừng nâng cao y đức, văn hóa phục vụ và chất lượng điều trị.'
@@ -169,68 +170,65 @@ export default async function SurveyHubPage() {
           </div>
 
           <div className="patientCareGrid">
-            {activeCampaigns.length > 0 ? (
-              activeCampaigns.map((camp: any) => (
-                <div key={camp.id} className="patientCareCard">
-                  <div className="patientCareCardTop">
-                    <div className="patientCareCardIcon">📝</div>
-                    <span className="patientCareCardBadge badgeActive">🟢 Đang mở</span>
+            {/* Luôn hiển thị 3 mẫu khảo sát chuẩn của Bộ Y tế */}
+            {DEFAULT_CAMPAIGNS.map((camp) => (
+              <div key={camp.id} className="patientCareCard">
+                <div className="patientCareCardTop">
+                  <div className="patientCareCardIcon">{camp.icon}</div>
+                  <span className="patientCareCardBadge badgePeriodic">{camp.period}</span>
+                </div>
+                <h3 className="patientCareCardTitle">{camp.title}</h3>
+                <p className="patientCareCardDesc">{camp.desc}</p>
+                <div className="patientCareCardMeta">
+                  <div className="patientCareCardMetaItem">
+                    <span>⏱️ Thời gian: Khoảng 2-3 phút</span>
                   </div>
-                  <h3 className="patientCareCardTitle">{camp.title}</h3>
-                  <p className="patientCareCardDesc">{camp.publicNote || 'Khảo sát ý kiến đóng góp nâng cao chất lượng phục vụ người bệnh.'}</p>
-                  <div className="patientCareCardMeta">
-                    {camp.startAt && (
-                      <div className="patientCareCardMetaItem">
-                        <span>📅 Bắt đầu: {new Date(camp.startAt).toLocaleDateString('vi-VN')}</span>
-                      </div>
-                    )}
-                    {camp.endAt && (
-                      <div className="patientCareCardMetaItem">
-                        <span>⏳ Kết thúc: {new Date(camp.endAt).toLocaleDateString('vi-VN')}</span>
-                      </div>
-                    )}
-                    <div className="patientCareCardMetaItem">
-                      <span>🔒 Khảo sát hoàn toàn ẩn danh</span>
-                    </div>
+                  <div className="patientCareCardMetaItem">
+                    <span>🛡️ Bảo mật: Hoàn toàn ẩn danh</span>
                   </div>
-                  <div className="patientCareCardActions">
-                    <Link href={`/khao-sat/${camp.slug}`} className="btnCarePrimary">
-                      Tham gia khảo sát →
-                    </Link>
+                  <div className="patientCareCardMetaItem">
+                    <span>🏢 Đơn vị tiếp nhận: Ban Giám đốc & Phòng QLCL</span>
                   </div>
                 </div>
-              ))
-            ) : (
-              DEFAULT_CAMPAIGNS.map((camp) => (
+                <div className="patientCareCardActions">
+                  <Link href={`/khao-sat/${camp.slug}`} className="btnCarePrimary" style={{ width: '100%', justifyContent: 'center' }}>
+                    Làm khảo sát ngay →
+                  </Link>
+                </div>
+              </div>
+            ))}
+
+            {/* Hiển thị các chiến dịch khảo sát tạo mới từ Admin CMS đồng bộ 100% */}
+            {activeCampaigns
+              .filter((camp: any) => !['ngoai-tru', 'noi-tru', 'nhan-vien'].includes(camp.slug))
+              .map((camp: any) => (
                 <div key={camp.id} className="patientCareCard">
                   <div className="patientCareCardTop">
-                    <div className="patientCareCardIcon">{camp.icon}</div>
-                    <span className="patientCareCardBadge badgePeriodic">{camp.period}</span>
+                    <div className="patientCareCardIcon">📋</div>
+                    <span className="patientCareCardBadge badgePeriodic">
+                      {camp.endAt ? `Đến ${new Date(camp.endAt).toLocaleDateString('vi-VN')}` : 'Đang mở tiếp nhận'}
+                    </span>
                   </div>
                   <h3 className="patientCareCardTitle">{camp.title}</h3>
-                  <p className="patientCareCardDesc">{camp.desc}</p>
+                  <p className="patientCareCardDesc">{camp.publicNote || 'Khảo sát ý kiến đóng góp nâng cao chất lượng khám chữa bệnh và tinh thần phục vụ người bệnh.'}</p>
                   <div className="patientCareCardMeta">
                     <div className="patientCareCardMetaItem">
                       <span>⏱️ Thời gian: Khoảng 2-3 phút</span>
                     </div>
                     <div className="patientCareCardMetaItem">
-                      <span>🛡️ Bảo mật: Hoàn toàn ẩn danh</span>
+                      <span>🛡️ Bảo mật: {camp.anonymous !== false ? 'Hoàn toàn ẩn danh' : 'Bảo mật thông tin'}</span>
                     </div>
                     <div className="patientCareCardMetaItem">
                       <span>🏢 Đơn vị tiếp nhận: Ban Giám đốc & Phòng QLCL</span>
                     </div>
                   </div>
                   <div className="patientCareCardActions">
-                    <Link href={`/khao-sat/${camp.slug}`} className="btnCarePrimary">
+                    <Link href={`/khao-sat/${camp.slug}`} className="btnCarePrimary" style={{ width: '100%', justifyContent: 'center' }}>
                       Làm khảo sát ngay →
-                    </Link>
-                    <Link href="/chat-luong-benh-vien" className="btnCareSecondary">
-                      Xem kết quả
                     </Link>
                   </div>
                 </div>
-              ))
-            )}
+              ))}
           </div>
 
           {/* CTA Banner liên kết */}

@@ -16,12 +16,14 @@ export const metadata: Metadata = {
 }
 
 export default async function HospitalQualityPage() {
-  let siteSettings: any = {}
   let qualitySettings: any = {}
 
   try {
-    siteSettings = await getGlobal('site-settings').catch(() => ({}))
-    qualitySettings = siteSettings?.qualityPage || {}
+    const [specQuality, siteSettings] = await Promise.all([
+      getGlobal('hospital-quality-settings' as any).catch(() => null),
+      getGlobal('site-settings').catch(() => ({})),
+    ])
+    qualitySettings = (specQuality && Object.keys(specQuality).length > 0) ? specQuality : (siteSettings?.qualityPage || {})
   } catch (err) {
     console.error('[HospitalQualityPage] Lỗi lấy cấu hình site:', err)
   }

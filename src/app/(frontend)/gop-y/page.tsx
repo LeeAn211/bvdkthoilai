@@ -12,14 +12,18 @@ export const metadata = {
 
 export default async function FeedbackPage() {
   let siteSettings: any = {}
+  let fbPage: any = {}
   try {
-    siteSettings = await getGlobal('site-settings' as any).catch(() => ({}))
+    const [specFb, settings] = await Promise.all([
+      getGlobal('feedback-page-settings' as any).catch(() => null),
+      getGlobal('site-settings' as any).catch(() => ({})),
+    ])
+    siteSettings = settings || {}
+    fbPage = (specFb && Object.keys(specFb).length > 0) ? specFb : (siteSettings?.feedbackPage || {})
   } catch {}
 
   const hotline = siteSettings?.hotline || '02923686115'
   const emergencyHotline = siteSettings?.emergencyHotline || '02923686115'
-
-  const fbPage = siteSettings?.feedbackPage || {}
   const eyebrow = fbPage.eyebrow || 'CHĂM SÓC NGƯỜI BỆNH & TIẾP NHẬN Ý KIẾN'
   const title = fbPage.title || 'Góp ý – Phản ánh Chất lượng'
   const description =

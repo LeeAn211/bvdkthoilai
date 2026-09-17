@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260916_019_add_document_security_pin_fields",
-  "schemaSha256": "92020335fc9bce49af89f0142800708d16c93c879eaa25b89498fabcf8cc4fe2"
+  "migrationId": "20260917_022_create_independent_patient_care_globals_tables",
+  "schemaSha256": "7d3c011fcf9f25a8b7eda73d53b7a9968cea4134eed35b11a29b0f2c491a2af8"
 }

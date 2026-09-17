@@ -4,7 +4,7 @@ import { moduleAccess } from '@/access'
 export const FeedbackActions: CollectionConfig = {
   slug: 'feedbackActions',
   labels: { singular: 'Nhật ký xử lý phản ánh', plural: 'Nhật ký xử lý phản ánh' },
-  admin: { useAsTitle: 'action', group: '💬 Chăm sóc người bệnh & Khảo sát', defaultColumns: ['case', 'action', 'performedBy', 'createdAt'] },
+  admin: { useAsTitle: 'action', group: '💬 Chăm sóc người bệnh & Khảo sát', defaultColumns: ['case', 'action', 'performedBy', 'createdAt'], hidden: true },
   access: { read: moduleAccess('feedback', 'view'), create: moduleAccess('feedback', 'edit'), update: () => false, delete: () => false },
   fields: [
     { name: 'case', label: 'Hồ sơ', type: 'relationship', relationTo: 'feedbackCases', required: true, index: true },

@@ -638,6 +638,10 @@ export const enum_survey_questions_type = pgEnum("enum_survey_questions_type", [
   "yesno",
   "text",
 ]);
+export const enum_survey_campaigns_custom_questions_type = pgEnum(
+  "enum_survey_campaigns_custom_questions_type",
+  ["rating5", "rating10", "single", "multiple", "yesno", "text"],
+);
 export const enum_dynamic_modules_workflow_state = pgEnum(
   "enum_dynamic_modules_workflow_state",
   ["draft", "submitted", "approved", "published", "hidden"],
@@ -1673,6 +1677,46 @@ export const pps_not_align = pgEnum("pps_not_align", [
   "center",
   "justify",
 ]);
+export const enum_examination_flow_settings_notice_align = pgEnum(
+  "enum_examination_flow_settings_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum_inpatient_guide_settings_notice_align = pgEnum(
+  "enum_inpatient_guide_settings_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum_checkup_packages_settings_notice_align = pgEnum(
+  "enum_checkup_packages_settings_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum_hospital_map_settings_notice_align = pgEnum(
+  "enum_hospital_map_settings_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum_hospital_quality_settings_programs_icon_type = pgEnum(
+  "enum_hospital_quality_settings_programs_icon_type",
+  ["blue", "green", "amber"],
+);
+export const enum_hospital_quality_settings_notice_align = pgEnum(
+  "enum_hospital_quality_settings_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum_survey_page_settings_notice_align = pgEnum(
+  "enum_survey_page_settings_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum_faq_page_settings_notice_align = pgEnum(
+  "enum_faq_page_settings_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum_forms_page_settings_notice_align = pgEnum(
+  "enum_forms_page_settings_notice_align",
+  ["left", "center", "justify"],
+);
+export const enum_feedback_page_settings_notice_align = pgEnum(
+  "enum_feedback_page_settings_notice_align",
+  ["left", "center", "justify"],
+);
 export const enum_seo_settings_status = pgEnum("enum_seo_settings_status", [
   "draft",
   "published",
@@ -6290,17 +6334,48 @@ export const survey_questions = pgTable(
   ],
 );
 
+export const survey_campaigns_custom_questions = pgTable(
+  "survey_campaigns_custom_questions",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    code: varchar("code"),
+    type: enum_survey_campaigns_custom_questions_type("type").default(
+      "rating5",
+    ),
+    required: boolean("required").default(true),
+    question: varchar("question"),
+    options: varchar("options"),
+    order: numeric("order", { mode: "number" }).default(0),
+  },
+  (columns) => [
+    index("survey_campaigns_custom_questions_order_idx").on(columns._order),
+    index("survey_campaigns_custom_questions_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [survey_campaigns.id],
+      name: "survey_campaigns_custom_questions_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const survey_campaigns = pgTable(
   "survey_campaigns",
   {
     id: serial("id").primaryKey(),
     title: varchar("title").notNull(),
     slug: varchar("slug").notNull(),
-    templateVersion: integer("template_version_id")
-      .notNull()
-      .references(() => survey_template_versions.id, {
+    useCustomQuestions: boolean("use_custom_questions").default(true),
+    templateVersion: integer("template_version_id").references(
+      () => survey_template_versions.id,
+      {
         onDelete: "set null",
-      }),
+      },
+    ),
+    showDemographics: boolean("show_demographics").default(true),
     department: integer("department_id").references(() => departments.id, {
       onDelete: "set null",
     }),
@@ -6317,6 +6392,16 @@ export const survey_campaigns = pgTable(
     active: boolean("active").default(true),
     anonymous: boolean("anonymous").default(true),
     publicNote: varchar("public_note"),
+    customOptions_outpatientClinics: varchar(
+      "custom_options_outpatient_clinics",
+    ),
+    customOptions_inpatientDepartments: varchar(
+      "custom_options_inpatient_departments",
+    ),
+    customOptions_staffPositions: varchar("custom_options_staff_positions"),
+    customOptions_staffUnitTypes: varchar("custom_options_staff_unit_types"),
+    customOptions_staffDepartments: varchar("custom_options_staff_departments"),
+    customOptions_areaSuggestions: varchar("custom_options_area_suggestions"),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -9122,6 +9207,14 @@ export const site_settings = pgTable(
     surveyPage_noticeAlign: enum_site_settings_survey_page_notice_align(
       "survey_page_notice_align",
     ).default("left"),
+    surveyPage_outpatientClinics: varchar("survey_page_outpatient_clinics"),
+    surveyPage_inpatientDepartments: varchar(
+      "survey_page_inpatient_departments",
+    ),
+    surveyPage_staffPositions: varchar("survey_page_staff_positions"),
+    surveyPage_staffUnitTypes: varchar("survey_page_staff_unit_types"),
+    surveyPage_staffDepartments: varchar("survey_page_staff_departments"),
+    surveyPage_areaSuggestions: varchar("survey_page_area_suggestions"),
     faqPage_eyebrow: varchar("faq_page_eyebrow").default(
       "CHĂM SÓC NGƯỜI BỆNH & GIẢI ĐÁP",
     ),
@@ -10396,6 +10489,24 @@ export const _site_settings_v = pgTable(
       enum__site_settings_v_version_survey_page_notice_align(
         "version_survey_page_notice_align",
       ).default("left"),
+    version_surveyPage_outpatientClinics: varchar(
+      "version_survey_page_outpatient_clinics",
+    ),
+    version_surveyPage_inpatientDepartments: varchar(
+      "version_survey_page_inpatient_departments",
+    ),
+    version_surveyPage_staffPositions: varchar(
+      "version_survey_page_staff_positions",
+    ),
+    version_surveyPage_staffUnitTypes: varchar(
+      "version_survey_page_staff_unit_types",
+    ),
+    version_surveyPage_staffDepartments: varchar(
+      "version_survey_page_staff_departments",
+    ),
+    version_surveyPage_areaSuggestions: varchar(
+      "version_survey_page_area_suggestions",
+    ),
     version_faqPage_eyebrow: varchar("version_faq_page_eyebrow").default(
       "CHĂM SÓC NGƯỜI BỆNH & GIẢI ĐÁP",
     ),
@@ -15459,6 +15570,676 @@ export const patient_portal_settings = pgTable("patient_portal_settings", {
   }),
 });
 
+export const examination_flow_settings_flow_tabs_steps = pgTable(
+  "examination_flow_settings_flow_tabs_steps",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    step: numeric("step", { mode: "number" }).notNull(),
+    title: varchar("title").notNull(),
+    location: varchar("location").notNull(),
+    timeEstimate: varchar("time_estimate"),
+    desc: varchar("desc").notNull(),
+    actions: varchar("actions"),
+    note: varchar("note"),
+    isHighlight: boolean("is_highlight").default(false),
+    isEmergency: boolean("is_emergency").default(false),
+  },
+  (columns) => [
+    index("examination_flow_settings_flow_tabs_steps_order_idx").on(
+      columns._order,
+    ),
+    index("examination_flow_settings_flow_tabs_steps_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [examination_flow_settings_flow_tabs.id],
+      name: "examination_flow_settings_flow_tabs_steps_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const examination_flow_settings_flow_tabs = pgTable(
+  "examination_flow_settings_flow_tabs",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    label: varchar("label").notNull(),
+    badgeText: varchar("badge_text"),
+    title: varchar("title").notNull(),
+    summary: varchar("summary").notNull(),
+  },
+  (columns) => [
+    index("examination_flow_settings_flow_tabs_order_idx").on(columns._order),
+    index("examination_flow_settings_flow_tabs_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [examination_flow_settings.id],
+      name: "examination_flow_settings_flow_tabs_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const examination_flow_settings_checklists = pgTable(
+  "examination_flow_settings_checklists",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    icon: varchar("icon").default("id"),
+  },
+  (columns) => [
+    index("examination_flow_settings_checklists_order_idx").on(columns._order),
+    index("examination_flow_settings_checklists_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [examination_flow_settings.id],
+      name: "examination_flow_settings_checklists_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const examination_flow_settings_priorities = pgTable(
+  "examination_flow_settings_priorities",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    text: varchar("text").notNull(),
+  },
+  (columns) => [
+    index("examination_flow_settings_priorities_order_idx").on(columns._order),
+    index("examination_flow_settings_priorities_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [examination_flow_settings.id],
+      name: "examination_flow_settings_priorities_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const examination_flow_settings = pgTable("examination_flow_settings", {
+  id: serial("id").primaryKey(),
+  eyebrow: varchar("eyebrow").default("HƯỚNG DẪN DÀNH CHO NGƯỜI BỆNH"),
+  title: varchar("title").default("Quy trình Khám chữa bệnh"),
+  description: varchar("description").default(
+    "Sơ đồ và các bước hướng dẫn người bệnh khi đến thăm khám có thẻ BHYT, khám thu phí dịch vụ hoặc tiếp nhận cấp cứu tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+  ),
+  showNoticeBanner: boolean("show_notice_banner").default(false),
+  noticeTitle: varchar("notice_title").default(
+    "Lưu ý khi đến khám tại Bệnh viện Đa khoa Khu vực Thới Lai",
+  ),
+  noticeContent: varchar("notice_content").default(
+    "• Người bệnh có thẻ BHYT đúng tuyến hoặc thông tuyến được hưởng đầy đủ quyền lợi chi trả.\n• Bệnh viện tiếp nhận khám sớm từ 06:30 tại các khoa chuyên môn trọng điểm.\n• Người cao tuổi, phụ nữ mang thai và trẻ nhỏ được cấp số ưu tiên tiếp đón.",
+  ),
+  noticeAlign:
+    enum_examination_flow_settings_notice_align("notice_align").default("left"),
+  showChecklist: boolean("show_checklist").default(true),
+  showPriority: boolean("show_priority").default(true),
+  showSupportBanner: boolean("show_support_banner").default(true),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
+export const inpatient_guide_settings_admission_steps = pgTable(
+  "inpatient_guide_settings_admission_steps",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    step: numeric("step", { mode: "number" }).notNull(),
+    title: varchar("title").notNull(),
+    location: varchar("location").notNull(),
+    desc: varchar("desc").notNull(),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("inpatient_guide_settings_admission_steps_order_idx").on(
+      columns._order,
+    ),
+    index("inpatient_guide_settings_admission_steps_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [inpatient_guide_settings.id],
+      name: "inpatient_guide_settings_admission_steps_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const inpatient_guide_settings_visiting_hours = pgTable(
+  "inpatient_guide_settings_visiting_hours",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    session: varchar("session").notNull(),
+    timeRange: varchar("time_range").notNull(),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("inpatient_guide_settings_visiting_hours_order_idx").on(
+      columns._order,
+    ),
+    index("inpatient_guide_settings_visiting_hours_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [inpatient_guide_settings.id],
+      name: "inpatient_guide_settings_visiting_hours_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const inpatient_guide_settings_belongings_checklist = pgTable(
+  "inpatient_guide_settings_belongings_checklist",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("🎒"),
+    category: varchar("category").notNull(),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+  },
+  (columns) => [
+    index("inpatient_guide_settings_belongings_checklist_order_idx").on(
+      columns._order,
+    ),
+    index("inpatient_guide_settings_belongings_checklist_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [inpatient_guide_settings.id],
+      name: "inpatient_guide_settings_belongings_checklist_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const inpatient_guide_settings = pgTable("inpatient_guide_settings", {
+  id: serial("id").primaryKey(),
+  eyebrow: varchar("eyebrow").default("HƯỚNG DẪN DÀNH CHO NGƯỜI BỆNH"),
+  title: varchar("title").default("Hướng dẫn Điều trị Nội trú"),
+  description: varchar("description").default(
+    "Thông tin chi tiết về thủ tục nhập viện, đồ dùng cần chuẩn bị, quy định buồng bệnh, giờ thăm bệnh và chế độ dinh dưỡng tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+  ),
+  showNoticeBanner: boolean("show_notice_banner").default(true),
+  noticeTitle: varchar("notice_title").default(
+    "Nội quy buồng bệnh và an toàn người bệnh",
+  ),
+  noticeContent: varchar("notice_content").default(
+    "• Mỗi người bệnh được tối đa 01 người thân ở lại chăm sóc và phải đeo thẻ nuôi bệnh.\n• Giữ gìn trật tự chung, tuyệt đối không hút thuốc lá trong khuôn viên bệnh viện.\n• Bệnh viện phục vụ chế độ ăn bệnh lý đạt chuẩn an toàn vệ sinh thực phẩm.",
+  ),
+  noticeAlign:
+    enum_inpatient_guide_settings_notice_align("notice_align").default("left"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
+export const checkup_packages_settings_packages = pgTable(
+  "checkup_packages_settings_packages",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    badge: varchar("badge"),
+    title: varchar("title").notNull(),
+    targetUser: varchar("target_user").notNull(),
+    priceText: varchar("price_text").notNull(),
+    desc: varchar("desc").notNull(),
+    features: varchar("features").notNull(),
+    buttonText: varchar("button_text").default("Đăng ký gói khám"),
+    buttonLink: varchar("button_link").default("/dat-lich-kham"),
+  },
+  (columns) => [
+    index("checkup_packages_settings_packages_order_idx").on(columns._order),
+    index("checkup_packages_settings_packages_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [checkup_packages_settings.id],
+      name: "checkup_packages_settings_packages_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const checkup_packages_settings = pgTable("checkup_packages_settings", {
+  id: serial("id").primaryKey(),
+  eyebrow: varchar("eyebrow").default("CHỦ ĐỘNG BẢO VỆ SỨC KHỎE"),
+  title: varchar("title").default("Gói Khám Sức khỏe & Tầm soát Bệnh lý"),
+  description: varchar("description").default(
+    "Các gói khám sức khỏe tổng quát, tầm soát bệnh lý mạn tính và khám cấp giấy chứng nhận sức khỏe với chi phí minh bạch, chuẩn y tế tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+  ),
+  showNoticeBanner: boolean("show_notice_banner").default(true),
+  noticeTitle: varchar("notice_title").default(
+    "Lưu ý quan trọng trước khi đi khám sức khỏe",
+  ),
+  noticeContent: varchar("notice_content").default(
+    "• Nhịn ăn sáng từ 8 - 10 tiếng nếu gói khám có xét nghiệm đường huyết, mỡ máu.\n• Uống nhiều nước lọc và nhịn tiểu trước khi làm siêu âm ổ bụng.\n• Không sử dụng rượu bia, chất kích thích 24 giờ trước khi khám.",
+  ),
+  noticeAlign:
+    enum_checkup_packages_settings_notice_align("notice_align").default("left"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
+export const hospital_map_settings_floors = pgTable(
+  "hospital_map_settings_floors",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    floorName: varchar("floor_name").notNull(),
+    overview: varchar("overview").notNull(),
+    rooms: varchar("rooms").notNull(),
+  },
+  (columns) => [
+    index("hospital_map_settings_floors_order_idx").on(columns._order),
+    index("hospital_map_settings_floors_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [hospital_map_settings.id],
+      name: "hospital_map_settings_floors_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hospital_map_settings_facilities = pgTable(
+  "hospital_map_settings_facilities",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("📍"),
+    name: varchar("name").notNull(),
+    location: varchar("location").notNull(),
+    hours: varchar("hours").default("24/24 hoặc Giờ hành chính"),
+    desc: varchar("desc"),
+  },
+  (columns) => [
+    index("hospital_map_settings_facilities_order_idx").on(columns._order),
+    index("hospital_map_settings_facilities_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [hospital_map_settings.id],
+      name: "hospital_map_settings_facilities_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hospital_map_settings = pgTable("hospital_map_settings", {
+  id: serial("id").primaryKey(),
+  eyebrow: varchar("eyebrow").default("CHỈ DẪN TIẾP ĐÓN TIỆN ÍCH"),
+  title: varchar("title").default("Sơ đồ Chỉ dẫn Khoa / Phòng & Tiện ích"),
+  description: varchar("description").default(
+    "Bản đồ chỉ dẫn phân tầng các khoa phòng chuyên môn, phòng khám chức năng và các khu vực dịch vụ công cộng tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+  ),
+  showNoticeBanner: boolean("show_notice_banner").default(true),
+  noticeTitle: varchar("notice_title").default(
+    "Bàn Hướng dẫn & Hỗ trợ người bệnh di chuyển",
+  ),
+  noticeContent: varchar("notice_content").default(
+    "• Tại sảnh chính Tầng trệt có Tổ Chăm sóc khách hàng trực tiếp chỉ dẫn và xe lăn hỗ trợ người già, người khuyết tật.\n• Thang máy vận chuyển ưu tiên người bệnh nội trú và xe cáng cấp cứu.",
+  ),
+  noticeAlign:
+    enum_hospital_map_settings_notice_align("notice_align").default("left"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
+export const hospital_quality_settings_stat_cards = pgTable(
+  "hospital_quality_settings_stat_cards",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    val: varchar("val").notNull(),
+    unit: varchar("unit"),
+    label: varchar("label").notNull(),
+  },
+  (columns) => [
+    index("hospital_quality_settings_stat_cards_order_idx").on(columns._order),
+    index("hospital_quality_settings_stat_cards_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [hospital_quality_settings.id],
+      name: "hospital_quality_settings_stat_cards_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hospital_quality_settings_dimensions = pgTable(
+  "hospital_quality_settings_dimensions",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    code: varchar("code").notNull(),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    score: varchar("score").notNull(),
+    percent: numeric("percent", { mode: "number" }).notNull(),
+  },
+  (columns) => [
+    index("hospital_quality_settings_dimensions_order_idx").on(columns._order),
+    index("hospital_quality_settings_dimensions_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [hospital_quality_settings.id],
+      name: "hospital_quality_settings_dimensions_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hospital_quality_settings_programs = pgTable(
+  "hospital_quality_settings_programs",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    iconType:
+      enum_hospital_quality_settings_programs_icon_type("icon_type").default(
+        "blue",
+      ),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+    highlights: varchar("highlights"),
+  },
+  (columns) => [
+    index("hospital_quality_settings_programs_order_idx").on(columns._order),
+    index("hospital_quality_settings_programs_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [hospital_quality_settings.id],
+      name: "hospital_quality_settings_programs_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hospital_quality_settings = pgTable("hospital_quality_settings", {
+  id: serial("id").primaryKey(),
+  eyebrow: varchar("eyebrow").default(
+    "QUẢN LÝ CHẤT LƯỢNG & AN TOÀN NGƯỜI BỆNH",
+  ),
+  title: varchar("title").default("Chất lượng Bệnh viện"),
+  description: varchar("description").default(
+    "Bộ chỉ số đo lường 83 tiêu chí chất lượng, kết quả khảo sát sự hài lòng và các chương trình cải tiến liên tục tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+  ),
+  showNoticeBanner: boolean("show_notice_banner").default(false),
+  noticeTitle: varchar("notice_title").default(
+    "Cam kết chất lượng phục vụ của Bệnh viện Đa khoa Khu vực Thới Lai",
+  ),
+  noticeContent: varchar("notice_content").default(
+    "• Lấy người bệnh làm trung tâm phục vụ, đảm bảo an toàn và quyền lợi người bệnh.\n• Đánh giá chất lượng định kỳ theo Bộ 83 Tiêu chí của Bộ Y tế.\n• Mọi ý kiến đóng góp được Ban Giám đốc tiếp nhận và cải tiến liên tục.",
+  ),
+  noticeAlign:
+    enum_hospital_quality_settings_notice_align("notice_align").default("left"),
+  showQualityCards: boolean("show_quality_cards").default(true),
+  showDimensions: boolean("show_dimensions").default(true),
+  showPrograms: boolean("show_programs").default(true),
+  showFeedbackBox: boolean("show_feedback_box").default(true),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
+export const survey_page_settings_info_boxes = pgTable(
+  "survey_page_settings_info_boxes",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("🛡️"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+  },
+  (columns) => [
+    index("survey_page_settings_info_boxes_order_idx").on(columns._order),
+    index("survey_page_settings_info_boxes_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [survey_page_settings.id],
+      name: "survey_page_settings_info_boxes_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const survey_page_settings = pgTable("survey_page_settings", {
+  id: serial("id").primaryKey(),
+  eyebrow: varchar("eyebrow").default("CHĂM SÓC NGƯỜI BỆNH & KHẢO SÁT"),
+  title: varchar("title").default("Khảo sát Ý kiến & Sự hài lòng"),
+  description: varchar("description").default(
+    "Bệnh viện Đa khoa Khu vực Thới Lai trân trọng từng ý kiến đóng góp của người bệnh và thân nhân để không ngừng nâng cao y đức, văn hóa phục vụ và chất lượng điều trị.",
+  ),
+  showNoticeBanner: boolean("show_notice_banner").default(false),
+  noticeTitle: varchar("notice_title").default("Quy chế khảo sát ẩn danh"),
+  noticeContent: varchar("notice_content").default(
+    "Mọi câu trả lời của quý người bệnh hoàn toàn bảo mật và không ảnh hưởng đến quá trình điều trị.",
+  ),
+  noticeAlign:
+    enum_survey_page_settings_notice_align("notice_align").default("left"),
+  outpatientClinics: varchar("outpatient_clinics"),
+  inpatientDepartments: varchar("inpatient_departments"),
+  staffPositions: varchar("staff_positions"),
+  staffUnitTypes: varchar("staff_unit_types"),
+  staffDepartments: varchar("staff_departments"),
+  areaSuggestions: varchar("area_suggestions"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
+export const faq_page_settings = pgTable("faq_page_settings", {
+  id: serial("id").primaryKey(),
+  eyebrow: varchar("eyebrow").default("CHĂM SÓC NGƯỜI BỆNH & GIẢI ĐÁP"),
+  title: varchar("title").default("Hỏi đáp Y tế & Câu hỏi thường gặp"),
+  description: varchar("description").default(
+    "Tổng hợp các giải đáp chính xác, nhanh chóng nhất về chính sách khám chữa bệnh, quyền lợi bảo hiểm và hướng dẫn thủ tục tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+  ),
+  showNoticeBanner: boolean("show_notice_banner").default(false),
+  noticeTitle: varchar("notice_title").default("Giải đáp thắc mắc người bệnh"),
+  noticeContent: varchar("notice_content").default(
+    "Nếu chưa tìm thấy thông tin cần biết, quý vị có thể đặt câu hỏi trực tuyến hoặc gọi hotline 02923686115.",
+  ),
+  noticeAlign:
+    enum_faq_page_settings_notice_align("notice_align").default("left"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
+export const forms_page_settings_info_boxes = pgTable(
+  "forms_page_settings_info_boxes",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("⚡"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+  },
+  (columns) => [
+    index("forms_page_settings_info_boxes_order_idx").on(columns._order),
+    index("forms_page_settings_info_boxes_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [forms_page_settings.id],
+      name: "forms_page_settings_info_boxes_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const forms_page_settings = pgTable("forms_page_settings", {
+  id: serial("id").primaryKey(),
+  eyebrow: varchar("eyebrow").default("CHĂM SÓC NGƯỜI BỆNH & THỦ TỤC ĐIỆN TỬ"),
+  title: varchar("title").default("Biểu mẫu Điện tử & Đăng ký"),
+  description: varchar("description").default(
+    "Hệ thống biểu mẫu hành chính số hóa giúp người bệnh đăng ký thủ tục nhanh chóng, tiết kiệm thời gian chờ đợi tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+  ),
+  showNoticeBanner: boolean("show_notice_banner").default(false),
+  noticeTitle: varchar("notice_title").default(
+    "Lưu ý khi điền biểu mẫu trực tuyến",
+  ),
+  noticeContent: varchar("notice_content").default(
+    "Vui lòng cung cấp đúng số điện thoại để nhận mã xác nhận tiếp nhận từ bệnh viện.",
+  ),
+  noticeAlign:
+    enum_forms_page_settings_notice_align("notice_align").default("left"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
+export const feedback_page_settings_info_boxes = pgTable(
+  "feedback_page_settings_info_boxes",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    icon: varchar("icon").default("📞"),
+    title: varchar("title").notNull(),
+    desc: varchar("desc").notNull(),
+  },
+  (columns) => [
+    index("feedback_page_settings_info_boxes_order_idx").on(columns._order),
+    index("feedback_page_settings_info_boxes_parent_id_idx").on(
+      columns._parentID,
+    ),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [feedback_page_settings.id],
+      name: "feedback_page_settings_info_boxes_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const feedback_page_settings = pgTable("feedback_page_settings", {
+  id: serial("id").primaryKey(),
+  eyebrow: varchar("eyebrow").default("CHĂM SÓC NGƯỜI BỆNH & TIẾP NHẬN Ý KIẾN"),
+  title: varchar("title").default("Góp ý – Phản ánh Chất lượng"),
+  description: varchar("description").default(
+    "Mọi ý kiến đóng góp, phản ánh hoặc khen ngợi của quý vị đều được Ban Giám đốc tiếp nhận trực tiếp và giải quyết minh bạch, có mã theo dõi tiến độ.",
+  ),
+  showNoticeBanner: boolean("show_notice_banner").default(false),
+  noticeTitle: varchar("notice_title").default("Quy trình tiếp nhận phản ánh"),
+  noticeContent: varchar("notice_content").default(
+    "• Ban Giám đốc tiếp nhận trực tiếp mọi ý kiến phản ánh của người bệnh và thân nhân.\n• Mọi phản ánh đều được cấp mã tra cứu tiến độ xử lý minh bạch.",
+  ),
+  noticeAlign:
+    enum_feedback_page_settings_notice_align("notice_align").default("left"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
+
 export const upload_settings = pgTable("upload_settings", {
   id: serial("id").primaryKey(),
   imageMaxMB: numeric("image_max_m_b", { mode: "number" })
@@ -17741,13 +18522,26 @@ export const relations_survey_questions = relations(
     }),
   }),
 );
+export const relations_survey_campaigns_custom_questions = relations(
+  survey_campaigns_custom_questions,
+  ({ one }) => ({
+    _parentID: one(survey_campaigns, {
+      fields: [survey_campaigns_custom_questions._parentID],
+      references: [survey_campaigns.id],
+      relationName: "customQuestions",
+    }),
+  }),
+);
 export const relations_survey_campaigns = relations(
   survey_campaigns,
-  ({ one }) => ({
+  ({ one, many }) => ({
     templateVersion: one(survey_template_versions, {
       fields: [survey_campaigns.templateVersion],
       references: [survey_template_versions.id],
       relationName: "templateVersion",
+    }),
+    customQuestions: many(survey_campaigns_custom_questions, {
+      relationName: "customQuestions",
     }),
     department: one(departments, {
       fields: [survey_campaigns.department],
@@ -20566,6 +21360,256 @@ export const relations_patient_portal_settings = relations(
     }),
   }),
 );
+export const relations_examination_flow_settings_flow_tabs_steps = relations(
+  examination_flow_settings_flow_tabs_steps,
+  ({ one }) => ({
+    _parentID: one(examination_flow_settings_flow_tabs, {
+      fields: [examination_flow_settings_flow_tabs_steps._parentID],
+      references: [examination_flow_settings_flow_tabs.id],
+      relationName: "steps",
+    }),
+  }),
+);
+export const relations_examination_flow_settings_flow_tabs = relations(
+  examination_flow_settings_flow_tabs,
+  ({ one, many }) => ({
+    _parentID: one(examination_flow_settings, {
+      fields: [examination_flow_settings_flow_tabs._parentID],
+      references: [examination_flow_settings.id],
+      relationName: "flowTabs",
+    }),
+    steps: many(examination_flow_settings_flow_tabs_steps, {
+      relationName: "steps",
+    }),
+  }),
+);
+export const relations_examination_flow_settings_checklists = relations(
+  examination_flow_settings_checklists,
+  ({ one }) => ({
+    _parentID: one(examination_flow_settings, {
+      fields: [examination_flow_settings_checklists._parentID],
+      references: [examination_flow_settings.id],
+      relationName: "checklists",
+    }),
+  }),
+);
+export const relations_examination_flow_settings_priorities = relations(
+  examination_flow_settings_priorities,
+  ({ one }) => ({
+    _parentID: one(examination_flow_settings, {
+      fields: [examination_flow_settings_priorities._parentID],
+      references: [examination_flow_settings.id],
+      relationName: "priorities",
+    }),
+  }),
+);
+export const relations_examination_flow_settings = relations(
+  examination_flow_settings,
+  ({ many }) => ({
+    flowTabs: many(examination_flow_settings_flow_tabs, {
+      relationName: "flowTabs",
+    }),
+    checklists: many(examination_flow_settings_checklists, {
+      relationName: "checklists",
+    }),
+    priorities: many(examination_flow_settings_priorities, {
+      relationName: "priorities",
+    }),
+  }),
+);
+export const relations_inpatient_guide_settings_admission_steps = relations(
+  inpatient_guide_settings_admission_steps,
+  ({ one }) => ({
+    _parentID: one(inpatient_guide_settings, {
+      fields: [inpatient_guide_settings_admission_steps._parentID],
+      references: [inpatient_guide_settings.id],
+      relationName: "admissionSteps",
+    }),
+  }),
+);
+export const relations_inpatient_guide_settings_visiting_hours = relations(
+  inpatient_guide_settings_visiting_hours,
+  ({ one }) => ({
+    _parentID: one(inpatient_guide_settings, {
+      fields: [inpatient_guide_settings_visiting_hours._parentID],
+      references: [inpatient_guide_settings.id],
+      relationName: "visitingHours",
+    }),
+  }),
+);
+export const relations_inpatient_guide_settings_belongings_checklist =
+  relations(inpatient_guide_settings_belongings_checklist, ({ one }) => ({
+    _parentID: one(inpatient_guide_settings, {
+      fields: [inpatient_guide_settings_belongings_checklist._parentID],
+      references: [inpatient_guide_settings.id],
+      relationName: "belongingsChecklist",
+    }),
+  }));
+export const relations_inpatient_guide_settings = relations(
+  inpatient_guide_settings,
+  ({ many }) => ({
+    admissionSteps: many(inpatient_guide_settings_admission_steps, {
+      relationName: "admissionSteps",
+    }),
+    visitingHours: many(inpatient_guide_settings_visiting_hours, {
+      relationName: "visitingHours",
+    }),
+    belongingsChecklist: many(inpatient_guide_settings_belongings_checklist, {
+      relationName: "belongingsChecklist",
+    }),
+  }),
+);
+export const relations_checkup_packages_settings_packages = relations(
+  checkup_packages_settings_packages,
+  ({ one }) => ({
+    _parentID: one(checkup_packages_settings, {
+      fields: [checkup_packages_settings_packages._parentID],
+      references: [checkup_packages_settings.id],
+      relationName: "packages",
+    }),
+  }),
+);
+export const relations_checkup_packages_settings = relations(
+  checkup_packages_settings,
+  ({ many }) => ({
+    packages: many(checkup_packages_settings_packages, {
+      relationName: "packages",
+    }),
+  }),
+);
+export const relations_hospital_map_settings_floors = relations(
+  hospital_map_settings_floors,
+  ({ one }) => ({
+    _parentID: one(hospital_map_settings, {
+      fields: [hospital_map_settings_floors._parentID],
+      references: [hospital_map_settings.id],
+      relationName: "floors",
+    }),
+  }),
+);
+export const relations_hospital_map_settings_facilities = relations(
+  hospital_map_settings_facilities,
+  ({ one }) => ({
+    _parentID: one(hospital_map_settings, {
+      fields: [hospital_map_settings_facilities._parentID],
+      references: [hospital_map_settings.id],
+      relationName: "facilities",
+    }),
+  }),
+);
+export const relations_hospital_map_settings = relations(
+  hospital_map_settings,
+  ({ many }) => ({
+    floors: many(hospital_map_settings_floors, {
+      relationName: "floors",
+    }),
+    facilities: many(hospital_map_settings_facilities, {
+      relationName: "facilities",
+    }),
+  }),
+);
+export const relations_hospital_quality_settings_stat_cards = relations(
+  hospital_quality_settings_stat_cards,
+  ({ one }) => ({
+    _parentID: one(hospital_quality_settings, {
+      fields: [hospital_quality_settings_stat_cards._parentID],
+      references: [hospital_quality_settings.id],
+      relationName: "statCards",
+    }),
+  }),
+);
+export const relations_hospital_quality_settings_dimensions = relations(
+  hospital_quality_settings_dimensions,
+  ({ one }) => ({
+    _parentID: one(hospital_quality_settings, {
+      fields: [hospital_quality_settings_dimensions._parentID],
+      references: [hospital_quality_settings.id],
+      relationName: "dimensions",
+    }),
+  }),
+);
+export const relations_hospital_quality_settings_programs = relations(
+  hospital_quality_settings_programs,
+  ({ one }) => ({
+    _parentID: one(hospital_quality_settings, {
+      fields: [hospital_quality_settings_programs._parentID],
+      references: [hospital_quality_settings.id],
+      relationName: "programs",
+    }),
+  }),
+);
+export const relations_hospital_quality_settings = relations(
+  hospital_quality_settings,
+  ({ many }) => ({
+    statCards: many(hospital_quality_settings_stat_cards, {
+      relationName: "statCards",
+    }),
+    dimensions: many(hospital_quality_settings_dimensions, {
+      relationName: "dimensions",
+    }),
+    programs: many(hospital_quality_settings_programs, {
+      relationName: "programs",
+    }),
+  }),
+);
+export const relations_survey_page_settings_info_boxes = relations(
+  survey_page_settings_info_boxes,
+  ({ one }) => ({
+    _parentID: one(survey_page_settings, {
+      fields: [survey_page_settings_info_boxes._parentID],
+      references: [survey_page_settings.id],
+      relationName: "infoBoxes",
+    }),
+  }),
+);
+export const relations_survey_page_settings = relations(
+  survey_page_settings,
+  ({ many }) => ({
+    infoBoxes: many(survey_page_settings_info_boxes, {
+      relationName: "infoBoxes",
+    }),
+  }),
+);
+export const relations_faq_page_settings = relations(
+  faq_page_settings,
+  () => ({}),
+);
+export const relations_forms_page_settings_info_boxes = relations(
+  forms_page_settings_info_boxes,
+  ({ one }) => ({
+    _parentID: one(forms_page_settings, {
+      fields: [forms_page_settings_info_boxes._parentID],
+      references: [forms_page_settings.id],
+      relationName: "infoBoxes",
+    }),
+  }),
+);
+export const relations_forms_page_settings = relations(
+  forms_page_settings,
+  ({ many }) => ({
+    infoBoxes: many(forms_page_settings_info_boxes, {
+      relationName: "infoBoxes",
+    }),
+  }),
+);
+export const relations_feedback_page_settings_info_boxes = relations(
+  feedback_page_settings_info_boxes,
+  ({ one }) => ({
+    _parentID: one(feedback_page_settings, {
+      fields: [feedback_page_settings_info_boxes._parentID],
+      references: [feedback_page_settings.id],
+      relationName: "infoBoxes",
+    }),
+  }),
+);
+export const relations_feedback_page_settings = relations(
+  feedback_page_settings,
+  ({ many }) => ({
+    infoBoxes: many(feedback_page_settings_info_boxes, {
+      relationName: "infoBoxes",
+    }),
+  }),
+);
 export const relations_upload_settings = relations(upload_settings, () => ({}));
 export const relations_default_media_settings_custom_defaults = relations(
   default_media_settings_custom_defaults,
@@ -20953,6 +21997,7 @@ type DatabaseSchema = {
   enum_chatbot_conversations_messages_from: typeof enum_chatbot_conversations_messages_from;
   enum_survey_template_versions_status: typeof enum_survey_template_versions_status;
   enum_survey_questions_type: typeof enum_survey_questions_type;
+  enum_survey_campaigns_custom_questions_type: typeof enum_survey_campaigns_custom_questions_type;
   enum_dynamic_modules_workflow_state: typeof enum_dynamic_modules_workflow_state;
   enum_dynamic_modules_status: typeof enum_dynamic_modules_status;
   enum__dynamic_modules_v_version_workflow_state: typeof enum__dynamic_modules_v_version_workflow_state;
@@ -21126,6 +22171,16 @@ type DatabaseSchema = {
   enum_working_hours_settings_emergency_banner_desc_size: typeof enum_working_hours_settings_emergency_banner_desc_size;
   pps_badge_t: typeof pps_badge_t;
   pps_not_align: typeof pps_not_align;
+  enum_examination_flow_settings_notice_align: typeof enum_examination_flow_settings_notice_align;
+  enum_inpatient_guide_settings_notice_align: typeof enum_inpatient_guide_settings_notice_align;
+  enum_checkup_packages_settings_notice_align: typeof enum_checkup_packages_settings_notice_align;
+  enum_hospital_map_settings_notice_align: typeof enum_hospital_map_settings_notice_align;
+  enum_hospital_quality_settings_programs_icon_type: typeof enum_hospital_quality_settings_programs_icon_type;
+  enum_hospital_quality_settings_notice_align: typeof enum_hospital_quality_settings_notice_align;
+  enum_survey_page_settings_notice_align: typeof enum_survey_page_settings_notice_align;
+  enum_faq_page_settings_notice_align: typeof enum_faq_page_settings_notice_align;
+  enum_forms_page_settings_notice_align: typeof enum_forms_page_settings_notice_align;
+  enum_feedback_page_settings_notice_align: typeof enum_feedback_page_settings_notice_align;
   enum_seo_settings_status: typeof enum_seo_settings_status;
   enum__seo_settings_v_version_status: typeof enum__seo_settings_v_version_status;
   sch_n_align: typeof sch_n_align;
@@ -21245,6 +22300,7 @@ type DatabaseSchema = {
   survey_template_versions_rels: typeof survey_template_versions_rels;
   survey_questions_options: typeof survey_questions_options;
   survey_questions: typeof survey_questions;
+  survey_campaigns_custom_questions: typeof survey_campaigns_custom_questions;
   survey_campaigns: typeof survey_campaigns;
   survey_codes: typeof survey_codes;
   survey_responses: typeof survey_responses;
@@ -21417,6 +22473,31 @@ type DatabaseSchema = {
   pps_svc_items: typeof pps_svc_items;
   pps_svc_groups: typeof pps_svc_groups;
   patient_portal_settings: typeof patient_portal_settings;
+  examination_flow_settings_flow_tabs_steps: typeof examination_flow_settings_flow_tabs_steps;
+  examination_flow_settings_flow_tabs: typeof examination_flow_settings_flow_tabs;
+  examination_flow_settings_checklists: typeof examination_flow_settings_checklists;
+  examination_flow_settings_priorities: typeof examination_flow_settings_priorities;
+  examination_flow_settings: typeof examination_flow_settings;
+  inpatient_guide_settings_admission_steps: typeof inpatient_guide_settings_admission_steps;
+  inpatient_guide_settings_visiting_hours: typeof inpatient_guide_settings_visiting_hours;
+  inpatient_guide_settings_belongings_checklist: typeof inpatient_guide_settings_belongings_checklist;
+  inpatient_guide_settings: typeof inpatient_guide_settings;
+  checkup_packages_settings_packages: typeof checkup_packages_settings_packages;
+  checkup_packages_settings: typeof checkup_packages_settings;
+  hospital_map_settings_floors: typeof hospital_map_settings_floors;
+  hospital_map_settings_facilities: typeof hospital_map_settings_facilities;
+  hospital_map_settings: typeof hospital_map_settings;
+  hospital_quality_settings_stat_cards: typeof hospital_quality_settings_stat_cards;
+  hospital_quality_settings_dimensions: typeof hospital_quality_settings_dimensions;
+  hospital_quality_settings_programs: typeof hospital_quality_settings_programs;
+  hospital_quality_settings: typeof hospital_quality_settings;
+  survey_page_settings_info_boxes: typeof survey_page_settings_info_boxes;
+  survey_page_settings: typeof survey_page_settings;
+  faq_page_settings: typeof faq_page_settings;
+  forms_page_settings_info_boxes: typeof forms_page_settings_info_boxes;
+  forms_page_settings: typeof forms_page_settings;
+  feedback_page_settings_info_boxes: typeof feedback_page_settings_info_boxes;
+  feedback_page_settings: typeof feedback_page_settings;
   upload_settings: typeof upload_settings;
   default_media_settings_custom_defaults: typeof default_media_settings_custom_defaults;
   default_media_settings: typeof default_media_settings;
@@ -21531,6 +22612,7 @@ type DatabaseSchema = {
   relations_survey_template_versions: typeof relations_survey_template_versions;
   relations_survey_questions_options: typeof relations_survey_questions_options;
   relations_survey_questions: typeof relations_survey_questions;
+  relations_survey_campaigns_custom_questions: typeof relations_survey_campaigns_custom_questions;
   relations_survey_campaigns: typeof relations_survey_campaigns;
   relations_survey_codes: typeof relations_survey_codes;
   relations_survey_responses: typeof relations_survey_responses;
@@ -21703,6 +22785,31 @@ type DatabaseSchema = {
   relations_pps_svc_items: typeof relations_pps_svc_items;
   relations_pps_svc_groups: typeof relations_pps_svc_groups;
   relations_patient_portal_settings: typeof relations_patient_portal_settings;
+  relations_examination_flow_settings_flow_tabs_steps: typeof relations_examination_flow_settings_flow_tabs_steps;
+  relations_examination_flow_settings_flow_tabs: typeof relations_examination_flow_settings_flow_tabs;
+  relations_examination_flow_settings_checklists: typeof relations_examination_flow_settings_checklists;
+  relations_examination_flow_settings_priorities: typeof relations_examination_flow_settings_priorities;
+  relations_examination_flow_settings: typeof relations_examination_flow_settings;
+  relations_inpatient_guide_settings_admission_steps: typeof relations_inpatient_guide_settings_admission_steps;
+  relations_inpatient_guide_settings_visiting_hours: typeof relations_inpatient_guide_settings_visiting_hours;
+  relations_inpatient_guide_settings_belongings_checklist: typeof relations_inpatient_guide_settings_belongings_checklist;
+  relations_inpatient_guide_settings: typeof relations_inpatient_guide_settings;
+  relations_checkup_packages_settings_packages: typeof relations_checkup_packages_settings_packages;
+  relations_checkup_packages_settings: typeof relations_checkup_packages_settings;
+  relations_hospital_map_settings_floors: typeof relations_hospital_map_settings_floors;
+  relations_hospital_map_settings_facilities: typeof relations_hospital_map_settings_facilities;
+  relations_hospital_map_settings: typeof relations_hospital_map_settings;
+  relations_hospital_quality_settings_stat_cards: typeof relations_hospital_quality_settings_stat_cards;
+  relations_hospital_quality_settings_dimensions: typeof relations_hospital_quality_settings_dimensions;
+  relations_hospital_quality_settings_programs: typeof relations_hospital_quality_settings_programs;
+  relations_hospital_quality_settings: typeof relations_hospital_quality_settings;
+  relations_survey_page_settings_info_boxes: typeof relations_survey_page_settings_info_boxes;
+  relations_survey_page_settings: typeof relations_survey_page_settings;
+  relations_faq_page_settings: typeof relations_faq_page_settings;
+  relations_forms_page_settings_info_boxes: typeof relations_forms_page_settings_info_boxes;
+  relations_forms_page_settings: typeof relations_forms_page_settings;
+  relations_feedback_page_settings_info_boxes: typeof relations_feedback_page_settings_info_boxes;
+  relations_feedback_page_settings: typeof relations_feedback_page_settings;
   relations_upload_settings: typeof relations_upload_settings;
   relations_default_media_settings_custom_defaults: typeof relations_default_media_settings_custom_defaults;
   relations_default_media_settings: typeof relations_default_media_settings;

@@ -47,12 +47,15 @@ export default async function FormsHubPage() {
   let siteSettings: any = {}
   let activeForms: any[] = []
 
+  let formsConf: any = {}
   try {
-    const [settings, payload] = await Promise.all([
+    const [specForms, settings, payload] = await Promise.all([
+      getGlobal('forms-page-settings' as any).catch(() => null),
       getGlobal('site-settings' as any).catch(() => ({})),
       getCMS().catch(() => null),
     ])
     siteSettings = settings || {}
+    formsConf = (specForms && Object.keys(specForms).length > 0) ? specForms : (siteSettings?.formsPage || {})
 
     if (payload) {
       const res = await payload.find({
@@ -70,8 +73,6 @@ export default async function FormsHubPage() {
       activeForms = res.docs || []
     }
   } catch {}
-
-  const formsConf = siteSettings?.formsPage || {}
   const eyebrow = formsConf.eyebrow || 'CHĂM SÓC NGƯỜI BỆNH & THỦ TỤC ĐIỆN TỬ'
   const title = formsConf.title || 'Biểu mẫu Điện tử & Đăng ký'
   const description = formsConf.description || 'Hệ thống biểu mẫu hành chính số hóa giúp người bệnh đăng ký thủ tục nhanh chóng, tiết kiệm thời gian chờ đợi tại Bệnh viện Đa khoa Khu vực Thới Lai.'

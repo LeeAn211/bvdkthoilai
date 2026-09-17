@@ -4,7 +4,7 @@ import { moduleAccess } from '@/access'
 export const ChatbotSettings: GlobalConfig = {
   slug: 'chatbot-settings',
   label: 'Chatbot',
-  admin: { group: '💬 Chăm sóc người bệnh & Khảo sát' },
+  admin: { group: '🤖 Trợ lý ảo & Chatbot' },
   access: { read: moduleAccess('chatbot', 'view'), update: moduleAccess('chatbot', 'edit') },
   fields: [
     { name: 'enabled', label: 'Bật chatbot', type: 'checkbox', defaultValue: true },

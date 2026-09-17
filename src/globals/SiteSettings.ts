@@ -140,7 +140,7 @@ const defaultAssistantAnswers = [
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
-  label: 'Header & Nhận diện',
+  label: 'Cấu hình Website & Nhận diện',
   admin: { group: '🌐 Trang chủ & Giao diện Website' },
   access: { read: () => true, update: moduleAccess('site-settings', 'edit') },
   versions: { max: 20 },
@@ -963,7 +963,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'examinationFlowPage',
       label: 'Trang Quy trình khám bệnh',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và cấu hình hiển thị trên trang /quy-trinh-kham-benh.' },
+      admin: { hidden: true, description: 'Đã chuyển thành mục độc lập tại "Khám bệnh & Dịch vụ Y tế".' },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'HƯỚNG DẪN DÀNH CHO NGƯỜI BỆNH' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Quy trình Khám chữa bệnh' },
@@ -1083,7 +1083,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'qualityPage',
       label: 'Trang Chất lượng bệnh viện',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và cấu hình hiển thị trên trang /chat-luong-benh-vien.' },
+      admin: { hidden: true, description: 'Đã chuyển thành mục độc lập tại "Chăm sóc người bệnh & Khảo sát".' },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'QUẢN LÝ CHẤT LƯỢNG & AN TOÀN NGƯỜI BỆNH' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Chất lượng Bệnh viện' },
@@ -1205,7 +1205,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'surveyPage',
       label: 'Trang Khảo sát ý kiến',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /khao-sat.' },
+      admin: { hidden: true, description: 'Đã chuyển thành mục độc lập tại "Chăm sóc người bệnh & Khảo sát".' },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'CHĂM SÓC NGƯỜI BỆNH & KHẢO SÁT' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Khảo sát Ý kiến & Sự hài lòng' },
@@ -1238,13 +1238,67 @@ export const SiteSettings: GlobalConfig = {
             { name: 'desc', label: 'Nội dung chi tiết', type: 'textarea', required: true },
           ],
         },
+        {
+          name: 'outpatientClinics',
+          label: 'Danh sách Phòng khám Ngoại trú (Mỗi dòng 1 phòng khám)',
+          type: 'textarea',
+          admin: {
+            description: 'Người quản trị có thể thêm mới, chỉnh sửa, xóa các phòng khám ngoại trú. Mỗi dòng là 1 lựa chọn hiển thị trong phiếu khảo sát ngoại trú.',
+            placeholder: 'Phòng khám Nội tổng quát / Tim mạch / Tiểu đường\nPhòng khám Ngoại - Chấn thương\nPhòng khám Sản - Phụ khoa\nPhòng khám Nhi khoa\nLiên chuyên khoa Mắt - TMH - Răng Hàm Mặt\nPhòng khám Y học cổ truyền & Phục hồi chức năng\nKhu vực Tiếp nhận Cấp cứu',
+          },
+        },
+        {
+          name: 'inpatientDepartments',
+          label: 'Danh sách Khoa điều trị Nội trú (Mỗi dòng 1 khoa)',
+          type: 'textarea',
+          admin: {
+            description: 'Danh sách khoa điều trị nội trú. Mỗi dòng là 1 lựa chọn hiển thị trong phiếu khảo sát nội trú.',
+            placeholder: 'Khoa Nội tổng hợp\nKhoa Ngoại tổng hợp\nKhoa Phụ sản\nKhoa Nhi\nKhoa Hồi sức cấp cứu (ICU)\nKhoa Y học cổ truyền & PHCN\nKhoa Truyền nhiễm',
+          },
+        },
+        {
+          name: 'staffPositions',
+          label: 'Danh sách Vị trí chuyên môn / Chức danh Nhân viên y tế',
+          type: 'textarea',
+          admin: {
+            description: 'Vị trí công tác của cán bộ nhân viên y tế (Mỗi dòng 1 vị trí).',
+            placeholder: 'Bác sĩ điều trị\nĐiều dưỡng / Hộ sinh\nDược sĩ\nKỹ thuật viên xét nghiệm / CĐHA\nChuyên viên / Nhân viên phòng chức năng\nLãnh đạo Khoa / Phòng\nNhân viên hỗ trợ khác',
+          },
+        },
+        {
+          name: 'staffUnitTypes',
+          label: 'Danh sách Khối đơn vị công tác (Mỗi dòng 1 khối)',
+          type: 'textarea',
+          admin: {
+            description: 'Khối đơn vị công tác của nhân viên y tế (Mỗi dòng 1 khối đơn vị).',
+            placeholder: 'Khoa Lâm sàng (Nội, Ngoại, Sản, Nhi, Cấp cứu...)\nKhoa Cận lâm sàng (Xét nghiệm, CĐHA, Dược...)\nPhòng Chức năng (KHTH, TCCB, TCKT, QLCL, ĐD...)',
+          },
+        },
+        {
+          name: 'staffDepartments',
+          label: 'Danh sách Khoa / Phòng trực thuộc Nhân viên y tế',
+          type: 'textarea',
+          admin: {
+            description: 'Danh sách khoa/phòng phân công công tác nhân viên y tế (Mỗi dòng 1 khoa/phòng).',
+            placeholder: 'Khoa Khám bệnh\nKhoa Cấp cứu - Hồi sức tích cực\nKhoa Nội tổng hợp\nKhoa Ngoại tổng hợp\nKhoa Phụ sản\nKhoa Nhi\nKhoa Y học cổ truyền & PHCN\nKhoa Dược\nKhoa Xét nghiệm & CĐHA\nKhối các Phòng chức năng',
+          },
+        },
+        {
+          name: 'areaSuggestions',
+          label: 'Danh sách Gợi ý Nơi cư trú (Mỗi dòng 1 địa chỉ theo chính quyền 2 cấp)',
+          type: 'textarea',
+          admin: {
+            description: 'Danh sách gợi ý xã/phường/thị trấn và tỉnh/thành phố khi người bệnh nhập địa chỉ cư trú (Mỗi dòng 1 gợi ý).',
+            placeholder: 'Xã Thới Lai, TP. Cần Thơ\nXã Trường Thành, TP. Cần Thơ\nXã Đông Thuận, TP. Cần Thơ\nXã Trường Xuân, TP. Cần Thơ\nXã Đông Hiệp, TP. Cần Thơ\nPhường Ô Môn, TP. Cần Thơ\nXã Trường Long, TP. Cần Thơ\nXã Thới Hưng, TP. Cần Thơ\nThị trấn Cờ Đỏ, TP. Cần Thơ\nThị trấn Phong Điền, TP. Cần Thơ\nPhường Thốt Nốt, TP. Cần Thơ\nPhường Ninh Kiều, TP. Cần Thơ\nPhường An Khánh, TP. Cần Thơ\nTỉnh Hậu Giang\nTỉnh Kiên Giang\nTỉnh An Giang\nTỉnh Đồng Tháp',
+          },
+        },
       ],
     },
     {
       name: 'faqPage',
       label: 'Trang Hỏi đáp y tế (FAQ)',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /hoi-dap.' },
+      admin: { hidden: true, description: 'Đã chuyển thành mục độc lập tại "Chăm sóc người bệnh & Khảo sát".' },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'CHĂM SÓC NGƯỜI BỆNH & GIẢI ĐÁP' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Hỏi đáp Y tế & Câu hỏi thường gặp' },
@@ -1269,7 +1323,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'formsPage',
       label: 'Trang Biểu mẫu điện tử',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /bieu-mau.' },
+      admin: { hidden: true, description: 'Đã chuyển thành mục độc lập tại "Chăm sóc người bệnh & Khảo sát".' },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'CHĂM SÓC NGƯỜI BỆNH & THỦ TỤC ĐIỆN TỬ' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Biểu mẫu Điện tử & Đăng ký' },
@@ -1309,7 +1363,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'patientPortalPage',
       label: 'Trang Dành cho người bệnh (Portal)',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /danh-cho-nguoi-benh.' },
+      admin: { hidden: true, description: 'Đã chuyển thành mục độc lập tại "Khám bệnh & Dịch vụ Y tế".' },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'CỔNG TIỆN ÍCH NGƯỜI BỆNH' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Dành cho Người bệnh' },
@@ -1336,7 +1390,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'feedbackPage',
       label: 'Trang Góp ý – Phản ánh chất lượng',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và 3 ô thông tin hotline/tra cứu/bảo mật trên trang /gop-y và /gop-y/tra-cuu.' },
+      admin: { hidden: true, description: 'Đã chuyển thành mục độc lập tại "Chăm sóc người bệnh & Khảo sát".' },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'CHĂM SÓC NGƯỜI BỆNH & TIẾP NHẬN Ý KIẾN' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Góp ý – Phản ánh Chất lượng' },
@@ -1376,7 +1430,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'inpatientPage',
       label: 'Trang Hướng dẫn Điều trị Nội trú',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả, thông báo, các bước nhập viện, đồ dùng cần mang, giờ thăm bệnh và chế độ dinh dưỡng trên trang /dieu-tri-noi-tru.' },
+      admin: { hidden: true, description: 'Đã chuyển thành mục độc lập tại "Khám bệnh & Dịch vụ Y tế".' },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'HƯỚNG DẪN DÀNH CHO NGƯỜI BỆNH' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Hướng dẫn Điều trị Nội trú' },
@@ -1445,7 +1499,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'checkupPackagesPage',
       label: 'Trang Gói khám sức khỏe & Tầm soát',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả, thông báo và danh sách các gói khám sức khỏe trên trang /goi-kham.' },
+      admin: { hidden: true, description: 'Đã chuyển thành mục độc lập tại "Khám bệnh & Dịch vụ Y tế".' },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'CHỦ ĐỘNG BẢO VỆ SỨC KHỎE' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Gói Khám Sức khỏe & Tầm soát Bệnh lý' },
@@ -1490,7 +1544,10 @@ export const SiteSettings: GlobalConfig = {
       name: 'hospitalMapPage',
       label: 'Trang Sơ đồ & Chỉ dẫn Khoa/Phòng',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả, thông báo, sơ đồ phân tầng và các khu vực tiện ích công cộng trên trang /so-do-benh-vien.' },
+      admin: {
+        hidden: true,
+        description: 'Đã chuyển thành mục độc lập tại "🏥 Khám bệnh & Dịch vụ Y tế". Tùy chỉnh tiêu đề, mô tả, thông báo, sơ đồ phân tầng và các khu vực tiện ích công cộng trên trang /so-do-benh-vien.',
+      },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'CHỈ DẪN TIẾP ĐÓN TIỆN ÍCH' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Sơ đồ Chỉ dẫn Khoa / Phòng & Tiện ích' },

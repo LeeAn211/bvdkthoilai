@@ -65,12 +65,15 @@ export default async function FaqHubPage({
   let siteSettings: any = {}
   let cmsFaqs: any[] = []
 
+  let faqConf: any = {}
   try {
-    const [settings, payload] = await Promise.all([
+    const [specFaq, settings, payload] = await Promise.all([
+      getGlobal('faq-page-settings' as any).catch(() => null),
       getGlobal('site-settings' as any).catch(() => ({})),
       getCMS().catch(() => null),
     ])
     siteSettings = settings || {}
+    faqConf = (specFaq && Object.keys(specFaq).length > 0) ? specFaq : (siteSettings?.faqPage || {})
 
     if (payload) {
       const res = await payload.find({
@@ -88,8 +91,6 @@ export default async function FaqHubPage({
       cmsFaqs = res.docs || []
     }
   } catch {}
-
-  const faqConf = siteSettings?.faqPage || {}
   const eyebrow = faqConf.eyebrow || 'CHĂM SÓC NGƯỜI BỆNH & GIẢI ĐÁP'
   const title = faqConf.title || 'Hỏi đáp Y tế & Câu hỏi thường gặp'
   const description = faqConf.description || 'Tổng hợp các giải đáp chính xác, nhanh chóng nhất về chính sách khám chữa bệnh, quyền lợi bảo hiểm và hướng dẫn thủ tục tại Bệnh viện Đa khoa Khu vực Thới Lai.'

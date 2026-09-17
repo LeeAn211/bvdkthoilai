@@ -197,6 +197,15 @@ export interface Config {
     'about-page': AboutPage;
     'working-hours-settings': WorkingHoursSetting;
     'patient-portal-settings': PatientPortalSetting;
+    'examination-flow-settings': ExaminationFlowSetting;
+    'inpatient-guide-settings': InpatientGuideSetting;
+    'checkup-packages-settings': CheckupPackagesSetting;
+    'hospital-map-settings': HospitalMapSetting;
+    'hospital-quality-settings': HospitalQualitySetting;
+    'survey-page-settings': SurveyPageSetting;
+    'faq-page-settings': FaqPageSetting;
+    'forms-page-settings': FormsPageSetting;
+    'feedback-page-settings': FeedbackPageSetting;
     'upload-settings': UploadSetting;
     'default-media-settings': DefaultMediaSetting;
     'seo-settings': SeoSetting;
@@ -220,6 +229,15 @@ export interface Config {
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'working-hours-settings': WorkingHoursSettingsSelect<false> | WorkingHoursSettingsSelect<true>;
     'patient-portal-settings': PatientPortalSettingsSelect<false> | PatientPortalSettingsSelect<true>;
+    'examination-flow-settings': ExaminationFlowSettingsSelect<false> | ExaminationFlowSettingsSelect<true>;
+    'inpatient-guide-settings': InpatientGuideSettingsSelect<false> | InpatientGuideSettingsSelect<true>;
+    'checkup-packages-settings': CheckupPackagesSettingsSelect<false> | CheckupPackagesSettingsSelect<true>;
+    'hospital-map-settings': HospitalMapSettingsSelect<false> | HospitalMapSettingsSelect<true>;
+    'hospital-quality-settings': HospitalQualitySettingsSelect<false> | HospitalQualitySettingsSelect<true>;
+    'survey-page-settings': SurveyPageSettingsSelect<false> | SurveyPageSettingsSelect<true>;
+    'faq-page-settings': FaqPageSettingsSelect<false> | FaqPageSettingsSelect<true>;
+    'forms-page-settings': FormsPageSettingsSelect<false> | FormsPageSettingsSelect<true>;
+    'feedback-page-settings': FeedbackPageSettingsSelect<false> | FeedbackPageSettingsSelect<true>;
     'upload-settings': UploadSettingsSelect<false> | UploadSettingsSelect<true>;
     'default-media-settings': DefaultMediaSettingsSelect<false> | DefaultMediaSettingsSelect<true>;
     'seo-settings': SeoSettingsSelect<false> | SeoSettingsSelect<true>;
@@ -2396,6 +2414,8 @@ export interface SurveyQuestion {
   createdAt: string;
 }
 /**
+ * Quản lý toàn bộ đợt khảo sát ý kiến người bệnh & nhân viên. Tùy chỉnh danh mục phòng khám, khoa điều trị, chức danh và địa bàn được liên kết trực tiếp tại bảng điều khiển phía trên.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "survey-campaigns".
  */
@@ -2406,13 +2426,70 @@ export interface SurveyCampaign {
    * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
-  templateVersion: number | SurveyTemplateVersion;
+  /**
+   * Mặc định BẬT: Bạn có thể nhập trực tiếp các câu hỏi khảo sát ở danh sách ngay bên dưới mà không cần tạo template phức tạp.
+   */
+  useCustomQuestions?: boolean | null;
+  /**
+   * Chọn phiên bản mẫu snapshot nếu dùng hệ thống template phân cấp của Bộ Y tế.
+   */
+  templateVersion?: (number | null) | SurveyTemplateVersion;
+  showDemographics?: boolean | null;
+  /**
+   * Tự do thêm, sửa, xóa, sắp xếp các câu hỏi khảo sát theo nhu cầu riêng của bệnh viện.
+   */
+  customQuestions?:
+    | {
+        code: string;
+        type: 'rating5' | 'rating10' | 'single' | 'multiple' | 'yesno' | 'text';
+        required?: boolean | null;
+        question: string;
+        /**
+         * Nhập mỗi lựa chọn trên 1 dòng. Áp dụng cho loại "Chọn 1 đáp án" hoặc "Chọn nhiều đáp án".
+         */
+        options?: string | null;
+        order?: number | null;
+        id?: string | null;
+      }[]
+    | null;
   department?: (number | null) | Department;
   startAt: string;
   endAt: string;
   active?: boolean | null;
   anonymous?: boolean | null;
+  /**
+   * Đoạn văn bản xuất hiện ở đầu phiếu khảo sát để giới thiệu và hướng dẫn người tham gia.
+   */
   publicNote?: string | null;
+  /**
+   * Nếu đợt khảo sát này có danh sách phòng khám, khoa phòng, chức danh hoặc địa bàn riêng biệt, bạn có thể nhập vào đây. Nếu để trống, hệ thống sẽ sử dụng danh sách mặc định của bệnh viện.
+   */
+  customOptions?: {
+    /**
+     * Áp dụng khi đợt khảo sát này dành cho khối ngoại trú. Mỗi dòng là 1 lựa chọn phòng khám.
+     */
+    outpatientClinics?: string | null;
+    /**
+     * Áp dụng khi đợt khảo sát này dành cho khối nội trú. Mỗi dòng là 1 khoa điều trị.
+     */
+    inpatientDepartments?: string | null;
+    /**
+     * Áp dụng khi đợt khảo sát dành cho nhân viên y tế (Mỗi dòng 1 vị trí).
+     */
+    staffPositions?: string | null;
+    /**
+     * Khối đơn vị công tác của nhân viên y tế (Mỗi dòng 1 khối).
+     */
+    staffUnitTypes?: string | null;
+    /**
+     * Danh sách khoa/phòng phân công nhân viên y tế (Mỗi dòng 1 khoa/phòng).
+     */
+    staffDepartments?: string | null;
+    /**
+     * Danh sách gợi ý địa bàn cư trú (Mỗi dòng 1 gợi ý).
+     */
+    areaSuggestions?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -4365,13 +4442,36 @@ export interface SurveyQuestionsSelect<T extends boolean = true> {
 export interface SurveyCampaignsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  useCustomQuestions?: T;
   templateVersion?: T;
+  showDemographics?: T;
+  customQuestions?:
+    | T
+    | {
+        code?: T;
+        type?: T;
+        required?: T;
+        question?: T;
+        options?: T;
+        order?: T;
+        id?: T;
+      };
   department?: T;
   startAt?: T;
   endAt?: T;
   active?: T;
   anonymous?: T;
   publicNote?: T;
+  customOptions?:
+    | T
+    | {
+        outpatientClinics?: T;
+        inpatientDepartments?: T;
+        staffPositions?: T;
+        staffUnitTypes?: T;
+        staffDepartments?: T;
+        areaSuggestions?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -5023,7 +5123,7 @@ export interface SiteSetting {
     noticeAlign?: ('left' | 'center' | 'justify') | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và cấu hình hiển thị trên trang /quy-trinh-kham-benh.
+   * Đã chuyển thành mục độc lập tại "Khám bệnh & Dịch vụ Y tế".
    */
   examinationFlowPage?: {
     eyebrow?: string | null;
@@ -5085,7 +5185,7 @@ export interface SiteSetting {
       | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và cấu hình hiển thị trên trang /chat-luong-benh-vien.
+   * Đã chuyển thành mục độc lập tại "Chăm sóc người bệnh & Khảo sát".
    */
   qualityPage?: {
     eyebrow?: string | null;
@@ -5140,7 +5240,7 @@ export interface SiteSetting {
       | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /khao-sat.
+   * Đã chuyển thành mục độc lập tại "Chăm sóc người bệnh & Khảo sát".
    */
   surveyPage?: {
     eyebrow?: string | null;
@@ -5162,9 +5262,33 @@ export interface SiteSetting {
           id?: string | null;
         }[]
       | null;
+    /**
+     * Người quản trị có thể thêm mới, chỉnh sửa, xóa các phòng khám ngoại trú. Mỗi dòng là 1 lựa chọn hiển thị trong phiếu khảo sát ngoại trú.
+     */
+    outpatientClinics?: string | null;
+    /**
+     * Danh sách khoa điều trị nội trú. Mỗi dòng là 1 lựa chọn hiển thị trong phiếu khảo sát nội trú.
+     */
+    inpatientDepartments?: string | null;
+    /**
+     * Vị trí công tác của cán bộ nhân viên y tế (Mỗi dòng 1 vị trí).
+     */
+    staffPositions?: string | null;
+    /**
+     * Khối đơn vị công tác của nhân viên y tế (Mỗi dòng 1 khối đơn vị).
+     */
+    staffUnitTypes?: string | null;
+    /**
+     * Danh sách khoa/phòng phân công công tác nhân viên y tế (Mỗi dòng 1 khoa/phòng).
+     */
+    staffDepartments?: string | null;
+    /**
+     * Danh sách gợi ý xã/phường/thị trấn và tỉnh/thành phố khi người bệnh nhập địa chỉ cư trú (Mỗi dòng 1 gợi ý).
+     */
+    areaSuggestions?: string | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /hoi-dap.
+   * Đã chuyển thành mục độc lập tại "Chăm sóc người bệnh & Khảo sát".
    */
   faqPage?: {
     eyebrow?: string | null;
@@ -5176,7 +5300,7 @@ export interface SiteSetting {
     noticeAlign?: ('left' | 'center' | 'justify') | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /bieu-mau.
+   * Đã chuyển thành mục độc lập tại "Chăm sóc người bệnh & Khảo sát".
    */
   formsPage?: {
     eyebrow?: string | null;
@@ -5200,7 +5324,7 @@ export interface SiteSetting {
       | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /danh-cho-nguoi-benh.
+   * Đã chuyển thành mục độc lập tại "Khám bệnh & Dịch vụ Y tế".
    */
   patientPortalPage?: {
     eyebrow?: string | null;
@@ -5212,7 +5336,7 @@ export interface SiteSetting {
     noticeAlign?: ('left' | 'center' | 'justify') | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và 3 ô thông tin hotline/tra cứu/bảo mật trên trang /gop-y và /gop-y/tra-cuu.
+   * Đã chuyển thành mục độc lập tại "Chăm sóc người bệnh & Khảo sát".
    */
   feedbackPage?: {
     eyebrow?: string | null;
@@ -5233,7 +5357,7 @@ export interface SiteSetting {
       | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả, thông báo, các bước nhập viện, đồ dùng cần mang, giờ thăm bệnh và chế độ dinh dưỡng trên trang /dieu-tri-noi-tru.
+   * Đã chuyển thành mục độc lập tại "Khám bệnh & Dịch vụ Y tế".
    */
   inpatientPage?: {
     eyebrow?: string | null;
@@ -5275,7 +5399,7 @@ export interface SiteSetting {
       | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả, thông báo và danh sách các gói khám sức khỏe trên trang /goi-kham.
+   * Đã chuyển thành mục độc lập tại "Khám bệnh & Dịch vụ Y tế".
    */
   checkupPackagesPage?: {
     eyebrow?: string | null;
@@ -5301,7 +5425,7 @@ export interface SiteSetting {
       | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả, thông báo, sơ đồ phân tầng và các khu vực tiện ích công cộng trên trang /so-do-benh-vien.
+   * Đã chuyển thành mục độc lập tại "🏥 Khám bệnh & Dịch vụ Y tế". Tùy chỉnh tiêu đề, mô tả, thông báo, sơ đồ phân tầng và các khu vực tiện ích công cộng trên trang /so-do-benh-vien.
    */
   hospitalMapPage?: {
     eyebrow?: string | null;
@@ -7070,6 +7194,382 @@ export interface PatientPortalSetting {
   createdAt?: string | null;
 }
 /**
+ * Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và chi tiết các bước trong quy trình khám BHYT, dịch vụ, cấp cứu trên trang /quy-trinh-kham-benh.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "examination-flow-settings".
+ */
+export interface ExaminationFlowSetting {
+  id: number;
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  showNoticeBanner?: boolean | null;
+  noticeTitle?: string | null;
+  noticeContent?: string | null;
+  noticeAlign?: ('left' | 'center' | 'justify') | null;
+  showChecklist?: boolean | null;
+  showPriority?: boolean | null;
+  showSupportBanner?: boolean | null;
+  /**
+   * Tùy chỉnh bật/tắt từng tab quy trình (Khám BHYT, Khám Dịch vụ, Cấp cứu 24/24...) và chỉnh sửa chi tiết các bước trong mỗi tab.
+   */
+  flowTabs?:
+    | {
+        enabled?: boolean | null;
+        id: string;
+        label: string;
+        badgeText?: string | null;
+        title: string;
+        summary: string;
+        steps?:
+          | {
+              enabled?: boolean | null;
+              step: number;
+              title: string;
+              location: string;
+              timeEstimate?: string | null;
+              desc: string;
+              actions?: string | null;
+              note?: string | null;
+              isHighlight?: boolean | null;
+              isEmergency?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
+      }[]
+    | null;
+  /**
+   * Tùy chỉnh bật/tắt hoặc chỉnh sửa nội dung từng loại giấy tờ cần mang theo.
+   */
+  checklists?:
+    | {
+        enabled?: boolean | null;
+        title: string;
+        desc: string;
+        icon?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  priorities?:
+    | {
+        enabled?: boolean | null;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tùy chỉnh tiêu đề, mô tả, thông báo, các bước nhập viện, đồ dùng cần mang, giờ thăm bệnh và chế độ dinh dưỡng trên trang /dieu-tri-noi-tru.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inpatient-guide-settings".
+ */
+export interface InpatientGuideSetting {
+  id: number;
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  showNoticeBanner?: boolean | null;
+  noticeTitle?: string | null;
+  noticeContent?: string | null;
+  noticeAlign?: ('left' | 'center' | 'justify') | null;
+  admissionSteps?:
+    | {
+        enabled?: boolean | null;
+        step: number;
+        title: string;
+        location: string;
+        desc: string;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  visitingHours?:
+    | {
+        enabled?: boolean | null;
+        session: string;
+        timeRange: string;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  belongingsChecklist?:
+    | {
+        enabled?: boolean | null;
+        icon?: string | null;
+        category: string;
+        title: string;
+        desc: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tùy chỉnh tiêu đề, mô tả, thông báo và danh sách các gói khám sức khỏe trên trang /goi-kham.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "checkup-packages-settings".
+ */
+export interface CheckupPackagesSetting {
+  id: number;
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  showNoticeBanner?: boolean | null;
+  noticeTitle?: string | null;
+  noticeContent?: string | null;
+  noticeAlign?: ('left' | 'center' | 'justify') | null;
+  packages?:
+    | {
+        enabled?: boolean | null;
+        badge?: string | null;
+        title: string;
+        targetUser: string;
+        priceText: string;
+        desc: string;
+        features: string;
+        buttonText?: string | null;
+        buttonLink?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tùy chỉnh tiêu đề, mô tả, thông báo, sơ đồ phân tầng và các khu vực tiện ích công cộng trên trang /so-do-benh-vien.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hospital-map-settings".
+ */
+export interface HospitalMapSetting {
+  id: number;
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  showNoticeBanner?: boolean | null;
+  noticeTitle?: string | null;
+  noticeContent?: string | null;
+  noticeAlign?: ('left' | 'center' | 'justify') | null;
+  floors?:
+    | {
+        enabled?: boolean | null;
+        floorName: string;
+        overview: string;
+        rooms: string;
+        id?: string | null;
+      }[]
+    | null;
+  facilities?:
+    | {
+        enabled?: boolean | null;
+        icon?: string | null;
+        name: string;
+        location: string;
+        hours?: string | null;
+        desc?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và cấu hình hiển thị 83 tiêu chí, điểm chất lượng trên trang /chat-luong-benh-vien.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hospital-quality-settings".
+ */
+export interface HospitalQualitySetting {
+  id: number;
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  showNoticeBanner?: boolean | null;
+  noticeTitle?: string | null;
+  noticeContent?: string | null;
+  noticeAlign?: ('left' | 'center' | 'justify') | null;
+  showQualityCards?: boolean | null;
+  showDimensions?: boolean | null;
+  showPrograms?: boolean | null;
+  showFeedbackBox?: boolean | null;
+  /**
+   * Tùy chỉnh số liệu, đơn vị và nhãn của 4 thẻ thống kê chất lượng.
+   */
+  statCards?:
+    | {
+        enabled?: boolean | null;
+        val: string;
+        unit?: string | null;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Chỉnh sửa điểm số, tỷ lệ % và mô tả từng phần tiêu chuẩn (Phần A -> E).
+   */
+  dimensions?:
+    | {
+        enabled?: boolean | null;
+        code: string;
+        title: string;
+        desc: string;
+        score: string;
+        percent: number;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Chỉnh sửa biểu tượng, tiêu đề, mô tả và các gạch đầu dòng điểm nổi bật.
+   */
+  programs?:
+    | {
+        enabled?: boolean | null;
+        iconType?: ('blue' | 'green' | 'amber') | null;
+        title: string;
+        desc: string;
+        highlights?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tùy chỉnh tiêu đề, mô tả, thông báo và các danh mục phòng khám / khoa nội trú dùng cho phiếu khảo sát trên trang /khao-sat.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-page-settings".
+ */
+export interface SurveyPageSetting {
+  id: number;
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  showNoticeBanner?: boolean | null;
+  noticeTitle?: string | null;
+  noticeContent?: string | null;
+  noticeAlign?: ('left' | 'center' | 'justify') | null;
+  /**
+   * Tùy chỉnh bật/tắt, biểu tượng, tiêu đề và mô tả của 3 ô thông tin trên trang /khao-sat.
+   */
+  infoBoxes?:
+    | {
+        enabled?: boolean | null;
+        icon?: string | null;
+        title: string;
+        desc: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Người quản trị có thể thêm mới, chỉnh sửa, xóa các phòng khám ngoại trú. Mỗi dòng là 1 lựa chọn hiển thị trong phiếu khảo sát ngoại trú.
+   */
+  outpatientClinics?: string | null;
+  /**
+   * Danh sách khoa điều trị nội trú. Mỗi dòng là 1 lựa chọn hiển thị trong phiếu khảo sát nội trú.
+   */
+  inpatientDepartments?: string | null;
+  /**
+   * Vị trí công tác của cán bộ nhân viên y tế (Mỗi dòng 1 vị trí).
+   */
+  staffPositions?: string | null;
+  /**
+   * Khối đơn vị công tác của nhân viên y tế (Mỗi dòng 1 khối đơn vị).
+   */
+  staffUnitTypes?: string | null;
+  /**
+   * Danh sách khoa/phòng phân công công tác nhân viên y tế (Mỗi dòng 1 khoa/phòng).
+   */
+  staffDepartments?: string | null;
+  /**
+   * Danh sách gợi ý xã/phường/thị trấn và tỉnh/thành phố khi người bệnh nhập địa chỉ cư trú (Mỗi dòng 1 gợi ý).
+   */
+  areaSuggestions?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tùy chỉnh tiêu đề, mô tả và thông báo lưu ý trên trang /hoi-dap.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-page-settings".
+ */
+export interface FaqPageSetting {
+  id: number;
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  showNoticeBanner?: boolean | null;
+  noticeTitle?: string | null;
+  noticeContent?: string | null;
+  noticeAlign?: ('left' | 'center' | 'justify') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tùy chỉnh tiêu đề, mô tả, thông báo và các ô tiện ích hướng dẫn trên trang /bieu-mau.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms-page-settings".
+ */
+export interface FormsPageSetting {
+  id: number;
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  showNoticeBanner?: boolean | null;
+  noticeTitle?: string | null;
+  noticeContent?: string | null;
+  noticeAlign?: ('left' | 'center' | 'justify') | null;
+  /**
+   * Tùy chỉnh bật/tắt, biểu tượng, tiêu đề và mô tả của 3 ô thông tin trên trang /bieu-mau.
+   */
+  infoBoxes?:
+    | {
+        enabled?: boolean | null;
+        icon?: string | null;
+        title: string;
+        desc: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và 3 ô thông tin hotline/tra cứu/bảo mật trên trang /gop-y và /gop-y/tra-cuu.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedback-page-settings".
+ */
+export interface FeedbackPageSetting {
+  id: number;
+  eyebrow?: string | null;
+  title?: string | null;
+  description?: string | null;
+  showNoticeBanner?: boolean | null;
+  noticeTitle?: string | null;
+  noticeContent?: string | null;
+  noticeAlign?: ('left' | 'center' | 'justify') | null;
+  infoBoxes?:
+    | {
+        enabled?: boolean | null;
+        icon?: string | null;
+        title: string;
+        desc: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * Cấu hình giới hạn upload theo Baseline V1.1. Giai đoạn Foundation tạo nguồn cấu hình tập trung; middleware enforcement sẽ hoàn thiện ở System hardening.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -7726,6 +8226,12 @@ export interface SiteSettingsSelect<T extends boolean = true> {
               desc?: T;
               id?: T;
             };
+        outpatientClinics?: T;
+        inpatientDepartments?: T;
+        staffPositions?: T;
+        staffUnitTypes?: T;
+        staffDepartments?: T;
+        areaSuggestions?: T;
       };
   faqPage?:
     | T
@@ -9034,6 +9540,325 @@ export interface PatientPortalSettingsSelect<T extends boolean = true> {
         primaryBtnText?: T;
         secondaryBtnText?: T;
         secondaryBtnLink?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "examination-flow-settings_select".
+ */
+export interface ExaminationFlowSettingsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  showNoticeBanner?: T;
+  noticeTitle?: T;
+  noticeContent?: T;
+  noticeAlign?: T;
+  showChecklist?: T;
+  showPriority?: T;
+  showSupportBanner?: T;
+  flowTabs?:
+    | T
+    | {
+        enabled?: T;
+        id?: T;
+        label?: T;
+        badgeText?: T;
+        title?: T;
+        summary?: T;
+        steps?:
+          | T
+          | {
+              enabled?: T;
+              step?: T;
+              title?: T;
+              location?: T;
+              timeEstimate?: T;
+              desc?: T;
+              actions?: T;
+              note?: T;
+              isHighlight?: T;
+              isEmergency?: T;
+              id?: T;
+            };
+      };
+  checklists?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        desc?: T;
+        icon?: T;
+        id?: T;
+      };
+  priorities?:
+    | T
+    | {
+        enabled?: T;
+        text?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inpatient-guide-settings_select".
+ */
+export interface InpatientGuideSettingsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  showNoticeBanner?: T;
+  noticeTitle?: T;
+  noticeContent?: T;
+  noticeAlign?: T;
+  admissionSteps?:
+    | T
+    | {
+        enabled?: T;
+        step?: T;
+        title?: T;
+        location?: T;
+        desc?: T;
+        note?: T;
+        id?: T;
+      };
+  visitingHours?:
+    | T
+    | {
+        enabled?: T;
+        session?: T;
+        timeRange?: T;
+        note?: T;
+        id?: T;
+      };
+  belongingsChecklist?:
+    | T
+    | {
+        enabled?: T;
+        icon?: T;
+        category?: T;
+        title?: T;
+        desc?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "checkup-packages-settings_select".
+ */
+export interface CheckupPackagesSettingsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  showNoticeBanner?: T;
+  noticeTitle?: T;
+  noticeContent?: T;
+  noticeAlign?: T;
+  packages?:
+    | T
+    | {
+        enabled?: T;
+        badge?: T;
+        title?: T;
+        targetUser?: T;
+        priceText?: T;
+        desc?: T;
+        features?: T;
+        buttonText?: T;
+        buttonLink?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hospital-map-settings_select".
+ */
+export interface HospitalMapSettingsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  showNoticeBanner?: T;
+  noticeTitle?: T;
+  noticeContent?: T;
+  noticeAlign?: T;
+  floors?:
+    | T
+    | {
+        enabled?: T;
+        floorName?: T;
+        overview?: T;
+        rooms?: T;
+        id?: T;
+      };
+  facilities?:
+    | T
+    | {
+        enabled?: T;
+        icon?: T;
+        name?: T;
+        location?: T;
+        hours?: T;
+        desc?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hospital-quality-settings_select".
+ */
+export interface HospitalQualitySettingsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  showNoticeBanner?: T;
+  noticeTitle?: T;
+  noticeContent?: T;
+  noticeAlign?: T;
+  showQualityCards?: T;
+  showDimensions?: T;
+  showPrograms?: T;
+  showFeedbackBox?: T;
+  statCards?:
+    | T
+    | {
+        enabled?: T;
+        val?: T;
+        unit?: T;
+        label?: T;
+        id?: T;
+      };
+  dimensions?:
+    | T
+    | {
+        enabled?: T;
+        code?: T;
+        title?: T;
+        desc?: T;
+        score?: T;
+        percent?: T;
+        id?: T;
+      };
+  programs?:
+    | T
+    | {
+        enabled?: T;
+        iconType?: T;
+        title?: T;
+        desc?: T;
+        highlights?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-page-settings_select".
+ */
+export interface SurveyPageSettingsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  showNoticeBanner?: T;
+  noticeTitle?: T;
+  noticeContent?: T;
+  noticeAlign?: T;
+  infoBoxes?:
+    | T
+    | {
+        enabled?: T;
+        icon?: T;
+        title?: T;
+        desc?: T;
+        id?: T;
+      };
+  outpatientClinics?: T;
+  inpatientDepartments?: T;
+  staffPositions?: T;
+  staffUnitTypes?: T;
+  staffDepartments?: T;
+  areaSuggestions?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-page-settings_select".
+ */
+export interface FaqPageSettingsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  showNoticeBanner?: T;
+  noticeTitle?: T;
+  noticeContent?: T;
+  noticeAlign?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "forms-page-settings_select".
+ */
+export interface FormsPageSettingsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  showNoticeBanner?: T;
+  noticeTitle?: T;
+  noticeContent?: T;
+  noticeAlign?: T;
+  infoBoxes?:
+    | T
+    | {
+        enabled?: T;
+        icon?: T;
+        title?: T;
+        desc?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "feedback-page-settings_select".
+ */
+export interface FeedbackPageSettingsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  showNoticeBanner?: T;
+  noticeTitle?: T;
+  noticeContent?: T;
+  noticeAlign?: T;
+  infoBoxes?:
+    | T
+    | {
+        enabled?: T;
+        icon?: T;
+        title?: T;
+        desc?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

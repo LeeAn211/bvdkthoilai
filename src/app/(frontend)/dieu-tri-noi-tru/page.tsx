@@ -91,12 +91,14 @@ const DEFAULT_ITEMS = [
 ]
 
 export default async function InpatientPage() {
-  let siteSettings: any = {}
+  let ipPage: any = {}
   try {
-    siteSettings = await getGlobal('site-settings').catch(() => ({}))
+    const [specPage, siteSettings] = await Promise.all([
+      getGlobal('inpatient-guide-settings' as any).catch(() => null),
+      getGlobal('site-settings').catch(() => ({})),
+    ])
+    ipPage = (specPage && Object.keys(specPage).length > 0) ? specPage : (siteSettings?.inpatientPage || {})
   } catch {}
-
-  const ipPage = siteSettings?.inpatientPage || {}
   const eyebrow = ipPage.eyebrow || 'HƯỚNG DẪN DÀNH CHO NGƯỜI BỆNH'
   const title = ipPage.title || 'Hướng dẫn Điều trị Nội trú'
   const description =

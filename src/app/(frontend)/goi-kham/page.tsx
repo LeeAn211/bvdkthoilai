@@ -84,12 +84,14 @@ const DEFAULT_PACKAGES = [
 ]
 
 export default async function CheckupPackagesPage() {
-  let siteSettings: any = {}
+  let pkgPage: any = {}
   try {
-    siteSettings = await getGlobal('site-settings').catch(() => ({}))
+    const [specPage, siteSettings] = await Promise.all([
+      getGlobal('checkup-packages-settings' as any).catch(() => null),
+      getGlobal('site-settings').catch(() => ({})),
+    ])
+    pkgPage = (specPage && Object.keys(specPage).length > 0) ? specPage : (siteSettings?.checkupPackagesPage || {})
   } catch {}
-
-  const pkgPage = siteSettings?.checkupPackagesPage || {}
   const eyebrow = pkgPage.eyebrow || 'CHỦ ĐỘNG BẢO VỆ SỨC KHỎE'
   const title = pkgPage.title || 'Gói Khám Sức khỏe & Tầm soát Bệnh lý'
   const description =

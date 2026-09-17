@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import AdminCharts, { MonthData, DepartmentStat } from './AdminCharts'
 import AdminDashboardCustomizer, { CardItem, ChartVisibility } from './AdminDashboardCustomizer'
+import SurveyQuickToolbar from './SurveyQuickToolbar'
 import styles from './AdminDashboard.module.css'
 
 export type GlyphName =
@@ -282,6 +283,11 @@ export default function AdminDashboardClient({
         feedbackDonePercent={feedbackDonePercent}
         feedbackProcessingPercent={feedbackProcessingPercent}
       />
+
+      {/* 2.3. Bảng Thống Kê Khảo Sát & Xuất Excel Theo Từng Đợt (Chăm sóc người bệnh & Khảo sát) */}
+      <div style={{ marginTop: 24 }}>
+        <SurveyQuickToolbar />
+      </div>
 
       {/* 2.5. Modern Segmented Tab Navigation Hub */}
       <nav className={styles.tabNavContainer} aria-label="Bộ lọc phân hệ quản trị">

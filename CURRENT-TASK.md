@@ -1,31 +1,61 @@
 # CURRENT-TASK
 
 ## Mục tiêu
-1. Thiết kế trang và mẫu khảo sát ý kiến người bệnh ngoại trú theo Mẫu số 2 của Bộ Y tế (https://hailong.chatluongbenhvien.vn/nguoi-benh-ngoai-tru-v2).
-2. Thiết kế trang và mẫu khảo sát ý kiến người bệnh nội trú theo Mẫu số 1 của Bộ Y tế (https://hailong.chatluongbenhvien.vn/nguoi-benh-noi-tru-v2).
-3. Thiết kế trang và mẫu khảo sát ý kiến & sự hài lòng của nhân viên y tế theo Mẫu số 3 của Bộ Y tế (QĐ 3869/QĐ-BYT).
+Tách độc lập toàn bộ các trang nội dung bài viết và cấu hình dành cho người bệnh ra khỏi mục "Cấu hình Website & Nhận diện" (`SiteSettings`), chuyển sang đúng các phân nhóm chuyên môn trong Admin CMS (`🏥 Khám bệnh & Dịch vụ Y tế` và `💬 Chăm sóc người bệnh & Khảo sát`), đồng thời ẩn/dọn sạch các trường này trong `SiteSettings`.
 
 ## Trạng thái: HOÀN THÀNH
 
 ## Files liên quan
-- `src/components/OutpatientSurveyForm.tsx` [NEW]
-- `src/components/InpatientSurveyForm.tsx` [NEW]
-- `src/components/StaffSurveyForm.tsx` [NEW]
-- `src/app/(frontend)/khao-sat/ngoai-tru/page.tsx` [NEW]
-- `src/app/(frontend)/khao-sat/noi-tru/page.tsx` [NEW]
-- `src/app/(frontend)/khao-sat/nhan-vien/page.tsx` [NEW]
-- `src/app/(frontend)/khao-sat/[slug]/page.tsx` [MODIFY]
+- `src/globals/ExaminationFlowSettings.ts` [NEW]
+- `src/globals/InpatientGuideSettings.ts` [NEW]
+- `src/globals/CheckupPackagesSettings.ts` [NEW]
+- `src/globals/HospitalMapSettings.ts` [NEW]
+- `src/globals/HospitalQualitySettings.ts` [NEW]
+- `src/globals/SurveyPageSettings.ts` [NEW]
+- `src/globals/FaqPageSettings.ts` [NEW]
+- `src/globals/FormsPageSettings.ts` [NEW]
+- `src/globals/FeedbackPageSettings.ts` [NEW]
+- `src/globals/SiteSettings.ts` [MODIFY]
+- `payload.config.ts` [MODIFY]
+- `src/app/(frontend)/quy-trinh-kham-benh/page.tsx` [MODIFY]
+- `src/app/(frontend)/dieu-tri-noi-tru/page.tsx` [MODIFY]
+- `src/app/(frontend)/goi-kham/page.tsx` [MODIFY]
+- `src/app/(frontend)/so-do-benh-vien/page.tsx` [MODIFY]
+- `src/app/(frontend)/chat-luong-benh-vien/page.tsx` [MODIFY]
 - `src/app/(frontend)/khao-sat/page.tsx` [MODIFY]
-- `src/app/(frontend)/api/surveys/outpatient/route.ts` [NEW]
-- `src/app/(frontend)/api/surveys/inpatient/route.ts` [NEW]
-- `src/app/(frontend)/api/surveys/staff/route.ts` [NEW]
-- `src/app/styles/outpatient-survey.css` [NEW]
-- `src/app/(frontend)/layout.tsx` [MODIFY]
+- `src/app/(frontend)/khao-sat/ngoai-tru/page.tsx` [MODIFY]
+- `src/app/(frontend)/khao-sat/noi-tru/page.tsx` [MODIFY]
+- `src/app/(frontend)/khao-sat/nhan-vien/page.tsx` [MODIFY]
+- `src/app/(frontend)/hoi-dap/page.tsx` [MODIFY]
+- `src/app/(frontend)/bieu-mau/page.tsx` [MODIFY]
+- `src/app/(frontend)/gop-y/page.tsx` [MODIFY]
+- `scripts/db-migrations/20260917_022_create_independent_patient_care_globals_tables.mjs` [NEW]
+- `scripts/db-schema-contract.json` [MODIFY]
 - `CHANGELOG.md` [MODIFY]
+- `CURRENT-TASK.md` [MODIFY]
 
 ## Kết quả đạt được
-- **Khảo sát Ngoại trú (Mẫu 2 BYT - `/khao-sat/ngoai-tru`)**: 19 câu hỏi thuộc 5 nhóm A-E, thông tin chung phòng khám, thanh đo %, Likert 1-5 sao/emoji, đánh giá thang điểm 10, cấp mã `KS-NT-2026-XXXX`.
-- **Khảo sát Nội trú (Mẫu 1 BYT - `/khao-sat/noi-tru`)**: 20 câu hỏi thuộc 5 nhóm A-E (tiếp cận, buồng bệnh, thuốc/viện phí, điều dưỡng chăm sóc, kết quả điều trị), thông tin số ngày nằm viện và khoa điều trị nội trú, thanh đo %, Likert 1-5 sao/emoji, đánh giá thang điểm 10, cấp mã `KS-NOITRU-2026-XXXX`.
-- **Khảo sát Nhân viên Y tế (Mẫu 3 BYT - `/khao-sat/nhan-vien`)**: 19 câu hỏi thuộc 5 nhóm A-E (môi trường làm việc, lãnh đạo & đồng nghiệp, quy chế tiền lương/đãi ngộ, cơ hội học tập/thăng tiến, hài lòng chung & gắn bó), thông tin vị trí chuyên môn, khối đơn vị, thâm niên công tác, thanh đo %, Likert 1-5 sao/emoji, đánh giá thang điểm 10, cấp mã `KS-NVYT-2026-XXXX`.
-- Cả 3 trang đều tương thích hoàn hảo trên điện thoại và máy tính, bảo mật 100% ẩn danh, hỗ trợ nút đánh giá nhanh tiện dụng.
-- Tất cả các endpoint API và route trang đều phản hồi HTTP 200 OK.
+1. **Tách riêng 9 mục Global độc lập vào đúng phân nhóm chuẩn y tế trong Admin CMS:**
+   - **Phân nhóm `🏥 Khám bệnh & Dịch vụ Y tế`:**
+     - `Trang Quy trình Khám bệnh` (`examination-flow-settings`)
+     - `Trang Hướng dẫn Điều trị Nội trú` (`inpatient-guide-settings`)
+     - `Trang Gói Khám Sức khỏe & Tầm soát` (`checkup-packages-settings`)
+     - `Trang Sơ đồ & Chỉ dẫn Khoa/Phòng` (`hospital-map-settings`)
+     - `Trang Cổng người bệnh` (`patient-portal-settings`)
+   - **Phân nhóm `💬 Chăm sóc người bệnh & Khảo sát`:**
+     - `Trang Chất lượng Bệnh viện` (`hospital-quality-settings`)
+     - `Trang Khảo sát Ý kiến` (`survey-page-settings`)
+     - `Trang Hỏi đáp Y tế (FAQ)` (`faq-page-settings`)
+     - `Trang Biểu mẫu Điện tử` (`forms-page-settings`)
+     - `Trang Góp ý – Phản ánh` (`feedback-page-settings`)
+2. **Dọn sạch mục "Cấu hình Website & Nhận diện" (`SiteSettings`):**
+   - Đã đặt `admin: { hidden: true }` cho toàn bộ các group: `examinationFlowPage`, `qualityPage`, `surveyPage`, `faqPage`, `formsPage`, `patientPortalPage`, `inpatientPage`, `checkupPackagesPage`, `hospitalMapPage`.
+   - Admin CMS mục "Cấu hình Website & Nhận diện" giờ đây thanh thoát, chuyên biệt chỉ dành cho: Logo, Tên BV, Slogan, Header, Footer, Chữ chạy Ticker, Email SMTP, Google Maps.
+3. **Cơ chế tải dữ liệu Frontend với fallback 2 lớp an toàn:**
+   - Các trang frontend ưu tiên đọc dữ liệu từ Global độc lập mới tương ứng.
+   - Nếu Global mới chưa có dữ liệu cấu hình, tự động fallback về dữ liệu trong `siteSettings` hoặc dữ liệu mẫu y tế mặc định.
+4. **Đồng bộ Cơ sở dữ liệu và Schema Contract tự động:**
+   - Tạo migration `20260917_022_create_independent_patient_care_globals_tables.mjs`.
+   - Đã deploy và verify thành công trên PostgreSQL.
+   - Seal schema contract và kiểm tra `npm run db:schema:check` đạt 100% hợp lệ.
+   - Toàn bộ các trang frontend và trang Admin `/admin` đều phản hồi mã `200 OK`.

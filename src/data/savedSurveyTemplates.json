@@ -1,0 +1,14 @@
+[
+  {
+    "id": "custom-tpl-1789632929122",
+    "title": "Test",
+    "description": "",
+    "createdAt": "2026-09-17T08:15:29.122Z",
+    "questions": [
+      {
+        "code": "C1",
+        "question": "Q1"
+      }
+    ]
+  }
+]

@@ -71,19 +71,70 @@ export const STAFF_SURVEY_SECTIONS = [
   },
 ]
 
-export default function StaffSurveyForm() {
+interface StaffSurveyFormProps {
+  customPositions?: string[]
+  customUnitTypes?: string[]
+  customDepartments?: string[]
+}
+
+export default function StaffSurveyForm({
+  customPositions,
+  customUnitTypes,
+  customDepartments,
+}: StaffSurveyFormProps = {}) {
   const [busy, setBusy] = useState(false)
   const [doneData, setDoneData] = useState<{ code: string; overallScore?: number } | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
+
+  // Danh sách vị trí chuyên môn: Dùng từ CMS nếu có
+  const positionsList = useMemo(() => {
+    if (customPositions && customPositions.length > 0) return customPositions
+    return [
+      'Bác sĩ điều trị',
+      'Điều dưỡng / Hộ sinh',
+      'Dược sĩ',
+      'Kỹ thuật viên y (Xét nghiệm / CĐHA)',
+      'Chuyên viên / Nhân viên phòng chức năng',
+      'Lãnh đạo Khoa / Phòng',
+      'Nhân viên hỗ trợ khác',
+    ]
+  }, [customPositions])
+
+  // Danh sách khối đơn vị: Dùng từ CMS nếu có
+  const unitTypesList = useMemo(() => {
+    if (customUnitTypes && customUnitTypes.length > 0) return customUnitTypes
+    return [
+      'Khoa Lâm sàng (Nội, Ngoại, Sản, Nhi, Cấp cứu...)',
+      'Khoa Cận lâm sàng (Xét nghiệm, CĐHA, Dược...)',
+      'Phòng Chức năng (KHTH, TCCB, TCKT, QLCL, ĐD...)',
+    ]
+  }, [customUnitTypes])
+
+  // Danh sách khoa phòng trực thuộc: Dùng từ CMS nếu có
+  const departmentsList = useMemo(() => {
+    if (customDepartments && customDepartments.length > 0) return customDepartments
+    return [
+      'Khoa Khám bệnh',
+      'Khoa Cấp cứu - Hồi sức tích cực',
+      'Khoa Nội tổng hợp',
+      'Khoa Ngoại tổng hợp',
+      'Khoa Phụ sản',
+      'Khoa Nhi',
+      'Khoa Y học cổ truyền & PHCN',
+      'Khoa Dược',
+      'Khoa Xét nghiệm & CĐHA',
+      'Khối các Phòng chức năng',
+    ]
+  }, [customDepartments])
 
   // Thông tin hành chính (Section I)
   const [demographics, setDemographics] = useState({
     gender: 'Nam',
     ageGroup: '30 - 45 tuổi',
-    position: 'Bác sĩ điều trị',
-    unitType: 'Khoa Lâm sàng',
+    position: positionsList[0] || 'Bác sĩ điều trị',
+    unitType: unitTypesList[0] || 'Khoa Lâm sàng',
     yearsOfExperience: '5 - 10 năm',
-    department: 'Khoa Nội tổng hợp',
+    department: departmentsList[0] || 'Khoa Nội tổng hợp',
   })
 
   // Điểm số 1-5 cho 19 câu hỏi Phần A -> E
@@ -135,9 +186,20 @@ export default function StaffSurveyForm() {
     // Kiểm tra xem đã chấm điểm đầy đủ chưa
     const missing = allQuestions.filter(q => !ratings[q.id])
     if (missing.length > 0) {
-      setErrorMsg(`Đồng chí vui lòng đánh giá đầy đủ tất cả các tiêu chí. Còn ${missing.length} câu chưa chọn (ví dụ: ${missing[0].id}).`)
+      setErrorMsg(`⚠️ Đồng chí vui lòng đánh giá đầy đủ tất cả các tiêu chí trước khi gửi. Còn ${missing.length} câu chưa chọn (ví dụ: Tiêu chí ${missing[0].id}).`)
       const el = document.getElementById(`q-${missing[0].id}`)
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        el.style.border = '2px solid #ef4444'
+        el.style.borderRadius = '12px'
+        el.style.padding = '12px'
+        el.style.boxShadow = '0 0 0 4px rgba(239, 68, 68, 0.2)'
+        setTimeout(() => {
+          el.style.border = ''
+          el.style.padding = ''
+          el.style.boxShadow = ''
+        }, 3000)
+      }
       return
     }
 
@@ -247,11 +309,9 @@ export default function StaffSurveyForm() {
       </div>
 
       {errorMsg && (
-        <div className="patientCareNoticeBanner" style={{ background: '#fef2f2', borderColor: '#fca5a5', borderLeftColor: '#ef4444', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#b91c1c', fontWeight: 700, fontSize: '14.5px' }}>
-            <span>⚠️</span>
-            <span>{errorMsg}</span>
-          </div>
+        <div className="surveyMissingWarningBanner">
+          <span style={{ fontSize: '20px' }}>⚠️</span>
+          <span style={{ color: '#b91c1c', fontWeight: 700, fontSize: '15px' }}>{errorMsg}</span>
         </div>
       )}
 
@@ -310,13 +370,9 @@ export default function StaffSurveyForm() {
                 value={demographics.position}
                 onChange={e => setDemographics(p => ({ ...p, position: e.target.value }))}
               >
-                <option value="Bác sĩ điều trị">Bác sĩ điều trị</option>
-                <option value="Điều dưỡng / Hộ sinh">Điều dưỡng / Hộ sinh</option>
-                <option value="Dược sĩ">Dược sĩ</option>
-                <option value="Kỹ thuật viên y">Kỹ thuật viên xét nghiệm / CĐHA</option>
-                <option value="Chuyên viên / Nhân viên hành chính">Chuyên viên / Nhân viên phòng chức năng</option>
-                <option value="Lãnh đạo khoa / phòng">Lãnh đạo Khoa / Phòng</option>
-                <option value="Khác">Nhân viên hỗ trợ khác</option>
+                {positionsList.map((pos, idx) => (
+                  <option key={idx} value={pos}>{pos}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -330,9 +386,9 @@ export default function StaffSurveyForm() {
                 value={demographics.unitType}
                 onChange={e => setDemographics(p => ({ ...p, unitType: e.target.value }))}
               >
-                <option value="Khoa Lâm sàng">Khoa Lâm sàng (Nội, Ngoại, Sản, Nhi, Cấp cứu...)</option>
-                <option value="Khoa Cận lâm sàng">Khoa Cận lâm sàng (Xét nghiệm, CĐHA, Dược...)</option>
-                <option value="Phòng Chức năng">Phòng Chức năng (KHTH, TCCB, TCKT, QLCL, ĐD...)</option>
+                {unitTypesList.map((ut, idx) => (
+                  <option key={idx} value={ut}>{ut}</option>
+                ))}
               </select>
             </div>
 
@@ -359,16 +415,9 @@ export default function StaffSurveyForm() {
                 value={demographics.department}
                 onChange={e => setDemographics(p => ({ ...p, department: e.target.value }))}
               >
-                <option value="Khoa Khám bệnh">Khoa Khám bệnh</option>
-                <option value="Khoa Cấp cứu - Hồi sức tích cực">Khoa Cấp cứu - Hồi sức tích cực</option>
-                <option value="Khoa Nội tổng hợp">Khoa Nội tổng hợp</option>
-                <option value="Khoa Ngoại tổng hợp">Khoa Ngoại tổng hợp</option>
-                <option value="Khoa Phụ sản">Khoa Phụ sản</option>
-                <option value="Khoa Nhi">Khoa Nhi</option>
-                <option value="Khoa Y học cổ truyền - PHCN">Khoa Y học cổ truyền & PHCN</option>
-                <option value="Khoa Dược">Khoa Dược</option>
-                <option value="Khoa Xét nghiệm - CĐHA">Khoa Xét nghiệm & CĐHA</option>
-                <option value="Khối các Phòng chức năng">Khối các Phòng chức năng</option>
+                {departmentsList.map((dep, idx) => (
+                  <option key={idx} value={dep}>{dep}</option>
+                ))}
               </select>
             </div>
           </div>

@@ -119,18 +119,26 @@ Một task chỉ được xem là hoàn thành khi:
   - **Dòng mô tả (`p`)**: Cỡ chữ `14px`, màu xanh sáng `#e2f1fc`, line-height `1.5`, chiều rộng khung `max-width: 1000px`, trải dài tự nhiên và **tuyệt đối không để rớt từ mồ côi**.
   - **Nhãn Eyebrow**: Nếu có, in hoa thanh thoát (`12px`, font-weight `700`, màu `#bae6fd`, letter-spacing `0.5px`).
 
-## 13. Nguyên tắc bắt buộc: Thiết kế trang xong PHẢI đưa vào Admin CMS (MANDATORY ADMIN CMS INTEGRATION):
-- **13.1. Bắt buộc 100% trang mới phải quản trị được từ Admin CMS**:
-  - Mỗi khi thiết kế hoặc xây dựng bất kỳ trang nào (trang danh mục, trang chức năng, trang hướng dẫn, v.v.), **TUYỆT ĐỐI KHÔNG ĐƯỢC DỪNG LẠI Ở VIỆC HARDCODE GIAO DIỆN**.
-  - Bắt buộc phải đưa cấu hình quản trị của trang đó vào Admin CMS (Global `SiteSettings.ts` hoặc Global riêng tương ứng).
-- **13.2. Các mục tối thiểu bắt buộc phải đưa vào Admin CMS**:
-  - **Phần Banner Hero đầu trang**: `eyebrow` (nhãn nhỏ), `title` (tiêu đề trang), `description` (đoạn mô tả).
+## 13. Nguyên tắc bắt buộc: Thiết kế trang mới PHẢI đưa vào Admin CMS dưới dạng Global / Collection độc lập và PHẢI loại khỏi SiteSettings (MANDATORY INDEPENDENT PAGE GLOBALS & EXCLUSION FROM SITESETTINGS):
+- **13.1. Bắt buộc 100% trang mới phải quản trị được từ Admin CMS dưới dạng Global / Collection độc lập**:
+  - Mỗi khi thiết kế hoặc xây dựng bất kỳ trang nào (trang danh mục, trang chức năng, trang hướng dẫn, trang dịch vụ, v.v.):
+    - **TUYỆT ĐỐI KHÔNG ĐƯỢC DỪNG LẠI Ở VIỆC HARDCODE GIAO DIỆN HOẶC NỘI DUNG MẪU.**
+    - **TUYỆT ĐỐI KHÔNG NHỒI NHÉT THÊM TRANG MỚI VÀO "CẤU HÌNH WEBSITE & NHẬN DIỆN" (`SiteSettings.ts`)**: Mục `SiteSettings` chỉ dành riêng cho cấu hình nhận diện thương hiệu toàn viện (Logo, Tên BV, Slogan, Header, Footer, Ticker chữ chạy, Email SMTP, Bản đồ Google Maps).
+    - **BẮT BUỘC PHẢI TẠO GLOBAL HOẶC COLLECTION ĐỘC LẬP RIÊNG BIỆT** (ví dụ `InpatientGuideSettings.ts`, `HospitalMapSettings.ts`, v.v.) và xếp vào đúng phân nhóm chuyên môn trực quan (như `🏥 Khám bệnh & Dịch vụ Y tế`, `💬 Chăm sóc người bệnh & Khảo sát`, `🛡️ Quản trị & Hệ thống`,...).
+- **13.2. Các mục tối thiểu bắt buộc phải đưa vào Admin CMS của từng trang**:
+  - **Phần Banner Hero đầu trang**: `eyebrow` (nhãn nhỏ), `title` (tiêu đề trang), `description` (đoạn mô tả, hỗ trợ Enter xuống dòng).
   - **Bảng Thông báo / Lưu ý quan trọng (Notice Banner)**: Checkbox bật/tắt (`showNoticeBanner`), `noticeTitle`, `noticeContent` (hỗ trợ xuống dòng tự do `white-space: pre-line`), `noticeAlign` (canh trái/giữa/đều).
-  - **Công tắc bật/tắt độc lập từng khối (Granular Toggles)**: Tất cả các khối nội dung, danh mục, checklist, banner liên kết hoặc widget phụ trên trang đều phải có checkbox `show...` riêng biệt để người quản trị có thể chủ động ẩn/hiện theo nhu cầu thực tế.
-- **13.3. Quy trình đồng bộ Database an toàn đi kèm**:
-  - Khi thêm trường cấu hình mới vào Global, phải tuân thủ nghiêm ngặt **Mục 6 (DATABASE SYNC MANDATE)**:
-    - Thêm cột bằng SQL an toàn (`ALTER TABLE <table_name> ADD COLUMN IF NOT EXISTS ...`).
-    - Thêm kiểu enum nếu có bằng SQL an toàn (`IF NOT EXISTS`).
+  - **Công tắc bật/tắt độc lập từng khối (Granular Toggles)**: Tất cả các khối nội dung, danh mục, checklist, card dịch vụ, biểu mẫu, banner liên kết hoặc widget phụ trên trang đều phải có checkbox `enabled` / `show...` riêng biệt để người quản trị có thể chủ động ẩn/hiện theo nhu cầu thực tế.
+  - **Quản trị mảng nội dung động (Dynamic Content Arrays)**: Các danh sách bước hướng dẫn, gói khám, tầng sơ đồ, câu hỏi FAQ, biểu mẫu giấy tờ... phải quản lý dạng mảng (`array`) có đầy đủ các trường chi tiết, cho phép thêm mới không giới hạn, chỉnh sửa hoặc kéo thả đổi thứ tự trực tiếp trong CMS.
+- **13.3. Cơ chế tải dữ liệu Frontend 2 lớp an toàn (Safe Two-Layer Fallback)**:
+  - Frontend luôn ưu tiên nạp dữ liệu từ Global độc lập mới tương ứng.
+  - Luôn có cơ chế Fallback về dữ liệu mẫu soạn sẵn chuẩn y tế (Default Fallback Object) khi CMS chưa có dữ liệu hoặc đang trống, đảm bảo giao diện luôn hiển thị hoàn chỉnh, không bao giờ bị trắng trang hay lỗi 500.
+- **13.4. Quy trình đóng gói Database Migration bắt buộc đi kèm**:
+  - Khi tạo Global / Collection mới, bắt buộc tuân thủ nghiêm ngặt **Mục 15 (DB MIGRATION PACKAGING)**:
+    - Sinh schema: `npm run generate:db-schema`.
+    - Tạo file migration: `scripts/db-migrations/YYYYMMDD_NNN_...mjs` tạo đầy đủ bảng, bảng phụ mảng, enum và verify.
+    - Seal contract: `npm run db:schema:seal -- <migration_id>` và kiểm tra `npm run db:schema:check`.
+    - Deploy tại local: `npm run db:migrate:deploy`.
     - Giữ `PAYLOAD_DB_PUSH=false` để server chạy mượt mà, không gián đoạn kết nối.
 
 ## 14. Nguyên tắc bắt buộc: Chống lệch tên cột Database & Cô lập lỗi tải dữ liệu (DATABASE FIELD INTEGRITY & FAULT ISOLATION MANDATE):

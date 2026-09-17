@@ -1,0 +1,120 @@
+import type { GlobalConfig } from 'payload'
+import { admins } from '@/access'
+
+export const ExaminationFlowSettings: GlobalConfig = {
+  slug: 'examination-flow-settings',
+  label: 'Trang Quy trình khám bệnh',
+  admin: {
+    group: '🏥 Khám bệnh & Dịch vụ Y tế',
+    description: 'Tùy chỉnh tiêu đề, mô tả, thông báo lưu ý và chi tiết các bước trong quy trình khám BHYT, dịch vụ, cấp cứu trên trang /quy-trinh-kham-benh.',
+  },
+  access: { read: () => true, update: admins },
+  fields: [
+    { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'HƯỚNG DẪN DÀNH CHO NGƯỜI BỆNH' },
+    { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Quy trình Khám chữa bệnh' },
+    { name: 'description', label: 'Mô tả trang', type: 'textarea', defaultValue: 'Sơ đồ và các bước hướng dẫn người bệnh khi đến thăm khám có thẻ BHYT, khám thu phí dịch vụ hoặc tiếp nhận cấp cứu tại Bệnh viện Đa khoa Khu vực Thới Lai.' },
+    {
+      name: 'showNoticeBanner',
+      label: 'Bật thông báo đầu trang quy trình',
+      type: 'checkbox',
+      defaultValue: false,
+    },
+    {
+      name: 'noticeTitle',
+      label: 'Tiêu đề thông báo lưu ý',
+      type: 'text',
+      defaultValue: 'Lưu ý khi đến khám tại Bệnh viện Đa khoa Khu vực Thới Lai',
+    },
+    {
+      name: 'noticeContent',
+      label: 'Nội dung thông báo (Hỗ trợ Enter xuống dòng)',
+      type: 'textarea',
+      defaultValue: '• Người bệnh có thẻ BHYT đúng tuyến hoặc thông tuyến được hưởng đầy đủ quyền lợi chi trả.\n• Bệnh viện tiếp nhận khám sớm từ 06:30 tại các khoa chuyên môn trọng điểm.\n• Người cao tuổi, phụ nữ mang thai và trẻ nhỏ được cấp số ưu tiên tiếp đón.',
+    },
+    {
+      name: 'noticeAlign',
+      label: 'Canh lề bảng lưu ý',
+      type: 'select',
+      defaultValue: 'left',
+      options: [
+        { label: 'Canh trái (Mặc định)', value: 'left' },
+        { label: 'Canh giữa', value: 'center' },
+        { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+      ],
+    },
+    {
+      name: 'showChecklist',
+      label: 'Hiển thị khối giấy tờ cần chuẩn bị',
+      type: 'checkbox',
+      defaultValue: true,
+    },
+    {
+      name: 'showPriority',
+      label: 'Hiển thị khối đối tượng ưu tiên tiếp đón',
+      type: 'checkbox',
+      defaultValue: true,
+    },
+    {
+      name: 'showSupportBanner',
+      label: 'Hiển thị banner đặt hẹn & cấp cứu',
+      type: 'checkbox',
+      defaultValue: true,
+    },
+    {
+      name: 'flowTabs',
+      label: 'Danh sách các Tab Quy trình khám bệnh',
+      type: 'array',
+      labels: { singular: 'Tab quy trình', plural: 'Các tab quy trình' },
+      admin: { description: 'Tùy chỉnh bật/tắt từng tab quy trình (Khám BHYT, Khám Dịch vụ, Cấp cứu 24/24...) và chỉnh sửa chi tiết các bước trong mỗi tab.' },
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị Tab này', type: 'checkbox', defaultValue: true },
+        { name: 'id', label: 'Mã Tab (id)', type: 'text', required: true, admin: { placeholder: 'bhyt, dich-vu, cap-cuu...' } },
+        { name: 'label', label: 'Tên hiển thị trên nút Tab', type: 'text', required: true },
+        { name: 'badgeText', label: 'Dòng nhãn nổi bật (Badge)', type: 'text' },
+        { name: 'title', label: 'Tiêu đề quy trình', type: 'text', required: true },
+        { name: 'summary', label: 'Tóm tắt quy trình (Hỗ trợ Enter)', type: 'textarea', required: true },
+        {
+          name: 'steps',
+          label: 'Các bước thực hiện trong quy trình',
+          type: 'array',
+          labels: { singular: 'Bước quy trình', plural: 'Các bước quy trình' },
+          fields: [
+            { name: 'enabled', label: 'Bật bước này', type: 'checkbox', defaultValue: true },
+            { name: 'step', label: 'Số thứ tự bước', type: 'number', required: true },
+            { name: 'title', label: 'Tiêu đề bước', type: 'text', required: true },
+            { name: 'location', label: 'Địa điểm / Phòng thực hiện', type: 'text', required: true },
+            { name: 'timeEstimate', label: 'Thời gian ước tính', type: 'text', admin: { placeholder: 'VD: 3 – 5 phút' } },
+            { name: 'desc', label: 'Mô tả chi tiết bước', type: 'textarea', required: true },
+            { name: 'actions', label: 'Các hành động cụ thể (Mỗi dòng 1 gạch đầu dòng, nhấn Enter để xuống dòng)', type: 'textarea' },
+            { name: 'note', label: 'Ghi chú quan trọng (Lưu ý)', type: 'text' },
+            { name: 'isHighlight', label: 'Làm nổi bật bước này', type: 'checkbox', defaultValue: false },
+            { name: 'isEmergency', label: 'Đánh dấu bước khẩn cấp / cấp cứu', type: 'checkbox', defaultValue: false },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'checklists',
+      label: 'Danh sách giấy tờ cần chuẩn bị (Checklist)',
+      type: 'array',
+      labels: { singular: 'Giấy tờ cần chuẩn bị', plural: 'Các giấy tờ cần chuẩn bị' },
+      admin: { description: 'Tùy chỉnh bật/tắt hoặc chỉnh sửa nội dung từng loại giấy tờ cần mang theo.' },
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị', type: 'checkbox', defaultValue: true },
+        { name: 'title', label: 'Tên giấy tờ', type: 'text', required: true },
+        { name: 'desc', label: 'Mô tả chi tiết', type: 'textarea', required: true },
+        { name: 'icon', label: 'Biểu tượng (id, card, file, medical)', type: 'text', defaultValue: 'id' },
+      ],
+    },
+    {
+      name: 'priorities',
+      label: 'Danh sách đối tượng ưu tiên tiếp đón',
+      type: 'array',
+      labels: { singular: 'Đối tượng ưu tiên', plural: 'Các đối tượng ưu tiên' },
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị', type: 'checkbox', defaultValue: true },
+        { name: 'text', label: 'Mô tả đối tượng ưu tiên', type: 'text', required: true },
+      ],
+    },
+  ],
+}

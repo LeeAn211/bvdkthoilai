@@ -399,7 +399,7 @@ export default async function AdminDashboard() {
       badge: `${surveys} đợt đang mở`,
       badgeType: 'info',
       subtext: 'Đánh giá chất lượng bệnh viện theo chuẩn Bộ Y tế',
-      href: '/admin/collections/survey-responses',
+      href: '/admin/collections/survey-campaigns',
       createHref: '/admin/collections/survey-campaigns/create',
       icon: 'survey',
       categoryGroup: 'cskh',

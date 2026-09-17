@@ -1,5 +1,436 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-17] - Tách Độc Lập Các Trang Dành Cho Người Bệnh Ra Khỏi "Cấu Hình Website & Nhận Diện" Sang Đúng Phân Nhóm Chuyên Môn
+
+- **Thời gian thực hiện:** 16:35 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Tách các trang nội dung, bài viết và cấu hình chức năng của các tab dành cho người bệnh ra khỏi mục **Cấu hình Website & Nhận diện** (`SiteSettings`).
+  - Đưa về đúng 2 phân nhóm chuyên môn trực quan trong Admin CMS:
+    1. **`🏥 Khám bệnh & Dịch vụ Y tế`**:
+       - `Trang Quy trình Khám bệnh` (`examination-flow-settings`)
+       - `Trang Hướng dẫn Điều trị Nội trú` (`inpatient-guide-settings`)
+       - `Trang Gói Khám Sức khỏe & Tầm soát` (`checkup-packages-settings`)
+       - `Trang Sơ đồ & Chỉ dẫn Khoa/Phòng` (`hospital-map-settings`)
+       - `Trang Cổng người bệnh` (`patient-portal-settings`)
+    2. **`💬 Chăm sóc người bệnh & Khảo sát`**:
+       - `Trang Chất lượng Bệnh viện` (`hospital-quality-settings`)
+       - `Trang Khảo sát Ý kiến` (`survey-page-settings`)
+       - `Trang Hỏi đáp Y tế (FAQ)` (`faq-page-settings`)
+       - `Trang Biểu mẫu Điện tử` (`forms-page-settings`)
+       - `Trang Góp ý – Phản ánh` (`feedback-page-settings`)
+  - **Dọn sạch mục "Cấu hình Website & Nhận diện"**: Ẩn (`hidden: true`) toàn bộ các tab này trong `SiteSettings`, chỉ để lại các cấu hình thuần túy: Logo, Tên BV, Slogan, Header, Footer, Ticker chữ chạy, Email SMTP, Bản đồ Google Maps.
+- **Chi tiết thực hiện:**
+  - **1. Tạo 9 Global Config độc lập:**
+    - `src/globals/ExaminationFlowSettings.ts`
+    - `src/globals/InpatientGuideSettings.ts`
+    - `src/globals/CheckupPackagesSettings.ts`
+    - `src/globals/HospitalMapSettings.ts`
+    - `src/globals/HospitalQualitySettings.ts`
+    - `src/globals/SurveyPageSettings.ts`
+    - `src/globals/FaqPageSettings.ts`
+    - `src/globals/FormsPageSettings.ts`
+    - `src/globals/FeedbackPageSettings.ts`
+  - **2. Đăng ký vào `payload.config.ts`:**
+    - Khai báo quyền trong `globalPermissionModules`.
+    - Thêm vào mảng `globals` đã bọc hàm phân quyền và audit `withGlobalAudit(applyGlobalPermissionVisibility(...))`.
+  - **3. Cập nhật các trang Frontend nạp dữ liệu từ Global mới với cơ chế Fallback an toàn:**
+    - `/quy-trinh-kham-benh`, `/dieu-tri-noi-tru`, `/goi-kham`, `/so-do-benh-vien`, `/chat-luong-benh-vien`, `/khao-sat`, `/hoi-dap`, `/bieu-mau`, `/gop-y`.
+  - **4. Ẩn toàn bộ trong `src/globals/SiteSettings.ts`:**
+    - Thiết lập `admin: { hidden: true }` cho các nhóm: `examinationFlowPage`, `qualityPage`, `surveyPage`, `faqPage`, `formsPage`, `patientPortalPage`, `inpatientPage`, `checkupPackagesPage`, `hospitalMapPage`.
+  - **5. Đóng gói Database Migration và Seal Schema Contract:**
+    - Tạo migration: `scripts/db-migrations/20260917_022_create_independent_patient_care_globals_tables.mjs`.
+    - Thực thi deploy PostgreSQL thành công.
+    - Seal contract và xác minh `npm run db:schema:check` thành công (`✓ DB schema contract hợp lệ: 20260917_022_create_independent_patient_care_globals_tables`).
+    - Xác minh HTTP: Toàn bộ các trang frontend và trang Admin CMS `/admin` đều đạt `200 OK`.
+- **Tệp tin thêm mới & chỉnh sửa:**
+  - `src/globals/ExaminationFlowSettings.ts` [NEW]
+  - `src/globals/InpatientGuideSettings.ts` [NEW]
+  - `src/globals/CheckupPackagesSettings.ts` [NEW]
+  - `src/globals/HospitalMapSettings.ts` [NEW]
+  - `src/globals/HospitalQualitySettings.ts` [NEW]
+  - `src/globals/SurveyPageSettings.ts` [NEW]
+  - `src/globals/FaqPageSettings.ts` [NEW]
+  - `src/globals/FormsPageSettings.ts` [NEW]
+  - `src/globals/FeedbackPageSettings.ts` [NEW]
+  - `src/globals/SiteSettings.ts` [MODIFY]
+  - `payload.config.ts` [MODIFY]
+  - Các trang frontend: `quy-trinh-kham-benh/page.tsx`, `dieu-tri-noi-tru/page.tsx`, `goi-kham/page.tsx`, `so-do-benh-vien/page.tsx`, `chat-luong-benh-vien/page.tsx`, `khao-sat/page.tsx`, `hoi-dap/page.tsx`, `bieu-mau/page.tsx`, `gop-y/page.tsx`
+  - `scripts/db-migrations/20260917_022_create_independent_patient_care_globals_tables.mjs` [NEW]
+  - `scripts/db-schema-contract.json` [MODIFY]
+- **Database / Schema:** Đồng bộ tự động thông qua Migration 022, tiếp tục duy trì an toàn với `PAYLOAD_DB_PUSH=false`.
+
+## [2026-09-17] - Kiểm Tra & Đồng Bộ Trọn Vẹn Quản Trị Cổng "Dành Cho Người Bệnh" (`/danh-cho-nguoi-benh`) Trong Admin CMS
+
+- **Thời gian thực hiện:** 15:42 (Asia/Saigon)
+- **Yêu cầu & Kết quả kiểm tra:**
+  - Kiểm tra toàn bộ hệ thống các tab điều hướng và các mẫu thẻ dịch vụ của trang **Dành cho người bệnh** (`/danh-cho-nguoi-benh`) đã được đưa vào Admin CMS và có thể tùy chỉnh, thêm mới, sửa xóa nội dung linh hoạt hay chưa.
+  - **Kết quả rà soát:**
+    - Toàn bộ trang `/danh-cho-nguoi-benh` đã được đưa vào cấu hình Global **`PatientPortalSettings`** trong Admin CMS tại vị trí: `🏥 Khám bệnh & Dịch vụ Y tế -> Trang Cổng người bệnh`.
+    - **1. Banner Hero & Thông báo lưu ý**: Quản trị tiêu đề, mô tả (hỗ trợ xuống dòng), bật/tắt banner thông báo, tiêu đề thông báo, nội dung thông báo và canh lề (trái/giữa/đều).
+    - **2. Quản lý 100% các Tab chuyên mục (Sub-Nav)**:
+      - Từng Tab đều có: Checkbox bật/tắt (`enabled`), Mã định danh (`key`), Tên tab (`label`), Liên kết URL (`href`), Biểu tượng (`icon`), Nhãn phụ nổi bật (`badge`).
+      - Cho phép thêm mới không giới hạn số lượng tab, xóa bỏ hoặc sắp xếp lại thứ tự các tab trực tiếp trên giao diện Admin CMS.
+      - Đã đồng bộ đầy đủ 12 tab dịch vụ người bệnh chuẩn y tế.
+    - **3. Khối 3 Cam kết phục vụ**: Có công tắc bật/tắt khối lớn và từng ô cam kết (sửa icon, tiêu đề, mô tả hoặc thêm mới ô cam kết).
+    - **4. Khối các nhóm danh mục tiện ích dịch vụ (Service Cards)**:
+      - Quản lý dạng mảng 2 cấp linh hoạt: Người quản trị có thể tạo thêm nhóm mới (`categoryTitle`) hoặc thêm/sửa/xóa từng thẻ card dịch vụ con (`title`, `desc`, `href`, `icon`, `badge`, `badgeType`, `buttonText`).
+      - Đã đồng bộ đầy đủ toàn bộ 13 dịch vụ tiện ích y tế (Quy trình khám, Giờ làm việc, Lịch khám, Bảng giá, Hướng dẫn nội trú, Gói khám, Sơ đồ bệnh viện, Khảo sát, Góp ý phản ánh, Tra cứu, Hỏi đáp FAQ, Biểu mẫu điện tử, Chất lượng bệnh viện).
+    - **5. Khối Kêu gọi hành động & Hotline cuối trang**: Quản trị toàn bộ tiêu đề, mô tả, nút gọi hotline, nút liên hệ.
+- **Tệp tin chỉnh sửa:**
+  - `src/globals/PatientPortalSettings.ts` (Đồng bộ đầy đủ defaultValue cho 12 tab Sub-Nav và 13 thẻ dịch vụ)
+- **Database / Schema:** An toàn tuyệt đối, giữ nguyên `PAYLOAD_DB_PUSH=false`.
+
+## [2026-09-17] - Khắc Phục Lỗi "Unexpected end of JSON input" Khi Lưu Mẫu Khảo Sát & Cô Lập Dữ Liệu Bộ Câu Hỏi Chuẩn
+
+- **Thời gian thực hiện:** 15:18 (Asia/Saigon)
+- **Yêu cầu & Xử lý:**
+  - Khắc phục triệt để lỗi thông báo `Lỗi: Unexpected end of JSON input` khi quản trị viên bấm nút "Lưu mẫu khảo sát cho lần sau" trên form tạo đợt khảo sát.
+  - **Nguyên nhân kỹ thuật:** File `surveyTemplatePresets.ts` trước đó import các hằng số bộ câu hỏi từ các Client Component (`OutpatientSurveyForm.tsx`,...), làm Next.js SSR/API bundler gặp lỗi biên dịch phụ thuộc chéo khi gọi API route `/api/surveys/templates`.
+  - **Giải pháp xử lý:**
+    - Tạo mới `src/data/surveyQuestionsData.ts` chứa dữ liệu các bộ câu hỏi chuẩn Bộ Y tế độc lập với UI/JSX.
+    - Cập nhật `surveyTemplatePresets.ts` và `export/route.ts` trỏ về nguồn dữ liệu thuần túy `surveyQuestionsData.ts`.
+    - Bổ sung cơ chế đọc response text an toàn trong `SurveyFileImportHelper.tsx`.
+    - Test kiểm thử thành công: Các API `GET /api/surveys/templates`, `POST /api/surveys/templates` (lưu mẫu) và `DELETE /api/surveys/templates` (xóa mẫu) phản hồi mã `200 OK` tức thì.
+- **Tệp tin chỉnh sửa:**
+  - `src/data/surveyQuestionsData.ts` (Tạo mới)
+  - `src/lib/surveyTemplatePresets.ts`
+  - `src/app/(frontend)/api/surveys/export/route.ts`
+  - `src/components/admin/SurveyFileImportHelper.tsx`
+- **Database / Schema:** Giữ nguyên quy chuẩn an toàn `PAYLOAD_DB_PUSH=false`.
+
+## [2026-09-17] - Thống Kê Khảo Sát Đa Khung Thời Gian (Ngày, Tuần, Tháng, Quý, 6 Tháng, 9 Tháng, Năm) & Phân Rã Từng Loại / Tất Cả Loại
+
+- **Thời gian thực hiện:** 15:15 (Asia/Saigon)
+- **Yêu cầu:** Bổ sung tính năng thống kê số lượt khảo sát theo **ngày, theo tuần, tháng, quý, 6 tháng, 9 tháng và năm**; xem số lượt và tỷ lệ phân rã cho **từng loại khảo sát** cũng như **tất cả các loại khảo sát** trên toàn viện, kèm nút xuất Excel tương ứng.
+- **Chi tiết thực hiện:**
+  - **1. Nâng cấp API Thống kê (`src/app/(frontend)/api/surveys/statistics/route.ts`):**
+    - Hỗ trợ tham số `period`: `all` (toàn bộ), `day` (hôm nay), `week` (7 ngày), `month` (tháng này), `quarter` (quý 3 tháng), `6months` (6 tháng), `9months` (9 tháng), `year` (năm nay 12 tháng).
+    - Hỗ trợ tham số `campaign=all`: Tổng hợp toàn bộ dữ liệu khảo sát từ các nguồn (`survey-responses` và `feedbackCases` có mã tiền tố `KS-`).
+    - Tính toán khối **phân rã chi tiết theo từng loại khảo sát (`categoryBreakdown`)**:
+      - Số lượt khảo sát của từng loại trong khoảng thời gian đã chọn.
+      - Tỷ trọng phần trăm (%) đóng góp của từng loại trên tổng số phiếu.
+      - Điểm đánh giá trung bình (ĐTB) tương ứng của từng loại.
+    - Cập nhật chỉ số hài lòng và danh sách phản hồi theo mốc thời gian linh hoạt.
+  - **2. Nâng cấp API Xuất Excel (.xlsx) theo thời gian (`src/app/(frontend)/api/surveys/export/route.ts`):**
+    - Nhận cả 2 tham số `campaign` (cụ thể hoặc `all`) và `period`.
+    - Khi xuất `campaign=all`: Tự động thêm cột **"Loại khảo sát"** để phân biệt giữa Ngoại trú, Nội trú, Nhân viên y tế và các đợt khảo sát tùy chỉnh khác.
+    - Tự động ghi rõ khoảng thời gian lọc (Hôm nay, Tuần này, Tháng, Quý, 6 tháng, 9 tháng, Năm) trên tiêu đề file Excel.
+  - **3. Cập nhật Bảng điều khiển Quản trị (`src/components/admin/SurveyQuickToolbar.tsx`):**
+    - Thêm bộ chọn: **"🌟 TẤT CẢ CÁC LOẠI KHẢO SÁT"** bên cạnh danh sách từng đợt cụ thể.
+    - Bổ sung thanh nút chọn khoảng thời gian trực quan gồm 8 mốc: *Toàn bộ thời gian, Hôm nay, Tuần này (7 ngày), Tháng này, Quý này (3 tháng), 6 tháng gần nhất, 9 tháng gần nhất, Năm nay (12 tháng)*.
+    - Bổ sung khối giao diện **"Số lượt khảo sát cho từng loại"**: Hiển thị thẻ thống kê số lượt, tỷ lệ % và thanh progress bar cho từng loại, có thể click trực tiếp vào thẻ để lọc nhanh đợt đó.
+    - Nút xuất file Excel đồng bộ tức thì theo đợt và mốc thời gian đang lọc.
+- **Tệp tin chỉnh sửa & tạo mới:**
+  - `src/app/(frontend)/api/surveys/statistics/route.ts`
+  - `src/app/(frontend)/api/surveys/export/route.ts`
+  - `src/components/admin/SurveyQuickToolbar.tsx`
+- **Database / Schema:** Giữ nguyên quy chuẩn `PAYLOAD_DB_PUSH=false`. Không thay đổi schema cơ sở dữ liệu.
+
+## [2026-09-17] - Đưa Bảng Thống Kê & Xuất Excel Khảo Sát Vào Trang Chủ Admin Dashboard & Gỡ Nút "Xem Kết Quả" Tại /khao-sat
+
+- **Thời gian thực hiện:** 14:55 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Đưa Bảng thống kê khảo sát và xuất file Excel vào **Trang chủ Admin CMS** (`/admin`) để người quản trị dễ xem, theo dõi và quản lý trực tiếp ngay khi đăng nhập.
+  2. Không đặt bảng thống kê khảo sát trên trang khảo sát người bệnh và **bỏ nút "Xem kết quả"** trên trang `/khao-sat`.
+- **Chi tiết thực hiện:**
+  - **1. Tích hợp Bảng Thống kê & Xuất Excel Khảo sát trực tiếp vào Trang chủ Admin CMS (`src/components/admin/AdminDashboardClient.tsx`):**
+    - Nhúng component bảng điều khiển `SurveyQuickToolbar` vào trung tâm Trang chủ Quản trị (`/admin`), ngay dưới hệ thống biểu đồ phân tích `AdminCharts` và trên cụm Bộ lọc phân hệ nghiệp vụ.
+    - Ban Lãnh đạo & Quản trị viên chỉ cần đăng nhập vào Admin là thấy ngay:
+      - Bộ chọn đợt khảo sát nhanh (Dropdown).
+      - Nút **"📥 Xuất file Excel (.xlsx) của đợt này"** trực tiếp.
+      - 4 Thẻ chỉ số KPI (Tổng số phiếu, Điểm đánh giá TB, Tỷ lệ hài lòng %, Trạng thái đợt).
+      - Biểu đồ phân bổ mức độ hài lòng 4 mức (Rất hài lòng, Hài lòng, Bình thường, Chưa hài lòng).
+      - Bảng tóm tắt các lượt khảo sát gần nhất kèm ý kiến phản hồi.
+  - **2. Làm sạch giao diện trang Cổng Khảo sát (`src/app/(frontend)/khao-sat/page.tsx`):**
+    - Đã gỡ bỏ toàn bộ component thống kê khảo sát khỏi trang `/khao-sat`.
+    - Đã **loại bỏ hoàn toàn nút "Xem kết quả"** trên tất cả các thẻ đợt khảo sát (Ngoại trú, Nội trú, Nhân viên và các đợt tùy chỉnh mới).
+    - Tối ưu nút **"Làm khảo sát ngay →"** toàn chiều rộng (full width) nổi bật, giúp người bệnh và thân nhân tập trung 100% vào việc điền phiếu khảo sát thuận tiện và không bị phân tâm.
+  - **3. Dọn sạch trang Chất lượng bệnh viện (`src/app/(frontend)/chat-luong-benh-vien/page.tsx`):**
+    - Đã gỡ bỏ bảng thống kê khảo sát khỏi trang này để giao diện giữ nguyên bố cục chuyên môn chuẩn Bộ Y tế.
+- **Tệp tin chỉnh sửa & tạo mới:**
+  - `src/components/admin/AdminDashboardClient.tsx`
+  - `src/app/(frontend)/khao-sat/page.tsx`
+  - `src/app/(frontend)/chat-luong-benh-vien/page.tsx`
+- **Database / Schema:** Giữ nguyên quy chuẩn `PAYLOAD_DB_PUSH=false`. Không thay đổi schema cơ sở dữ liệu.
+
+## [2026-09-17] - Lưu Mẫu Khảo Sát Tái Sử Dụng & Quản Lý / Xóa Mẫu Lỗi Thời
+
+- **Thời gian thực hiện:** 14:35 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Bổ sung nút để **Lưu mẫu lại cho lần sau** (Save Template for Future Use) từ danh sách câu hỏi đang soạn/nhận diện được.
+  2. Bổ sung giao diện và tính năng để **Quản lý và Xóa mẫu sử dụng lại nếu các mẫu đó đã lỗi thời** (Delete Outdated Templates).
+- **Chi tiết thực hiện:**
+  - **1. Kho lưu trữ mẫu tự tạo không làm đổi schema database (`src/lib/savedSurveyTemplatesStore.ts`):**
+    - Thiết kế module lưu trữ an toàn `savedSurveyTemplatesStore.ts` lưu dữ liệu các mẫu tự tạo tại `src/data/savedSurveyTemplates.json`.
+    - Hỗ trợ đầy đủ các hàm nghiệp vụ: `getSavedSurveyTemplates()`, `saveSurveyTemplate()`, `deleteSavedSurveyTemplate(id)`.
+    - Bảo toàn 100% quy chuẩn `PAYLOAD_DB_PUSH=false`, không phát sinh truy vấn Drizzle hay sửa đổi schema cột vật lý.
+  - **2. Mở rộng API mẫu khảo sát (`src/app/(frontend)/api/surveys/templates/route.ts`):**
+    - Hỗ trợ `GET`: Trả về cả các mẫu chuẩn BYT, danh sách các đợt cũ và danh sách `savedTemplates` do quản trị viên đã lưu. Hỗ trợ query `?templateId=...` để lấy chi tiết câu hỏi của mẫu đã lưu.
+    - Hỗ trợ `POST`: Lưu mẫu khảo sát mới với tiêu đề, mô tả và toàn bộ câu hỏi (mã, loại câu hỏi, tùy chọn đáp án, tính bắt buộc).
+    - Hỗ trợ `DELETE`: Xóa mẫu khảo sát theo ID khi mẫu đó đã cũ hoặc lỗi thời.
+  - **3. Cập nhật giao diện Trình hỗ trợ tạo đợt khảo sát (`src/components/admin/SurveyFileImportHelper.tsx`):**
+    - Thêm nút nổi bật: **💾 Lưu thành mẫu cho lần sau** bên cạnh nút nạp câu hỏi vào form.
+    - Tích hợp Modal nhập Tên mẫu và Mô tả ngắn khi lưu, có thông báo thành công và tự động cập nhật danh sách.
+    - Tại mục "Cách 1: Tái sử dụng mẫu có sẵn": Bổ sung phân vùng trực quan **"💾 Mẫu khảo sát bạn đã lưu (X mẫu)"**.
+    - Mỗi thẻ mẫu hiển thị tên mẫu, số lượng câu hỏi, nút bấm nạp nhanh 1-Click, và **biểu tượng thùng rác màu đỏ 🗑️** cho phép người quản trị xóa ngay lập tức những mẫu đã lỗi thời (kèm hộp thoại xác nhận an toàn).
+- **Tệp tin chỉnh sửa & tạo mới:**
+  - `src/lib/savedSurveyTemplatesStore.ts` (Mới)
+  - `src/app/(frontend)/api/surveys/templates/route.ts`
+  - `src/components/admin/SurveyFileImportHelper.tsx`
+- **Database / Schema:** Tuân thủ triệt để `PAYLOAD_DB_PUSH=false`. Dữ liệu template lưu trữ độc lập, an toàn tuyệt đối.
+
+## [2026-09-17] - Tái Sử Dụng Mẫu Khảo Sát, Biểu Đồ Thống Kê & Xuất Excel (.xlsx) Tách Riêng Từng Đợt
+
+- **Thời gian thực hiện:** 13:20 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Khi tạo đợt khảo sát: Có thể chọn sử dụng lại các mẫu đã tạo (Ngoại trú, Nội trú, Nhân viên hoặc sao chép từ bất kỳ đợt nào đã tạo trước đó) hoặc tự tạo đợt khảo sát mới linh hoạt.
+  2. Bổ sung biểu đồ thống kê khảo sát riêng cho từng đợt và xem được kết quả chi tiết.
+  3. Xuất file Excel (`.xlsx`) danh sách các lượt đã khảo sát, bóc tách riêng ra từng đợt để dễ quản lý.
+- **Chi tiết thực hiện:**
+  - **1. Tái sử dụng mẫu có sẵn & Sao chép đợt khảo sát cũ (`src/lib/surveyTemplatePresets.ts`, `src/app/(frontend)/api/surveys/templates/route.ts`, `src/components/admin/SurveyFileImportHelper.tsx`):**
+    - Cung cấp danh mục 3 mẫu chuẩn Bộ Y tế:
+      - 🩺 Mẫu 2: Khảo sát Hài lòng Người bệnh Ngoại trú (22 câu chuẩn).
+      - 🏥 Mẫu 1: Khảo sát Hài lòng Người bệnh Nội trú (23 câu chuẩn).
+      - 👨‍⚕️ Mẫu 3: Khảo sát Ý kiến Nhân viên Y tế (22 câu chuẩn).
+    - Thêm danh sách Dropdown tự động đọc toàn bộ các đợt khảo sát đã tạo trước đó trong cơ sở dữ liệu.
+    - Người quản trị chỉ cần 1-Click chọn mẫu hoặc đợt cũ, hệ thống sẽ tự động bóc tách và đổ toàn bộ danh sách câu hỏi vào bảng xem trước để tinh chỉnh và nạp vào form.
+  - **2. Bảng điều khiển Thống kê & Biểu đồ phân bổ theo từng đợt (`src/components/admin/SurveyQuickToolbar.tsx`, `src/app/(frontend)/api/surveys/statistics/route.ts`):**
+    - Nâng cấp API thống kê trả về chi tiết phân bổ mức độ hài lòng: Rất hài lòng (4.5-5 sao / 9-10 điểm), Hài lòng (3.5-4.4 sao / 7-8.9 điểm), Bình thường (2.5-3.4 sao), Chưa hài lòng (< 2.5 sao).
+    - Tích hợp bộ chọn đợt khảo sát động (`select campaign`) ngay trên bảng quản trị `SurveyQuickToolbar`.
+    - Hiển thị trực quan: 4 thẻ KPI (Tổng lượt gửi, Điểm đánh giá TB, Tỷ lệ hài lòng %, Trạng thái đợt) kết hợp thanh biểu đồ phân bổ tỷ lệ % trực quan với màu sắc y tế chuẩn.
+    - Hiển thị bảng tóm tắt các lượt gửi phản hồi gần nhất của đợt đó.
+  - **3. Xuất file Excel (.xlsx) chuyên nghiệp bóc tách từng đợt (`src/app/(frontend)/api/surveys/export/route.ts`):**
+    - Sử dụng thư viện chuẩn `exceljs` để xuất ra file định dạng Excel chuẩn (`.xlsx`).
+    - File Excel có tiêu đề bệnh viện trang trọng: **SỞ Y TẾ TP. CẦN THƠ - BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI**, tên đợt khảo sát, thời gian xuất và tổng số lượt.
+    - **Cấu trúc dữ liệu chi tiết trên 1 dòng duy nhất**:
+      - Các cột thông tin định danh: STT, Mã biên nhận, Thời gian gửi, Người tham gia, Giới tính, Độ tuổi, Khoa/Phòng/Vị trí, Điểm TB (Thang 5 - Số thuần túy).
+      - **Tất cả các câu hỏi khảo sát được dàn trải thành từng cột riêng biệt** (VD: Cột A1, A2, B1, B2... hoặc C1, C2...): Toàn bộ điểm số được chuẩn hóa thành **số thuần túy (từ 1 đến 5), loại bỏ hoàn toàn icon ngôi sao ★** để tiện lợi cho việc tính toán công thức trung bình, hàm SUM/AVERAGE trong Excel.
+      - **Bổ sung dòng chú thích quy ước thang điểm (1 - 5) ngay đầu bảng**:
+        - Mức 1 = Rất không hài lòng / Rất kém
+        - Mức 2 = Không hài lòng / Kém
+        - Mức 3 = Bình thường
+        - Mức 4 = Hài lòng / Tốt
+        - Mức 5 = Rất hài lòng / Rất tốt
+      - Cột cuối cùng: Ý kiến đóng góp & đề xuất khác.
+    - Header bảng mang màu sắc nhận diện y tế (`#075985` & `#0284C7`), chữ trắng đậm, viền ô sắc nét, tự động căn chỉnh độ rộng cột (`Auto-fit width`).
+    - Tích hợp nút tải file trực tiếp tại thanh công cụ của đợt đó.
+- **Tệp tin chỉnh sửa & tạo mới:**
+  - `src/lib/surveyTemplatePresets.ts` (Mới)
+  - `src/app/(frontend)/api/surveys/templates/route.ts` (Mới)
+  - `src/app/(frontend)/api/surveys/export/route.ts`
+  - `src/app/(frontend)/api/surveys/statistics/route.ts`
+  - `src/components/admin/SurveyFileImportHelper.tsx`
+  - `src/components/admin/SurveyQuickToolbar.tsx`
+- **Database / Schema:** Giữ nguyên quy chuẩn `PAYLOAD_DB_PUSH=false`. Không làm thay đổi schema cột bảng vật lý.
+
+
+- **Thời gian thực hiện:** 13:00 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Khi chọn thang điểm chưa hiện rõ đang chọn ở mức bao nhiêu điểm -> Làm nổi bật rõ ràng số điểm đang chọn (`surveyScore10Btn.selected`, badge `✓ Đang chọn: X / 10 điểm`).
+  2. Khi gửi phiếu khảo sát mà chưa hoàn thành thì đưa ra thông báo nhắc hoàn thành mới được gửi cho tất cả các mẫu khảo sát, đồng thời cuộn đến và viền đỏ câu hỏi còn thiếu.
+  3. Thiết kế giao diện các mẫu khảo sát đồng bộ với nhau hết.
+  4. Thêm tính năng khi nhận diện kiểu câu hỏi hiển thị thì tạo sẵn thêm các kiểu chọn kiểu trả lời để người quản trị có thể chọn đúng theo mẫu người dùng muốn.
+- **Chi tiết thực hiện:**
+  - **1. Thang điểm 1-10 (`SurveyForm.tsx`, `patient-care.css`, `OutpatientSurveyForm.tsx`, `InpatientSurveyForm.tsx`, `StaffSurveyForm.tsx`):**
+    - Thiết kế hệ thống nút bấm thang điểm 1-10 đồng bộ: hiệu ứng gradient xanh thương hiệu khi được chọn, đổ bóng nổi bật, kèm huy hiệu (badge): `✓ Đang chọn: X / 10 điểm`.
+    - Thống nhất kích thước, font chữ, responsive trên cả mobile và desktop.
+  - **2. Cảnh báo nhắc hoàn thành khảo sát trước khi gửi:**
+    - Cập nhật banner cảnh báo nổi bật `surveyMissingWarningBanner` (viền đỏ nổi bật, icon ⚠️, hiệu ứng rung nhẹ thu hút sự chú ý).
+    - Tự động cuộn mượt (`scrollIntoView`) đến câu hỏi chưa được đánh giá đầu tiên, kết hợp hiệu ứng viền đỏ và bóng mờ nổi bật (`0 0 0 4px rgba(239, 68, 68, 0.2)`) trong 3 giây để người dùng nhận diện ngay vị trí cần điền.
+    - Áp dụng đồng bộ 100% trên tất cả các form: Khảo sát chung linh hoạt (`SurveyForm`), Khảo sát Ngoại trú (`OutpatientSurveyForm`), Khảo sát Nội trú (`InpatientSurveyForm`), Khảo sát Nhân viên y tế (`StaffSurveyForm`).
+  - **3. Tùy chọn linh hoạt kiểu trả lời ngay trên bảng xem trước khi Import (`SurveyFileImportHelper.tsx`):**
+    - Cột "Loại câu hỏi" trên bảng xem trước khi bóc tách Word/Excel được chuyển thành **Dropdown Menu trực tiếp**:
+      - ⭐ 1-5 Sao / Mức độ hài lòng (`rating5`)
+      - 🎯 Thang điểm 1-10 (`rating10`)
+      - 🔘 Trắc nghiệm chọn 1 đáp án (`single`)
+      - ☑️ Chọn nhiều đáp án (`multiple`)
+      - ⚖️ Đúng / Sai / Có / Không (`yesno`)
+      - ✍️ Ý kiến tự do / Nhập chữ (`text`)
+    - Cột "Bắt buộc" có nút chuyển đổi nhanh (Toggle: `✓ Bắt buộc` / `Tùy chọn`).
+    - Người quản trị có thể thay đổi bất kỳ câu nào theo đúng ý đồ của mình trước khi bấm "Điền vào danh sách câu hỏi bên dưới".
+- **Kiểm thử:** Đã chạy `npm run typecheck` đạt 100% không lỗi. Mọi form khảo sát hoạt động trơn tru, đồng bộ.
+
+## [2026-09-17] - Đồng bộ Thẻ Khảo sát Mới với Mẫu Sẵn & Nâng cấp Nhận diện Tự động Câu hỏi Thực tế (Word / Excel)
+
+- **Thời gian thực hiện:** 12:45 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Thẻ khảo sát tạo thêm trên trang Hub `/khao-sat` chưa đồng bộ với các mẫu có sẵn -> Thiết kế lại đồng bộ 100%.
+  2. Hỗ trợ nhận diện tự động mẫu câu hỏi thực tế của người dùng:
+     - Dạng ô vuông inline `☐ Khám ngoại trú    ☐ Điều trị nội trú` hoặc nhiều lựa chọn trên 1 dòng.
+     - Dạng thang điểm 4-5 mức hài lòng: `Rất hài lòng | Hài lòng | Bình thường | Chưa hài lòng`.
+     - Dạng viết tay ý kiến tự do có dòng chấm chấm `..........................`
+- **Chi tiết thực hiện:**
+  - **1. Đồng bộ giao diện Hub Khảo sát (`src/app/(frontend)/khao-sat/page.tsx`):**
+    - Cập nhật thẻ các đợt khảo sát mới (`activeCampaigns`) theo đúng chuẩn giao diện y tế của 3 mẫu có sẵn:
+      - Icon gradient nền xanh dương / cam đỏ cao cấp.
+      - Badge góc phải chuẩn thời hạn khảo sát (`Định kỳ năm 2026` hoặc ngày kết thúc).
+      - Khối meta 3 dòng chuẩn mực: ⏱ Thời gian: Khoảng 2-3 phút, 🛡 Bảo mật: Hoàn toàn ẩn danh, 🏛 Đơn vị tiếp nhận: Ban Giám đốc & Phòng QLCL.
+      - Đầy đủ 2 nút hành động: **"Làm khảo sát ngay →"** và **"Xem kết quả"** (thay vì 1 nút đơn điệu trước đây).
+  - **2. Nâng cấp Parser Thông minh (`src/lib/surveyFileParser.ts`):**
+    - Nhận diện ký tự ô vuông: `☐`, `☑`, `☒`, `□`, `■`, `[ ]`, `( )` cùng dòng hoặc cách nhau bằng Tab/khoảng trắng để tự động bóc tách thành các options con.
+    - Nhận diện câu hỏi thang điểm hài lòng (`Rất hài lòng`, `Hài lòng`, `Bình thường`, `Chưa hài lòng`) thành loại câu hỏi `rating5`.
+    - Tự động nhận diện các câu hỏi kèm dòng chấm chấm `......` hoặc gạch chân `_____` thành loại `text` (Nhập ý kiến tự do / Textarea) và tự động làm sạch các dấu chấm thừa khi lưu.
+- **Kiểm thử:** Đã test trực tiếp với đúng bộ 11 câu hỏi thực tế của người dùng, phân tích chuẩn 100% (câu 1-2: single có options, câu 3-8: rating5, câu 9-11: text tự do).
+
+## [2026-09-17] - Hỗ trợ Soạn Câu hỏi Khảo sát Sẵn bằng Word (.docx) & Excel (.xlsx) rồi Import Tự động
+
+- **Thời gian thực hiện:** 12:26 (Asia/Saigon)
+- **Yêu cầu:** Người dùng muốn có thể soạn sẵn mẫu câu hỏi khảo sát bằng cả file Word (.docx) và Excel (.xlsx) rồi tải lên (import) tự động vào hệ thống.
+- **Chi tiết thực hiện:**
+  - **1. Module bóc tách câu hỏi đa định dạng (`src/lib/surveyFileParser.ts`):**
+    - `parseSurveyFromWorkbook`: Đọc file Excel (.xlsx), tự động nhận diện thông minh các cột (Mã câu, Nội dung, Loại câu hỏi, Các lựa chọn con, Bắt buộc).
+    - `parseSurveyFromWord`: Sử dụng `JSZip` giải nén và phân tích cấu trúc OpenXML `word/document.xml` của file Word (.docx), nhận diện các dòng câu hỏi ("Câu 1: ...", "1. ..."), nhận diện thẻ loại câu hỏi trong ngoặc vuông `[5 sao]`, `[10 điểm]`, `[chọn 1]`, `[chọn nhiều]`, `[đúng/sai]`, `[ý kiến]`, và các gạch đầu dòng đáp án con (`-`, `*`, `a)`, `b)`...).
+  - **2. Tệp mẫu chuẩn Word & Excel sẵn sàng tải về (`public/templates/`):**
+    - `public/templates/mau-khao-sat-cau-hoi.docx`: Mẫu văn bản Word chuẩn có màu sắc, định dạng và các câu hỏi mẫu đầy đủ loại.
+    - `public/templates/mau-khao-sat-cau-hoi.xlsx`: Mẫu bảng tính Excel chuẩn với 5 cột rõ ràng, tiêu đề xanh thương hiệu y tế.
+  - **3. Component Admin CMS (`src/components/admin/SurveyFileImportHelper.tsx`):**
+    - Giao diện trực quan tích hợp ngay phía trên danh sách câu hỏi trong trang tạo/sửa Đợt khảo sát (`SurveyCampaigns`).
+    - Có 2 nút tải file mẫu: "Tải mẫu Word (.docx)" và "Tải mẫu Excel (.xlsx)".
+    - Khu vực chọn file hỗ trợ cả `.docx` và `.xlsx`, nút "🔍 Đọc & Phân tích câu hỏi".
+    - Hiển thị bảng xem trước (Preview) chi tiết: Mã, Loại, Nội dung câu hỏi, Đáp án con, Bắt buộc.
+    - Nút "✓ Điền vào danh sách câu hỏi bên dưới" tự động điền mảng `customQuestions` trong form của Payload CMS qua `dispatchFields`.
+  - **4. Đăng ký Collection & ImportMap:**
+    - `src/collections/SurveyCampaigns.ts`: Bổ sung trường `surveyFileImportHelper` (loại UI).
+    - `src/app/(payload)/admin/importMap.js`: Đăng ký component vào hệ thống render của Payload CMS.
+- **Kiểm thử:** Đã test parse thành công cả 2 file mẫu Word và Excel; `npm run typecheck` đạt 100% không lỗi.
+
+
+## [2026-09-17] - Khởi tạo Sẵn 3 Mẫu Khảo sát Chuẩn kèm Đầy đủ Câu hỏi vào Admin CMS
+
+- **Thời gian thực hiện:** 12:12 (Asia/Saigon)
+- **Yêu cầu:** Người dùng muốn thấy sẵn 3 mẫu khảo sát chuẩn trong Admin CMS để sau này có thay đổi thông tin thì có thể tùy chỉnh lại trực tiếp (câu hỏi, danh mục phòng khám/khoa/chức danh).
+- **Chi tiết thực hiện:**
+  - Chạy kịch bản khởi tạo (seed) tự động nạp 3 đợt khảo sát chuẩn Bộ Y tế vào bảng `survey_campaigns` và `survey_campaigns_custom_questions`:
+    1. **Khảo sát Sự hài lòng Người bệnh Khám Ngoại trú** (`slug: ngoai-tru`, ID: 1): Nạp đủ 19 câu hỏi tiêu chuẩn 5 nhóm (A1-E3) + danh sách phòng khám ngoại trú + gợi ý địa bàn.
+    2. **Khảo sát Sự hài lòng Người bệnh Điều trị Nội trú** (`slug: noi-tru`, ID: 2): Nạp đủ 20 câu hỏi tiêu chuẩn 5 nhóm (A1-E3) + danh sách khoa điều trị nội trú + gợi ý địa bàn.
+    3. **Khảo sát Ý kiến & Sự hài lòng Nhân viên Y tế** (`slug: nhan-vien`, ID: 3): Nạp đủ 19 câu hỏi tiêu chuẩn 5 nhóm (A1-E3) + chức danh + khối đơn vị + khoa phòng trực thuộc.
+  - Cập nhật `src/components/admin/SurveyQuickToolbar.tsx`: Bổ sung các nút bấm tắt "✏️ Sửa Mẫu Ngoại trú (19 câu)", "✏️ Sửa Mẫu Nội trú (20 câu)", "✏️ Sửa Mẫu Nhân viên (19 câu)" để người quản trị click 1 chạm là vào thẳng trang sửa câu hỏi chi tiết.
+- **Kiểm thử:** Typecheck passed 100%, database cập nhật hoàn tất.
+
+- **Thời gian thực hiện:** 12:00 (Asia/Saigon)
+- **Yêu cầu:** Giữ thanh menu Sidebar Admin gọn gàng, người dùng tạo/sửa câu hỏi khảo sát trực tiếp ngay trong từng "Đợt khảo sát" mà không cần thông qua bảng trung gian phức tạp.
+- **Chi tiết thực hiện:**
+  - `src/collections/SurveyCampaigns.ts`: Đặt mặc định trường `useCustomQuestions` là `true` ("⚡ Tự thiết lập câu hỏi trực tiếp cho đợt khảo sát này"). Khi người quản trị bấm "+ Tạo Đợt Khảo sát Mới", mục **"📋 Danh sách câu hỏi khảo sát linh hoạt"** sẽ hiển thị sẵn ngay lập tức, cho phép thêm câu hỏi, chọn loại câu hỏi (sao, điểm, radio, checkbox, ý kiến) một cách trực quan.
+  - `src/components/admin/SurveyQuickToolbar.tsx`: Cập nhật thẻ hướng dẫn nhanh nêu rõ vị trí tạo câu hỏi trực tiếp và tùy chỉnh danh mục.
+- **Kiểm thử:** Đảm bảo TypeScript và hệ thống hoạt động ổn định.
+
+## [2026-09-17] - Đưa Cấu hình Tùy chỉnh Danh mục Khảo sát vào Trực tiếp Từng "Đợt khảo sát" (Phương án B)
+
+- **Thời gian thực hiện:** 11:55 (Asia/Saigon)
+- **Yêu cầu:**
+  - Tách riêng cấu hình danh mục khảo sát (phòng khám ngoại trú, khoa điều trị nội trú, chức danh, địa bàn) vào thẳng từng đợt khảo sát trong nhóm **"💬 Chăm sóc người bệnh & Khảo sát"**, không bắt người dùng phải chuyển qua mục "Cấu hình Website & Nhận diện" gây rối và khó phân biệt.
+- **Chi tiết thực hiện:**
+  - **1. Bổ sung trường `customOptions` vào `SurveyCampaigns.ts`:**
+    - Thêm nhóm trường `⚙️ Danh mục & Lựa chọn riêng cho đợt khảo sát này (Tùy chọn)`:
+      - `outpatientClinics`: Danh sách phòng khám ngoại trú riêng của đợt.
+      - `inpatientDepartments`: Danh sách khoa điều trị nội trú riêng của đợt.
+      - `staffPositions`: Danh sách chức danh nhân viên riêng của đợt.
+      - `staffUnitTypes`: Danh sách khối đơn vị riêng của đợt.
+      - `staffDepartments`: Danh sách khoa/phòng trực thuộc riêng của đợt.
+      - `areaSuggestions`: Danh sách gợi ý địa bàn cư trú riêng của đợt.
+    - Cơ chế hoạt động: Khi tạo bất kỳ đợt khảo sát nào, người quản trị có thể nhập danh sách riêng cho đợt đó; nếu để trống, hệ thống sẽ tự động dùng danh mục mặc định của bệnh viện.
+  - **2. Database Migration 021 & Seal Schema Contract:**
+    - Tạo `scripts/db-migrations/20260917_021_add_survey_campaigns_custom_options.mjs` thêm 6 cột `custom_options_*` vào bảng `survey_campaigns`.
+    - Chạy `npm run generate:db-schema`.
+    - Chạy `npm run db:schema:seal -- 20260917_021_add_survey_campaigns_custom_options`.
+    - Chạy `npm run db:schema:check`: Đạt 100% hợp lệ.
+    - Chạy `npm run db:migrate:deploy`: Apply thành công vào Neon PostgreSQL.
+  - **3. Cập nhật các trang hiển thị khảo sát:**
+    - `src/app/(frontend)/khao-sat/[slug]/page.tsx`, `ngoai-tru/page.tsx`, `noi-tru/page.tsx`, `nhan-vien/page.tsx`: Ưu tiên đọc cấu hình danh mục riêng từ chính Đợt khảo sát (`campaign.customOptions`), nếu không có mới fallback về cấu hình mặc định.
+    - `src/components/admin/SurveyQuickToolbar.tsx`: Cập nhật nút tạo đợt khảo sát mới trực tiếp với lời dẫn rõ ràng.
+- **Kiểm thử:**
+  - `npm run typecheck`: Passed 100%.
+  - Các route `/khao-sat`, `/khao-sat/ngoai-tru`, `/khao-sat/noi-tru`, `/khao-sat/nhan-vien` đều phản hồi HTTP 200 OK.
+
+
+
+- **Thời gian thực hiện:** 11:25 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Đổi tên hiển thị Global `SiteSettings` từ "Header & Nhận diện" thành "Cấu hình Website & Nhận diện" để người dùng không bị hiểu lầm là chỉ chứa Header.
+  2. Tạo liên kết trực tiếp và hướng dẫn rõ ràng từ Đợt khảo sát tới khu vực Cài đặt danh mục khảo sát, giúp người quản trị dễ dàng tìm và quản lý đúng mục.
+- **Chi tiết thực hiện:**
+  - **1. Đổi tên hiển thị Global (`src/globals/SiteSettings.ts`):**
+    - Đổi `label: 'Header & Nhận diện'` thành `label: 'Cấu hình Website & Nhận diện'` để thể hiện đúng vai trò là trung tâm cấu hình giao diện & các trang chức năng (bao gồm Header, Slogan, Trang chủ, Khảo sát, FAQ, Biểu mẫu, Dịch vụ).
+  - **2. Bổ sung liên kết và hướng dẫn trực tiếp (`src/components/admin/SurveyQuickToolbar.tsx` & `src/collections/SurveyCampaigns.ts`):**
+    - Thêm hộp công cụ `SurveyQuickToolbar` ngay trên đầu danh sách **Đợt khảo sát**.
+    - Nút bấm `⚙️ Mở Cài đặt Danh mục Khảo sát →` đưa người quản trị truy cập thẳng vào phần cấu hình danh mục khảo sát (phòng khám ngoại trú, khoa điều trị nội trú, chức danh nhân viên, gợi ý địa bàn cư trú).
+    - Thêm `description` trong `SurveyCampaigns.ts` nêu rõ vị trí cấu hình danh mục.
+- **Chi tiết thực hiện:**
+  - **1. Ẩn các bảng kỹ thuật con khỏi Sidebar Admin (`admin.hidden: true`):**
+    - `SurveyAnswers.ts` ("Câu trả lời khảo sát"): Bảng con lưu từng dòng câu trả lời của 1 phiếu, xem qua quan hệ của Phiếu trả lời. Đã ẩn khỏi sidebar.
+    - `SurveyCodes.ts` ("Mã khảo sát / QR"): Bảng con cấp mã dùng trong chiến dịch. Đã ẩn khỏi sidebar.
+    - `SurveyStatistics.ts` ("Thống kê khảo sát"): Bảng tính toán tổng hợp ngầm, không cần tạo thủ công. Đã ẩn khỏi sidebar.
+    - `SurveyTemplateVersions.ts` ("Phiên bản khảo sát"): Bảng snapshot phân cấp cũ, gây rối rắm. Đã ẩn khỏi sidebar.
+    - `SurveyTemplates.ts` & `SurveyQuestions.ts`: Đã ẩn khỏi sidebar để người quản trị tập trung 100% vào **Đợt khảo sát** với chế độ tự thêm câu hỏi linh hoạt.
+    - `FeedbackActions.ts` ("Nhật ký xử lý phản ánh"): Bảng nhật ký ngầm ghi lại lịch sử trạng thái của từng hồ sơ. Đã ẩn khỏi sidebar.
+  - **2. Tách riêng nhóm Chatbot & AI sang nhóm mới chuyên biệt:**
+    - Tạo nhóm riêng: `🤖 Trợ lý ảo & Chatbot` gồm:
+      - `ChatbotIntents.ts`: Kịch bản Chatbot (có import Excel).
+      - `ChatbotConversations.ts`: Lịch sử hội thoại của người dùng.
+      - `ChatbotUnanswered.ts`: Danh sách câu hỏi Chatbot chưa trả lời để bổ sung kịch bản.
+      - `ChatbotSettings.ts`: Cấu hình bật/tắt, lời chào, tên trợ lý.
+  - **3. Nhóm "💬 Chăm sóc người bệnh & Khảo sát" giờ đây chỉ còn các mục trọng tâm nghiệp vụ:**
+    - 📋 **Đợt khảo sát (`SurveyCampaigns`)**: Tạo và quản trị mọi đợt khảo sát ý kiến.
+    - 📊 **Phiếu trả lời khảo sát (`SurveyResponses`)**: Xem kết quả phản hồi của người tham gia.
+    - 💬 **Phản hồi người bệnh (`Feedback`)**: Xem và xử lý các ý kiến, khiếu nại, khen ngợi.
+    - 📁 **Hồ sơ phản ánh (`FeedbackCases`)**: Quản lý hồ sơ theo dõi chi tiết.
+    - 🗂️ **Nhóm phản ánh (`FeedbackCategories`)**: Phân loại các chủ đề góp ý theo khoa phòng.
+    - 🩺 **Tư vấn trực tuyến (`Consultations`)**: Giải đáp thắc mắc chuyên môn sức khỏe.
+    - 📝 **Biểu mẫu (`Forms`)** & **Dữ liệu biểu mẫu (`FormSubmissions`)**: Các form đăng ký điện tử.
+    - ❓ **Câu hỏi thường gặp (`FAQs`)**: Quản lý hỏi đáp.
+  - **4. Tạo Banner Lối tắt Cấu hình Khảo sát (`SurveyQuickToolbar`):**
+    - Đặt component `SurveyQuickToolbar` tại `admin.components.beforeList` của `SurveyCampaigns`.
+    - Khi người quản trị vào mục **Đợt khảo sát**, trên cùng sẽ hiển thị ngay hộp công cụ nổi bật:
+      - Nút bấm trực tiếp: `⚙️ Mở Cài đặt Danh mục Khảo sát →` dẫn thẳng vào cấu hình tùy chỉnh phòng khám ngoại trú, khoa nội trú, chức danh, địa bàn.
+      - Các nút liên kết xem nhanh các mẫu trực tuyến: Khảo sát Ngoại trú, Nội trú, Nhân viên, và Cổng khảo sát chung.
+  - **5. Cập nhật importMap & Schema:**
+    - Đã chạy `npm run generate:importmap` đăng ký `SurveyQuickToolbar`.
+    - Đã chạy `npm run typecheck` đạt chuẩn 100%.
+
+
+
+- **Thời gian thực hiện:** 11:06 (Asia/Saigon)
+- **Yêu cầu:**
+  1. Đưa toàn bộ các tùy chọn, danh mục lựa chọn của 3 mẫu khảo sát (Ngoại trú, Nội trú, Nhân viên y tế) vào Admin CMS để người quản trị có thể thêm mới, chỉnh sửa, xóa tùy ý mà không cần sửa code.
+  2. Tạo thêm 1 mẫu dùng chung (Generic Survey Campaign) trong Admin CMS để sau này khi bệnh viện có bất kỳ đợt khảo sát mới nào khác (cấp cứu, dinh dưỡng, an toàn người bệnh, văn hóa công sở,...) thì quản trị viên có thể tự thêm câu hỏi và xuất bản trực tiếp mà không cần thiết kế lại giao diện code.
+- **Chi tiết thực hiện:**
+  - **1. Cấu hình Admin CMS cho 3 mẫu khảo sát (`src/globals/SiteSettings.ts`):**
+    - Thêm 6 trường quản trị danh mục linh hoạt vào group `surveyPage`:
+      - `outpatientClinics`: Danh sách phòng khám Ngoại trú (Mỗi dòng 1 phòng khám, người quản trị tự do thêm bớt).
+      - `inpatientDepartments`: Danh sách khoa điều trị Nội trú (Mỗi dòng 1 khoa phòng).
+      - `staffPositions`: Danh sách vị trí chuyên môn / chức danh Nhân viên y tế.
+      - `staffUnitTypes`: Danh sách khối đơn vị công tác (Lâm sàng, Cận lâm sàng, Phòng chức năng).
+      - `staffDepartments`: Danh sách khoa / phòng trực thuộc nhân viên.
+      - `areaSuggestions`: Danh sách gợi ý nơi cư trú (xã/phường/tỉnh theo chính quyền 2 cấp).
+  - **2. Động cơ Mẫu Khảo sát Dùng chung Linh hoạt (`src/collections/SurveyCampaigns.ts`):**
+    - Bổ sung tùy chọn `useCustomQuestions` (⚡ Chế độ khảo sát linh hoạt trực tiếp).
+    - Bổ sung trường `showDemographics` (Hiển thị khối thông tin chung người tham gia).
+    - Bổ sung bảng mảng `customQuestions`: Quản trị viên tự thêm mảng câu hỏi tùy ý với:
+      - Mã câu hỏi (`code`).
+      - Loại câu hỏi đa dạng (`type`): ⭐ Mức hài lòng 1–5 sao, 🎯 Đánh giá điểm 1–10, 🔘 Chọn 1 đáp án (Radio), ☑️ Chọn nhiều đáp án (Checkbox), ⚖️ Có/Không (Yes/No), ✍️ Nhập ý kiến tự do (Textarea).
+      - Bắt buộc trả lời (`required`).
+      - Các lựa chọn (`options` - mỗi dòng một lựa chọn).
+      - Thứ tự ưu tiên (`order`).
+  - **3. Database Migration & Schema Contract (`scripts/db-migrations/20260917_020_add_survey_customization_and_generic_campaigns.mjs`):**
+    - Migration số 20 áp dụng an toàn trên Neon PostgreSQL (`ADD COLUMN IF NOT EXISTS`, tạo bảng `survey_campaigns_custom_questions`, bỏ ràng buộc `NOT NULL` trên `template_version_id`).
+    - Thực thi `generate:db-schema`, `db:schema:seal -- 20260917_020_add_survey_customization_and_generic_campaigns` và `db:migrate:deploy`.
+    - Xác minh kiểm tra contract `db:schema:check` đạt 100% hợp lệ.
+  - **4. Nâng cấp Dynamic Survey Renderer & Forms:**
+    - `src/components/SurveyForm.tsx`: Nâng cấp renderer toàn diện hỗ trợ hiển thị thang Likert 1-5 sao emoji, thanh điểm 1-10 nút bấm nhanh, radio pills, checkbox pills, textareas, Turnstile, khối thông tin chung demographics, và thanh đo % tiến độ thời gian thực.
+    - `src/components/OutpatientSurveyForm.tsx`: Nhận props `customClinics` và `customAreas` từ CMS, fallback mặc định nếu CMS để trống.
+    - `src/components/InpatientSurveyForm.tsx`: Nhận props `customDepartments` và `customAreas` từ CMS, fallback mặc định nếu CMS để trống.
+    - `src/components/StaffSurveyForm.tsx`: Nhận props `customPositions`, `customUnitTypes`, `customDepartments` từ CMS.
+    - `src/app/(frontend)/khao-sat/ngoai-tru/page.tsx`, `noi-tru/page.tsx`, `nhan-vien/page.tsx`: Truy vấn `site-settings` và truyền dữ liệu động vào Client Form.
+    - `src/app/(frontend)/khao-sat/[slug]/page.tsx`: Hỗ trợ tự động render cả chiến dịch dùng chung linh hoạt lẫn 3 mẫu khảo sát Bộ Y tế.
+    - `src/app/(frontend)/khao-sat/page.tsx`: Hiển thị đồng thời 3 mẫu chuẩn BYT và tất cả các chiến dịch khảo sát tạo mới từ CMS đang mở.
+    - `src/app/(frontend)/api/surveys/submit/route.ts`: Xử lý lưu trữ thông minh câu hỏi từ `customQuestions`, tính điểm trung bình, xuất mã biên nhận `KS-YYYY-XXXX`, đồng thời tự động lưu vào `feedbackCases` và `survey-responses`.
+- **Kiểm thử & Xác nhận:**
+  - `npm run typecheck`: Passed không có bất kỳ lỗi nào.
+  - `curl http://localhost:3000/khao-sat`: HTTP 200 OK.
+  - `curl http://localhost:3000/khao-sat/ngoai-tru`: HTTP 200 OK.
+  - `curl http://localhost:3000/khao-sat/noi-tru`: HTTP 200 OK.
+  - `curl http://localhost:3000/khao-sat/nhan-vien`: HTTP 200 OK.
+
 ## [2026-09-17] - Chuẩn hóa Nơi cư trú theo mô hình Chính quyền 2 cấp & Sáp nhập xã theo Nghị quyết 1668/NQ-UBTVQH15
 
 - **Thời gian thực hiện:** 10:36 (Asia/Saigon)

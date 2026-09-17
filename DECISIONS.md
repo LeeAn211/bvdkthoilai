@@ -1,5 +1,16 @@
 # DECISIONS
 
+## 2026-09-17 — Tách độc lập các trang chức năng/nội dung ra khỏi SiteSettings sang Global/Collection chuyên trách
+- Quyết định: 
+  1. Tất cả các trang nội dung, trang quy trình, hướng dẫn, tiện ích, dịch vụ y tế mới (hoặc nâng cấp) **TUYỆT ĐỐI KHÔNG NHỒI NHÉT VÀO SiteSettings** ("Cấu hình Website & Nhận diện").
+  2. Mục `SiteSettings` chỉ giữ đúng chức năng cốt lõi toàn cục: Nhận diện thương hiệu (Logo, Tên BV, Slogan, Khẩu hiệu), Header, Footer, Chữ chạy Ticker, Cấu hình SMTP, Bản đồ Google Maps.
+  3. Mọi trang mới bắt buộc phải tạo thành **Global hoặc Collection độc lập riêng biệt** và xếp vào đúng phân nhóm nghiệp vụ y tế trực quan trong Admin CMS (ví dụ: `🏥 Khám bệnh & Dịch vụ Y tế`, `💬 Chăm sóc người bệnh & Khảo sát`, `🛡️ Quản trị & Hệ thống`,...).
+  4. Mọi trang mới phải có đầy đủ: Banner Hero, Bảng thông báo/lưu ý (Notice Banner) hỗ trợ xuống dòng tự do, Granular Toggles (checkbox enabled/show cho từng khối/widget con), và cơ chế Fallback an toàn 2 lớp chống trắng trang.
+  5. Luôn đóng gói Database Migration tự động (`scripts/db-migrations/`), seal schema contract (`db:schema:seal`) và verify (`db:schema:check`) để tự động hóa 100% khi deploy Railway/VPS mà không cần gõ SQL thủ công.
+- Lý do: Tránh làm phình to bảng `site_settings` gây nghẽn Drizzle introspection, giúp cây menu Admin CMS khoa học, dễ phân quyền granular cho từng khoa phòng/cán bộ chuyên trách quản trị đúng trang của mình.
+- Không chọn: Tiếp tục gộp chung tất cả các trang vào một file `SiteSettings.ts` khổng lồ khiến menu Admin rối rắm và khó kiểm soát quyền hạn.
+- Tác động: Cập nhật thành quy định bắt buộc vĩnh viễn tại Mục 13 trong `AGENTS.md`. Mọi AI agent và lập trình viên tiếp theo bắt buộc phải tuân thủ nghiêm ngặt khi xây dựng trang mới.
+
 ## 2026-09-15 — Chiến lược triển khai Production lên VPS (DevOps Strategy: Coolify & Docker)
 
 - Quyết định: Chọn giải pháp **Coolify (Self-hosted PaaS trên nền tảng Docker)** làm phương án chính thức để triển khai hệ thống lên máy chủ VPS riêng biệt hoặc máy chủ dùng chung trong tương lai. Chi tiết lưu tại `docs/CHIEN-LUOC-TRIEN-KHAI-VPS.md`.

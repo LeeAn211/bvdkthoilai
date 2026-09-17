@@ -31,6 +31,8 @@ import { default as default_9637cefafeb6600a998c5ef49603565b } from '../../../..
 import { default as default_5c576dfdc8a9a6c3d967695062ab8dcd } from '../../../../src/components/admin/ServicesExcelImport'
 import { default as default_688d79dcd6a2511ec4d98b30dde78fc0 } from '../../../../src/components/admin/FAQExcelImport'
 import { default as default_8be40d08e9627c0381c099acd3be9964 } from '../../../../src/components/admin/ChatbotIntentExcelImport'
+import { default as default_f1ff3e0198fa85b9c57d8504c3bd0706 } from '../../../../src/components/admin/SurveyFileImportHelper'
+import { default as default_271aad26f1c95d5f689786460cb553b6 } from '../../../../src/components/admin/SurveyQuickToolbar'
 import { default as default_b3bdbaeac36b397934490ab857666025 } from '../../../../src/components/admin/ColorPickerField'
 import { default as default_36b29d1c4df83aa951aa6a39b683d07c } from '../../../../src/components/admin/AdminIcon'
 import { default as default_f3fbabdce87bad5a8e97b0f255ae00c1 } from '../../../../src/components/admin/AdminLogo'
@@ -75,6 +77,8 @@ export const importMap = {
   "/src/components/admin/ServicesExcelImport#default": default_5c576dfdc8a9a6c3d967695062ab8dcd,
   "/src/components/admin/FAQExcelImport#default": default_688d79dcd6a2511ec4d98b30dde78fc0,
   "/src/components/admin/ChatbotIntentExcelImport#default": default_8be40d08e9627c0381c099acd3be9964,
+  "/src/components/admin/SurveyFileImportHelper#default": default_f1ff3e0198fa85b9c57d8504c3bd0706,
+  "/src/components/admin/SurveyQuickToolbar#default": default_271aad26f1c95d5f689786460cb553b6,
   "/src/components/admin/ColorPickerField#default": default_b3bdbaeac36b397934490ab857666025,
   "/src/components/admin/AdminIcon#default": default_36b29d1c4df83aa951aa6a39b683d07c,
   "/src/components/admin/AdminLogo#default": default_f3fbabdce87bad5a8e97b0f255ae00c1,

@@ -79,6 +79,15 @@ import { HospitalHistory } from './src/globals/HospitalHistory'
 import { AboutPage } from './src/globals/AboutPage'
 import { WorkingHoursSettings } from './src/globals/WorkingHoursSettings'
 import { PatientPortalSettings } from './src/globals/PatientPortalSettings'
+import { ExaminationFlowSettings } from './src/globals/ExaminationFlowSettings'
+import { InpatientGuideSettings } from './src/globals/InpatientGuideSettings'
+import { CheckupPackagesSettings } from './src/globals/CheckupPackagesSettings'
+import { HospitalMapSettings } from './src/globals/HospitalMapSettings'
+import { HospitalQualitySettings } from './src/globals/HospitalQualitySettings'
+import { SurveyPageSettings } from './src/globals/SurveyPageSettings'
+import { FaqPageSettings } from './src/globals/FaqPageSettings'
+import { FormsPageSettings } from './src/globals/FormsPageSettings'
+import { FeedbackPageSettings } from './src/globals/FeedbackPageSettings'
 import { withAudit, withGlobalAudit } from './src/lib/audit'
 import { hospitalEditor } from './src/editor/hospitalEditor'
 import { hasModulePermission } from './src/access'
@@ -183,6 +192,15 @@ const globalPermissionModules: Record<string, string> = {
   'appointment-settings': 'appointments',
   'quick-links-settings': 'homepage',
   'patient-portal-settings': 'site-settings',
+  'examination-flow-settings': 'services',
+  'inpatient-guide-settings': 'services',
+  'checkup-packages-settings': 'services',
+  'hospital-map-settings': 'services',
+  'hospital-quality-settings': 'surveys',
+  'survey-page-settings': 'surveys',
+  'faq-page-settings': 'faqs',
+  'forms-page-settings': 'forms',
+  'feedback-page-settings': 'feedback',
 }
 
 const hideWithoutModulePermission = <T extends CollectionConfig | GlobalConfig>(
@@ -311,5 +329,9 @@ export default buildConfig({
     ].map((collection) => withAudit(applyCollectionPermissionVisibility(collection))),
     AuditLogs,
   ],
-  globals: [SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, WorkingHoursSettings, PatientPortalSettings, UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings].map((global) => withGlobalAudit(applyGlobalPermissionVisibility(global)))
+  globals: [
+    SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, WorkingHoursSettings, PatientPortalSettings,
+    ExaminationFlowSettings, InpatientGuideSettings, CheckupPackagesSettings, HospitalMapSettings, HospitalQualitySettings, SurveyPageSettings, FaqPageSettings, FormsPageSettings, FeedbackPageSettings,
+    UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings
+  ].map((global) => withGlobalAudit(applyGlobalPermissionVisibility(global)))
 })

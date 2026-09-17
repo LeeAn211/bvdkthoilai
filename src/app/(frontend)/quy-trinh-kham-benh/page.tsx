@@ -22,9 +22,12 @@ export default async function ExaminationFlowPage() {
   let flowSettings: any = {}
 
   try {
-    const siteSettings: any = await getGlobal('site-settings').catch(() => ({}))
-    const contactSettings: any = await getGlobal('contact-settings').catch(() => ({}))
-    flowSettings = siteSettings?.examinationFlowPage || {}
+    const [specFlow, siteSettings, contactSettings] = await Promise.all([
+      getGlobal('examination-flow-settings' as any).catch(() => null),
+      getGlobal('site-settings').catch(() => ({})),
+      getGlobal('contact-settings').catch(() => ({})),
+    ])
+    flowSettings = (specFlow && Object.keys(specFlow).length > 0) ? specFlow : (siteSettings?.examinationFlowPage || {})
     medproUrl = siteSettings?.medproUrl || medproUrl
     hotline = contactSettings?.hotline || siteSettings?.hotline || hotline
     emergencyHotline = contactSettings?.emergencyHotline || siteSettings?.emergencyHotline || emergencyHotline

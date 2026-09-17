@@ -72,10 +72,56 @@ export const INPATIENT_SURVEY_SECTIONS = [
   },
 ]
 
-export default function InpatientSurveyForm() {
+interface InpatientSurveyFormProps {
+  customDepartments?: string[]
+  customAreas?: string[]
+}
+
+export default function InpatientSurveyForm({
+  customDepartments,
+  customAreas,
+}: InpatientSurveyFormProps = {}) {
   const [busy, setBusy] = useState(false)
   const [doneData, setDoneData] = useState<{ code: string; overallScore?: number } | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
+
+  // Danh sách khoa điều trị nội trú: Dùng từ CMS nếu có, fallback về danh sách chuẩn
+  const departmentsList = useMemo(() => {
+    if (customDepartments && customDepartments.length > 0) return customDepartments
+    return [
+      'Khoa Nội tổng hợp',
+      'Khoa Ngoại tổng hợp',
+      'Khoa Phụ sản',
+      'Khoa Nhi',
+      'Khoa Hồi sức cấp cứu (ICU)',
+      'Khoa Y học cổ truyền & PHCN',
+      'Khoa Truyền nhiễm',
+    ]
+  }, [customDepartments])
+
+  // Danh sách gợi ý địa bàn cư trú theo mô hình 2 cấp
+  const areaSuggestionsList = useMemo(() => {
+    if (customAreas && customAreas.length > 0) return customAreas
+    return [
+      'Xã Thới Lai, TP. Cần Thơ',
+      'Xã Trường Thành, TP. Cần Thơ',
+      'Xã Đông Thuận, TP. Cần Thơ',
+      'Xã Trường Xuân, TP. Cần Thơ',
+      'Xã Đông Hiệp, TP. Cần Thơ',
+      'Phường Ô Môn, TP. Cần Thơ',
+      'Xã Trường Long, TP. Cần Thơ',
+      'Xã Thới Hưng, TP. Cần Thơ',
+      'Thị trấn Cờ Đỏ, TP. Cần Thơ',
+      'Thị trấn Phong Điền, TP. Cần Thơ',
+      'Phường Thốt Nốt, TP. Cần Thơ',
+      'Phường Ninh Kiều, TP. Cần Thơ',
+      'Phường An Khánh, TP. Cần Thơ',
+      'Tỉnh Hậu Giang',
+      'Tỉnh Kiên Giang',
+      'Tỉnh An Giang',
+      'Tỉnh Đồng Tháp',
+    ]
+  }, [customAreas])
 
   // Thông tin hành chính (Section I)
   const [demographics, setDemographics] = useState({
@@ -84,7 +130,7 @@ export default function InpatientSurveyForm() {
     daysInHospital: '3 - 5 ngày',
     insurance: 'Có BHYT',
     area: '',
-    department: 'Khoa Nội tổng hợp',
+    department: departmentsList[0] || 'Khoa Nội tổng hợp',
     respondentType: 'Người bệnh trực tiếp',
   })
 
@@ -137,9 +183,21 @@ export default function InpatientSurveyForm() {
     // Kiểm tra xem đã chấm điểm đầy đủ chưa
     const missing = allQuestions.filter(q => !ratings[q.id])
     if (missing.length > 0) {
-      setErrorMsg(`Quý vị vui lòng đánh giá đầy đủ tất cả câu hỏi. Còn ${missing.length} câu chưa chọn (ví dụ: ${missing[0].id}).`)
+      setErrorMsg(`⚠️ Quý vị vui lòng hoàn thành tất cả các câu hỏi bắt buộc trước khi gửi. Hiện còn ${missing.length} câu chưa chọn (ví dụ: Câu ${missing[0].id}).`)
+      // Cuộn tới câu hỏi đầu tiên bị thiếu và highlight
       const el = document.getElementById(`q-${missing[0].id}`)
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        el.style.border = '2px solid #ef4444'
+        el.style.borderRadius = '12px'
+        el.style.padding = '12px'
+        el.style.boxShadow = '0 0 0 4px rgba(239, 68, 68, 0.2)'
+        setTimeout(() => {
+          el.style.border = ''
+          el.style.padding = ''
+          el.style.boxShadow = ''
+        }, 3000)
+      }
       return
     }
 
@@ -249,11 +307,9 @@ export default function InpatientSurveyForm() {
       </div>
 
       {errorMsg && (
-        <div className="patientCareNoticeBanner" style={{ background: '#fef2f2', borderColor: '#fca5a5', borderLeftColor: '#ef4444', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#b91c1c', fontWeight: 700, fontSize: '14.5px' }}>
-            <span>⚠️</span>
-            <span>{errorMsg}</span>
-          </div>
+        <div className="surveyMissingWarningBanner">
+          <span style={{ fontSize: '20px' }}>⚠️</span>
+          <span style={{ color: '#b91c1c', fontWeight: 700, fontSize: '15px' }}>{errorMsg}</span>
         </div>
       )}
 
@@ -353,26 +409,9 @@ export default function InpatientSurveyForm() {
                 list="inpatient-area-suggestions"
               />
               <datalist id="inpatient-area-suggestions">
-                {/* Các xã mới khu vực Thới Lai sau sáp nhập theo NQ 1668/NQ-UBTVQH15 (Mô hình chính quyền 2 cấp) */}
-                <option value="Xã Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Trường Thành, TP. Cần Thơ" />
-                <option value="Xã Đông Thuận, TP. Cần Thơ" />
-                <option value="Xã Trường Xuân, TP. Cần Thơ" />
-                <option value="Xã Đông Hiệp, TP. Cần Thơ" />
-                {/* Các xã/phường giáp ranh lân cận tại Cần Thơ */}
-                <option value="Phường Ô Môn, TP. Cần Thơ" />
-                <option value="Xã Trường Long, TP. Cần Thơ" />
-                <option value="Xã Thới Hưng, TP. Cần Thơ" />
-                <option value="Thị trấn Cờ Đỏ, TP. Cần Thơ" />
-                <option value="Thị trấn Phong Điền, TP. Cần Thơ" />
-                <option value="Phường Thốt Nốt, TP. Cần Thơ" />
-                <option value="Phường Ninh Kiều, TP. Cần Thơ" />
-                <option value="Phường An Khánh, TP. Cần Thơ" />
-                {/* Các tỉnh giáp ranh có người bệnh đến khám */}
-                <option value="Tỉnh Hậu Giang" />
-                <option value="Tỉnh Kiên Giang" />
-                <option value="Tỉnh An Giang" />
-                <option value="Tỉnh Đồng Tháp" />
+                {areaSuggestionsList.map((area, idx) => (
+                  <option key={idx} value={area} />
+                ))}
               </datalist>
             </div>
 
@@ -384,13 +423,9 @@ export default function InpatientSurveyForm() {
                 value={demographics.department}
                 onChange={e => setDemographics(p => ({ ...p, department: e.target.value }))}
               >
-                <option value="Khoa Nội tổng hợp">Khoa Nội tổng hợp</option>
-                <option value="Khoa Ngoại tổng hợp">Khoa Ngoại tổng hợp</option>
-                <option value="Khoa Phụ sản">Khoa Phụ sản</option>
-                <option value="Khoa Nhi">Khoa Nhi</option>
-                <option value="Khoa Hồi sức cấp cứu">Khoa Hồi sức cấp cứu (ICU)</option>
-                <option value="Khoa Y học cổ truyền - PHCN">Khoa Y học cổ truyền & PHCN</option>
-                <option value="Khoa Truyền nhiễm">Khoa Truyền nhiễm</option>
+                {departmentsList.map((d, idx) => (
+                  <option key={idx} value={d}>{d}</option>
+                ))}
               </select>
             </div>
           </div>

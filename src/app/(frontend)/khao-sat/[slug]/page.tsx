@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getCMS } from '@/lib/payload'
+import { getCMS, getGlobal } from '@/lib/payload'
 import { PageHero } from '@/components/PageHero'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
@@ -14,7 +14,12 @@ export default async function SurveyDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const payload = await getCMS()
+  const [payload, siteSettings] = await Promise.all([
+    getCMS(),
+    getGlobal('site-settings' as any).catch(() => ({})),
+  ])
+
+  const surveyConf = (siteSettings as any)?.surveyPage || {}
 
   const result = await payload.find({
     collection: 'survey-campaigns',
@@ -30,6 +35,39 @@ export default async function SurveyDetailPage({
   })
 
   const campaign: any = result.docs[0]
+
+  // Ưu tiên đọc cấu hình danh mục riêng từ chính Đợt khảo sát (nếu có), fallback về cấu hình chung
+  const campOptions = campaign?.customOptions || {}
+  const rawClinics = campOptions.outpatientClinics || surveyConf.outpatientClinics
+  const rawInpatientDepts = campOptions.inpatientDepartments || surveyConf.inpatientDepartments
+  const rawPositions = campOptions.staffPositions || surveyConf.staffPositions
+  const rawUnitTypes = campOptions.staffUnitTypes || surveyConf.staffUnitTypes
+  const rawStaffDepts = campOptions.staffDepartments || surveyConf.staffDepartments
+  const rawAreas = campOptions.areaSuggestions || surveyConf.areaSuggestions
+
+  const customClinics = typeof rawClinics === 'string' && rawClinics.trim()
+    ? rawClinics.split(/\r?\n/).map((s: string) => s.trim()).filter(Boolean)
+    : undefined
+
+  const customInpatientDepartments = typeof rawInpatientDepts === 'string' && rawInpatientDepts.trim()
+    ? rawInpatientDepts.split(/\r?\n/).map((s: string) => s.trim()).filter(Boolean)
+    : undefined
+
+  const customPositions = typeof rawPositions === 'string' && rawPositions.trim()
+    ? rawPositions.split(/\r?\n/).map((s: string) => s.trim()).filter(Boolean)
+    : undefined
+
+  const customUnitTypes = typeof rawUnitTypes === 'string' && rawUnitTypes.trim()
+    ? rawUnitTypes.split(/\r?\n/).map((s: string) => s.trim()).filter(Boolean)
+    : undefined
+
+  const customStaffDepartments = typeof rawStaffDepts === 'string' && rawStaffDepts.trim()
+    ? rawStaffDepts.split(/\r?\n/).map((s: string) => s.trim()).filter(Boolean)
+    : undefined
+
+  const customAreas = typeof rawAreas === 'string' && rawAreas.trim()
+    ? rawAreas.split(/\r?\n/).map((s: string) => s.trim()).filter(Boolean)
+    : undefined
   if (!campaign) {
     if (slug === 'ngoai-tru' || slug === 'nguoi-benh-ngoai-tru') {
       const OutpatientSurveyForm = (await import('@/components/OutpatientSurveyForm')).default
@@ -45,7 +83,7 @@ export default async function SurveyDetailPage({
           <main className="patientCareSection">
             <div className="container">
               <PatientCareSubNav activeKey="khao-sat" />
-              <OutpatientSurveyForm />
+              <OutpatientSurveyForm customClinics={customClinics} customAreas={customAreas} />
             </div>
           </main>
           <SiteFooter />
@@ -66,7 +104,7 @@ export default async function SurveyDetailPage({
           <main className="patientCareSection">
             <div className="container">
               <PatientCareSubNav activeKey="khao-sat" />
-              <InpatientSurveyForm />
+              <InpatientSurveyForm customDepartments={customInpatientDepartments} customAreas={customAreas} />
             </div>
           </main>
           <SiteFooter />
@@ -87,7 +125,11 @@ export default async function SurveyDetailPage({
           <main className="patientCareSection">
             <div className="container">
               <PatientCareSubNav activeKey="khao-sat" />
-              <StaffSurveyForm />
+              <StaffSurveyForm
+                customPositions={customPositions}
+                customUnitTypes={customUnitTypes}
+                customDepartments={customStaffDepartments}
+              />
             </div>
           </main>
           <SiteFooter />
@@ -101,11 +143,27 @@ export default async function SurveyDetailPage({
   if (campaign.startAt && new Date(campaign.startAt).getTime() > now) return notFound()
   if (campaign.endAt && new Date(campaign.endAt).getTime() < now) return notFound()
 
-  const version: any = campaign.templateVersion
-  const questions = (version?.questions || [])
-    .map((q: any) => (typeof q === 'object' ? q : null))
-    .filter(Boolean)
-    .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+  // Thu thập danh sách câu hỏi: Hỗ trợ cả 2 chế độ (customQuestions hoặc templateVersion)
+  let questions: any[] = []
+  if (campaign.useCustomQuestions && Array.isArray(campaign.customQuestions) && campaign.customQuestions.length > 0) {
+    questions = campaign.customQuestions
+      .map((cq: any, idx: number) => ({
+        id: cq.id || cq.code || `cq_${idx}`,
+        code: cq.code || `C${idx + 1}`,
+        question: cq.question,
+        type: cq.type,
+        required: cq.required !== false,
+        options: cq.options,
+        order: cq.order || 0,
+      }))
+      .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+  } else {
+    const version: any = campaign.templateVersion
+    questions = (version?.questions || [])
+      .map((q: any) => (typeof q === 'object' ? q : null))
+      .filter(Boolean)
+      .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+  }
 
   return (
     <>
@@ -123,7 +181,7 @@ export default async function SurveyDetailPage({
 
           <div className="surveyContainer">
             <div className="surveyHeaderCard">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
                 <span className="patientCareCardBadge badgeActive">🟢 Đang tiếp nhận ý kiến</span>
                 {campaign.endAt && (
                   <span style={{ fontSize: '13px', color: '#64748b' }}>
@@ -137,7 +195,11 @@ export default async function SurveyDetailPage({
               </p>
             </div>
 
-            <SurveyForm campaignId={String(campaign.id)} questions={questions} />
+            <SurveyForm
+              campaignId={String(campaign.id)}
+              questions={questions}
+              showDemographics={campaign.showDemographics}
+            />
           </div>
         </div>
       </main>

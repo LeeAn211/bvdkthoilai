@@ -71,10 +71,56 @@ export const OUTPATIENT_SURVEY_SECTIONS = [
   },
 ]
 
-export default function OutpatientSurveyForm() {
+interface OutpatientSurveyFormProps {
+  customClinics?: string[]
+  customAreas?: string[]
+}
+
+export default function OutpatientSurveyForm({
+  customClinics,
+  customAreas,
+}: OutpatientSurveyFormProps = {}) {
   const [busy, setBusy] = useState(false)
   const [doneData, setDoneData] = useState<{ code: string; overallScore?: number } | null>(null)
   const [errorMsg, setErrorMsg] = useState('')
+
+  // Danh sách phòng khám: Dùng từ CMS nếu có, nếu chưa có thì fallback về danh sách chuẩn
+  const clinicsList = useMemo(() => {
+    if (customClinics && customClinics.length > 0) return customClinics
+    return [
+      'Phòng khám Nội tổng quát / Tim mạch / Tiểu đường',
+      'Phòng khám Ngoại - Chấn thương',
+      'Phòng khám Sản - Phụ khoa',
+      'Phòng khám Nhi khoa',
+      'Liên chuyên khoa Mắt - TMH - Răng Hàm Mặt',
+      'Phòng khám Y học cổ truyền & Phục hồi chức năng',
+      'Khu vực Tiếp nhận Cấp cứu',
+    ]
+  }, [customClinics])
+
+  // Danh sách gợi ý địa bàn nơi cư trú theo mô hình 2 cấp: Dùng từ CMS nếu có
+  const areaSuggestionsList = useMemo(() => {
+    if (customAreas && customAreas.length > 0) return customAreas
+    return [
+      'Xã Thới Lai, TP. Cần Thơ',
+      'Xã Trường Thành, TP. Cần Thơ',
+      'Xã Đông Thuận, TP. Cần Thơ',
+      'Xã Trường Xuân, TP. Cần Thơ',
+      'Xã Đông Hiệp, TP. Cần Thơ',
+      'Phường Ô Môn, TP. Cần Thơ',
+      'Xã Trường Long, TP. Cần Thơ',
+      'Xã Thới Hưng, TP. Cần Thơ',
+      'Thị trấn Cờ Đỏ, TP. Cần Thơ',
+      'Thị trấn Phong Điền, TP. Cần Thơ',
+      'Phường Thốt Nốt, TP. Cần Thơ',
+      'Phường Ninh Kiều, TP. Cần Thơ',
+      'Phường An Khánh, TP. Cần Thơ',
+      'Tỉnh Hậu Giang',
+      'Tỉnh Kiên Giang',
+      'Tỉnh An Giang',
+      'Tỉnh Đồng Tháp',
+    ]
+  }, [customAreas])
 
   // Thông tin hành chính (Section I)
   const [demographics, setDemographics] = useState({
@@ -82,7 +128,7 @@ export default function OutpatientSurveyForm() {
     ageGroup: '30-45',
     insurance: 'Có BHYT',
     area: '',
-    department: 'Phòng khám Đa khoa / Nội',
+    department: clinicsList[0] || 'Phòng khám Ngoại trú',
     respondentType: 'Người bệnh trực tiếp',
   })
 
@@ -135,10 +181,21 @@ export default function OutpatientSurveyForm() {
     // Kiểm tra xem đã chấm điểm đầy đủ chưa
     const missing = allQuestions.filter(q => !ratings[q.id])
     if (missing.length > 0) {
-      setErrorMsg(`Quý vị vui lòng đánh giá đầy đủ tất cả câu hỏi. Còn ${missing.length} câu chưa chọn (ví dụ: ${missing[0].id}).`)
-      // Cuộn tới câu hỏi đầu tiên bị thiếu
+      setErrorMsg(`⚠️ Quý vị vui lòng hoàn thành tất cả các câu hỏi bắt buộc trước khi gửi. Hiện còn ${missing.length} câu chưa chọn (ví dụ: Câu ${missing[0].id}).`)
+      // Cuộn tới câu hỏi đầu tiên bị thiếu và highlight
       const el = document.getElementById(`q-${missing[0].id}`)
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        el.style.border = '2px solid #ef4444'
+        el.style.borderRadius = '12px'
+        el.style.padding = '12px'
+        el.style.boxShadow = '0 0 0 4px rgba(239, 68, 68, 0.2)'
+        setTimeout(() => {
+          el.style.border = ''
+          el.style.padding = ''
+          el.style.boxShadow = ''
+        }, 3000)
+      }
       return
     }
 
@@ -248,11 +305,9 @@ export default function OutpatientSurveyForm() {
       </div>
 
       {errorMsg && (
-        <div className="patientCareNoticeBanner" style={{ background: '#fef2f2', borderColor: '#fca5a5', borderLeftColor: '#ef4444', marginBottom: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#b91c1c', fontWeight: 700, fontSize: '14.5px' }}>
-            <span>⚠️</span>
-            <span>{errorMsg}</span>
-          </div>
+        <div className="surveyMissingWarningBanner">
+          <span style={{ fontSize: '20px' }}>⚠️</span>
+          <span style={{ color: '#b91c1c', fontWeight: 700, fontSize: '15px' }}>{errorMsg}</span>
         </div>
       )}
 
@@ -337,26 +392,9 @@ export default function OutpatientSurveyForm() {
                 list="area-suggestions"
               />
               <datalist id="area-suggestions">
-                {/* Các xã mới khu vực Thới Lai sau sáp nhập theo NQ 1668/NQ-UBTVQH15 (Mô hình chính quyền 2 cấp) */}
-                <option value="Xã Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Trường Thành, TP. Cần Thơ" />
-                <option value="Xã Đông Thuận, TP. Cần Thơ" />
-                <option value="Xã Trường Xuân, TP. Cần Thơ" />
-                <option value="Xã Đông Hiệp, TP. Cần Thơ" />
-                {/* Các xã/phường giáp ranh lân cận tại Cần Thơ */}
-                <option value="Phường Ô Môn, TP. Cần Thơ" />
-                <option value="Xã Trường Long, TP. Cần Thơ" />
-                <option value="Xã Thới Hưng, TP. Cần Thơ" />
-                <option value="Thị trấn Cờ Đỏ, TP. Cần Thơ" />
-                <option value="Thị trấn Phong Điền, TP. Cần Thơ" />
-                <option value="Phường Thốt Nốt, TP. Cần Thơ" />
-                <option value="Phường Ninh Kiều, TP. Cần Thơ" />
-                <option value="Phường An Khánh, TP. Cần Thơ" />
-                {/* Các tỉnh giáp ranh có người bệnh đến khám */}
-                <option value="Tỉnh Hậu Giang" />
-                <option value="Tỉnh Kiên Giang" />
-                <option value="Tỉnh An Giang" />
-                <option value="Tỉnh Đồng Tháp" />
+                {areaSuggestionsList.map((area, idx) => (
+                  <option key={idx} value={area} />
+                ))}
               </datalist>
             </div>
 
@@ -368,13 +406,9 @@ export default function OutpatientSurveyForm() {
                 value={demographics.department}
                 onChange={e => setDemographics(p => ({ ...p, department: e.target.value }))}
               >
-                <option value="Phòng khám Đa khoa / Nội">Phòng khám Nội tổng quát / Tim mạch / Tiểu đường</option>
-                <option value="Phòng khám Ngoại">Phòng khám Ngoại - Chấn thương</option>
-                <option value="Phòng khám Sản - Phụ khoa">Phòng khám Sản - Phụ khoa</option>
-                <option value="Phòng khám Nhi">Phòng khám Nhi khoa</option>
-                <option value="Phòng khám Tai Mũi Họng - Mắt - RHM">Liên chuyên khoa Mắt - TMH - Răng Hàm Mặt</option>
-                <option value="Phòng khám Y học Cổ truyền - PHCN">Phòng khám Y học cổ truyền & Phục hồi chức năng</option>
-                <option value="Khu vực Cấp cứu">Khu vực Tiếp nhận Cấp cứu</option>
+                {clinicsList.map((c, idx) => (
+                  <option key={idx} value={c}>{c}</option>
+                ))}
               </select>
             </div>
           </div>

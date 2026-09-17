@@ -457,6 +457,85 @@
   font-weight: 600;
 }
 
+/* Thang điểm 1-10 đồng bộ chuẩn toàn hệ thống */
+.surveyScore10Grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+@media (max-width: 640px) {
+  .surveyScore10Grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+}
+
+.surveyScore10Btn {
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1.5px solid #cbd5e1;
+  background: #f8fafc;
+  font-weight: 800;
+  font-size: 16px;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.surveyScore10Btn:hover {
+  background: #eff6ff;
+  border-color: #0284c7;
+  color: #0284c7;
+  transform: translateY(-2px);
+}
+
+.surveyScore10Btn.selected {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border-color: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.surveyScore10SelectedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  border: 1px solid #bae6fd;
+}
+
+.surveyMissingWarningBanner {
+  background: #fef2f2;
+  border: 1.5px solid #f87171;
+  border-left: 6px solid #ef4444;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: shakeWarning 0.35s ease-in-out;
+}
+
+@keyframes shakeWarning {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
 .surveyYesNoGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
