@@ -1,17 +1,37 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-17] - Chuẩn hóa Nơi cư trú theo mô hình Chính quyền 2 cấp (Bỏ cấp Huyện)
+## [2026-09-17] - Chuẩn hóa Nơi cư trú theo mô hình Chính quyền 2 cấp & Sáp nhập xã theo Nghị quyết 1668/NQ-UBTVQH15
 
-- **Thời gian thực hiện:** 10:33 (Asia/Saigon)
-- **Yêu cầu:** Cập nhật thông tin nơi cư trú trên biểu mẫu khảo sát người bệnh theo mô hình tổ chức chính quyền địa phương 2 cấp mới (xã/phường/thị trấn trực thuộc tỉnh/thành phố trực thuộc trung ương, không còn cấp huyện trung gian).
-- **Nội dung thực hiện:**
-  - `src/components/OutpatientSurveyForm.tsx`:
-    - Cập nhật nhãn trường: `Nơi cư trú (Ấp/Khu vực, Xã/Phường/Thị trấn, Tỉnh/TP)`.
-    - Điều chỉnh placeholder hướng dẫn: `Nhập ấp/khu vực, xã/phường/thị trấn, tỉnh/thành phố (VD: TT. Thới Lai, TP. Cần Thơ)...`.
-    - Điều chỉnh danh sách gợi ý `datalist`: Các xã/thị trấn trực thuộc TP. Cần Thơ (ví dụ: `Thị trấn Thới Lai, TP. Cần Thơ`, `Xã Thới Thạnh, TP. Cần Thơ`, `Phường Thới Hòa, TP. Cần Thơ`...) thay vì kèm tên huyện cũ.
-  - `src/components/InpatientSurveyForm.tsx`:
-    - Áp dụng tương tự cho biểu mẫu khảo sát điều trị nội trú.
-- **Kiểm thử & Xác nhận:** Cả 2 biểu mẫu hiển thị chuẩn xác theo mô hình quản lý hành chính 2 cấp mới.
+- **Thời gian thực hiện:** 10:36 (Asia/Saigon)
+- **Yêu cầu:** Tra cứu văn bản chính thức của Quốc hội và cập nhật chính xác danh sách các đơn vị hành chính sau khi sáp nhập, đổi tên theo Nghị quyết số 1668/NQ-UBTVQH15 của Ủy ban Thường vụ Quốc hội (có hiệu lực từ 01/7/2025) và mô hình chính quyền địa phương 2 cấp tại TP. Cần Thơ (bỏ cấp huyện).
+- **Cơ sở dữ liệu & Căn cứ pháp lý tra cứu:**
+  - **Nghị quyết số 1668/NQ-UBTVQH15** ngày 16/6/2025 của Ủy ban Thường vụ Quốc hội về sắp xếp các đơn vị hành chính cấp xã của TP. Cần Thơ:
+    - **Xã Thới Lai mới:** Sáp nhập toàn bộ diện tích & dân số của **thị trấn Thới Lai (cũ), xã Thới Tân và xã Trường Thắng** (trụ sở tại Huyện ủy Thới Lai cũ).
+    - **Xã Trường Thành mới:** Sáp nhập toàn bộ diện tích & dân số của **xã Định Môn, xã Tân Thạnh và xã Trường Thành**.
+    - **Xã Đông Thuận mới:** Sáp nhập toàn bộ diện tích & dân số của **xã Đông Bình và xã Đông Thuận**.
+    - **Xã Trường Xuân mới:** Sáp nhập toàn bộ diện tích & dân số của **xã Trường Xuân A, xã Trường Xuân B và xã Trường Xuân**.
+    - **Xã Đông Hiệp mới:** Sáp nhập toàn bộ diện tích & dân số của **xã Đông Thắng, xã Xuân Thắng và xã Đông Hiệp**.
+    - **Phường Ô Môn mới:** Sáp nhập toàn bộ diện tích & dân số của **xã Thới Thạnh (cũ)** cùng các phường Châu Văn Liêm, Thới Hòa, Thới An.
+- **Nội dung thực hiện trên code:**
+  - `src/components/OutpatientSurveyForm.tsx` & `src/components/InpatientSurveyForm.tsx`:
+    - Cập nhật danh sách gợi ý `datalist` loại bỏ hoàn toàn các tên xã cũ đã sáp nhập (thị trấn Thới Lai cũ, Định Môn, Thới Tân, Đông Bình, Trường Thắng, Tân Thạnh, Xuân Thắng, Thới Thạnh, Trường Xuân A, Trường Xuân B).
+    - Thay thế bằng các xã/phường chuẩn mới trực thuộc TP. Cần Thơ:
+      - `Xã Thới Lai, TP. Cần Thơ`
+      - `Xã Trường Thành, TP. Cần Thơ`
+      - `Xã Đông Thuận, TP. Cần Thơ`
+      - `Xã Trường Xuân, TP. Cần Thơ`
+      - `Xã Đông Hiệp, TP. Cần Thơ`
+      - `Phường Ô Môn, TP. Cần Thơ`
+      - `Xã Trường Long, TP. Cần Thơ`
+      - `Xã Thới Hưng, TP. Cần Thơ`
+      - `Thị trấn Cờ Đỏ, TP. Cần Thơ`
+      - `Thị trấn Phong Điền, TP. Cần Thơ`
+      - `Phường Thốt Nốt, TP. Cần Thơ`
+      - `Phường Ninh Kiều, TP. Cần Thơ`
+      - `Phường An Khánh, TP. Cần Thơ`
+      - Cùng các tỉnh lân cận: `Tỉnh Hậu Giang`, `Tỉnh Kiên Giang`, `Tỉnh An Giang`, `Tỉnh Đồng Tháp`.
+    - Placeholder hướng dẫn chuẩn mới: `Nhập ấp/khu vực, xã/phường, tỉnh/thành phố (VD: Ấp Thới Thuận B, Xã Thới Lai, TP. Cần Thơ)...`.
+- **Kiểm thử & Xác nhận:** Cả 2 biểu mẫu nội trú và ngoại trú hoạt động mượt mà, hỗ trợ cả tự gõ tay địa chỉ ấp/khu vực lẫn gợi ý xã/phường chuẩn sau sáp nhập.
 
 - **Thời gian thực hiện:** 10:25 (Asia/Saigon)
 - **Yêu cầu:** Thiết kế bổ sung mẫu khảo sát ý kiến và sự hài lòng của nhân viên y tế theo chuẩn Mẫu số 3 của Bộ Y tế (theo Quyết định 3869/QĐ-BYT), giao diện chuyên nghiệp, trực quan và dễ thao tác trên cả điện thoại di động và máy tính, phục vụ cán bộ nhân viên Bệnh viện Đa khoa Khu vực Thới Lai.

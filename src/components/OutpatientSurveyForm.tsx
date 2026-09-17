@@ -333,29 +333,26 @@ export default function OutpatientSurveyForm() {
                 className="opsInput"
                 value={demographics.area}
                 onChange={e => setDemographics(p => ({ ...p, area: e.target.value }))}
-                placeholder="Nhập ấp/khu vực, xã/phường/thị trấn, tỉnh/thành phố (VD: TT. Thới Lai, TP. Cần Thơ)..."
+                placeholder="Nhập ấp/khu vực, xã/phường, tỉnh/thành phố (VD: Ấp Thới Thuận B, Xã Thới Lai, TP. Cần Thơ)..."
                 list="area-suggestions"
               />
               <datalist id="area-suggestions">
-                <option value="Thị trấn Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Thới Thạnh, TP. Cần Thơ" />
-                <option value="Xã Thới Tân, TP. Cần Thơ" />
-                <option value="Xã Tân Thạnh, TP. Cần Thơ" />
-                <option value="Xã Xuân Thắng, TP. Cần Thơ" />
-                <option value="Xã Đông Bình, TP. Cần Thơ" />
-                <option value="Xã Đông Thuận, TP. Cần Thơ" />
+                {/* Các xã mới khu vực Thới Lai sau sáp nhập theo NQ 1668/NQ-UBTVQH15 (Mô hình chính quyền 2 cấp) */}
+                <option value="Xã Thới Lai, TP. Cần Thơ" />
                 <option value="Xã Trường Thành, TP. Cần Thơ" />
-                <option value="Xã Trường Thắng, TP. Cần Thơ" />
+                <option value="Xã Đông Thuận, TP. Cần Thơ" />
                 <option value="Xã Trường Xuân, TP. Cần Thơ" />
-                <option value="Xã Trường Xuân A, TP. Cần Thơ" />
-                <option value="Xã Trường Xuân B, TP. Cần Thơ" />
-                <option value="Xã Định Môn, TP. Cần Thơ" />
+                <option value="Xã Đông Hiệp, TP. Cần Thơ" />
+                {/* Các xã/phường giáp ranh lân cận tại Cần Thơ */}
+                <option value="Phường Ô Môn, TP. Cần Thơ" />
+                <option value="Xã Trường Long, TP. Cần Thơ" />
+                <option value="Xã Thới Hưng, TP. Cần Thơ" />
                 <option value="Thị trấn Cờ Đỏ, TP. Cần Thơ" />
-                <option value="Phường Thới Hòa, TP. Cần Thơ" />
-                <option value="Phường Châu Văn Liêm, TP. Cần Thơ" />
-                <option value="Phường Thốt Nốt, TP. Cần Thơ" />
-                <option value="Phường An Khánh, TP. Cần Thơ" />
                 <option value="Thị trấn Phong Điền, TP. Cần Thơ" />
+                <option value="Phường Thốt Nốt, TP. Cần Thơ" />
+                <option value="Phường Ninh Kiều, TP. Cần Thơ" />
+                <option value="Phường An Khánh, TP. Cần Thơ" />
+                {/* Các tỉnh giáp ranh có người bệnh đến khám */}
                 <option value="Tỉnh Hậu Giang" />
                 <option value="Tỉnh Kiên Giang" />
                 <option value="Tỉnh An Giang" />
