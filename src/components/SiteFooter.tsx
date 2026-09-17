@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
 import { SocialBrandIcon } from './SocialBrandIcon'
-import { MobileBottomBar } from './MobileBottomBar'
 import styles from './SiteFooter.module.css'
 
 const legacyColumns = (medpro: string, hotline: string) => [
@@ -350,14 +349,6 @@ export async function SiteFooter() {
           </div>
         )}
       </footer>
-
-      {/* Mobile Sticky Action Bar - Chuẩn phong cách Medpro di động */}
-      {footer?.showMobileBar !== false && (
-        <MobileBottomBar
-          medproUrl={medpro}
-          emergencyHotline={emergencyHotline}
-        />
-      )}
     </>
   )
 }

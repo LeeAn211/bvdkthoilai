@@ -11,7 +11,10 @@
 .mobileTopBar,
 .mobileMenuBackdrop,
 .mobileMenuPanel,
-.mobileActionBar {
+.mobileActionBar,
+.mobileBarRow,
+.mobileDrawerBackdrop,
+.mobileDrawerWrap {
   display: none !important;
 }
 

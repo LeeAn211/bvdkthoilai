@@ -1,5 +1,19 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-17] - Khắc phục triệt để lỗi thừa nút Danh mục và bảng Drawer trên giao diện Desktop
+
+- **Thời gian thực hiện:** 09:50 (Asia/Saigon)
+- **Yêu cầu:** Loại bỏ phần nút "Trang chủ / DANH MỤC" và khung bảng trượt "Danh mục điều hướng" bị hiển thị thừa/đè lấn trên giao diện máy tính (Desktop), chỉ giữ lại thanh menu ngang chuẩn mực (`mainMenu`) trên màn hình máy tính.
+- **Nội dung thực hiện:**
+  - `src/components/MobileNavHeader.tsx`:
+    - Loại bỏ hoàn toàn khối `mobileBarRow` (nút Trang chủ + nút DANH MỤC) và toàn bộ khối `mobileDrawerWrap` / `mobileDrawerBackdrop` thừa bên trong component này.
+    - Component chỉ tập trung render thanh điều hướng chính (`mainMenu`) cho desktop và tablet, quản lý đóng/mở dropdown đa tầng khi rê chuột hoặc click.
+  - `src/components/SiteFooter.tsx`:
+    - Dọn dẹp component `MobileBottomBar` cũ bị dư thừa.
+  - `src/app/styles/mobile-medpro.css`:
+    - Khóa ẩn triệt để (`display: none !important`) các class liên quan đến drawer di động (`.mobileBarRow`, `.mobileDrawerBackdrop`, `.mobileDrawerWrap`) trên màn hình máy tính desktop.
+- **Kiểm thử & Xác nhận:** `npx tsc --noEmit` đạt 0 lỗi, HTTP trả về 200 OK. Giao diện desktop hoàn toàn sạch đẹp, hiển thị đúng thanh menu ngang chính thống của bệnh viện.
+
 ## [2026-09-16] - Đồng bộ cụm nút chuyển qua lại Chuyên gia của chúng tôi giống Kỹ thuật chuyên sâu
 
 - **Thời gian thực hiện:** 21:55 (Asia/Saigon)
