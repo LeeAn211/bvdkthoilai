@@ -73,6 +73,27 @@ export default async function SurveyDetailPage({
         </>
       )
     }
+    if (slug === 'nhan-vien' || slug === 'nhan-vien-y-te' || slug === 'khao-sat-nhan-vien') {
+      const StaffSurveyForm = (await import('@/components/StaffSurveyForm')).default
+      return (
+        <>
+          <SiteHeader />
+          <PageHero
+            eyebrow="KHẢO SÁT NỘI BỘ & PHÁT TRIỂN NGUỒN LỰC"
+            title="Khảo sát Ý kiến & Sự hài lòng Nhân viên Y tế"
+            description="Mẫu số 3 ban hành theo Quyết định của Bộ Y tế. Ý kiến đóng góp dân chủ, trách nhiệm và thẳng thắn của toàn thể cán bộ, nhân viên y tế là cơ sở để Ban Giám đốc xây dựng môi trường làm việc ngày càng văn minh, đoàn kết, công bằng và đãi ngộ xứng đáng."
+            breadcrumb="Khảo sát Nhân viên y tế"
+          />
+          <main className="patientCareSection">
+            <div className="container">
+              <PatientCareSubNav activeKey="khao-sat" />
+              <StaffSurveyForm />
+            </div>
+          </main>
+          <SiteFooter />
+        </>
+      )
+    }
     return notFound()
   }
 

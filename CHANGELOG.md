@@ -1,6 +1,33 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-17] - Thiết kế Mẫu Khảo sát Ý kiến Người bệnh Nội trú chuẩn Bộ Y tế (Mẫu số 1)
+## [2026-09-17] - Thiết kế Mẫu Khảo sát Ý kiến & Sự hài lòng Nhân viên Y tế chuẩn Bộ Y tế (Mẫu số 3)
+
+- **Thời gian thực hiện:** 10:25 (Asia/Saigon)
+- **Yêu cầu:** Thiết kế bổ sung mẫu khảo sát ý kiến và sự hài lòng của nhân viên y tế theo chuẩn Mẫu số 3 của Bộ Y tế (theo Quyết định 3869/QĐ-BYT), giao diện chuyên nghiệp, trực quan và dễ thao tác trên cả điện thoại di động và máy tính, phục vụ cán bộ nhân viên Bệnh viện Đa khoa Khu vực Thới Lai.
+- **Nội dung thực hiện:**
+  - `src/components/StaffSurveyForm.tsx` (MỚI):
+    - **Header & Thanh tiến độ:** Hiển thị huy hiệu Bộ Y tế Mẫu số 3, cam kết 100% ẩn danh và bảo mật nội bộ, thanh đo % hoàn thành tiêu chí thời gian thực.
+    - **Phần I: Thông tin chung nhân viên y tế:** Giới tính, nhóm tuổi, vị trí công tác/chuyên môn (Bác sĩ, Điều dưỡng/Hộ sinh, Dược sĩ, KTV, Hành chính, Lãnh đạo...), khối đơn vị (Lâm sàng, Cận lâm sàng, Phòng chức năng), thâm niên công tác và khoa/phòng trực thuộc.
+    - **Phần II: 5 Nhóm tiêu chí đánh giá chuẩn Bộ Y tế (19 câu hỏi):**
+      - *Phần A:* Môi trường làm việc & điều kiện cơ sở vật chất (Nơi làm việc, phòng trực, trang thiết bị y tế, thuốc/vật tư, phương tiện bảo hộ, an toàn lao động).
+      - *Phần B:* Lãnh đạo quản lý & mối quan hệ đồng nghiệp (Lãnh đạo lắng nghe, phân công công việc/ca trực công bằng, đồng nghiệp đoàn kết, phối hợp liên khoa).
+      - *Phần C:* Quy chế nội bộ, tiền lương & chế độ đãi ngộ (Lương/phụ cấp trực chi trả đúng hạn, quy chế chi tiêu nội bộ công khai, khen thưởng kịp thời, chế độ phúc lợi).
+      - *Phần D:* Áp lực công việc, cơ hội học tập & phát triển nghề nghiệp (Khối lượng công việc/trực không quá tải, tạo điều kiện đào tạo liên tục, tự chủ chuyên môn, cơ hội thăng tiến).
+      - *Phần E:* Hài lòng chung & ý định gắn bó lâu dài (Tự hào là thành viên bệnh viện, hài lòng với môi trường làm việc, mong muốn gắn bó lâu dài).
+    - **Thang điểm 5 mức Likert trực quan:** Thẻ chọn Likert 1-5 sao kèm emoji biểu cảm (`😞 Rất không hài lòng` -> `😄 Rất hài lòng`), đổi màu trạng thái sinh động, nút tiện ích "Đánh giá nhanh toàn phần" (Tất cả 5★ / Tất cả 4★) tiết kiệm thời gian.
+    - **Phần III: Đánh giá tổng thể & Đề xuất kiến nghị:**
+      - Thang điểm 10 đánh giá sự hài lòng chung đối với môi trường làm việc tại viện.
+      - Câu hỏi về ý định tiếp tục gắn bó lâu dài.
+      - Vùng nhập đề xuất, kiến nghị và sáng kiến cải tiến tự do.
+    - **Bảo mật & Biên nhận:** Tích hợp Cloudflare Turnstile, honeypot chống bot, xuất mã biên nhận định danh duy nhất (VD: `KS-NVYT-2026-XXXX`).
+  - `src/app/(frontend)/api/surveys/staff/route.ts` (MỚI): Endpoint tiếp nhận phiếu khảo sát nhân viên, tính điểm trung bình, tự động phân loại và lưu trữ an toàn vào CMS `feedbackCases` và `feedback`.
+  - `src/app/(frontend)/khao-sat/nhan-vien/page.tsx` (MỚI): Trang khảo sát nhân viên chuyên dụng với PageHero chuẩn thương hiệu bệnh viện.
+  - `src/app/(frontend)/khao-sat/[slug]/page.tsx`: Hỗ trợ tự động nhận diện slug `nhan-vien` và tải giao diện Khảo sát nhân viên.
+  - `src/app/(frontend)/khao-sat/page.tsx`: Bổ sung thẻ đợt Khảo sát Nhân viên y tế vào danh sách các đợt khảo sát trên trang Hub.
+- **Kiểm thử & Xác nhận:**
+  - Trang `/khao-sat/nhan-vien` và `/khao-sat/staff` trả về mã HTTP 200 OK.
+  - Test API gửi thành công và trả về mã biên nhận `KS-NVYT-2026-XXXX` kèm điểm trung bình.
+  - Giao diện thân thiện và mượt mà trên cả desktop và mobile.
 
 - **Thời gian thực hiện:** 10:18 (Asia/Saigon)
 - **Yêu cầu:** Thiết kế bổ sung mẫu khảo sát sự hài lòng người bệnh điều trị nội trú theo chuẩn Mẫu số 1 của Bộ Y tế (từ mẫu chuẩn https://hailong.chatluongbenhvien.vn/nguoi-benh-noi-tru-v2 theo Quyết định 3869/QĐ-BYT & QĐ 56/QĐ-BYT 2024), giao diện chuyên nghiệp, trực quan và dễ thao tác trên cả điện thoại di động và máy tính.

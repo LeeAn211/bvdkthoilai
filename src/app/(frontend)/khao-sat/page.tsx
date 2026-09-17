@@ -34,6 +34,15 @@ const DEFAULT_CAMPAIGNS = [
     status: 'active',
   },
   {
+    id: 'sample-staff',
+    title: 'Khảo sát Ý kiến & Hài lòng Nhân viên Y tế',
+    slug: 'nhan-vien',
+    desc: 'Lấy ý kiến dân chủ của cán bộ, nhân viên y tế về môi trường làm việc, điều kiện cơ sở vật chất, lãnh đạo quản lý và chế độ đãi ngộ.',
+    period: 'Định kỳ hàng năm',
+    icon: '🩺',
+    status: 'active',
+  },
+  {
     id: 'sample-emergency',
     title: 'Khảo sát Chất lượng Tiếp nhận & Cấp cứu',
     slug: 'cap-cuu',
