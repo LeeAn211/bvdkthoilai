@@ -341,39 +341,41 @@ export default function InpatientSurveyForm() {
               </div>
             </div>
 
-            {/* Nơi cư trú / Địa chỉ chi tiết */}
+            {/* Nơi cư trú / Địa chỉ chi tiết (Chính quyền 2 cấp: Xã/Phường/Thị trấn trực thuộc Tỉnh/Thành phố) */}
             <div className="opsFieldGroup">
-              <label className="opsLabel">Nơi cư trú (Địa chỉ / Xã, Huyện, Tỉnh)</label>
+              <label className="opsLabel">Nơi cư trú (Ấp/Khu vực, Xã/Phường/Thị trấn, Tỉnh/TP)</label>
               <input
                 type="text"
                 className="opsInput"
                 value={demographics.area}
                 onChange={e => setDemographics(p => ({ ...p, area: e.target.value }))}
-                placeholder="Nhập địa chỉ, ấp/khu vực, xã/thị trấn (VD: TT. Thới Lai, Huyện Thới Lai, Cần Thơ)..."
+                placeholder="Nhập ấp/khu vực, xã/phường/thị trấn, tỉnh/thành phố (VD: TT. Thới Lai, TP. Cần Thơ)..."
                 list="inpatient-area-suggestions"
               />
               <datalist id="inpatient-area-suggestions">
-                <option value="Thị trấn Thới Lai, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Thới Thạnh, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Thới Tân, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Tân Thạnh, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Xuân Thắng, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Đông Bình, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Đông Thuận, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Trường Thành, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Trường Thắng, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Trường Xuân, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Trường Xuân A, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Trường Xuân B, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Xã Định Môn, Huyện Thới Lai, TP. Cần Thơ" />
-                <option value="Huyện Cờ Đỏ, TP. Cần Thơ" />
-                <option value="Quận Ô Môn, TP. Cần Thơ" />
-                <option value="Quận Thốt Nốt, TP. Cần Thơ" />
-                <option value="Quận Bình Thủy, TP. Cần Thơ" />
-                <option value="Quận Ninh Kiều, TP. Cần Thơ" />
-                <option value="Quận Cái Răng, TP. Cần Thơ" />
-                <option value="Huyện Phong Điền, TP. Cần Thơ" />
-                <option value="Huyện Vĩnh Thạnh, TP. Cần Thơ" />
+                <option value="Thị trấn Thới Lai, TP. Cần Thơ" />
+                <option value="Xã Thới Thạnh, TP. Cần Thơ" />
+                <option value="Xã Thới Tân, TP. Cần Thơ" />
+                <option value="Xã Tân Thạnh, TP. Cần Thơ" />
+                <option value="Xã Xuân Thắng, TP. Cần Thơ" />
+                <option value="Xã Đông Bình, TP. Cần Thơ" />
+                <option value="Xã Đông Thuận, TP. Cần Thơ" />
+                <option value="Xã Trường Thành, TP. Cần Thơ" />
+                <option value="Xã Trường Thắng, TP. Cần Thơ" />
+                <option value="Xã Trường Xuân, TP. Cần Thơ" />
+                <option value="Xã Trường Xuân A, TP. Cần Thơ" />
+                <option value="Xã Trường Xuân B, TP. Cần Thơ" />
+                <option value="Xã Định Môn, TP. Cần Thơ" />
+                <option value="Thị trấn Cờ Đỏ, TP. Cần Thơ" />
+                <option value="Phường Thới Hòa, TP. Cần Thơ" />
+                <option value="Phường Châu Văn Liêm, TP. Cần Thơ" />
+                <option value="Phường Thốt Nốt, TP. Cần Thơ" />
+                <option value="Phường An Khánh, TP. Cần Thơ" />
+                <option value="Thị trấn Phong Điền, TP. Cần Thơ" />
+                <option value="Tỉnh Hậu Giang" />
+                <option value="Tỉnh Kiên Giang" />
+                <option value="Tỉnh An Giang" />
+                <option value="Tỉnh Đồng Tháp" />
               </datalist>
             </div>
 
