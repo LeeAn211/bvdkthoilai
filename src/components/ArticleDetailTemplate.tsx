@@ -472,6 +472,13 @@ export function ArticleDetailTemplate({
               <ShareButtons title={title} horizontal config={shareConfig} />
             )}
 
+            {/* Trên Mobile: Khi sharePosition === 'left', cột sticky trái bị ẩn theo responsive, tự động hiển thị thanh chia sẻ ngang gọn gàng ở đây */}
+            {isShareEnabled && sharePosition === 'left' && (
+              <div className={styles.postDetailShareMobileOnly}>
+                <ShareButtons title={title} horizontal config={shareConfig} />
+              </div>
+            )}
+
             {/* Thông tin nổi bật (dành cho đấu thầu, tuyển dụng, kỹ thuật...) */}
             {isHighlightsVisible && highlights && highlights.length > 0 && (
               <div className={styles.metaHighlightBox}>

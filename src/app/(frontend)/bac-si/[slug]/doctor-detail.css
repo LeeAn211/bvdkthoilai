@@ -444,18 +444,67 @@
 }
 
 @media (max-width: 768px) {
+  .docDetailHero {
+    padding: 22px 0 20px;
+  }
+  .docDetailHeroTitle {
+    font-size: 24px;
+  }
+  .docDetailBody {
+    margin-top: 24px;
+  }
+  /* Layout linh hoạt trên mobile: Ảnh đại diện và thông tin danh hiệu hiển thị gọn gàng, đồng bộ chuẩn desktop */
   .docDetailGrid {
-    grid-template-columns: 1fr;
-    gap: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
   .docDetailSidebar {
     position: static;
-    max-width: 320px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(140px, 180px) 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .docAvatarBox {
+    max-width: 180px;
+    margin: 0;
+    aspect-ratio: 1 / 1.25;
+  }
+  .docBookingBtn {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 12px 18px;
+    font-size: 14px;
+  }
+  .docContactNotice {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .docNameLarge {
+    font-size: 22px;
+  }
+  .docRoleTitle {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  .docMetaBadges {
+    gap: 10px 16px;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+  }
+  .docTwoColSection {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .docSectionCard {
+    padding: 18px 16px;
   }
   .docRelatedGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px 16px;
+    gap: 16px 12px;
   }
   .docRelatedHeader {
     flex-direction: column;
@@ -465,7 +514,21 @@
 }
 
 @media (max-width: 480px) {
+  .docDetailSidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .docAvatarBox {
+    width: 200px;
+    max-width: 200px;
+    margin: 0 auto 8px;
+  }
+  .docBookingBtn,
+  .docContactNotice {
+    width: 100%;
+  }
   .docRelatedGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

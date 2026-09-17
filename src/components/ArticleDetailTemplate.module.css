@@ -381,6 +381,11 @@
   gap: 20px;
 }
 
+/* Ẩn share mobile trên desktop (chỉ hiện khi màn hình < 1024px) */
+.postDetailShareMobileOnly {
+  display: none;
+}
+
 @media (max-width: 1024px) {
   .postDetailLayout {
     grid-template-columns: 1fr 300px;
@@ -389,12 +394,20 @@
   .postDetailShareCol {
     display: none;
   }
+  .postDetailShareMobileOnly {
+    display: block;
+    margin-bottom: 20px;
+  }
 }
 
 @media (max-width: 860px) {
+  .postDetailContainer {
+    padding-top: 20px;
+    padding-bottom: 40px;
+  }
   .postDetailLayout {
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 28px;
   }
   .postDetailSidebar {
     position: static;
@@ -406,9 +419,30 @@
 
 @media (max-width: 540px) {
   .postDetailTitle {
-    font-size: 22px;
+    font-size: 23px;
+    line-height: 1.32;
+    margin-bottom: 12px;
+  }
+  .postDetailMetaTop {
+    font-size: 13px;
+    gap: 8px 10px;
+    margin-bottom: 16px;
+  }
+  .postDetailExcerpt {
+    font-size: 14.5px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+  }
+  .postDetailBody {
+    font-size: 15.5px;
+    line-height: 1.75;
   }
   .relatedGrid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .relatedSectionHeading {
+    font-size: 18px;
+    margin-bottom: 18px;
   }
 }

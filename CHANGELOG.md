@@ -1,5 +1,27 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-17] - Đồng Bộ Toàn Diện Giao Diện Chi Tiết Bài Viết & Chuyên Gia Trên Điện Thoại Theo Chuẩn Desktop
+
+- **Thời gian thực hiện:** 20:15 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Đồng bộ tất cả bài viết thông tin chi tiết trên điện thoại theo chuẩn chuyên gia của website, khi bấm vào xem chi tiết trên mobile phải giữ trọn vẹn mẫu chuẩn chỉn chu, chuyên nghiệp như trên desktop.
+- **Các điểm đã kiểm tra và hoàn thiện:**
+  1. **Trang chi tiết Bác sĩ / Chuyên gia (`/bac-si/[slug]`):**
+     - Chuẩn hóa dải Hero Banner trên mobile (`padding: 22px 0 20px`, tiêu đề 24px) theo đúng chuẩn mực thiết kế Hero Banner y tế của dự án (`PageHero`).
+     - Bảo toàn tỷ lệ ảnh chân dung chuyên gia chuẩn đứng `3:4` (`1 / 1.25`), bo góc mềm mại, `object-fit: cover` sắc nét không biến dạng trên mọi kích thước màn hình điện thoại.
+     - Tối ưu layout sidebar và nội dung chuyên môn trên mobile: khối ảnh và danh hiệu đặt gọn gàng, nút Đặt lịch khám chiếm full width tiện lợi, 2 cột Đào tạo - Công tác và Thế mạnh chuyên môn xếp dọc mạch lạc, rõ ràng.
+     - Lưới bác sĩ cùng chuyên khoa / đơn vị công tác hiển thị dạng 2 cột trực quan, cân đối trên mobile thay vì bị tràn viền hay vỡ layout.
+  2. **Trang chi tiết Bài viết / Tin tức / Thông báo (`ArticleDetailTemplate`):**
+     - Bổ sung khối chia sẻ bài viết ngang tự động (`.postDetailShareMobileOnly`) ngay dưới phần metadata trên mobile khi cột sticky trái bị ẩn, giúp người dùng điện thoại dễ dàng chia sẻ (Facebook, Zalo, Copy Link) như trên máy tính.
+     - Cân chỉnh font size tiêu đề bài viết trên mobile (`23px`, `line-height: 1.32`, `text-wrap: balance`), thu gọn padding sapo dẫn nhập (`.postDetailExcerpt`), tối ưu kích thước ảnh nội dung (`max-width: 100%`, bo góc `12px`, tự động căn giữa).
+     - Khối bài viết cùng chuyên mục (`.relatedGrid`) co giãn 1-2 cột mượt mà, typography tối ưu trải nghiệm đọc trên màn hình cảm ứng.
+- **Tệp tin chỉnh sửa:**
+  - `src/app/(frontend)/bac-si/[slug]/doctor-detail.css` [MODIFY]
+  - `src/components/ArticleDetailTemplate.tsx` [MODIFY]
+  - `src/components/ArticleDetailTemplate.module.css` [MODIFY]
+- **Database / Schema:** Không thay đổi schema.
+- **Kiểm tra chất lượng:** `npx tsc --noEmit` đạt `0` lỗi.
+
 ## [2026-09-17] - Đồng Bộ Toàn Diện Giao Diện Chân Trang (Footer) Trên Điện Thoại & Hệ Thống CMS
 
 - **Thời gian thực hiện:** 18:15 (Asia/Saigon)
