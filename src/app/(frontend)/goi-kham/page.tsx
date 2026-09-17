@@ -86,10 +86,11 @@ const DEFAULT_PACKAGES = [
 export default async function CheckupPackagesPage() {
   let pkgPage: any = {}
   try {
-    const [specPage, siteSettings] = await Promise.all([
+    const [specPage, siteSettingsData] = await Promise.all([
       getGlobal('checkup-packages-settings' as any).catch(() => null),
       getGlobal('site-settings').catch(() => ({})),
     ])
+    const siteSettings: any = siteSettingsData
     pkgPage = (specPage && Object.keys(specPage).length > 0) ? specPage : (siteSettings?.checkupPackagesPage || {})
   } catch {}
   const eyebrow = pkgPage.eyebrow || 'CHỦ ĐỘNG BẢO VỆ SỨC KHỎE'

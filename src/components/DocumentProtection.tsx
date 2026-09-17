@@ -60,8 +60,7 @@ export function DocumentProtection({
     // 4. Chặn sự kiện trước khi in (beforeprint)
     const handleBeforePrint = (e: Event) => {
       if (preventPrint || preventCopy) {
-        // Hủy hoặc xóa nội dung in nếu trình duyệt hỗ trợ
-        alert('Tài liệu được thiết lập bảo vệ: Không cho phép in hoặc xuất PDF khi chưa mở khóa.')
+        alert('Tài liệu bảo mật lưu hành nội bộ của Bệnh viện Đa khoa Khu vực Thới Lai: Chỉ được xem trực tuyến trên website, không cho phép sao chép, tải về hoặc in ấn.')
       }
     }
 
@@ -86,14 +85,15 @@ export function DocumentProtection({
         <style jsx global>{`
           @media print {
             .protectedDocumentContent,
-            .protectedPrintDisabled {
+            .protectedPrintDisabled,
+            iframe {
               display: none !important;
               visibility: hidden !important;
               height: 0 !important;
               overflow: hidden !important;
             }
             body::before {
-              content: 'Tài liệu bảo mật - Bệnh viện Đa khoa Khu vực Thới Lai. Không cho phép in trực tiếp.' !important;
+              content: 'TÀI LIỆU BẢO MẬT NỘI BỘ - BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI. CHỈ ĐƯỢC XEM TRỰC TIẾP TRÊN WEBSITE, KHÔNG ĐƯỢC PHÉP IN HOẶC XUẤT TẬP TIN.' !important;
               display: block !important;
               padding: 40px !important;
               font-size: 16pt !important;

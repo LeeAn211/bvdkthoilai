@@ -103,10 +103,11 @@ const DEFAULT_FACILITIES = [
 export default async function HospitalMapPage() {
   let mapPage: any = {}
   try {
-    const [specPage, siteSettings] = await Promise.all([
+    const [specPage, siteSettingsData] = await Promise.all([
       getGlobal('hospital-map-settings' as any).catch(() => null),
       getGlobal('site-settings').catch(() => ({})),
     ])
+    const siteSettings: any = siteSettingsData
     mapPage = (specPage && Object.keys(specPage).length > 0) ? specPage : (siteSettings?.hospitalMapPage || {})
   } catch {}
   const eyebrow = mapPage.eyebrow || 'CHỈ DẪN TIẾP ĐÓN TIỆN ÍCH'

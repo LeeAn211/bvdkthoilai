@@ -1,5 +1,21 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-17] - Thiết Lập Chế Độ Chỉ Xem Trực Tuyến, Chống Sao Chép, Tải Về Và In Ấn Cho Tài Liệu/Phác Đồ Khóa Mật Khẩu PIN
+
+- **Thời gian thực hiện:** 17:35 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Đối với tài liệu, văn bản và phác đồ điều trị có cài đặt khóa mật khẩu bảo mật (`accessMode === 'pin'`):
+    1. Khi người dùng mở khóa bằng mã xác thực, **CHỈ ĐƯỢC XEM TRỰC TIẾP TRÊN TRANG WEB**.
+    2. **TUYỆT ĐỐI KHÔNG ĐƯỢC TẢI VỀ**: Ẩn/vô hiệu hóa nút Tải về, thiết lập `canDownload = false`, hiển thị nhãn cảnh báo `🔒 Chỉ xem trên website (Cấm tải về / In ấn)`.
+    3. **TUYỆT ĐỐI KHÔNG ĐƯỢC IN ẤN**: Chặn lệnh in `Ctrl+P`, chặn sự kiện `beforeprint`, CSS `@media print` tự động ẩn toàn bộ nội dung và khung iframe viewer, hiển thị thông báo cấm in trực tiếp.
+    4. **TUYỆT ĐỐI KHÔNG ĐƯỢC SAO CHÉP**: Tự động kích hoạt chống sao chép (`user-select: none`, chặn chuột phải `contextmenu`, chặn các phím tắt `Ctrl+C`, `Ctrl+S`, `Ctrl+U`, `Ctrl+A`, `Ctrl+X`, `F12`).
+    5. **TRÌNH ĐỌC PDF / IFRAME**: Nhúng tham số `#toolbar=0&navpanes=0` để vô hiệu hóa thanh công cụ tải về/in của trình duyệt, ẩn hoàn toàn nút "Mở cửa sổ mới" để không làm lộ liên kết file trực tiếp.
+    6. **GIAO DIỆN & THÔNG BÁO**: Cập nhật toàn bộ các nhãn nút ("Nhập mã để xem trực tuyến", "Xác nhận & Mở khóa xem") và banner cảnh báo rõ ràng quy định lưu hành nội bộ của Bệnh viện ĐKKV Thới Lai.
+- **Tệp tin chỉnh sửa:**
+  - `src/components/DocumentDetailView.tsx` [MODIFY]
+  - `src/components/DocumentProtection.tsx` [MODIFY]
+- **Database / Schema:** Không thay đổi schema (tận dụng trường `accessMode`, `accessPin` và `allowDownload` hiện có).
+
 ## [2026-09-17] - Tách Độc Lập Các Trang Dành Cho Người Bệnh Ra Khỏi "Cấu Hình Website & Nhận Diện" Sang Đúng Phân Nhóm Chuyên Môn
 
 - **Thời gian thực hiện:** 16:35 (Asia/Saigon)

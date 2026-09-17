@@ -22,11 +22,13 @@ export default async function ExaminationFlowPage() {
   let flowSettings: any = {}
 
   try {
-    const [specFlow, siteSettings, contactSettings] = await Promise.all([
+    const [specFlow, siteSettingsData, contactSettingsData] = await Promise.all([
       getGlobal('examination-flow-settings' as any).catch(() => null),
       getGlobal('site-settings').catch(() => ({})),
       getGlobal('contact-settings').catch(() => ({})),
     ])
+    const siteSettings: any = siteSettingsData
+    const contactSettings: any = contactSettingsData
     flowSettings = (specFlow && Object.keys(specFlow).length > 0) ? specFlow : (siteSettings?.examinationFlowPage || {})
     medproUrl = siteSettings?.medproUrl || medproUrl
     hotline = contactSettings?.hotline || siteSettings?.hotline || hotline

@@ -25,6 +25,7 @@ export interface DocumentDetailData {
   defaultPin?: string
   allowDownload?: boolean
   preventCopy?: boolean
+  preventPrint?: boolean
   showViewer?: boolean
   textAlign?: 'left' | 'center' | 'right' | 'justify'
   titleColor?: 'default' | 'navy' | 'blue' | 'green' | 'red'
@@ -93,9 +94,17 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
 
   // Quyền thao tác thực tế: Nếu là PIN thì phải đã unlock, nếu là locked thì luôn cấm
   const canAccessDocument = (!isPinProtected || isUnlocked) && !isFullyLocked
-  const canDownload = canAccessDocument && doc.allowDownload !== false
+
+  // Đối với tài liệu có cài mật khẩu (isPinProtected): Tuyệt đối CHỈ CHO XEM TRỰC TIẾP TRÊN WEB,
+  // KHÔNG cho phép tải file về máy, không mở cửa sổ mới và cấm in ấn, sao chép.
+  const canDownload = !isPinProtected && canAccessDocument && doc.allowDownload !== false
+
+  // Chặn sao chép và chặn in: Kích hoạt khi bật cờ riêng HOẶC khi tài liệu có mật khẩu bảo mật
+  const isCopyDisabled = Boolean(doc.preventCopy) || isPinProtected
+  const isPrintDisabled = Boolean(doc.preventPrint) || isPinProtected
 
   // Link viewer: nếu chưa unlock thì tuyệt đối không tải url file vào iframe
+  // Khi là tài liệu khóa PIN hoặc cấm tải: cưỡng chế PDF toolbar=0 để ẩn nút In & Tải về của trình đọc PDF
   const embedViewerUrl = (canAccessDocument && doc.fileUrl)
     ? isPdf
       ? `${doc.fileUrl}#toolbar=${canDownload ? '1' : '0'}&navpanes=0`
@@ -104,11 +113,11 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
 
   return (
     <DocumentProtection
-      preventCopy={Boolean(doc.preventCopy) || (isPinProtected && !isUnlocked)}
-      preventPrint={isPinProtected && !isUnlocked}
+      preventCopy={isCopyDisabled}
+      preventPrint={isPrintDisabled}
     >
       <article className={styles.container}>
-        {/* Banner cảnh báo bảo mật nếu có mã PIN hoặc preventCopy = true */}
+        {/* Banner cảnh báo bảo mật nếu có mã PIN và CHƯA mở khóa */}
         {isPinProtected && !isUnlocked && (
           <div className={styles.protectionNotice} style={{ background: '#fff2f0', borderColor: '#ffccc7', color: '#a8071a' }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -116,12 +125,25 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
             <span>
-              <strong>Tài liệu giới hạn lưu hành nội bộ:</strong> Toàn bộ trình xem trước, tải file và in PDF đã được bảo vệ. Vui lòng nhập mã xác thực do Bệnh viện Đa khoa Khu vực Thới Lai cung cấp để mở khóa.
+              <strong>Tài liệu giới hạn lưu hành nội bộ:</strong> Trình xem trực tuyến đã được khóa bằng mật khẩu bảo mật. Vui lòng nhập mã xác thực do Bệnh viện Đa khoa Khu vực Thới Lai cung cấp để mở khóa xem trực tiếp trên trang web.
             </span>
           </div>
         )}
 
-        {(!isPinProtected || isUnlocked) && doc.preventCopy && (
+        {/* Banner thông báo chế độ chỉ xem trực tuyến khi ĐÃ MỞ KHÓA tài liệu có mật khẩu */}
+        {isPinProtected && isUnlocked && (
+          <div className={styles.protectionNotice} style={{ background: '#e6f7ff', borderColor: '#91caff', color: '#0050b3' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>
+              <strong>Chế độ xem an toàn nội bộ:</strong> Tài liệu chỉ được xem trực tiếp trên website Bệnh viện ĐKKV Thới Lai. Hệ thống đã vô hiệu hóa tính năng tải về, sao chép và in ấn theo quy định lưu hành nội bộ.
+            </span>
+          </div>
+        )}
+
+        {!isPinProtected && doc.preventCopy && (
           <div className={styles.protectionNotice}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -236,20 +258,20 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
                               type="button"
                               className={styles.btnUnlockModal}
                               onClick={() => setShowPinModal(true)}
-                              title="Nhập mã xác thực để mở khóa tài liệu"
+                              title="Nhập mã xác thực để mở khóa xem trực tuyến"
                             >
                               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                               </svg>
-                              <span>Nhập mã để xem & tải</span>
+                              <span>Nhập mã để xem trực tuyến</span>
                             </button>
                             <span className={styles.lockedTextNotice}>
-                              🔒 Đã khóa xem & tải về
+                              🔒 Đã khóa xem trực tuyến
                             </span>
                           </>
                         ) : isFullyLocked ? (
-                          <span className={styles.downloadLocked} title="Chỉ cho phép đọc trực tuyến theo quy định">
+                          <span className={styles.downloadLocked} title="Chỉ cho phép đọc trích yếu theo quy định">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -271,7 +293,7 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
                               <span>{activeViewer ? 'Thu gọn xem' : 'Xem trực tiếp'}</span>
                             </button>
 
-                            {/* Nút tải về: chỉ hiển thị khi canDownload === true */}
+                            {/* Nút tải về: chỉ hiển thị khi canDownload === true (tuyệt đối không hiển thị khi có mã PIN) */}
                             {canDownload ? (
                               <a
                                 href={doc.fileUrl}
@@ -288,12 +310,12 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
                                 <span>Tải về</span>
                               </a>
                             ) : (
-                              <span className={styles.downloadLocked} title="Chỉ cho phép đọc trực tuyến theo quy định">
+                              <span className={styles.downloadLocked} title="Tài liệu chỉ cho phép đọc trực tuyến trên website, không cho phép tải về hay in ấn">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                                 </svg>
-                                <span>Chỉ xem trực tuyến</span>
+                                <span>{isPinProtected ? '🔒 Chỉ xem trên website (Cấm tải về / In ấn)' : 'Chỉ xem trực tuyến'}</span>
                               </span>
                             )}
                           </>
@@ -321,7 +343,7 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
               </div>
               <h3 className={styles.lockedTitle}>Tài liệu lưu hành nội bộ đã được khóa</h3>
               <p className={styles.lockedDesc}>
-                Để xem trực tuyến, tải tệp hoặc in tài liệu này, vui lòng nhập mã xác thực do Bệnh viện Đa khoa Khu vực Thới Lai cấp.
+                Để xem trực tuyến tài liệu nội bộ này trên website, vui lòng nhập mã xác thực do Bệnh viện Đa khoa Khu vực Thới Lai cấp. <em>(Tài liệu chỉ cho phép xem trực tiếp, không hỗ trợ tải về hoặc in ấn)</em>.
               </p>
               <form onSubmit={handleVerifyPin} className={styles.pinForm}>
                 <div className={styles.pinInputGroup}>
@@ -338,7 +360,7 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
                     aria-label="Mã PIN bảo mật tài liệu"
                   />
                   <button type="submit" className={styles.btnSubmitPin}>
-                    <span>Mở khóa tài liệu</span>
+                    <span>Mở khóa xem tài liệu</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                       <polyline points="12 5 19 12 12 19"></polyline>
@@ -441,7 +463,7 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
                   Xác thực mã bảo mật nội bộ
                 </h3>
                 <p style={{ fontSize: '0.9rem', color: '#64748b', margin: 0, lineHeight: 1.5 }}>
-                  Vui lòng nhập mã PIN do Bệnh viện ĐKKV Thới Lai cấp để mở khóa xem và tải file <strong>{doc.fileName || 'tài liệu'}</strong>:
+                  Vui lòng nhập mã PIN do Bệnh viện ĐKKV Thới Lai cấp để mở khóa xem trực tuyến <strong>{doc.fileName || 'tài liệu'}</strong> (Tài liệu không hỗ trợ tải về hoặc in ấn):
                 </p>
               </div>
 
@@ -459,7 +481,7 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
                 />
                 {pinError && <p className={styles.pinErrorMsg} style={{ margin: 0 }}>{pinError}</p>}
                 <button type="submit" className={styles.btnSubmitPin} style={{ width: '100%', marginTop: 6 }}>
-                  <span>Xác nhận & Mở khóa ngay</span>
+                  <span>Xác nhận & Mở khóa xem</span>
                 </button>
               </form>
             </div>

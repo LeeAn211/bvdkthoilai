@@ -19,10 +19,11 @@ export default async function HospitalQualityPage() {
   let qualitySettings: any = {}
 
   try {
-    const [specQuality, siteSettings] = await Promise.all([
+    const [specQuality, siteSettingsData] = await Promise.all([
       getGlobal('hospital-quality-settings' as any).catch(() => null),
       getGlobal('site-settings').catch(() => ({})),
     ])
+    const siteSettings: any = siteSettingsData
     qualitySettings = (specQuality && Object.keys(specQuality).length > 0) ? specQuality : (siteSettings?.qualityPage || {})
   } catch (err) {
     console.error('[HospitalQualityPage] Lỗi lấy cấu hình site:', err)
