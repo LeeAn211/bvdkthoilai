@@ -825,30 +825,6 @@ export default async function HomePage() {
 
           if (type === 'featured-news') {
             const seeAllUrl = cfg.featuredSeeAllUrl || '/tin-tuc'
-            const newsLayout = item.sectionLayout || 'editorial-grid'
-
-            if (newsLayout === 'editorial-grid') {
-              const newsEditorialItems = featuredItems.map((fi: any) => ({
-                id: fi.id,
-                href: fi.href,
-                cover: fi.image,
-                coverFit: fi.imageFit || 'cover',
-                coverPosition: fi.imagePosition || 'top',
-                title: fi.title,
-                excerpt: fi.excerpt || '',
-                date: fi.date || '',
-                category: fi.kind || 'TIN TỨC',
-              }))
-              return (
-                <section className="sectionPro configurableHomeSection homeFeaturedSection" style={style} key={key}>
-                  <div className="container">
-                    <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href={seeAllUrl}>Xem tất cả →</a></div>
-                    {renderEditorialSection({ items: newsEditorialItems, layout: 'editorial-grid', showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || undefined, emptyText: 'Chưa có tin tức được đăng.', actionText: 'Xem chi tiết tin tức →' })}
-                  </div>
-                </section>
-              )
-            }
-
             return (
               <section className="sectionPro configurableHomeSection homeFeaturedSection" style={style} key={key}>
                 <div className="container">
@@ -1176,7 +1152,27 @@ export default async function HomePage() {
 
           if (type === 'news-portal') {
             if (!news || news.length === 0) return null
-            return <section className="sectionPro configurableHomeSection homePortalNewsSection homePortalPage" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem toàn bộ bài viết →</a></div><HomeNewsTabs items={news.map((article) => ({ id: article.id, title: article.title, slug: article.slug, excerpt: article.excerpt, category: article.category, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news, coverFit: article.coverFit || 'cover', coverPosition: article.coverPosition || 'top' }))} tabs={contentTabsFor('news-portal')} /></div></section>
+            const newsPortalLayout = item.sectionLayout || 'editorial-grid'
+            const newsPortalLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
+            const newsPortalItems = news.slice(0, newsPortalLimit).map((article: any) => ({
+              id: article.id,
+              href: `/tin-tuc/${article.slug}`,
+              cover: mediaUrl(article.cover || article.seoImage) || defaultMedia.news,
+              coverFit: article.coverFit || 'cover',
+              coverPosition: article.coverPosition || 'top',
+              title: article.title,
+              excerpt: article.excerpt || '',
+              date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+              category: article.category || 'TIN TỨC',
+            }))
+            return (
+              <section className="sectionPro configurableHomeSection homePortalNewsSection homePortalPage" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem toàn bộ bài viết →</a></div>
+                  {renderEditorialSection({ items: newsPortalItems, layout: newsPortalLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || undefined, emptyText: 'Chưa có tin tức được đăng.', actionText: 'Xem chi tiết tin tức →' })}
+                </div>
+              </section>
+            )
           }
 
           if (type === 'patient-portal-services') {
