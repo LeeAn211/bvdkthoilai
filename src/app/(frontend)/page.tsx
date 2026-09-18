@@ -825,6 +825,30 @@ export default async function HomePage() {
 
           if (type === 'featured-news') {
             const seeAllUrl = cfg.featuredSeeAllUrl || '/tin-tuc'
+            const newsLayout = item.sectionLayout || 'editorial-grid'
+
+            if (newsLayout === 'editorial-grid') {
+              const newsEditorialItems = featuredItems.map((fi: any) => ({
+                id: fi.id,
+                href: fi.href,
+                cover: fi.image,
+                coverFit: fi.imageFit || 'cover',
+                coverPosition: fi.imagePosition || 'top',
+                title: fi.title,
+                excerpt: fi.excerpt || '',
+                date: fi.date || '',
+                category: fi.kind || 'TIN TỨC',
+              }))
+              return (
+                <section className="sectionPro configurableHomeSection homeFeaturedSection" style={style} key={key}>
+                  <div className="container">
+                    <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href={seeAllUrl}>Xem tất cả →</a></div>
+                    {renderEditorialSection({ items: newsEditorialItems, layout: 'editorial-grid', showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || undefined, emptyText: 'Chưa có tin tức được đăng.', actionText: 'Xem chi tiết tin tức →' })}
+                  </div>
+                </section>
+              )
+            }
+
             return (
               <section className="sectionPro configurableHomeSection homeFeaturedSection" style={style} key={key}>
                 <div className="container">
@@ -841,6 +865,7 @@ export default async function HomePage() {
               </section>
             )
           }
+
 
           if (type === 'advanced-techniques') {
             const collectionSlides = advancedTechniques.map((tech: any) => {
