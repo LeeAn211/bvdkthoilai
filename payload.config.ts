@@ -233,10 +233,15 @@ const applyCollectionPermissionVisibility = (config: CollectionConfig): Collecti
 const applyGlobalPermissionVisibility = (config: GlobalConfig): GlobalConfig =>
   hideWithoutModulePermission(config, globalPermissionModules[config.slug])
 
-if (isProduction && (!payloadSecret || payloadSecret === 'CHANGE_ME' || payloadSecret.length < 32)) {
-  throw new Error('PAYLOAD_SECRET bắt buộc phải có ít nhất 32 ký tự trên Production.')
+const isNextBuild = process.env.NEXT_PHASE === 'phase-production-build' || process.env.npm_lifecycle_event === 'build'
+const effectivePayloadSecret = payloadSecret || (isNextBuild || !isProduction ? 'development-build-secret-32characters-fallback' : '')
+
+if (isProduction && !isNextBuild && (!effectivePayloadSecret || effectivePayloadSecret === 'CHANGE_ME' || effectivePayloadSecret.length < 32)) {
+  throw new Error('PAYLOAD_SECRET bắt buộc phải có ít nhất 32 ký tự trên Production khi khởi chạy.')
 }
-if (!databaseURL) throw new Error('Thiếu biến môi trường DATABASE_URL.')
+if (!databaseURL && !isNextBuild) {
+  throw new Error('Thiếu biến môi trường DATABASE_URL.')
+}
 
 export default buildConfig({
   serverURL: siteURL || 'http://localhost:3000',
@@ -250,7 +255,7 @@ export default buildConfig({
     fallbackLanguage: 'vi',
   },
   editor: hospitalEditor,
-  secret: payloadSecret || 'development-only-secret-change-before-production',
+  secret: effectivePayloadSecret || 'development-only-secret-change-before-production',
   email: smtpConfigured
     ? nodemailerAdapter({
         defaultFromAddress: process.env.SMTP_FROM_ADDRESS || smtpUser,
