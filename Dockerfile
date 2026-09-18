@@ -6,17 +6,18 @@ RUN npm install --no-audit --no-fund
 FROM node:22-alpine AS builder
 WORKDIR /app
 
+# Only non-sensitive public configuration needed at build time
 ARG DATABASE_URL
-ARG PAYLOAD_SECRET
 ARG NEXT_PUBLIC_SITE_URL
 ARG NEXT_PUBLIC_MEDPRO_URL
-ARG PREVIEW_SECRET
 
 ENV DATABASE_URL=$DATABASE_URL
-ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_MEDPRO_URL=$NEXT_PUBLIC_MEDPRO_URL
-ENV PREVIEW_SECRET=$PREVIEW_SECRET
+
+# Secrets like PAYLOAD_SECRET and PREVIEW_SECRET are supplied at runtime (via Railway / Docker run environment variables)
+# Dummy fallback secret is provided only during build phase to avoid Docker build secret leakage
+ENV PAYLOAD_SECRET=temporary_build_secret_must_be_provided_at_runtime_32chars
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
