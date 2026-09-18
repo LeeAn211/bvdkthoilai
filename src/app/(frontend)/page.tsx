@@ -1383,7 +1383,42 @@ export default async function HomePage() {
             )
           }
 
-          if (type === 'schedules') return <section id="schedules" className="sectionPro configurableHomeSection homeScheduleSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/lich-kham">Xem tất cả →</a></div><ScheduleExplorer daily={homeDailySchedules} weekly={homeWeeklySchedules} attachments={homeAttachedSchedules} emergency={homeEmergencySchedules} medpro={medpro} tabOrder={scheduleTabOrder.length ? scheduleTabOrder : undefined} tabs={scheduleTabs.length ? scheduleTabs : undefined} compact /></div></section>
+          if (type === 'schedules') {
+            const schedLayout = item.sectionLayout || 'editorial-grid'
+            const schedLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
+
+            if (schedLayout === 'editorial-grid') {
+              const allSchedules = [...homeDailySchedules, ...homeWeeklySchedules, ...homeEmergencySchedules, ...homeAttachedSchedules]
+              const schedItems = allSchedules.slice(0, schedLimit).map((s: any) => ({
+                id: s.id,
+                href: `/lich-kham/${s.id}`,
+                cover: s.coverUrl || s.scheduleImageUrl || defaultMedia.schedules,
+                coverFit: 'cover',
+                coverPosition: 'top',
+                title: s.title || s.doctorName || 'Lịch khám bệnh',
+                excerpt: s.summary || s.note || s.department || 'Lịch khám được cập nhật từ Bệnh viện Đa khoa Khu vực Thới Lai.',
+                date: s.date || s.validFrom || s.weekStart || '',
+                category: s.mode === 'emergency' ? 'LỊCH TRỰC CẤP CỨU' : s.mode === 'weekly' ? 'LỊCH TUẦN' : s.mode === 'attachment' ? 'LỊCH ĐÍNH KÈM' : 'LỊCH KHÁM',
+              }))
+              return (
+                <section id="schedules" className="sectionPro configurableHomeSection homeScheduleSection" style={style} key={key}>
+                  <div className="container">
+                    <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/lich-kham">Xem tất cả →</a></div>
+                    {renderEditorialSection({ items: schedItems, layout: 'editorial-grid', showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || undefined, emptyText: 'Chưa có lịch khám được cập nhật.', actionText: 'Xem lịch khám →' })}
+                  </div>
+                </section>
+              )
+            }
+
+            return (
+              <section id="schedules" className="sectionPro configurableHomeSection homeScheduleSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/lich-kham">Xem tất cả →</a></div>
+                  <ScheduleExplorer daily={homeDailySchedules} weekly={homeWeeklySchedules} attachments={homeAttachedSchedules} emergency={homeEmergencySchedules} medpro={medpro} tabOrder={scheduleTabOrder.length ? scheduleTabOrder : undefined} tabs={scheduleTabs.length ? scheduleTabs : undefined} compact />
+                </div>
+              </section>
+            )
+          }
 
           if (type === 'vaccination-portal-services') {
             const rawVaxTabs = Array.isArray(item.portalVaccinationTabs) ? item.portalVaccinationTabs : []
