@@ -139,35 +139,44 @@ function VaccinationCard({ item, kind, featured = false }: { item: any; kind: Va
     )
   }
 
-  // --- TAB TIÊM NGỪA THEO ĐỢT & THÔNG BÁO LỊCH TIÊM: Phương án 3 (editorial-style) ---
+  // --- TAB TIÊM NGỪA THEO ĐỢT & THÔNG BÁO LỊCH TIÊM: Phương án 3 chuẩn mực ---
   const badge = item.badge || (kind === 'announcements' ? 'THÔNG BÁO TIÊM NGỪA' : `ĐỢT TIÊM · ${formatDate(item.date)}`)
   const excerpt = kind === 'announcements'
     ? (item.summary || item.description || 'Bấm xem chi tiết nội dung thông báo lịch tiêm ngừa.')
     : (item.summary || item.target || item.description || 'Thông tin đợt tiêm ngừa tại bệnh viện.')
   const href = item.href || `/tiem-chung/${item.id}`
   const dateStr = item.date ? formatDate(item.date) : (item.startDate ? formatDate(item.startDate) : '')
+  const placeholder = kind === 'announcements' ? '📢' : '🗓'
 
   if (featured) {
-    // Thẻ lớn bên trái (editorial hero)
     return (
       <a className="editorialHeroCard" href={href}>
-        <div className="editorialHeroCover" style={{ aspectRatio: '16/9', overflow: 'hidden', borderRadius: '10px 10px 0 0', background: '#e0f2fe' }}>
-          {item.imageUrl
-            ? <img src={item.imageUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
-            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>
-                {kind === 'announcements' ? '📢' : '🗓'}
-              </div>
-          }
+        <div className="editorialHeroThumb">
+          {item.imageUrl ? (
+            <img src={item.imageUrl} alt={item.title} className="editorialHeroImg" />
+          ) : (
+            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '38px', background: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)' }}>
+              {placeholder}
+            </div>
+          )}
+          <span className="editorialHeroBadge">{badge}</span>
         </div>
         <div className="editorialHeroBody">
-          <div className="editorialHeroMeta">
-            <span className="editorialHeroBadge">{badge}</span>
-            {dateStr && <span className="editorialHeroDate">{dateStr}</span>}
-          </div>
+          {dateStr && (
+            <div className="editorialHeroDate">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <span>{dateStr}</span>
+            </div>
+          )}
           <h3 className="editorialHeroTitle">{item.title}</h3>
           <p className="editorialHeroExcerpt">{excerpt}</p>
           <div className="editorialHeroAction">
-            <span>Xem chi tiết →</span>
+            <span>Xem chi tiết thông tin →</span>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
@@ -178,23 +187,29 @@ function VaccinationCard({ item, kind, featured = false }: { item: any; kind: Va
     )
   }
 
-  // Thẻ nhỏ bên phải (editorial side card)
   return (
-    <a className="editorialSideCard" href={href}>
-      <div className="editorialSideCover">
-        {item.imageUrl
-          ? <img src={item.imageUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
-          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', background: '#f0f9ff' }}>
-              {kind === 'announcements' ? '📢' : '🗓'}
-            </div>
-        }
+    <a className="editorialRowItem" href={href}>
+      <div className="editorialRowThumb">
+        {item.imageUrl ? (
+          <img src={item.imageUrl} alt={item.title} className="editorialRowImg" />
+        ) : (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', background: '#e0f2fe' }}>
+            {placeholder}
+          </div>
+        )}
       </div>
-      <div className="editorialSideBody">
-        <div className="editorialSideMeta">
-          <span className="editorialSideBadge">{badge}</span>
-          {dateStr && <span className="editorialSideDate">{dateStr}</span>}
+      <div className="editorialRowContent">
+        <div className="editorialRowMeta">
+          <span className="editorialRowBadge">{badge}</span>
+          {dateStr && <span className="editorialRowDate">{dateStr}</span>}
         </div>
-        <h4 className="editorialSideTitle">{item.title}</h4>
+        <h4 className="editorialRowTitle">{item.title}</h4>
+        {excerpt && <p className="editorialRowExcerpt">{excerpt}</p>}
+      </div>
+      <div className="editorialRowArrow" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
       </div>
     </a>
   )
@@ -473,9 +488,9 @@ export function VaccinationTabs({
             </div>
           )
         ) : (
-          <div className={`tabEditorialGrid vaccinationEditorialGrid ${visibleItems.length === 1 ? 'single' : ''}`}>
+          <div className={`editorialVariant3 vaccinationEditorialGrid ${visibleItems.length === 1 ? 'single' : ''}`}>
             <VaccinationCard item={visibleItems[0]} kind={definition.kind} featured />
-            <div className="tabEditorialList">
+            <div className="editorialRowList">
               {visibleItems.slice(1).map((item, index) => <VaccinationCard item={item} kind={definition.kind} key={item.id || index} />)}
             </div>
           </div>

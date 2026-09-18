@@ -1,23 +1,38 @@
 # CURRENT TASK
 
-## Trang thai: HOAN THANH - TÁI THIẾT KẾ KHỐI THÔNG BÁO THEO PHƯƠNG ÁN 3 (1 THẺ LỚN TRÁI + LIST HÀNG NGANG PHẢI)
+## Trang thai: HOÀN THÀNH - KHẮC PHỤC HIỂN THỊ PHÂN CHIA TAB KHỐI CỔNG THÔNG TIN BỆNH VIỆN & THÔNG TIN KHÁM BỆNH (LỊCH KHÁM BỆNH)
 
-### Đã hoàn thành:
-1. **Triển khai Bố cục Phương án 3 cho Khối Thông báo & Editorial Grid**:
-   - Chỉnh sửa `renderEditorialSection` cho mẫu `editorial-grid` trong `src/app/(frontend)/page.tsx`.
-   - **Cột trái (1 Thẻ Lớn Nổi Bật - `editorialHeroCard`)**:
-     - Tỷ lệ khung ảnh `16:9.6` góc bo 16px, badge danh mục nổi bật góc dưới ảnh.
-     - Xóa triệt để lỗi dấu phẩy thừa trước ngày tháng (biểu tượng lịch SVG + ngày đăng rõ ràng).
-     - Tiêu đề `h3` cỡ 18px đậm đà `#0f2e47`, đoạn tóm tắt 3 dòng, nút "Xem chi tiết thông báo →".
-   - **Cột phải (Danh sách 4 hàng ngang - `editorialRowList`)**:
-     - 4 thông báo phụ xếp hàng ngang gọn gàng, chia đều theo chiều cao cột trái.
-     - Thumbnail 96x72px bên trái, badge chuyên mục nhỏ + ngày tháng, tiêu đề 2 dòng đậm đà, nút mũi tên tròn chỉ báo điều hướng.
-2. **Cập nhật Styling & Responsive trong `30-home-editorial.css`**:
-   - Cân đối tỷ lệ 2 cột `1.15fr : 1fr` với gap 22px, không còn khoảng trống thừa thị giác.
-   - Hỗ trợ dàn 1 cột mượt mà trên Tablet (< 900px) và thu gọn thông số trên Mobile (< 600px).
-3. **Kiểm tra chất lượng**:
+### Đã hoàn thành theo yêu cầu người dùng:
+1. **Khắc phục hiển thị phân chia theo từng Tab cho CỔNG THÔNG TIN BỆNH VIỆN (`src/app/(frontend)/page.tsx`):**
+   - Thay thế việc kết xuất danh sách phẳng `renderEditorialSection` bằng `<HomeNewsTabs>` hoàn chỉnh.
+   - Nhận diện chuyên mục chuẩn y tế bằng `categoryName(article)` (đồng bộ giữa `categoryRef` và `category`).
+   - Tự động hiển thị các Tab chuyên mục (Tin bệnh viện, Tin y tế, Kiến thức sức khỏe, Hoạt động đoàn thể, hoặc các chuyên mục cấu hình trong CMS), phân loại từng bài viết vào đúng Tab chuyên mục thay vì gộp chung một danh sách.
+   - Áp dụng đầy đủ chuẩn thiết kế **Phương án 3 (Tỷ lệ vàng gọn gàng)**: thẻ chính nổi bật bên trái (`editorialHeroCard`) và danh sách các tin kế tiếp bên phải (`editorialRowList`).
+
+2. **Khắc phục hiển thị phân chia theo từng Tab cho THÔNG TIN KHÁM BỆNH - Lịch khám bệnh (`src/components/ScheduleExplorer.tsx` & `src/app/(frontend)/page.tsx`):**
+   - Đảm bảo thanh chuyển Tab luôn hiển thị đầy đủ các tab chuẩn y tế:
+     + **Lịch trực cấp cứu**
+     + **Theo ngày** (kèm bộ lọc chọn ngày trực quan)
+     + **Theo tuần**
+     + **Lịch đính kèm** (ảnh/file bảng lịch)
+   - Loại bỏ đoạn code lọc triệt tiêu các tab rỗng khiến thanh tab bị ẩn đi khi một số loại lịch chưa có bài. Giờ đây tất cả các tab luôn hiển thị trực quan, tab đầu tiên có dữ liệu được chọn mặc định; nếu bấm vào tab chưa có dữ liệu sẽ hiển thị thông báo rỗng nhẹ nhàng (`Chưa có lịch...`).
+   - Đảm bảo các bài viết / lịch thuộc mode nào hiển thị đúng vào tab đó, không bị gộp lẫn vào nhau.
+
+3. **Kiểm tra chất lượng & Tiêu chuẩn:**
+   - `npx tsc --noEmit`: Đạt 0 lỗi biên dịch TypeScript.
+   - Tuân thủ nghiêm ngặt Quy tắc Bắt buộc Dự án (Mandates 1, 2, 4, 5, 8, 9).
+2. **Tài liệu - Văn bản & Đấu thầu - Mua sắm** (`documents` & `procurement` trong `page.tsx`):
+   - Đã đồng bộ qua hàm `renderEditorialSection` dùng layout `editorialVariant3`.
+3. **Lịch trực - Lịch khám bệnh** (`ScheduleExplorer.tsx` & `schedules` trong `page.tsx`):
+   - Áp dụng đầy đủ cho Lịch trực cấp cứu, Lịch đính kèm, Lịch theo ngày và theo tuần.
+4. **Thông tin tiêm ngừa** (`VaccinationTabs.tsx`):
+   - Tab **"Thông báo lịch tiêm"** và tab **"Tiêm ngừa theo đợt"** dùng chuẩn `editorialHeroCard` + `editorialRowList`.
+   - Tab **"Các loại vắc xin"** giữ nguyên dạng 3 card chuyên dụng có giá tiêm và nút đăng ký.
+5. **Hoạt động khoa học** (`HomeScienceTabs.tsx` & `science` trong `page.tsx`):
+   - Chuyển `ScienceCard` sang mô hình `editorialHeroCard` + `editorialRowItem` với icon `🔬` tinh tế.
+6. **Kiểm tra chất lượng**:
    - `npx tsc --noEmit`: Đạt 0 lỗi.
-   - Ghi nhận đầy đủ vào `CHANGELOG.md` theo Core Mandates.
+   - Cập nhật đầy đủ `CHANGELOG.md` và `CURRENT-TASK.md`.
 
 ## Tong ket 4 Dot Toi uu He thong Admin CMS:
 1. **ĐỢT 1: HỢP NHẤT CHATBOT & KHẢO SÁT & GÓP Ý**:

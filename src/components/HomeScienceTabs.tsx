@@ -43,7 +43,7 @@ function EmptyCard() {
   )
 }
 
-/** Card hoạt động khoa học — dùng cùng form editorial với Trang tin tức Bệnh viện */
+/** Card hoạt động khoa học — dùng layout Phương án 3 Chuẩn mực */
 function ScienceCard({
   item,
   isFeatured,
@@ -53,50 +53,81 @@ function ScienceCard({
   isFeatured: boolean
   activeTab: string
 }) {
+  const href = item.href || `/hoat-dong-khoa-hoc/${item.slug}`
+  const badge = item.category || activeTab || 'NGHIÊN CỨU KHOA HỌC'
+
   if (isFeatured) {
-    // Ô lớn: ảnh trên (kèm badge chuyên mục), nội dung dưới (kèm excerpt)
     return (
-      <a href={item.href || `/hoat-dong-khoa-hoc/${item.slug}`} className="featured">
-        <div className="homeEditorialImage">
+      <a href={href} className="editorialHeroCard">
+        <div className="editorialHeroThumb">
           {item.coverUrl ? (
             <img
               src={item.coverUrl}
               alt={item.title}
-              className="editorialImg"
+              className="editorialHeroImg"
               loading="lazy"
             />
           ) : (
-            <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#f0f7fd,#e2eef7)' }} />
+            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '38px', background: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)' }}>
+              🔬
+            </div>
           )}
-          <span>{item.category || activeTab}</span>
+          <span className="editorialHeroBadge">{badge}</span>
         </div>
-        <div className="homeEditorialCopy">
-          <small>{item.date || 'Mới cập nhật'}</small>
-          <h3>{item.title}</h3>
-          <p>{item.excerpt || 'Thông tin chuyên môn và hoạt động đào tạo của bệnh viện.'}</p>
+        <div className="editorialHeroBody">
+          {item.date && (
+            <div className="editorialHeroDate">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <span>{item.date}</span>
+            </div>
+          )}
+          <h3 className="editorialHeroTitle">{item.title}</h3>
+          <p className="editorialHeroExcerpt">{item.excerpt || 'Thông tin chuyên môn và hoạt động nghiên cứu đào tạo của bệnh viện.'}</p>
+          <div className="editorialHeroAction">
+            <span>Xem chi tiết bài viết →</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </div>
         </div>
       </a>
     )
   }
 
-  // 4 ô nhỏ: layout dọc (ảnh trên, text dưới, không badge, không excerpt)
   return (
-    <a href={item.href || `/hoat-dong-khoa-hoc/${item.slug}`}>
-      <div className="homeEditorialImage">
+    <a href={href} className="editorialRowItem">
+      <div className="editorialRowThumb">
         {item.coverUrl ? (
           <img
             src={item.coverUrl}
             alt={item.title}
-            className="editorialImg"
+            className="editorialRowImg"
             loading="lazy"
           />
         ) : (
-          <div style={{ width: '100%', height: '100%', background: 'linear-gradient(135deg,#f0f7fd,#e2eef7)' }} />
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', background: '#e0f2fe' }}>
+            🔬
+          </div>
         )}
       </div>
-      <div className="homeEditorialCopy">
-        <small>{item.date || 'Mới cập nhật'}</small>
-        <h3>{item.title}</h3>
+      <div className="editorialRowContent">
+        <div className="editorialRowMeta">
+          <span className="editorialRowBadge">{badge}</span>
+          {item.date && <span className="editorialRowDate">{item.date}</span>}
+        </div>
+        <h4 className="editorialRowTitle">{item.title}</h4>
+        {item.excerpt && <p className="editorialRowExcerpt">{item.excerpt}</p>}
+      </div>
+      <div className="editorialRowArrow" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
       </div>
     </a>
   )
@@ -189,15 +220,17 @@ export function HomeScienceTabs({ items, tabs: configuredTabs }: { items: Scienc
         </div>
       )}
 
-      {/* Panel — dùng cùng form homeEditorialGrid của section Thông báo */}
+      {/* Panel — dùng layout Phương án 3 Chuẩn mực */}
       {featured ? (
-        <div role="tabpanel" className="homeEditorialGrid" style={{ marginTop: tabs.length > 1 ? 22 : 0 }}>
+        <div role="tabpanel" className="homeEditorialGrid editorialVariant3" style={{ marginTop: tabs.length > 1 ? 22 : 0 }}>
           <ScienceCard item={featured} isFeatured={true} activeTab={activeTab} />
-          {sideItems.map((item) =>
-            item ? (
-              <ScienceCard key={item.id} item={item} isFeatured={false} activeTab={activeTab} />
-            ) : null,
-          )}
+          <div className="editorialRowList">
+            {sideItems.map((item) =>
+              item ? (
+                <ScienceCard key={item.id} item={item} isFeatured={false} activeTab={activeTab} />
+              ) : null,
+            )}
+          </div>
         </div>
       ) : (
         <div className="professionalEmpty tabEmptyState">

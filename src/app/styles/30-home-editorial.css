@@ -1,55 +1,56 @@
 /* Canonical homepage editorial cards - Bệnh viện Đa khoa Khu vực Thới Lai
    Layout: PHƯƠNG ÁN 3 - 1 Thẻ Lớn Nổi Bật (Trái) + Danh Sách Hàng Ngang (Phải) */
-.homePortalPage .homeEditorialGrid.editorialVariant3 {
+.homePortalPage .homeEditorialGrid.editorialVariant3,
+.editorialVariant3 {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.14fr);
   align-items: stretch;
-  gap: 22px;
+  gap: 20px;
 }
 
 /* 1. CỘT TRÁI: 1 THẺ LỚN NỔI BẬT (FEATURED HERO CARD) */
-.homePortalPage .editorialHeroCard {
+.editorialHeroCard {
   min-width: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
   background: #ffffff;
   border: 1px solid #dce8f2;
-  box-shadow: 0 4px 18px rgba(10, 42, 74, 0.06);
+  box-shadow: 0 4px 16px rgba(10, 42, 74, 0.05);
   text-decoration: none;
   transition: transform .28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .28s cubic-bezier(0.16, 1, 0.3, 1), border-color .22s ease;
 }
 
-.homePortalPage .editorialHeroCard:hover {
-  transform: translateY(-4px);
+.editorialHeroCard:hover {
+  transform: translateY(-3px);
   border-color: #0878d1;
-  box-shadow: 0 14px 30px rgba(8, 120, 209, 0.16);
+  box-shadow: 0 12px 26px rgba(8, 120, 209, 0.14);
 }
 
-.homePortalPage .editorialHeroThumb {
+.editorialHeroThumb {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9.6;
-  max-height: 290px;
+  aspect-ratio: 16 / 9;
+  max-height: 225px;
   overflow: hidden;
   background: linear-gradient(135deg, #eff6fc 0%, #e2eff9 100%);
   flex-shrink: 0;
   border-bottom: 1px solid #edf4f8;
 }
 
-.homePortalPage .editorialHeroThumb::after {
+.editorialHeroThumb::after {
   content: "";
   position: absolute;
   inset: auto 0 0 0;
-  height: 40%;
+  height: 38%;
   pointer-events: none;
-  background: linear-gradient(to top, rgba(7, 43, 76, 0.45) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(7, 43, 76, 0.42) 0%, transparent 100%);
   z-index: 1;
 }
 
-.homePortalPage .editorialHeroImg {
+.editorialHeroImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -58,60 +59,60 @@
   transition: transform .45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.homePortalPage .editorialHeroCard:hover .editorialHeroImg {
+.editorialHeroCard:hover .editorialHeroImg {
   transform: scale(1.04);
 }
 
-.homePortalPage .editorialHeroBadge {
+.editorialHeroBadge {
   position: absolute;
   z-index: 2;
-  left: 16px;
-  bottom: 14px;
-  max-width: calc(100% - 32px);
+  left: 14px;
+  bottom: 12px;
+  max-width: calc(100% - 28px);
   overflow: hidden;
   border-radius: 999px;
-  padding: 5px 13px;
+  padding: 4px 11px;
   color: #055497;
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(6px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 850;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
   text-transform: uppercase;
 }
 
-.homePortalPage .editorialHeroBody {
-  padding: 20px 22px 22px;
+.editorialHeroBody {
+  padding: 16px 18px 18px;
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
   background: #ffffff;
 }
 
-.homePortalPage .editorialHeroDate {
+.editorialHeroDate {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   color: #0878d1;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
-.homePortalPage .editorialHeroDate svg {
+.editorialHeroDate svg {
   color: #0878d1;
   flex-shrink: 0;
 }
 
-.homePortalPage .editorialHeroTitle {
+.editorialHeroTitle {
   color: #0f2e47;
-  font-size: 18px;
+  font-size: 16.5px;
   font-weight: 800;
-  line-height: 1.4;
-  margin: 0 0 10px;
+  line-height: 1.38;
+  margin: 0 0 8px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -120,15 +121,15 @@
   text-wrap: balance;
 }
 
-.homePortalPage .editorialHeroCard:hover .editorialHeroTitle {
+.editorialHeroCard:hover .editorialHeroTitle {
   color: #0878d1;
 }
 
-.homePortalPage .editorialHeroExcerpt {
+.editorialHeroExcerpt {
   color: #526e85;
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 0 0 14px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
@@ -136,26 +137,26 @@
   flex: 1 1 auto;
 }
 
-.homePortalPage .editorialHeroAction {
+.editorialHeroAction {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   color: #0754a8;
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 750;
   margin-top: auto;
-  padding-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid #f0f5fa;
   transition: gap .2s ease, color .2s ease;
 }
 
-.homePortalPage .editorialHeroCard:hover .editorialHeroAction {
+.editorialHeroCard:hover .editorialHeroAction {
   color: #0878d1;
-  gap: 10px;
+  gap: 9px;
 }
 
 /* 2. CỘT PHẢI: DANH SÁCH CÁC HÀNG NGANG (SUB LIST ROWS) */
-.homePortalPage .editorialRowList {
+.editorialRowList {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -163,7 +164,7 @@
   justify-content: space-between;
 }
 
-.homePortalPage .editorialRowItem {
+.editorialRowItem {
   display: flex;
   align-items: center;
   gap: 15px;
@@ -177,14 +178,14 @@
   flex: 1 1 auto;
 }
 
-.homePortalPage .editorialRowItem:hover {
+.editorialRowItem:hover {
   transform: translateX(4px);
   border-color: #0878d1;
   box-shadow: 0 6px 18px rgba(8, 120, 209, 0.12);
   background: #fafcfe;
 }
 
-.homePortalPage .editorialRowThumb {
+.editorialRowThumb {
   width: 96px;
   min-width: 96px;
   height: 72px;
@@ -196,7 +197,7 @@
   border: 1px solid #e7f0f6;
 }
 
-.homePortalPage .editorialRowImg {
+.editorialRowImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -205,11 +206,11 @@
   transition: transform .3s ease;
 }
 
-.homePortalPage .editorialRowItem:hover .editorialRowImg {
+.editorialRowItem:hover .editorialRowImg {
   transform: scale(1.05);
 }
 
-.homePortalPage .editorialRowContent {
+.editorialRowContent {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
@@ -217,14 +218,14 @@
   justify-content: center;
 }
 
-.homePortalPage .editorialRowMeta {
+.editorialRowMeta {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
 }
 
-.homePortalPage .editorialRowBadge {
+.editorialRowBadge {
   font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
@@ -237,14 +238,14 @@
   white-space: nowrap;
 }
 
-.homePortalPage .editorialRowDate {
+.editorialRowDate {
   font-size: 11.5px;
   color: #64748b;
   font-weight: 600;
   white-space: nowrap;
 }
 
-.homePortalPage .editorialRowTitle {
+.editorialRowTitle {
   color: #12344d;
   font-size: 14px;
   font-weight: 750;
@@ -257,11 +258,11 @@
   transition: color .2s ease;
 }
 
-.homePortalPage .editorialRowItem:hover .editorialRowTitle {
+.editorialRowItem:hover .editorialRowTitle {
   color: #0878d1;
 }
 
-.homePortalPage .editorialRowExcerpt {
+.editorialRowExcerpt {
   color: #647f95;
   font-size: 12px;
   line-height: 1.45;
@@ -272,7 +273,7 @@
   overflow: hidden;
 }
 
-.homePortalPage .editorialRowArrow {
+.editorialRowArrow {
   color: #a0b8cc;
   flex-shrink: 0;
   display: flex;
@@ -285,13 +286,13 @@
   transition: color .2s ease, background-color .2s ease, transform .2s ease;
 }
 
-.homePortalPage .editorialRowItem:hover .editorialRowArrow {
+.editorialRowItem:hover .editorialRowArrow {
   color: #ffffff;
   background: #0878d1;
   transform: translateX(2px);
 }
 
-.homePortalPage .editorialRowEmpty {
+.editorialRowEmpty {
   padding: 24px;
   text-align: center;
   color: #8397a7;
@@ -299,6 +300,18 @@
   background: #f8fafc;
   border-radius: 12px;
   border: 1px dashed #dce6ed;
+}
+
+/* Trường hợp chỉ có 1 bài: thẻ căn giữa với độ rộng đẹp, không bị giãn bè sang 2 cột */
+.editorialVariant3.single {
+  grid-template-columns: minmax(0, 680px);
+  justify-content: center;
+}
+
+/* Khi số thẻ phụ ít hơn 4 (ví dụ 1 hoặc 2 thẻ), không kéo dài thẻ con quá mức */
+.editorialRowList:has(> .editorialRowItem:only-child),
+.editorialRowList > .editorialRowItem:only-child {
+  flex: 0 0 auto;
 }
 
 /* Giữ đủ 1 ô chính khi có ít bài */
@@ -402,12 +415,13 @@
     max-height: 310px;
     flex-basis: auto;
   }
-  .homePortalPage .homeEditorialGrid.editorialVariant3 {
+  .homePortalPage .homeEditorialGrid.editorialVariant3,
+  .editorialVariant3 {
     grid-template-columns: 1fr;
     gap: 18px;
   }
-  .homePortalPage .editorialHeroThumb {
-    max-height: 340px;
+  .editorialHeroThumb {
+    max-height: 240px;
   }
   .homePortalPage .homeEditorialGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -442,39 +456,40 @@
   }
 }
 @media (max-width: 600px) {
-  .homePortalPage .homeEditorialGrid.editorialVariant3 {
+  .homePortalPage .homeEditorialGrid.editorialVariant3,
+  .editorialVariant3 {
     grid-template-columns: 1fr;
     gap: 14px;
   }
-  .homePortalPage .editorialHeroThumb {
+  .editorialHeroThumb {
     max-height: 220px;
     aspect-ratio: 16 / 10;
   }
-  .homePortalPage .editorialHeroBody {
+  .editorialHeroBody {
     padding: 16px 18px 18px;
   }
-  .homePortalPage .editorialHeroTitle {
+  .editorialHeroTitle {
     font-size: 16px;
     margin-bottom: 8px;
   }
-  .homePortalPage .editorialHeroExcerpt {
+  .editorialHeroExcerpt {
     font-size: 13px;
     -webkit-line-clamp: 2;
     margin-bottom: 12px;
   }
-  .homePortalPage .editorialRowItem {
+  .editorialRowItem {
     gap: 12px;
     padding: 10px 12px;
   }
-  .homePortalPage .editorialRowThumb {
+  .editorialRowThumb {
     width: 84px;
     min-width: 84px;
     height: 64px;
   }
-  .homePortalPage .editorialRowTitle {
+  .editorialRowTitle {
     font-size: 13.5px;
   }
-  .homePortalPage .editorialRowExcerpt {
+  .editorialRowExcerpt {
     display: none;
   }
   .homePortalPage .homeEditorialGrid {

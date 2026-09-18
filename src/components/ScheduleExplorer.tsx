@@ -30,17 +30,73 @@ function ScheduleCard({ item, kind, featured = false }: { item: any; kind: Sched
       ? `${item.startTime || '--:--'} – ${item.endTime || '--:--'} · ${item.room || 'Phòng khám cập nhật tại quầy'}`
       : `Áp dụng: ${formatDate(item.weekStart || item.validFrom)} ${(item.weekEnd || item.validTo) ? `– ${formatDate(item.weekEnd || item.validTo)}` : ''}`
   const placeholder = kind === 'emergency' ? 'TRỰC' : kind === 'daily' ? (item.date ? new Date(item.date).toLocaleDateString('vi-VN', { day: '2-digit' }) : 'LỊCH') : kind === 'weekly' ? '7' : (item.fileFormat || 'TỆP')
+  const href = item.href || `/lich-kham/${item.id}`
 
-  return <a className={`schedulePostCard ${featured ? 'tabFeatureCard' : 'tabSideCard'}`} href={item.href || `/lich-kham/${item.id}`}>
-    {item.imageUrl ? <img src={item.imageUrl} alt={title}/> : <div className="schedulePostPlaceholder">{placeholder}</div>}
-    <div>
-      <span>{label}</span>
-      <h3>{title}</h3>
-      {featured && <p>{summary}</p>}
-      <small>{detail}</small>
-      <b>Xem chi tiết →</b>
-    </div>
-  </a>
+  if (featured) {
+    return (
+      <a className="editorialHeroCard" href={href}>
+        <div className="editorialHeroThumb">
+          {item.imageUrl ? (
+            <img src={item.imageUrl} alt={title} className="editorialHeroImg" />
+          ) : (
+            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '38px', fontWeight: 800, color: '#0754a8', background: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)' }}>
+              {placeholder}
+            </div>
+          )}
+          <span className="editorialHeroBadge">{label}</span>
+        </div>
+        <div className="editorialHeroBody">
+          {detail && (
+            <div className="editorialHeroDate">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <span>{detail}</span>
+            </div>
+          )}
+          <h3 className="editorialHeroTitle">{title}</h3>
+          <p className="editorialHeroExcerpt">{summary}</p>
+          <div className="editorialHeroAction">
+            <span>Xem chi tiết lịch →</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </div>
+        </div>
+      </a>
+    )
+  }
+
+  return (
+    <a className="editorialRowItem" href={href}>
+      <div className="editorialRowThumb">
+        {item.imageUrl ? (
+          <img src={item.imageUrl} alt={title} className="editorialRowImg" />
+        ) : (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px', fontWeight: 800, color: '#0754a8', background: '#e0f2fe' }}>
+            {placeholder}
+          </div>
+        )}
+      </div>
+      <div className="editorialRowContent">
+        <div className="editorialRowMeta">
+          <span className="editorialRowBadge">{label}</span>
+          {detail && <span className="editorialRowDate">{detail}</span>}
+        </div>
+        <h4 className="editorialRowTitle">{title}</h4>
+        {summary && <p className="editorialRowExcerpt">{summary}</p>}
+      </div>
+      <div className="editorialRowArrow" aria-hidden="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </div>
+    </a>
+  )
 }
 
 export function ScheduleExplorer({ daily, weekly, attachments, emergency = [], tabOrder = ['emergency', 'attachments', 'daily', 'weekly'], tabs: configuredTabs, compact = false }: Props) {
@@ -64,12 +120,10 @@ export function ScheduleExplorer({ daily, weekly, attachments, emergency = [], t
       rawTabs = keys.filter((key) => builtInMeta[key]).map((key, index) => ({ key: `${key}-${index}`, queryKey: key, ...builtInMeta[key] }))
     }
 
-    // Chỉ giữ lại những tab THỰC SỰ CÓ DỮ LIỆU để không bao giờ hiện tab trống
-    const activeWithItems = rawTabs.filter((tab) => tab.items && tab.items.length > 0)
-    return activeWithItems.length > 0 ? activeWithItems : rawTabs
+    return rawTabs
   }, [attachments, configuredTabs, daily, emergency, tabOrder, weekly])
 
-  // Chọn tab đầu tiên có dữ liệu nếu có thể để người dùng không nhìn thấy tab trống
+  // Chọn tab đầu tiên có dữ liệu nếu có thể để người dùng xem ngay nội dung sẵn có
   const initialTabKey = useMemo(() => {
     const foundWithItems = tabDefinitions.find(t => t.items.length > 0)
     return foundWithItems ? foundWithItems.key : (tabDefinitions[0]?.key || 'emergency-0')
@@ -117,9 +171,9 @@ export function ScheduleExplorer({ daily, weekly, attachments, emergency = [], t
 
     return <div className="scheduleTabPanel">
       {items.length === 0 ? <div className="empty-state">{definition.empty}</div> : <>
-        <div className={`tabEditorialGrid scheduleEditorialGrid ${visibleItems.length === 1 ? 'single' : ''}`}>
+        <div className={`editorialVariant3 scheduleEditorialGrid ${visibleItems.length === 1 ? 'single' : ''}`}>
           <ScheduleCard item={visibleItems[0]} kind={definition.kind} featured />
-          <div className="tabEditorialList">
+          <div className="editorialRowList">
             {visibleItems.slice(1).map((item, index) => <ScheduleCard item={item} kind={definition.kind} key={item.id || index} />)}
           </div>
         </div>

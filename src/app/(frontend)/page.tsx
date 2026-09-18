@@ -15,7 +15,7 @@ import { CustomCardsCarousel } from '@/components/CustomCardsCarousel'
 import { HomeScrollSnapHandler } from '@/components/HomeScrollSnapHandler'
 import { getCMS, getGlobal, getHomepage } from '@/lib/payload'
 import { mediaFormat, mediaLabel, mediaUrl } from '@/lib/media'
-import { getDefaultContentMedia, scientificActivityGroupName } from '@/lib/defaultMedia'
+import { categoryName, getDefaultContentMedia, scientificActivityGroupName } from '@/lib/defaultMedia'
 import type { CSSProperties } from 'react'
 
 export const revalidate = 0
@@ -1152,24 +1152,24 @@ export default async function HomePage() {
 
           if (type === 'news-portal') {
             if (!news || news.length === 0) return null
-            const newsPortalLayout = item.sectionLayout || 'editorial-grid'
-            const newsPortalLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
-            const newsPortalItems = news.slice(0, newsPortalLimit).map((article: any) => ({
+            const newsPortalTabs = contentTabsFor('news-portal')
+            const newsPortalItems = news.map((article: any) => ({
               id: article.id,
+              slug: article.slug,
               href: `/tin-tuc/${article.slug}`,
-              cover: mediaUrl(article.cover || article.seoImage) || defaultMedia.news,
+              coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news,
               coverFit: article.coverFit || 'cover',
               coverPosition: article.coverPosition || 'top',
               title: article.title,
               excerpt: article.excerpt || '',
               date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
-              category: article.category || 'TIN TỨC',
+              category: categoryName(article) || article.category || 'TIN TỨC',
             }))
             return (
               <section className="sectionPro configurableHomeSection homePortalNewsSection homePortalPage" style={style} key={key}>
                 <div className="container">
                   <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem toàn bộ bài viết →</a></div>
-                  {renderEditorialSection({ items: newsPortalItems, layout: newsPortalLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || undefined, emptyText: 'Chưa có tin tức được đăng.', actionText: 'Xem chi tiết tin tức →' })}
+                  <HomeNewsTabs items={newsPortalItems} tabs={newsPortalTabs.length ? newsPortalTabs : undefined} />
                 </div>
               </section>
             )
@@ -1384,36 +1384,10 @@ export default async function HomePage() {
           }
 
           if (type === 'schedules') {
-            const schedLayout = item.sectionLayout || 'editorial-grid'
-            const schedLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
-
-            if (schedLayout === 'editorial-grid') {
-              const allSchedules = [...homeDailySchedules, ...homeWeeklySchedules, ...homeEmergencySchedules, ...homeAttachedSchedules]
-              const schedItems = allSchedules.slice(0, schedLimit).map((s: any) => ({
-                id: s.id,
-                href: `/lich-kham/${s.id}`,
-                cover: s.coverUrl || s.scheduleImageUrl || defaultMedia.schedules,
-                coverFit: 'cover',
-                coverPosition: 'top',
-                title: s.title || s.doctorName || 'Lịch khám bệnh',
-                excerpt: s.summary || s.note || s.department || 'Lịch khám được cập nhật từ Bệnh viện Đa khoa Khu vực Thới Lai.',
-                date: s.date || s.validFrom || s.weekStart || '',
-                category: s.mode === 'emergency' ? 'LỊCH TRỰC CẤP CỨU' : s.mode === 'weekly' ? 'LỊCH TUẦN' : s.mode === 'attachment' ? 'LỊCH ĐÍNH KÈM' : 'LỊCH KHÁM',
-              }))
-              return (
-                <section id="schedules" className="sectionPro configurableHomeSection homeScheduleSection" style={style} key={key}>
-                  <div className="container">
-                    <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/lich-kham">Xem tất cả →</a></div>
-                    {renderEditorialSection({ items: schedItems, layout: 'editorial-grid', showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || undefined, emptyText: 'Chưa có lịch khám được cập nhật.', actionText: 'Xem lịch khám →' })}
-                  </div>
-                </section>
-              )
-            }
-
             return (
               <section id="schedules" className="sectionPro configurableHomeSection homeScheduleSection" style={style} key={key}>
                 <div className="container">
-                  <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/lich-kham">Xem tất cả →</a></div>
+                  <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/lich-kham">Xem tất cả →</a></div>
                   <ScheduleExplorer daily={homeDailySchedules} weekly={homeWeeklySchedules} attachments={homeAttachedSchedules} emergency={homeEmergencySchedules} medpro={medpro} tabOrder={scheduleTabOrder.length ? scheduleTabOrder : undefined} tabs={scheduleTabs.length ? scheduleTabs : undefined} compact />
                 </div>
               </section>

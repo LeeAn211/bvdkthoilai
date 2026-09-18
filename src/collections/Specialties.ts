@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { anyone, organizationDepartmentScopedAccess } from '@/access'
-import { seoFields, slugField } from '@/fields/common'
+import { seoFields, slugField, slugifyVietnamese } from '@/fields/common'
 
 export const Specialties: CollectionConfig = {
   slug: 'specialties',
@@ -46,6 +46,12 @@ export const Specialties: CollectionConfig = {
           }
         }
       }
+
+      // Tự động sinh slug nếu chưa có hoặc đang để trống
+      if (!record.slug && record.name && typeof record.name === 'string' && record.name.trim().length > 0) {
+        record.slug = slugifyVietnamese(record.name)
+      }
+
       return record
     }],
   },

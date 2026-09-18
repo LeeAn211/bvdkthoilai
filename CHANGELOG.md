@@ -1,5 +1,130 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-19] - Khắc Phục Hiển Thị Phân Chia Tab Khối Cổng Thông Tin Bệnh Viện & Thông Tin Khám Bệnh
+
+- **Thời gian thực hiện:** 00:25 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *CỔNG THÔNG TIN BỆNH VIỆN: Trang tin tức Bệnh viện & THÔNG TIN KHÁM BỆNH: Lịch khám bệnh 2 phần này các bài viết chưa được hiện đúng tab đang bị gộp chung lại với nhau.*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Khối CỔNG THÔNG TIN BỆNH VIỆN (`news-portal`):**
+     - **Nguyên nhân:** Trước đó, trong `src/app/(frontend)/page.tsx`, section `news-portal` chỉ gọi `renderEditorialSection` với mảng tin tức phẳng mà không render component `<HomeNewsTabs>`, dẫn đến không hiển thị thanh Tab chuyên mục (Tin bệnh viện, Tin y tế, Kiến thức sức khỏe, v.v.) và gộp chung toàn bộ bài viết vào 1 danh sách duy nhất.
+     - **Giải pháp:**
+       - Tích hợp component `<HomeNewsTabs>` vào section `news-portal` trong `src/app/(frontend)/page.tsx`.
+       - Đồng bộ hàm `categoryName(article)` để nhận diện đúng chuyên mục chuẩn y tế (`categoryRef` hoặc `category`).
+       - Truyền tabs từ `contentTabsFor('news-portal')` hoặc fallback tự động theo chuyên mục thực tế của bài viết.
+       - Áp dụng trọn vẹn bố cục Phương án 3 Chuẩn mực: thẻ chính bên trái (`editorialHeroCard`) và các tin kế tiếp bên phải (`editorialRowList`).
+  2. **Khối THÔNG TIN KHÁM BỆNH - Lịch khám bệnh (`schedules`):**
+     - **Nguyên nhân:** Trong `src/components/ScheduleExplorer.tsx`, đoạn code `rawTabs.filter((tab) => tab.items && tab.items.length > 0)` đã lọc bỏ những tab chưa có bài. Khi database chỉ có 1 loại lịch (ví dụ chỉ có lịch trực cấp cứu hoặc chỉ có lịch theo ngày), số lượng tab còn lại = 1 khiến điều kiện `{tabDefinitions.length > 1 && ...}` ẩn hoàn toàn thanh Tab, làm người dùng thấy như nội dung bị gộp chung hoặc không phân chia tab.
+     - **Giải pháp:**
+       - Bỏ việc lọc triệt tiêu `rawTabs`, bảo toàn đầy đủ 4 tab chuẩn y tế (`Lịch trực cấp cứu`, `Theo ngày`, `Theo tuần`, `Lịch đính kèm`).
+       - Tự động chọn tab đầu tiên có dữ liệu sẵn có (`initialTabKey`) để người dùng xem ngay nội dung thực tế; khi chuyển sang tab chưa có dữ liệu sẽ hiển thị thông báo rỗng nhẹ nhàng tương ứng.
+       - Đảm bảo các bài viết / lịch thuộc mode nào hiển thị đúng vào tab đó, phân chia rành mạch và trực quan.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/app/(frontend)/page.tsx`
+  - `src/components/ScheduleExplorer.tsx`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-18] - Tự Động Sinh Slug Chuẩn Tiếng Việt Cho Chuyên Khoa (Specialties)
+
+- **Thời gian thực hiện:** 23:55 - 00:03 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Phần chuyên khoa khi tạo chuyên khoa chưa tự động sinh slug.*
+- **Nguyên nhân & Giải pháp triển khai:**
+  - **Nguyên nhân:** Trước đây, trong `Specialties.ts`, người dùng có thể nhập tên chuyên khoa hoặc để trống để lấy tên theo "Khoa / Phòng phụ trách". Tuy nhiên, hook của collection chỉ gán `record.name` mà chưa xử lý sinh `record.slug` trong trường hợp này, dẫn đến khi để trống slug hoặc tạo mới chuyên khoa thì slug không được điền tự động.
+  - **Giải pháp:**
+    1. Import `slugifyVietnamese` từ `@/fields/common`.
+    2. Cập nhật hook `beforeValidate` của collection `Specialties`: Nếu `record.slug` chưa có hoặc để trống, hệ thống tự động kiểm tra `record.name` (kể cả tên tự động lấy từ Khoa/Phòng) và sinh slug chuẩn tiếng Việt không dấu (ví dụ: `khoa-kham-benh`, `tim-mach`).
+    3. Đảm bảo slug vẫn cho phép quản trị viên nhập đè thủ công nếu muốn tùy biến đường dẫn riêng.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/collections/Specialties.ts`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-18] - Đồng Bộ Toàn Diện Bố Cục Phương Án 3 (Tỷ Lệ Vàng Gọn Gàng) Cho Tất Cả Các Khối Trang Chủ
+
+- **Thời gian thực hiện:** 23:45 - 23:48 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Áp dụng cho trang tin tức, tài liệu, đấu thầu lịch trực, tab thông báo lịch tiêm của Thông tin tiêm ngừa và Hoạt động khoa học.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Tin tức Bệnh viện (`HomeNewsTabs.tsx` & section `news-portal`):**
+     - Chuyển đổi component `NewsCard` sang mô hình chuẩn: Thẻ chính bên trái (`editorialHeroCard` với ảnh tỷ lệ 16/9 gọn gàng, badge chuyên mục, ngày đăng kèm icon, tóm tắt và nút xem chi tiết) và các tin kế tiếp bên phải dạng hàng ngang (`editorialRowItem` với thumbnail 96x72px, tag chuyên mục, tiêu đề 2 dòng sắc nét, nút mũi tên điều hướng).
+     - Đưa container vào lưới `.homeEditorialGrid.editorialVariant3` và `.editorialRowList`.
+  2. **Hoạt động Khoa học (`HomeScienceTabs.tsx` & section `science`):**
+     - Nâng cấp `ScienceCard` sang giao diện `editorialHeroCard` + `editorialRowItem` đồng bộ.
+     - Sử dụng icon `🔬` tinh tế làm fallback khi bài nghiên cứu chưa có hình ảnh đại diện.
+     - Bao bọc danh sách trong `.homeEditorialGrid.editorialVariant3` và `.editorialRowList`.
+  3. **Tài liệu - Văn bản & Đấu thầu - Mua sắm (`page.tsx`):**
+     - Cả 2 section `documents` và `procurement` dùng hàm trung tâm `renderEditorialSection` với layout mặc định `editorial-grid`, đã tự động kích hoạt `.homeEditorialGrid.editorialVariant3` với tỷ lệ vàng gọn gàng `1fr : 1.14fr`.
+  4. **Lịch trực - Lịch khám (`ScheduleExplorer.tsx` & `page.tsx`):**
+     - Đã hoàn tất áp dụng `.editorialHeroCard` và `.editorialRowItem` cho toàn bộ các tab Lịch trực cấp cứu, Lịch đính kèm, Lịch khám theo ngày/tuần.
+  5. **Thông tin tiêm ngừa (`VaccinationTabs.tsx`):**
+     - Tab **"Thông báo lịch tiêm"** và tab **"Tiêm ngừa theo đợt"** hoạt động hoàn hảo trên layout Phương án 3 gọn gàng, trong khi tab **"Các loại vắc xin"** bảo lưu thiết kế 3 card độc quyền có giá và nút đăng ký tiêm.
+  6. **Kiểm tra chất lượng & Tiêu chuẩn:**
+     - `npx tsc --noEmit`: 0 lỗi biên dịch TypeScript.
+     - Tuân thủ nghiêm ngặt Quy tắc Bắt buộc Dự án (Mandates 1, 2, 4, 5, 8, 9).
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/HomeNewsTabs.tsx`
+  - `src/components/HomeScienceTabs.tsx`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-18] - Tinh Chỉnh Tỷ Lệ Vàng Gọn Gàng Cho Ô Nội Dung Chính (Phương Án 3 - Gợi Ý 1)
+
+- **Thời gian thực hiện:** 23:38 - 23:40 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Tôi thấy ô nội dung chính hơi to giảm kích thước ô nội dung chính. Bạn đưa ra gợi ý tối ưu nhất về phần này.*
+  - *Người dùng lựa chọn: "GỢI Ý 1 (Khuyên dùng nhất - Tỷ lệ Vàng Gọn Gàng)".*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Thu gọn kích thước ô nội dung chính (`editorialHeroCard`):**
+     - Đổi tỷ lệ ảnh từ `16/9.6` sang chuẩn `16/9` và giới hạn `max-height: 225px` (thay vì 290px), giảm đáng kể cảm giác choán ngợp và chiếm diện tích dọc.
+     - Tinh gọn padding thân thẻ từ `20px 22px` về `16px 18px 18px` thanh thoát.
+     - Điều chỉnh cỡ chữ tiêu đề `h3` từ 18px xuống 16.5px, đoạn tóm tắt 13px, padding nút hành động 10px.
+  2. **Cân đối tỷ lệ 2 cột (`editorialVariant3`):**
+     - Chuyển tỷ lệ lưới từ `1.15fr : 1fr` thành `1fr : 1.14fr` kết hợp `gap: 20px`. Cột bên phải có thêm chiều rộng để hiển thị tiêu đề và ngày tháng của 4 dòng tin thoáng đãng hơn.
+  3. **Tối ưu hóa Responsive:**
+     - Giảm `max-height` ảnh thẻ lớn trên Tablet xuống 240px (thay vì 340px).
+     - Giữ nguyên hiển thị sắc nét, không vỡ ảnh trên Mobile.
+  4. **Kiểm tra chất lượng:**
+     - `npx tsc --noEmit`: 0 lỗi.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/app/styles/30-home-editorial.css`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-18] - Áp Dụng Phương Án 3 Cho Khối Lịch Khám & Tiêm Ngừa (Tab Đợt Tiêm & Thông Báo)
+
+- **Thời gian thực hiện:** 23:25 - 23:32 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Áp dụng Phương án 3 cho THÔNG TIN KHÁM BỆNH (Lịch khám bệnh).*
+  - *TIÊM NGỪA AN TOÀN: Thông tin tiêm ngừa chỉ áp dụng cho tab tiêm ngừa theo đợt và thông báo lịch tiêm còn tab các loại vắc xin giữ nguyên không áp dụng theo phương án 3.*
+  - *Phần tab tiêm ngừa theo đợt và thông báo lịch tiêm bị lỗi kéo dài ô quá mức.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Đồng bộ hóa layout Phương án 3 cho component `ScheduleExplorer.tsx` (Thông tin Khám bệnh):**
+     - Nâng cấp `ScheduleCard` thành 2 kiểu hiển thị chuẩn y tế:
+       - **Thẻ chính Spotlight (`editorialHeroCard`):** Khung ảnh tỷ lệ `16:9.6`, bo góc 16px, badge loại lịch rõ nét, thông tin ngày áp dụng/khung giờ với icon lịch SVG, tiêu đề và tóm tắt tinh tế.
+       - **Thẻ phụ hàng ngang (`editorialRowItem`):** Thumbnail vuông nhỏ 96x72px, tag chuyên mục, tiêu đề 2 dòng đậm đà, nút mũi tên tròn điều hướng sang trang chi tiết lịch khám.
+     - Sử dụng container `editorialVariant3` + `editorialRowList` đảm bảo cân bằng chiều cao 2 cột.
+  2. **Áp dụng chọn lọc cho `VaccinationTabs.tsx` (Tiêm ngừa an toàn):**
+     - **Tab "Tiêm ngừa theo đợt" & "Thông báo lịch tiêm":** Áp dụng trọn vẹn bố cục Phương án 3 (`editorialHeroCard` + `editorialRowList`).
+     - **Tab "Các loại vắc xin":** Giữ nguyên 100% component Carousel 3 ô trượt tuần tự hiện đại và lưới lọc theo độ tuổi/đối tượng theo đúng yêu cầu người dùng.
+     - **Khắc phục triệt để lỗi kéo dài ô quá mức:**
+       - Cấu trúc ảnh thumbnail và body thẻ áp dụng `aspect-ratio: 16/9.6` và `max-height: 290px`.
+       - Cột danh sách bên phải tự động tính toán co giãn linh hoạt theo nội dung thực tế (`flex: 0 0 auto` khi ít bài), ngăn chặn việc CSS grid/flex kéo dẹt chiều dọc thẻ.
+  3. **Tối ưu hóa Styling chung trong `30-home-editorial.css`:**
+     - Mở rộng các class `.editorialHeroCard`, `.editorialHeroThumb`, `.editorialRowList`, `.editorialRowItem` thành CSS dùng chung toàn viện.
+     - Thêm xử lý tinh tế cho trường hợp chỉ có 1 bài (`.editorialVariant3.single`), tự động căn giữa khung hình đẹp mắt với chiều rộng tối đa 680px.
+     - Hỗ trợ responsive đa màn hình mượt mà (PC, Tablet, Mobile).
+  4. **Kiểm tra chất lượng:**
+     - `npx tsc --noEmit`: Đạt 0 lỗi.
+     - Không thay đổi database schema, tương thích 100% dữ liệu CMS hiện có.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/ScheduleExplorer.tsx`
+  - `src/components/VaccinationTabs.tsx`
+  - `src/app/styles/30-home-editorial.css`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
 ## [2026-09-18] - Tái Thiết Kế Khối Thông Báo & Editorial Grid: Phương Án 3 (1 Thẻ Lớn Nổi Bật + Danh Sách Hàng Ngang)
 
 - **Thời gian thực hiện:** 22:30 - 22:36 (Asia/Saigon)
