@@ -520,6 +520,7 @@ export default async function HomePage() {
     showExcerpt?: boolean
     badgeOverride?: string
     emptyText?: string
+    actionText?: string
   }) {
     const {
       items,
@@ -529,6 +530,7 @@ export default async function HomePage() {
       showExcerpt = true,
       badgeOverride,
       emptyText = 'Chưa có nội dung.',
+      actionText = 'Xem chi tiết →',
     } = params
 
     if (!items || items.length === 0) return <div className="professionalEmpty">{emptyText}</div>
@@ -599,7 +601,7 @@ export default async function HomePage() {
                       <p className="editorialHeroExcerpt">{mainEntry.excerpt || ''}</p>
                     )}
                     <div className="editorialHeroAction">
-                      <span>Xem chi tiết thông báo</span>
+                      <span>{actionText}</span>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         <line x1="5" y1="12" x2="19" y2="12" />
                         <polyline points="12 5 19 12 12 19" />
@@ -1330,7 +1332,7 @@ export default async function HomePage() {
               <section className="sectionPro configurableHomeSection homeNoticeSection" style={style} key={key}>
                 <div className="container">
                   <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/thong-bao">Xem tất cả →</a></div>
-                  {renderEditorialSection({ items: noticeItems, layout: noticeLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'THÔNG BÁO', emptyText: 'Chưa có thông báo được đăng.' })}
+                  {renderEditorialSection({ items: noticeItems, layout: noticeLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'THÔNG BÁO', emptyText: 'Chưa có thông báo được đăng.', actionText: 'Xem chi tiết thông báo →' })}
                 </div>
               </section>
             )
@@ -1354,7 +1356,7 @@ export default async function HomePage() {
               <section className="sectionPro configurableHomeSection homeProcurementSection" style={style} key={key}>
                 <div className="container">
                   <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/dau-thau-mua-sam">Xem tất cả →</a></div>
-                  {renderEditorialSection({ items: procItems, layout: procLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'ĐẤU THẦU – MUA SẮM', emptyText: 'Chưa có hồ sơ đấu thầu – mua sắm.' })}
+                  {renderEditorialSection({ items: procItems, layout: procLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'ĐẤU THẦU – MUA SẮM', emptyText: 'Chưa có hồ sơ đấu thầu – mua sắm.', actionText: 'Xem hồ sơ đấu thầu →' })}
                 </div>
               </section>
             )
@@ -1520,7 +1522,7 @@ export default async function HomePage() {
               <section className="sectionPro configurableHomeSection homeDocumentsSection" style={style} key={key}>
                 <div className="container">
                   <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/van-ban">Xem tất cả →</a></div>
-                  {renderEditorialSection({ items: allDocItems, layout: docLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'VĂN BẢN – TÀI LIỆU', emptyText: 'Chưa có văn bản được đăng.' })}
+                  {renderEditorialSection({ items: allDocItems, layout: docLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'VĂN BẢN – TÀI LIỆU', emptyText: 'Chưa có văn bản được đăng.', actionText: 'Xem văn bản – tài liệu →' })}
                 </div>
               </section>
             )
@@ -1551,7 +1553,7 @@ export default async function HomePage() {
               <section className="sectionPro configurableHomeSection homeDynamicContentSection" style={style} key={key}>
                 <div className="container">
                   <div className="homeSectionHead"><div><span className="sectionKicker">{item.eyebrow || 'NỘI DUNG'}</span><h2>{item.title || linkedSection.title}</h2>{(item.description || linkedSection.description) && <p>{item.description || linkedSection.description || `Các bài viết mới thuộc mục ${linkedSection.title}.`}</p>}</div><a href={sectionHref}>Xem tất cả →</a></div>
-                  {renderEditorialSection({ items: csItems, layout: csLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || String(linkedSection.title || 'NỘI DUNG').toUpperCase(), emptyText: `Chưa có bài viết trong mục ${linkedSection.title}.` })}
+                  {renderEditorialSection({ items: csItems, layout: csLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || String(linkedSection.title || 'NỘI DUNG').toUpperCase(), emptyText: `Chưa có bài viết trong mục ${linkedSection.title}.`, actionText: item.heroActionText || `Xem ${linkedSection.title} →` })}
                 </div>
               </section>
             )
