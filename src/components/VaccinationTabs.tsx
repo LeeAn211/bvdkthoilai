@@ -120,25 +120,86 @@ function ModernVaccineItemCard({
 
 function VaccinationCard({ item, kind, featured = false }: { item: any; kind: VaccinationKind; featured?: boolean }) {
   const isVaccine = kind === 'vaccines'
-  const label = item.badge || (kind === 'announcements' ? 'THÔNG BÁO TIÊM NGỪA' : kind === 'campaigns' ? `ĐỢT TIÊM · ${formatDate(item.date)}` : (availability[item.availability] || 'Đang cập nhật'))
-  const summary = kind === 'announcements'
-    ? (item.summary || 'Bấm xem chi tiết nội dung thông báo lịch tiêm ngừa.')
-    : kind === 'campaigns'
-      ? (item.summary || item.target || 'Thông tin đợt tiêm ngừa tại bệnh viện.')
-      : (item.prevents ? `Phòng bệnh: ${item.prevents}` : (item.summary || item.desc))
-  const placeholder = item.icon || (kind === 'announcements' ? '📢' : kind === 'campaigns' ? '🗓' : '💉')
-  const feeDisplay = item.priceText ? item.priceText : money(item.fee)
 
-  return <a className={`${isVaccine ? 'vaccineCard' : 'vaccinationPostCard'} ${featured ? 'tabFeatureCard' : 'tabSideCard'}`} href={item.href || `/tiem-chung/${item.id}`}>
-    {item.imageUrl ? <img src={item.imageUrl} alt={item.title}/> : <div className={isVaccine ? 'vaccinePlaceholder' : 'vaccinationPostPlaceholder'}>{placeholder}</div>}
-    <div>
-      {isVaccine ? <span className={`vaccineStatus ${item.availability || 'available'}`}>{label}</span> : <span>{label}</span>}
-      <h3>{item.title}</h3>
-      {featured && <p>{summary}</p>}
-      {isVaccine && featured ? <div className="vaccineCardFooter"><strong>{feeDisplay}</strong><b>{item.buttonText || 'Xem chi tiết →'}</b></div> : <b>{item.buttonText || 'Xem chi tiết →'}</b>}
-    </div>
-  </a>
+
+  // --- TAB VẮC XIN: giữ nguyên layout cũ ---
+  if (isVaccine) {
+    const label = item.badge || (availability[item.availability] || 'Đang cập nhật')
+    const feeDisplay = item.priceText ? item.priceText : money(item.fee)
+    return (
+      <a className={`vaccineCard ${featured ? 'tabFeatureCard' : 'tabSideCard'}`} href={item.href || `/tiem-chung/${item.id}`}>
+        {item.imageUrl ? <img src={item.imageUrl} alt={item.title}/> : <div className="vaccinePlaceholder">💉</div>}
+        <div>
+          <span className={`vaccineStatus ${item.availability || 'available'}`}>{label}</span>
+          <h3>{item.title}</h3>
+          {featured && <p>{item.prevents ? `Phòng bệnh: ${item.prevents}` : (item.summary || item.desc)}</p>}
+          {featured ? <div className="vaccineCardFooter"><strong>{feeDisplay}</strong><b>{item.buttonText || 'Xem chi tiết →'}</b></div> : <b>{item.buttonText || 'Xem chi tiết →'}</b>}
+        </div>
+      </a>
+    )
+  }
+
+  // --- TAB TIÊM NGỪA THEO ĐỢT & THÔNG BÁO LỊCH TIÊM: Phương án 3 (editorial-style) ---
+  const badge = item.badge || (kind === 'announcements' ? 'THÔNG BÁO TIÊM NGỪA' : `ĐỢT TIÊM · ${formatDate(item.date)}`)
+  const excerpt = kind === 'announcements'
+    ? (item.summary || item.description || 'Bấm xem chi tiết nội dung thông báo lịch tiêm ngừa.')
+    : (item.summary || item.target || item.description || 'Thông tin đợt tiêm ngừa tại bệnh viện.')
+  const href = item.href || `/tiem-chung/${item.id}`
+  const dateStr = item.date ? formatDate(item.date) : (item.startDate ? formatDate(item.startDate) : '')
+
+  if (featured) {
+    // Thẻ lớn bên trái (editorial hero)
+    return (
+      <a className="editorialHeroCard" href={href}>
+        <div className="editorialHeroCover" style={{ aspectRatio: '16/9', overflow: 'hidden', borderRadius: '10px 10px 0 0', background: '#e0f2fe' }}>
+          {item.imageUrl
+            ? <img src={item.imageUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
+            : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>
+                {kind === 'announcements' ? '📢' : '🗓'}
+              </div>
+          }
+        </div>
+        <div className="editorialHeroBody">
+          <div className="editorialHeroMeta">
+            <span className="editorialHeroBadge">{badge}</span>
+            {dateStr && <span className="editorialHeroDate">{dateStr}</span>}
+          </div>
+          <h3 className="editorialHeroTitle">{item.title}</h3>
+          <p className="editorialHeroExcerpt">{excerpt}</p>
+          <div className="editorialHeroAction">
+            <span>Xem chi tiết →</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </div>
+        </div>
+      </a>
+    )
+  }
+
+  // Thẻ nhỏ bên phải (editorial side card)
+  return (
+    <a className="editorialSideCard" href={href}>
+      <div className="editorialSideCover">
+        {item.imageUrl
+          ? <img src={item.imageUrl} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} />
+          : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', background: '#f0f9ff' }}>
+              {kind === 'announcements' ? '📢' : '🗓'}
+            </div>
+        }
+      </div>
+      <div className="editorialSideBody">
+        <div className="editorialSideMeta">
+          <span className="editorialSideBadge">{badge}</span>
+          {dateStr && <span className="editorialSideDate">{dateStr}</span>}
+        </div>
+        <h4 className="editorialSideTitle">{item.title}</h4>
+      </div>
+    </a>
+  )
 }
+
 
 export function VaccinationTabs({
   announcements,
