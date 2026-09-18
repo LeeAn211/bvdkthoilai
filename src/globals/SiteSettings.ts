@@ -145,6 +145,26 @@ export const SiteSettings: GlobalConfig = {
   access: { read: () => true, update: moduleAccess('site-settings', 'edit') },
   versions: { max: 20 },
   hooks: {
+    beforeValidate: [
+      ({ data }) => {
+        if (!data) return data
+        if (data.headerBrandAppearance) {
+          if (!data.headerBrandAppearance.colorScheme) {
+            data.headerBrandAppearance.colorScheme = 'default'
+          }
+          if (!data.headerBrandAppearance.nameFontFamily) {
+            data.headerBrandAppearance.nameFontFamily = 'inherit'
+          }
+          if (data.headerBrandAppearance.showLogo === undefined || data.headerBrandAppearance.showLogo === null) {
+            data.headerBrandAppearance.showLogo = true
+          }
+          if (data.headerBrandAppearance.showHospitalName === undefined || data.headerBrandAppearance.showHospitalName === null) {
+            data.headerBrandAppearance.showHospitalName = true
+          }
+        }
+        return data
+      },
+    ],
     afterRead: [({ doc }) => ({
       ...doc,
       websiteAssistant: {
@@ -198,12 +218,13 @@ export const SiteSettings: GlobalConfig = {
           label: '🎨 Bảng màu chủ đạo (Color Scheme)',
           type: 'select',
           enumName: 'brand_color_scheme',
-          defaultValue: 'custom',
+          defaultValue: 'default',
           admin: {
             description: 'Chọn bảng màu phối hợp sẵn cho Tên đơn vị + Slogan. Chọn "Tuỳ chọn" để dùng màu tự chọn bên dưới.',
           },
           options: [
-            { label: '🏥 Y tế xanh dương (Mặc định)', value: 'custom' },
+            { label: '🏥 Y tế xanh dương (Mặc định)', value: 'default' },
+            { label: '🎨 Tuỳ chỉnh màu sắc riêng', value: 'custom' },
             { label: '🌊 Navy & Vàng sang trọng', value: 'navy-gold' },
             { label: '🌿 Xanh lá y tế & Trắng tinh khiết', value: 'green-white' },
             { label: '🌙 Tối premium (Dark Mode)', value: 'dark-premium' },
@@ -244,11 +265,16 @@ export const SiteSettings: GlobalConfig = {
           admin: { description: 'Font chữ riêng cho dòng tên bệnh viện. "Theo website" = dùng font hệ thống chung.' },
           options: [
             { label: 'Theo font hệ thống website', value: 'inherit' },
-            { label: '"Be Vietnam Pro" – Hiện đại, chuẩn y tế Việt', value: '"Be Vietnam Pro", sans-serif' },
-            { label: '"Montserrat" – Sang trọng, quốc tế', value: '"Montserrat", sans-serif' },
-            { label: '"Roboto" – Khoa học, sạch sẽ', value: '"Roboto", sans-serif' },
-            { label: '"Nunito" – Mềm mại, thân thiện', value: '"Nunito", sans-serif' },
-            { label: '"Inter" – Tối giản, chuyên nghiệp', value: '"Inter", sans-serif' },
+            { label: '"Be Vietnam Pro" – Hiện đại, chuẩn y tế Việt', value: 'be-vietnam-pro' },
+            { label: '"Be Vietnam Pro" (CSS font-family)', value: '"Be Vietnam Pro", sans-serif' },
+            { label: '"Montserrat" – Sang trọng, quốc tế', value: 'montserrat' },
+            { label: '"Montserrat" (CSS font-family)', value: '"Montserrat", sans-serif' },
+            { label: '"Roboto" – Khoa học, sạch sẽ', value: 'roboto' },
+            { label: '"Roboto" (CSS font-family)', value: '"Roboto", sans-serif' },
+            { label: '"Nunito" – Mềm mại, thân thiện', value: 'nunito' },
+            { label: '"Nunito" (CSS font-family)', value: '"Nunito", sans-serif' },
+            { label: '"Inter" – Tối giản, chuyên nghiệp', value: 'inter' },
+            { label: '"Inter" (CSS font-family)', value: '"Inter", sans-serif' },
           ],
         },
         {
@@ -875,7 +901,10 @@ export const SiteSettings: GlobalConfig = {
       name: 'servicePricePage',
       label: 'Trang Bảng giá dịch vụ',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, thông báo lưu ý BHYT, ô tìm kiếm và số dịch vụ hiển thị trên mỗi trang.' },
+      admin: {
+        hidden: true,
+        description: 'Cấu hình tiêu đề, lưu ý BHYT và số dòng hiển thị đã chuyển sang trang quản trị chuyên mục Khám bệnh & Dịch vụ Y tế. Giữ trường ẩn để tương thích dữ liệu.',
+      },
       fields: [
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Bảng giá dịch vụ' },
         { name: 'description', label: 'Mô tả', type: 'textarea', defaultValue: 'Tra cứu giá BHYT và giá dịch vụ được cập nhật trực tiếp từ hệ thống quản trị.' },
@@ -922,7 +951,7 @@ export const SiteSettings: GlobalConfig = {
       name: 'vaccinationPage',
       label: 'Trang Tiêm chủng vắc xin',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, banner thông báo và lưu ý an toàn tiêm chủng trên trang /tiem-chung.' },
+      admin: { hidden: true, description: 'Đã chuyển thành mục độc lập "Trang Tiêm chủng & Vắc xin" tại Khám bệnh & Dịch vụ Y tế.' },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'TIÊM NGỪA AN TOÀN' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Thông tin tiêm ngừa' },
@@ -1603,7 +1632,10 @@ export const SiteSettings: GlobalConfig = {
       name: 'lichTrucPage',
       label: 'Trang Lịch trực cấp cứu',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /lich-truc.' },
+      admin: {
+        hidden: true,
+        description: 'Trang /lich-truc đã tích hợp chuyển hướng và quản lý tập trung tại Lịch khám / Lịch trực. Giữ trường ẩn để bảo toàn dữ liệu.',
+      },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'TRỰC 24/7' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Lịch trực Cấp cứu' },
@@ -1630,7 +1662,10 @@ export const SiteSettings: GlobalConfig = {
       name: 'scienceActivityPage',
       label: 'Trang Hoạt động Khoa học',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /hoat-dong-khoa-hoc.' },
+      admin: {
+        hidden: true,
+        description: 'Đã chuyển sang quản lý tập trung tại chuyên mục Hoạt động khoa học. Giữ trường ẩn để bảo toàn dữ liệu.',
+      },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'NGHIÊN CỨU & HỌC THUẬT' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Hoạt động Khoa học' },
@@ -1657,7 +1692,10 @@ export const SiteSettings: GlobalConfig = {
       name: 'clinicalProtocolPage',
       label: 'Trang Phác đồ điều trị',
       type: 'group',
-      admin: { description: 'Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /phac-do-dieu-tri.' },
+      admin: {
+        hidden: true,
+        description: 'Đã chuyển sang quản lý tập trung tại chuyên mục Phác đồ điều trị. Giữ trường ẩn để bảo toàn dữ liệu.',
+      },
       fields: [
         { name: 'eyebrow', label: 'Nhãn nhỏ (Eyebrow)', type: 'text', defaultValue: 'CHUYÊN MÔN LÂM SÀNG' },
         { name: 'title', label: 'Tiêu đề trang', type: 'text', defaultValue: 'Phác đồ Điều trị' },
@@ -1695,7 +1733,10 @@ export const SiteSettings: GlobalConfig = {
       name: 'websiteAssistant',
       label: 'Chatbot và nút lên đầu trang',
       type: 'group',
-      admin: { description: 'Tùy chỉnh trợ lý hỗ trợ hiển thị ở góc phải trên toàn bộ website.' },
+      admin: {
+        hidden: true,
+        description: 'Đã chuyển sang quản lý tập trung tại nhóm "🤖 Trợ lý ảo & Chatbot" (Cấu hình Chatbot & Trợ lý ảo). Giữ trường ẩn để bảo toàn dữ liệu và khả năng tương thích.',
+      },
       fields: [
         { name: 'enabled', label: 'Hiển thị chatbot', type: 'checkbox', defaultValue: true },
         { name: 'backToTopEnabled', label: 'Hiển thị nút lên đầu trang', type: 'checkbox', defaultValue: true },

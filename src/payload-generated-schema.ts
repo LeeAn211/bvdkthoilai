@@ -484,6 +484,13 @@ export const enum__vaccination_schedules_v_version_status = pgEnum(
   "enum__vaccination_schedules_v_version_status",
   ["draft", "published"],
 );
+export const enum_vaccines_target_group = pgEnum("enum_vaccines_target_group", [
+  "all",
+  "infant",
+  "child",
+  "pregnancy",
+  "adult",
+]);
 export const enum_vaccines_availability = pgEnum("enum_vaccines_availability", [
   "available",
   "coming",
@@ -493,6 +500,10 @@ export const enum_vaccines_status = pgEnum("enum_vaccines_status", [
   "draft",
   "published",
 ]);
+export const enum__vaccines_v_version_target_group = pgEnum(
+  "enum__vaccines_v_version_target_group",
+  ["all", "infant", "child", "pregnancy", "adult"],
+);
 export const enum__vaccines_v_version_availability = pgEnum(
   "enum__vaccines_v_version_availability",
   ["available", "coming", "unavailable"],
@@ -815,6 +826,7 @@ export const enum_site_settings_header_contact_cards_font_weight = pgEnum(
 );
 export const qp_icon_t = pgEnum("qp_icon_t", ["blue", "green", "amber"]);
 export const brand_color_scheme = pgEnum("brand_color_scheme", [
+  "default",
   "custom",
   "navy-gold",
   "green-white",
@@ -824,10 +836,15 @@ export const brand_color_scheme = pgEnum("brand_color_scheme", [
 ]);
 export const brand_name_font = pgEnum("brand_name_font", [
   "inherit",
+  "be-vietnam-pro",
   '"Be Vietnam Pro", sans-serif',
+  "montserrat",
   '"Montserrat", sans-serif',
+  "roboto",
   '"Roboto", sans-serif',
+  "nunito",
   '"Nunito", sans-serif',
+  "inter",
   '"Inter", sans-serif',
 ]);
 export const brand_name_weight = pgEnum("brand_name_weight", [
@@ -1322,6 +1339,22 @@ export const enum_homepage_vax_tabs_tab = pgEnum("enum_homepage_vax_tabs_tab", [
   "campaigns",
   "vaccines",
 ]);
+export const enum_hp_svc_tabs_source = pgEnum("enum_hp_svc_tabs_source", [
+  "packages",
+  "flow",
+  "inpatient",
+  "map",
+  "portal-cards",
+  "manual",
+]);
+export const enum_hp_vax_tabs_cfg_source = pgEnum(
+  "enum_hp_vax_tabs_cfg_source",
+  ["vaccines", "campaigns", "announcements", "manual"],
+);
+export const enum_hp_custom_cards_status_type = pgEnum(
+  "enum_hp_custom_cards_status_type",
+  ["available", "info", "warning", "unavailable"],
+);
 export const enum_homepage_sections_type = pgEnum(
   "enum_homepage_sections_type",
   [
@@ -1329,6 +1362,9 @@ export const enum_homepage_sections_type = pgEnum(
     "advanced-techniques",
     "our-experts",
     "news-portal",
+    "patient-portal-services",
+    "vaccination-portal-services",
+    "custom-carousel",
     "organization",
     "notices",
     "schedules",
@@ -1449,6 +1485,22 @@ export const enum__homepage_vax_tabs_v_tab = pgEnum(
   "enum__homepage_vax_tabs_v_tab",
   ["announcements", "campaigns", "vaccines"],
 );
+export const enum__hp_svc_tabs_v_source = pgEnum("enum__hp_svc_tabs_v_source", [
+  "packages",
+  "flow",
+  "inpatient",
+  "map",
+  "portal-cards",
+  "manual",
+]);
+export const enum__hp_vax_tabs_cfg_v_source = pgEnum(
+  "enum__hp_vax_tabs_cfg_v_source",
+  ["vaccines", "campaigns", "announcements", "manual"],
+);
+export const enum__hp_custom_cards_v_status_type = pgEnum(
+  "enum__hp_custom_cards_v_status_type",
+  ["available", "info", "warning", "unavailable"],
+);
 export const enum__homepage_v_version_sections_type = pgEnum(
   "enum__homepage_v_version_sections_type",
   [
@@ -1456,6 +1508,9 @@ export const enum__homepage_v_version_sections_type = pgEnum(
     "advanced-techniques",
     "our-experts",
     "news-portal",
+    "patient-portal-services",
+    "vaccination-portal-services",
+    "custom-carousel",
     "organization",
     "notices",
     "schedules",
@@ -2053,6 +2108,19 @@ export const enum_article_detail_settings_share_settings_position = pgEnum(
 export const enum_article_detail_settings_sidebar_banner_position = pgEnum(
   "enum_article_detail_settings_sidebar_banner_position",
   ["aboveLatest", "belowLatest"],
+);
+export const enum_vcs_custom_blocks_text_align = pgEnum(
+  "enum_vcs_custom_blocks_text_align",
+  ["left", "center", "justify"],
+);
+export const vcs_not_align = pgEnum("vcs_not_align", [
+  "left",
+  "center",
+  "justify",
+]);
+export const enum_vaccination_settings_content_block_text_align = pgEnum(
+  "enum_vaccination_settings_content_block_text_align",
+  ["left", "center", "justify"],
 );
 
 export const users_permissions_actions = pgTable(
@@ -4815,7 +4883,10 @@ export const vaccines = pgTable(
     manufacturer: varchar("manufacturer"),
     origin: varchar("origin"),
     prevents: varchar("prevents"),
+    targetGroup: enum_vaccines_target_group("target_group").default("all"),
     ageGroup: varchar("age_group"),
+    price: numeric("price", { mode: "number" }),
+    priceNote: varchar("price_note"),
     image: integer("image_id").references(() => media.id, {
       onDelete: "set null",
     }),
@@ -4873,7 +4944,12 @@ export const _vaccines_v = pgTable(
     version_manufacturer: varchar("version_manufacturer"),
     version_origin: varchar("version_origin"),
     version_prevents: varchar("version_prevents"),
+    version_targetGroup: enum__vaccines_v_version_target_group(
+      "version_target_group",
+    ).default("all"),
     version_ageGroup: varchar("version_age_group"),
+    version_price: numeric("version_price", { mode: "number" }),
+    version_priceNote: varchar("version_price_note"),
     version_image: integer("version_image_id").references(() => media.id, {
       onDelete: "set null",
     }),
@@ -9071,7 +9147,7 @@ export const site_settings = pgTable(
     ).default("700"),
     headerBrandAppearance_colorScheme: brand_color_scheme(
       "header_brand_appearance_color_scheme",
-    ).default("custom"),
+    ).default("default"),
     headerBrandAppearance_logoSize: numeric(
       "header_brand_appearance_logo_size",
       { mode: "number" },
@@ -10334,7 +10410,7 @@ export const _site_settings_v = pgTable(
     ).default("700"),
     version_headerBrandAppearance_colorScheme: brand_color_scheme(
       "version_header_brand_appearance_color_scheme",
-    ).default("custom"),
+    ).default("default"),
     version_headerBrandAppearance_logoSize: numeric(
       "version_header_brand_appearance_logo_size",
       { mode: "number" },
@@ -13203,6 +13279,145 @@ export const homepage_vax_tabs = pgTable(
   ],
 );
 
+export const hp_svc_manual = pgTable(
+  "hp_svc_manual",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    title: varchar("title"),
+    desc: varchar("desc"),
+    badge: varchar("badge"),
+    icon: varchar("icon").default("🩺"),
+    href: varchar("href"),
+    buttonText: varchar("button_text").default("Xem chi tiết →"),
+  },
+  (columns) => [
+    index("hp_svc_manual_order_idx").on(columns._order),
+    index("hp_svc_manual_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [hp_svc_tabs.id],
+      name: "hp_svc_manual_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hp_svc_tabs = pgTable(
+  "hp_svc_tabs",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    label: varchar("label"),
+    source: enum_hp_svc_tabs_source("source").default("packages"),
+    limit: numeric("limit", { mode: "number" }).default(6),
+    customBadge: varchar("custom_badge"),
+    seeMoreUrl: varchar("see_more_url"),
+  },
+  (columns) => [
+    index("hp_svc_tabs_order_idx").on(columns._order),
+    index("hp_svc_tabs_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [homepage_sections.id],
+      name: "hp_svc_tabs_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hp_vax_manual = pgTable(
+  "hp_vax_manual",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    title: varchar("title"),
+    desc: varchar("desc"),
+    badge: varchar("badge"),
+    icon: varchar("icon").default("💉"),
+    priceText: varchar("price_text"),
+    href: varchar("href"),
+    buttonText: varchar("button_text").default("Xem chi tiết →"),
+  },
+  (columns) => [
+    index("hp_vax_manual_order_idx").on(columns._order),
+    index("hp_vax_manual_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [hp_vax_tabs_cfg.id],
+      name: "hp_vax_manual_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hp_vax_tabs_cfg = pgTable(
+  "hp_vax_tabs_cfg",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    label: varchar("label"),
+    source: enum_hp_vax_tabs_cfg_source("source").default("vaccines"),
+    limit: numeric("limit", { mode: "number" }).default(8),
+    customBadge: varchar("custom_badge"),
+    seeMoreUrl: varchar("see_more_url"),
+  },
+  (columns) => [
+    index("hp_vax_tabs_cfg_order_idx").on(columns._order),
+    index("hp_vax_tabs_cfg_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [homepage_sections.id],
+      name: "hp_vax_tabs_cfg_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hp_custom_cards = pgTable(
+  "hp_custom_cards",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    title: varchar("title"),
+    code: varchar("code"),
+    statusText: varchar("status_text"),
+    statusType:
+      enum_hp_custom_cards_status_type("status_type").default("available"),
+    origin: varchar("origin"),
+    image: integer("image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    summary: varchar("summary"),
+    spec1Key: varchar("spec1_key"),
+    spec1Val: varchar("spec1_val"),
+    spec2Key: varchar("spec2_key"),
+    spec2Val: varchar("spec2_val"),
+    spec3Key: varchar("spec3_key"),
+    spec3Val: varchar("spec3_val"),
+    priceLabel: varchar("price_label").default("GIÁ NIÊM YẾT"),
+    priceValue: varchar("price_value"),
+    detailUrl: varchar("detail_url"),
+    detailBtnText: varchar("detail_btn_text"),
+    actionUrl: varchar("action_url"),
+    actionBtnText: varchar("action_btn_text"),
+  },
+  (columns) => [
+    index("hp_custom_cards_order_idx").on(columns._order),
+    index("hp_custom_cards_parent_id_idx").on(columns._parentID),
+    index("hp_custom_cards_image_idx").on(columns.image),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [homepage_sections.id],
+      name: "hp_custom_cards_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const homepage_sections = pgTable(
   "homepage_sections",
   {
@@ -13287,6 +13502,22 @@ export const homepage_sections = pgTable(
     organizationMedpro_backgroundColor: varchar(
       "organization_medpro_background_color",
     ),
+    carouselItemsPerView: numeric("carousel_items_per_view", {
+      mode: "number",
+    }).default(3),
+    carouselAutoplaySeconds: numeric("carousel_autoplay_seconds", {
+      mode: "number",
+    }).default(5),
+    carouselDetailBtnText: varchar("carousel_detail_btn_text").default(
+      "Chi tiết",
+    ),
+    carouselActionBtnText: varchar("carousel_action_btn_text").default(
+      "Đăng ký ngay",
+    ),
+    carouselSeeMoreText: varchar("carousel_see_more_text").default(
+      "Xem tất cả →",
+    ),
+    carouselSeeMoreUrl: varchar("carousel_see_more_url"),
     linkedContentSection: integer("linked_content_section_id").references(
       () => content_sections.id,
       {
@@ -13890,6 +14121,150 @@ export const _homepage_vax_tabs_v = pgTable(
   ],
 );
 
+export const _hp_svc_manual_v = pgTable(
+  "_hp_svc_manual_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    title: varchar("title"),
+    desc: varchar("desc"),
+    badge: varchar("badge"),
+    icon: varchar("icon").default("🩺"),
+    href: varchar("href"),
+    buttonText: varchar("button_text").default("Xem chi tiết →"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hp_svc_manual_v_order_idx").on(columns._order),
+    index("_hp_svc_manual_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_hp_svc_tabs_v.id],
+      name: "_hp_svc_manual_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _hp_svc_tabs_v = pgTable(
+  "_hp_svc_tabs_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    label: varchar("label"),
+    source: enum__hp_svc_tabs_v_source("source").default("packages"),
+    limit: numeric("limit", { mode: "number" }).default(6),
+    customBadge: varchar("custom_badge"),
+    seeMoreUrl: varchar("see_more_url"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hp_svc_tabs_v_order_idx").on(columns._order),
+    index("_hp_svc_tabs_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_homepage_v_version_sections.id],
+      name: "_hp_svc_tabs_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _hp_vax_manual_v = pgTable(
+  "_hp_vax_manual_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    title: varchar("title"),
+    desc: varchar("desc"),
+    badge: varchar("badge"),
+    icon: varchar("icon").default("💉"),
+    priceText: varchar("price_text"),
+    href: varchar("href"),
+    buttonText: varchar("button_text").default("Xem chi tiết →"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hp_vax_manual_v_order_idx").on(columns._order),
+    index("_hp_vax_manual_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_hp_vax_tabs_cfg_v.id],
+      name: "_hp_vax_manual_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _hp_vax_tabs_cfg_v = pgTable(
+  "_hp_vax_tabs_cfg_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    label: varchar("label"),
+    source: enum__hp_vax_tabs_cfg_v_source("source").default("vaccines"),
+    limit: numeric("limit", { mode: "number" }).default(8),
+    customBadge: varchar("custom_badge"),
+    seeMoreUrl: varchar("see_more_url"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hp_vax_tabs_cfg_v_order_idx").on(columns._order),
+    index("_hp_vax_tabs_cfg_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_homepage_v_version_sections.id],
+      name: "_hp_vax_tabs_cfg_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _hp_custom_cards_v = pgTable(
+  "_hp_custom_cards_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    title: varchar("title"),
+    code: varchar("code"),
+    statusText: varchar("status_text"),
+    statusType:
+      enum__hp_custom_cards_v_status_type("status_type").default("available"),
+    origin: varchar("origin"),
+    image: integer("image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    summary: varchar("summary"),
+    spec1Key: varchar("spec1_key"),
+    spec1Val: varchar("spec1_val"),
+    spec2Key: varchar("spec2_key"),
+    spec2Val: varchar("spec2_val"),
+    spec3Key: varchar("spec3_key"),
+    spec3Val: varchar("spec3_val"),
+    priceLabel: varchar("price_label").default("GIÁ NIÊM YẾT"),
+    priceValue: varchar("price_value"),
+    detailUrl: varchar("detail_url"),
+    detailBtnText: varchar("detail_btn_text"),
+    actionUrl: varchar("action_url"),
+    actionBtnText: varchar("action_btn_text"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hp_custom_cards_v_order_idx").on(columns._order),
+    index("_hp_custom_cards_v_parent_id_idx").on(columns._parentID),
+    index("_hp_custom_cards_v_image_idx").on(columns.image),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_homepage_v_version_sections.id],
+      name: "_hp_custom_cards_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const _homepage_v_version_sections = pgTable(
   "_homepage_v_version_sections",
   {
@@ -13974,6 +14349,22 @@ export const _homepage_v_version_sections = pgTable(
     organizationMedpro_backgroundColor: varchar(
       "organization_medpro_background_color",
     ),
+    carouselItemsPerView: numeric("carousel_items_per_view", {
+      mode: "number",
+    }).default(3),
+    carouselAutoplaySeconds: numeric("carousel_autoplay_seconds", {
+      mode: "number",
+    }).default(5),
+    carouselDetailBtnText: varchar("carousel_detail_btn_text").default(
+      "Chi tiết",
+    ),
+    carouselActionBtnText: varchar("carousel_action_btn_text").default(
+      "Đăng ký ngay",
+    ),
+    carouselSeeMoreText: varchar("carousel_see_more_text").default(
+      "Xem tất cả →",
+    ),
+    carouselSeeMoreUrl: varchar("carousel_see_more_url"),
     linkedContentSection: integer("linked_content_section_id").references(
       () => content_sections.id,
       {
@@ -17102,8 +17493,8 @@ export const _seo_settings_v = pgTable(
   ],
 );
 
-export const chatbot_settings_quick_topics = pgTable(
-  "chatbot_settings_quick_topics",
+export const cb_quick_topics = pgTable(
+  "cb_quick_topics",
   {
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
@@ -17112,41 +17503,61 @@ export const chatbot_settings_quick_topics = pgTable(
     value: varchar("value").notNull(),
   },
   (columns) => [
-    index("chatbot_settings_quick_topics_order_idx").on(columns._order),
-    index("chatbot_settings_quick_topics_parent_id_idx").on(columns._parentID),
+    index("cb_quick_topics_order_idx").on(columns._order),
+    index("cb_quick_topics_parent_id_idx").on(columns._parentID),
     foreignKey({
       columns: [columns["_parentID"]],
       foreignColumns: [chatbot_settings.id],
-      name: "chatbot_settings_quick_topics_parent_id_fk",
+      name: "cb_quick_topics_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
 
-export const chatbot_settings = pgTable("chatbot_settings", {
-  id: serial("id").primaryKey(),
-  enabled: boolean("enabled").default(true),
-  assistantName: varchar("assistant_name").default("Trợ lý Thới Lai"),
-  statusText: varchar("status_text").default("Đang trực tuyến"),
-  greeting: varchar("greeting"),
-  inputPlaceholder: varchar("input_placeholder").default(
-    "Nhập nội dung cần hỏi…",
-  ),
-  fallbackResponse: varchar("fallback_response").default(
-    "Tôi chưa tìm thấy câu trả lời phù hợp. Bạn có thể gửi câu hỏi cho tư vấn viên.",
-  ),
-  handoffEnabled: boolean("handoff_enabled").default(true),
-  logConversations: boolean("log_conversations").default(true),
-  updatedAt: timestamp("updated_at", {
-    mode: "string",
-    withTimezone: true,
-    precision: 3,
-  }),
-  createdAt: timestamp("created_at", {
-    mode: "string",
-    withTimezone: true,
-    precision: 3,
-  }),
-});
+export const chatbot_settings = pgTable(
+  "chatbot_settings",
+  {
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    backToTopEnabled: boolean("back_to_top_enabled").default(true),
+    assistantLogo: integer("assistant_logo_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    assistantName: varchar("assistant_name").default("Trợ lý Thới Lai"),
+    statusText: varchar("status_text").default("Đang trực tuyến"),
+    greeting: varchar("greeting").default(
+      "Xin chào! Tôi có thể giúp bạn tra cứu lịch khám, bảng giá, tiêm ngừa và thông tin bệnh viện.",
+    ),
+    inputPlaceholder: varchar("input_placeholder").default(
+      "Nhập nội dung cần hỏi…",
+    ),
+    noticeText: varchar("notice_text").default(
+      "Thông tin chỉ mang tính tham khảo. Trường hợp cấp cứu, vui lòng gọi bệnh viện ngay.",
+    ),
+    primaryColor: varchar("primary_color").default("#0878D1"),
+    fallbackResponse: varchar("fallback_response").default(
+      "Tôi chưa hiểu rõ câu hỏi. Bạn hãy chọn một mục gợi ý hoặc liên hệ trực tiếp với bệnh viện để được hỗ trợ.",
+    ),
+    fallbackLinkLabel: varchar("fallback_link_label").default(
+      "Liên hệ bệnh viện",
+    ),
+    fallbackLinkUrl: varchar("fallback_link_url").default("/lien-he"),
+    handoffEnabled: boolean("handoff_enabled").default(true),
+    logConversations: boolean("log_conversations").default(true),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+  },
+  (columns) => [
+    index("chatbot_settings_assistant_logo_idx").on(columns.assistantLogo),
+  ],
+);
 
 export const system_settings = pgTable("system_settings", {
   id: serial("id").primaryKey(),
@@ -18054,6 +18465,82 @@ export const article_detail_settings = pgTable(
     ),
   ],
 );
+
+export const vcs_custom_blocks = pgTable(
+  "vcs_custom_blocks",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    kicker: varchar("kicker"),
+    title: varchar("title").notNull(),
+    subtitle: varchar("subtitle"),
+    content: jsonb("content"),
+    textAlign: enum_vcs_custom_blocks_text_align("text_align").default("left"),
+  },
+  (columns) => [
+    index("vcs_custom_blocks_order_idx").on(columns._order),
+    index("vcs_custom_blocks_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [vaccination_settings.id],
+      name: "vcs_custom_blocks_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const vaccination_settings = pgTable("vaccination_settings", {
+  id: serial("id").primaryKey(),
+  eyebrow: varchar("eyebrow").default("TIÊM NGỪA AN TOÀN"),
+  title: varchar("title")
+    .notNull()
+    .default("Thông tin tiêm ngừa & Danh mục Vắc xin"),
+  description: varchar("description").default(
+    "Theo dõi bảng giá vắc xin hiện hành, đối tượng tiêm ngừa và lịch tiêm chủng an toàn tại Bệnh viện Đa khoa Khu vực Thới Lai.",
+  ),
+  showNoticeBanner: boolean("show_notice_banner").default(true),
+  noticeTitle: varchar("notice_title").default(
+    "Quy trình và An toàn Tiêm chủng tại Bệnh viện",
+  ),
+  noticeContent: varchar("notice_content").default(
+    "• Người đến tiêm chủng được khám sàng lọc trước tiêm và tư vấn chỉ định vắc xin phù hợp.\n• Theo dõi sức khỏe ít nhất 30 phút sau tiêm tại phòng theo dõi của bệnh viện.\n• Vui lòng mang theo sổ tiêm chủng hoặc ứng dụng tiêm chủng điện tử khi đến tiêm.",
+  ),
+  noticeAlign: vcs_not_align("notice_align").default("left"),
+  showSearch: boolean("show_search").default(true),
+  showAgeFilter: boolean("show_age_filter").default(true),
+  showPrice: boolean("show_price").default(true),
+  showBookButton: boolean("show_book_button").default(true),
+  showWorkflowSection: boolean("show_workflow_section").default(true),
+  showSupportBanner: boolean("show_support_banner").default(true),
+  itemsPerView: numeric("items_per_view", { mode: "number" }).default(3),
+  autoplaySeconds: numeric("autoplay_seconds", { mode: "number" }).default(5),
+  bookButtonText: varchar("book_button_text").default("Đăng ký tiêm"),
+  detailButtonText: varchar("detail_button_text").default("Chi tiết"),
+  bookButtonUrl: varchar("book_button_url").default("https://medpro.vn/"),
+  consultHotline: varchar("consult_hotline").default("0292 3861 234"),
+  contentBlock_enabled: boolean("content_block_enabled").default(false),
+  contentBlock_title: varchar("content_block_title").default(
+    "Hướng dẫn tiêm chủng an toàn và phòng ngừa phản ứng sau tiêm",
+  ),
+  contentBlock_subtitle: varchar("content_block_subtitle").default(
+    "Thông tin chuyên môn từ Hội đồng Chuyên môn Bệnh viện Đa khoa Khu vực Thới Lai về theo dõi sức khỏe và quy chuẩn tiêm chủng an toàn.",
+  ),
+  contentBlock_content: jsonb("content_block_content"),
+  contentBlock_textAlign: enum_vaccination_settings_content_block_text_align(
+    "content_block_text_align",
+  ).default("left"),
+  updatedAt: timestamp("updated_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+  createdAt: timestamp("created_at", {
+    mode: "string",
+    withTimezone: true,
+    precision: 3,
+  }),
+});
 
 export const relations_users_permissions_actions = relations(
   users_permissions_actions,
@@ -21319,6 +21806,61 @@ export const relations_homepage_vax_tabs = relations(
     }),
   }),
 );
+export const relations_hp_svc_manual = relations(hp_svc_manual, ({ one }) => ({
+  _parentID: one(hp_svc_tabs, {
+    fields: [hp_svc_manual._parentID],
+    references: [hp_svc_tabs.id],
+    relationName: "manualItems",
+  }),
+}));
+export const relations_hp_svc_tabs = relations(
+  hp_svc_tabs,
+  ({ one, many }) => ({
+    _parentID: one(homepage_sections, {
+      fields: [hp_svc_tabs._parentID],
+      references: [homepage_sections.id],
+      relationName: "portalServiceTabs",
+    }),
+    manualItems: many(hp_svc_manual, {
+      relationName: "manualItems",
+    }),
+  }),
+);
+export const relations_hp_vax_manual = relations(hp_vax_manual, ({ one }) => ({
+  _parentID: one(hp_vax_tabs_cfg, {
+    fields: [hp_vax_manual._parentID],
+    references: [hp_vax_tabs_cfg.id],
+    relationName: "manualItems",
+  }),
+}));
+export const relations_hp_vax_tabs_cfg = relations(
+  hp_vax_tabs_cfg,
+  ({ one, many }) => ({
+    _parentID: one(homepage_sections, {
+      fields: [hp_vax_tabs_cfg._parentID],
+      references: [homepage_sections.id],
+      relationName: "portalVaccinationTabs",
+    }),
+    manualItems: many(hp_vax_manual, {
+      relationName: "manualItems",
+    }),
+  }),
+);
+export const relations_hp_custom_cards = relations(
+  hp_custom_cards,
+  ({ one }) => ({
+    _parentID: one(homepage_sections, {
+      fields: [hp_custom_cards._parentID],
+      references: [homepage_sections.id],
+      relationName: "customCarouselCards",
+    }),
+    image: one(media, {
+      fields: [hp_custom_cards.image],
+      references: [media.id],
+      relationName: "image",
+    }),
+  }),
+);
 export const relations_homepage_sections = relations(
   homepage_sections,
   ({ one, many }) => ({
@@ -21352,6 +21894,15 @@ export const relations_homepage_sections = relations(
     }),
     vaccinationTabOrder: many(homepage_vax_tabs, {
       relationName: "vaccinationTabOrder",
+    }),
+    portalServiceTabs: many(hp_svc_tabs, {
+      relationName: "portalServiceTabs",
+    }),
+    portalVaccinationTabs: many(hp_vax_tabs_cfg, {
+      relationName: "portalVaccinationTabs",
+    }),
+    customCarouselCards: many(hp_custom_cards, {
+      relationName: "customCarouselCards",
     }),
     linkedContentSection: one(content_sections, {
       fields: [homepage_sections.linkedContentSection],
@@ -21662,6 +22213,67 @@ export const relations__homepage_vax_tabs_v = relations(
     }),
   }),
 );
+export const relations__hp_svc_manual_v = relations(
+  _hp_svc_manual_v,
+  ({ one }) => ({
+    _parentID: one(_hp_svc_tabs_v, {
+      fields: [_hp_svc_manual_v._parentID],
+      references: [_hp_svc_tabs_v.id],
+      relationName: "manualItems",
+    }),
+  }),
+);
+export const relations__hp_svc_tabs_v = relations(
+  _hp_svc_tabs_v,
+  ({ one, many }) => ({
+    _parentID: one(_homepage_v_version_sections, {
+      fields: [_hp_svc_tabs_v._parentID],
+      references: [_homepage_v_version_sections.id],
+      relationName: "portalServiceTabs",
+    }),
+    manualItems: many(_hp_svc_manual_v, {
+      relationName: "manualItems",
+    }),
+  }),
+);
+export const relations__hp_vax_manual_v = relations(
+  _hp_vax_manual_v,
+  ({ one }) => ({
+    _parentID: one(_hp_vax_tabs_cfg_v, {
+      fields: [_hp_vax_manual_v._parentID],
+      references: [_hp_vax_tabs_cfg_v.id],
+      relationName: "manualItems",
+    }),
+  }),
+);
+export const relations__hp_vax_tabs_cfg_v = relations(
+  _hp_vax_tabs_cfg_v,
+  ({ one, many }) => ({
+    _parentID: one(_homepage_v_version_sections, {
+      fields: [_hp_vax_tabs_cfg_v._parentID],
+      references: [_homepage_v_version_sections.id],
+      relationName: "portalVaccinationTabs",
+    }),
+    manualItems: many(_hp_vax_manual_v, {
+      relationName: "manualItems",
+    }),
+  }),
+);
+export const relations__hp_custom_cards_v = relations(
+  _hp_custom_cards_v,
+  ({ one }) => ({
+    _parentID: one(_homepage_v_version_sections, {
+      fields: [_hp_custom_cards_v._parentID],
+      references: [_homepage_v_version_sections.id],
+      relationName: "customCarouselCards",
+    }),
+    image: one(media, {
+      fields: [_hp_custom_cards_v.image],
+      references: [media.id],
+      relationName: "image",
+    }),
+  }),
+);
 export const relations__homepage_v_version_sections = relations(
   _homepage_v_version_sections,
   ({ one, many }) => ({
@@ -21695,6 +22307,15 @@ export const relations__homepage_v_version_sections = relations(
     }),
     vaccinationTabOrder: many(_homepage_vax_tabs_v, {
       relationName: "vaccinationTabOrder",
+    }),
+    portalServiceTabs: many(_hp_svc_tabs_v, {
+      relationName: "portalServiceTabs",
+    }),
+    portalVaccinationTabs: many(_hp_vax_tabs_cfg_v, {
+      relationName: "portalVaccinationTabs",
+    }),
+    customCarouselCards: many(_hp_custom_cards_v, {
+      relationName: "customCarouselCards",
     }),
     linkedContentSection: one(content_sections, {
       fields: [_homepage_v_version_sections.linkedContentSection],
@@ -22802,11 +23423,11 @@ export const relations__seo_settings_v = relations(
     }),
   }),
 );
-export const relations_chatbot_settings_quick_topics = relations(
-  chatbot_settings_quick_topics,
+export const relations_cb_quick_topics = relations(
+  cb_quick_topics,
   ({ one }) => ({
     _parentID: one(chatbot_settings, {
-      fields: [chatbot_settings_quick_topics._parentID],
+      fields: [cb_quick_topics._parentID],
       references: [chatbot_settings.id],
       relationName: "quickTopics",
     }),
@@ -22814,8 +23435,13 @@ export const relations_chatbot_settings_quick_topics = relations(
 );
 export const relations_chatbot_settings = relations(
   chatbot_settings,
-  ({ many }) => ({
-    quickTopics: many(chatbot_settings_quick_topics, {
+  ({ one, many }) => ({
+    assistantLogo: one(media, {
+      fields: [chatbot_settings.assistantLogo],
+      references: [media.id],
+      relationName: "assistantLogo",
+    }),
+    quickTopics: many(cb_quick_topics, {
       relationName: "quickTopics",
     }),
   }),
@@ -23021,6 +23647,24 @@ export const relations_article_detail_settings = relations(
     }),
   }),
 );
+export const relations_vcs_custom_blocks = relations(
+  vcs_custom_blocks,
+  ({ one }) => ({
+    _parentID: one(vaccination_settings, {
+      fields: [vcs_custom_blocks._parentID],
+      references: [vaccination_settings.id],
+      relationName: "customBlocks",
+    }),
+  }),
+);
+export const relations_vaccination_settings = relations(
+  vaccination_settings,
+  ({ many }) => ({
+    customBlocks: many(vcs_custom_blocks, {
+      relationName: "customBlocks",
+    }),
+  }),
+);
 
 type DatabaseSchema = {
   enum_users_permissions_actions: typeof enum_users_permissions_actions;
@@ -23115,8 +23759,10 @@ type DatabaseSchema = {
   enum_vaccination_schedules_status: typeof enum_vaccination_schedules_status;
   enum__vaccination_schedules_v_version_schedule_kind: typeof enum__vaccination_schedules_v_version_schedule_kind;
   enum__vaccination_schedules_v_version_status: typeof enum__vaccination_schedules_v_version_status;
+  enum_vaccines_target_group: typeof enum_vaccines_target_group;
   enum_vaccines_availability: typeof enum_vaccines_availability;
   enum_vaccines_status: typeof enum_vaccines_status;
+  enum__vaccines_v_version_target_group: typeof enum__vaccines_v_version_target_group;
   enum__vaccines_v_version_availability: typeof enum__vaccines_v_version_availability;
   enum__vaccines_v_version_status: typeof enum__vaccines_v_version_status;
   enum_recruitment_layout_template: typeof enum_recruitment_layout_template;
@@ -23252,6 +23898,9 @@ type DatabaseSchema = {
   enum_homepage_sections_schedule_tab_order_tab: typeof enum_homepage_sections_schedule_tab_order_tab;
   enum_vaccine_manual_link_mode: typeof enum_vaccine_manual_link_mode;
   enum_homepage_vax_tabs_tab: typeof enum_homepage_vax_tabs_tab;
+  enum_hp_svc_tabs_source: typeof enum_hp_svc_tabs_source;
+  enum_hp_vax_tabs_cfg_source: typeof enum_hp_vax_tabs_cfg_source;
+  enum_hp_custom_cards_status_type: typeof enum_hp_custom_cards_status_type;
   enum_homepage_sections_type: typeof enum_homepage_sections_type;
   enum_homepage_sections_featured_filter_mode: typeof enum_homepage_sections_featured_filter_mode;
   enum_homepage_sections_featured_card_fit: typeof enum_homepage_sections_featured_card_fit;
@@ -23274,6 +23923,9 @@ type DatabaseSchema = {
   enum__homepage_v_version_sections_schedule_tab_order_tab: typeof enum__homepage_v_version_sections_schedule_tab_order_tab;
   enum__vaccine_manual_v_link_mode: typeof enum__vaccine_manual_v_link_mode;
   enum__homepage_vax_tabs_v_tab: typeof enum__homepage_vax_tabs_v_tab;
+  enum__hp_svc_tabs_v_source: typeof enum__hp_svc_tabs_v_source;
+  enum__hp_vax_tabs_cfg_v_source: typeof enum__hp_vax_tabs_cfg_v_source;
+  enum__hp_custom_cards_v_status_type: typeof enum__hp_custom_cards_v_status_type;
   enum__homepage_v_version_sections_type: typeof enum__homepage_v_version_sections_type;
   enum__homepage_v_version_sections_featured_filter_mode: typeof enum__homepage_v_version_sections_featured_filter_mode;
   enum__homepage_v_version_sections_featured_card_fit: typeof enum__homepage_v_version_sections_featured_card_fit;
@@ -23409,6 +24061,9 @@ type DatabaseSchema = {
   enum_article_detail_settings_hero_padding: typeof enum_article_detail_settings_hero_padding;
   enum_article_detail_settings_share_settings_position: typeof enum_article_detail_settings_share_settings_position;
   enum_article_detail_settings_sidebar_banner_position: typeof enum_article_detail_settings_sidebar_banner_position;
+  enum_vcs_custom_blocks_text_align: typeof enum_vcs_custom_blocks_text_align;
+  vcs_not_align: typeof vcs_not_align;
+  enum_vaccination_settings_content_block_text_align: typeof enum_vaccination_settings_content_block_text_align;
   users_permissions_actions: typeof users_permissions_actions;
   users_permissions: typeof users_permissions;
   users_sessions: typeof users_sessions;
@@ -23614,6 +24269,11 @@ type DatabaseSchema = {
   homepage_sections_schedule_tab_order: typeof homepage_sections_schedule_tab_order;
   vaccine_manual: typeof vaccine_manual;
   homepage_vax_tabs: typeof homepage_vax_tabs;
+  hp_svc_manual: typeof hp_svc_manual;
+  hp_svc_tabs: typeof hp_svc_tabs;
+  hp_vax_manual: typeof hp_vax_manual;
+  hp_vax_tabs_cfg: typeof hp_vax_tabs_cfg;
+  hp_custom_cards: typeof hp_custom_cards;
   homepage_sections: typeof homepage_sections;
   homepage: typeof homepage;
   _homepage_v_version_banners: typeof _homepage_v_version_banners;
@@ -23632,6 +24292,11 @@ type DatabaseSchema = {
   _homepage_v_version_sections_schedule_tab_order: typeof _homepage_v_version_sections_schedule_tab_order;
   _vaccine_manual_v: typeof _vaccine_manual_v;
   _homepage_vax_tabs_v: typeof _homepage_vax_tabs_v;
+  _hp_svc_manual_v: typeof _hp_svc_manual_v;
+  _hp_svc_tabs_v: typeof _hp_svc_tabs_v;
+  _hp_vax_manual_v: typeof _hp_vax_manual_v;
+  _hp_vax_tabs_cfg_v: typeof _hp_vax_tabs_cfg_v;
+  _hp_custom_cards_v: typeof _hp_custom_cards_v;
   _homepage_v_version_sections: typeof _homepage_v_version_sections;
   _homepage_v: typeof _homepage_v;
   organization_chart_deputy_directors: typeof organization_chart_deputy_directors;
@@ -23717,7 +24382,7 @@ type DatabaseSchema = {
   seo_settings: typeof seo_settings;
   _seo_settings_v_version_robots_disallow: typeof _seo_settings_v_version_robots_disallow;
   _seo_settings_v: typeof _seo_settings_v;
-  chatbot_settings_quick_topics: typeof chatbot_settings_quick_topics;
+  cb_quick_topics: typeof cb_quick_topics;
   chatbot_settings: typeof chatbot_settings;
   system_settings: typeof system_settings;
   sch_notes: typeof sch_notes;
@@ -23734,6 +24399,8 @@ type DatabaseSchema = {
   display_settings: typeof display_settings;
   ads_share_btns: typeof ads_share_btns;
   article_detail_settings: typeof article_detail_settings;
+  vcs_custom_blocks: typeof vcs_custom_blocks;
+  vaccination_settings: typeof vaccination_settings;
   relations_users_permissions_actions: typeof relations_users_permissions_actions;
   relations_users_permissions: typeof relations_users_permissions;
   relations_users_sessions: typeof relations_users_sessions;
@@ -23939,6 +24606,11 @@ type DatabaseSchema = {
   relations_homepage_sections_schedule_tab_order: typeof relations_homepage_sections_schedule_tab_order;
   relations_vaccine_manual: typeof relations_vaccine_manual;
   relations_homepage_vax_tabs: typeof relations_homepage_vax_tabs;
+  relations_hp_svc_manual: typeof relations_hp_svc_manual;
+  relations_hp_svc_tabs: typeof relations_hp_svc_tabs;
+  relations_hp_vax_manual: typeof relations_hp_vax_manual;
+  relations_hp_vax_tabs_cfg: typeof relations_hp_vax_tabs_cfg;
+  relations_hp_custom_cards: typeof relations_hp_custom_cards;
   relations_homepage_sections: typeof relations_homepage_sections;
   relations_homepage: typeof relations_homepage;
   relations__homepage_v_version_banners: typeof relations__homepage_v_version_banners;
@@ -23957,6 +24629,11 @@ type DatabaseSchema = {
   relations__homepage_v_version_sections_schedule_tab_order: typeof relations__homepage_v_version_sections_schedule_tab_order;
   relations__vaccine_manual_v: typeof relations__vaccine_manual_v;
   relations__homepage_vax_tabs_v: typeof relations__homepage_vax_tabs_v;
+  relations__hp_svc_manual_v: typeof relations__hp_svc_manual_v;
+  relations__hp_svc_tabs_v: typeof relations__hp_svc_tabs_v;
+  relations__hp_vax_manual_v: typeof relations__hp_vax_manual_v;
+  relations__hp_vax_tabs_cfg_v: typeof relations__hp_vax_tabs_cfg_v;
+  relations__hp_custom_cards_v: typeof relations__hp_custom_cards_v;
   relations__homepage_v_version_sections: typeof relations__homepage_v_version_sections;
   relations__homepage_v: typeof relations__homepage_v;
   relations_organization_chart_deputy_directors: typeof relations_organization_chart_deputy_directors;
@@ -24042,7 +24719,7 @@ type DatabaseSchema = {
   relations_seo_settings: typeof relations_seo_settings;
   relations__seo_settings_v_version_robots_disallow: typeof relations__seo_settings_v_version_robots_disallow;
   relations__seo_settings_v: typeof relations__seo_settings_v;
-  relations_chatbot_settings_quick_topics: typeof relations_chatbot_settings_quick_topics;
+  relations_cb_quick_topics: typeof relations_cb_quick_topics;
   relations_chatbot_settings: typeof relations_chatbot_settings;
   relations_system_settings: typeof relations_system_settings;
   relations_sch_notes: typeof relations_sch_notes;
@@ -24059,6 +24736,8 @@ type DatabaseSchema = {
   relations_display_settings: typeof relations_display_settings;
   relations_ads_share_btns: typeof relations_ads_share_btns;
   relations_article_detail_settings: typeof relations_article_detail_settings;
+  relations_vcs_custom_blocks: typeof relations_vcs_custom_blocks;
+  relations_vaccination_settings: typeof relations_vaccination_settings;
 };
 
 declare module "@payloadcms/db-postgres" {

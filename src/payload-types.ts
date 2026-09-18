@@ -216,6 +216,7 @@ export interface Config {
     'quick-links-settings': QuickLinksSetting;
     'display-settings': DisplaySetting;
     'article-detail-settings': ArticleDetailSetting;
+    'vaccination-settings': VaccinationSetting;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -250,6 +251,7 @@ export interface Config {
     'quick-links-settings': QuickLinksSettingsSelect<false> | QuickLinksSettingsSelect<true>;
     'display-settings': DisplaySettingsSelect<false> | DisplaySettingsSelect<true>;
     'article-detail-settings': ArticleDetailSettingsSelect<false> | ArticleDetailSettingsSelect<true>;
+    'vaccination-settings': VaccinationSettingsSelect<false> | VaccinationSettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1273,7 +1275,7 @@ export interface Specialty {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Khoa/Phòng là quan hệ tổ chức chính của bác sĩ. Chuyên khoa chỉ chọn khi bác sĩ thực sự thuộc một lĩnh vực chuyên môn riêng.
+ * Hệ thống quản lý thống nhất toàn bộ Thầy thuốc, Bác sĩ và Chuyên gia hiển thị trên Trang chủ cũng như toàn bộ website.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "doctors".
@@ -1836,7 +1838,19 @@ export interface Vaccine {
   manufacturer?: string | null;
   origin?: string | null;
   prevents?: string | null;
+  /**
+   * Chọn nhóm độ tuổi chuẩn để bộ lọc trên trang chủ và trang /tiem-chung nhận diện chính xác 100%.
+   */
+  targetGroup?: ('all' | 'infant' | 'child' | 'pregnancy' | 'adult') | null;
+  /**
+   * Dòng chữ hiển thị chi tiết trên thẻ vắc xin và trang chi tiết vắc xin.
+   */
   ageGroup?: string | null;
+  /**
+   * Nhập trực tiếp giá tiêm tại đây. Có thể quản lý lịch sử giá trong Lịch sử giá vắc xin.
+   */
+  price?: number | null;
+  priceNote?: string | null;
   /**
    * Không bắt buộc. Nếu bỏ trống website dùng ảnh mặc định Lịch tiêm chủng / Tiêm ngừa.
    */
@@ -2438,7 +2452,7 @@ export interface SurveyQuestion {
   createdAt: string;
 }
 /**
- * Quản lý toàn bộ đợt khảo sát ý kiến người bệnh & nhân viên. Tùy chỉnh danh mục phòng khám, khoa điều trị, chức danh và địa bàn được liên kết trực tiếp tại bảng điều khiển phía trên.
+ * Hệ thống quản lý thống nhất: Quản lý các đợt khảo sát, câu hỏi, theo dõi số lượt tham gia, xem chi tiết phiếu trả lời, biểu đồ mức độ hài lòng và xuất báo cáo Excel.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "survey-campaigns".
@@ -4065,7 +4079,10 @@ export interface VaccinesSelect<T extends boolean = true> {
   manufacturer?: T;
   origin?: T;
   prevents?: T;
+  targetGroup?: T;
   ageGroup?: T;
+  price?: T;
+  priceNote?: T;
   image?: T;
   detailContent?: T;
   availability?: T;
@@ -4893,7 +4910,8 @@ export interface SiteSetting {
     /**
      * Chọn bảng màu phối hợp sẵn cho Tên đơn vị + Slogan. Chọn "Tuỳ chọn" để dùng màu tự chọn bên dưới.
      */
-    colorScheme?: ('custom' | 'navy-gold' | 'green-white' | 'dark-premium' | 'red-white' | 'sky-orange') | null;
+    colorScheme?:
+      ('default' | 'custom' | 'navy-gold' | 'green-white' | 'dark-premium' | 'red-white' | 'sky-orange') | null;
     logoSize?: number | null;
     titleFontSize?: number | null;
     subtitleFontSize?: number | null;
@@ -4903,10 +4921,15 @@ export interface SiteSetting {
     nameFontFamily?:
       | (
           | 'inherit'
+          | 'be-vietnam-pro'
           | '"Be Vietnam Pro", sans-serif'
+          | 'montserrat'
           | '"Montserrat", sans-serif'
+          | 'roboto'
           | '"Roboto", sans-serif'
+          | 'nunito'
           | '"Nunito", sans-serif'
+          | 'inter'
           | '"Inter", sans-serif'
         )
       | null;
@@ -5125,7 +5148,7 @@ export interface SiteSetting {
   googleMapsEmbed?: string | null;
   footerText?: string | null;
   /**
-   * Tùy chỉnh tiêu đề, thông báo lưu ý BHYT, ô tìm kiếm và số dịch vụ hiển thị trên mỗi trang.
+   * Cấu hình tiêu đề, lưu ý BHYT và số dòng hiển thị đã chuyển sang trang quản trị chuyên mục Khám bệnh & Dịch vụ Y tế. Giữ trường ẩn để tương thích dữ liệu.
    */
   servicePricePage: {
     title?: string | null;
@@ -5140,7 +5163,7 @@ export interface SiteSetting {
     emptyText?: string | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, banner thông báo và lưu ý an toàn tiêm chủng trên trang /tiem-chung.
+   * Đã chuyển thành mục độc lập "Trang Tiêm chủng & Vắc xin" tại Khám bệnh & Dịch vụ Y tế.
    */
   vaccinationPage?: {
     eyebrow?: string | null;
@@ -5487,7 +5510,7 @@ export interface SiteSetting {
       | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /lich-truc.
+   * Trang /lich-truc đã tích hợp chuyển hướng và quản lý tập trung tại Lịch khám / Lịch trực. Giữ trường ẩn để bảo toàn dữ liệu.
    */
   lichTrucPage?: {
     eyebrow?: string | null;
@@ -5499,7 +5522,7 @@ export interface SiteSetting {
     noticeAlign?: ('left' | 'center' | 'justify') | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /hoat-dong-khoa-hoc.
+   * Đã chuyển sang quản lý tập trung tại chuyên mục Hoạt động khoa học. Giữ trường ẩn để bảo toàn dữ liệu.
    */
   scienceActivityPage?: {
     eyebrow?: string | null;
@@ -5511,7 +5534,7 @@ export interface SiteSetting {
     noticeAlign?: ('left' | 'center' | 'justify') | null;
   };
   /**
-   * Tùy chỉnh tiêu đề, mô tả và thông báo trên trang /phac-do-dieu-tri.
+   * Đã chuyển sang quản lý tập trung tại chuyên mục Phác đồ điều trị. Giữ trường ẩn để bảo toàn dữ liệu.
    */
   clinicalProtocolPage?: {
     eyebrow?: string | null;
@@ -5525,7 +5548,7 @@ export interface SiteSetting {
     showCategoryFilter?: boolean | null;
   };
   /**
-   * Tùy chỉnh trợ lý hỗ trợ hiển thị ở góc phải trên toàn bộ website.
+   * Đã chuyển sang quản lý tập trung tại nhóm "🤖 Trợ lý ảo & Chatbot" (Cấu hình Chatbot & Trợ lý ảo). Giữ trường ẩn để bảo toàn dữ liệu và khả năng tương thích.
    */
   websiteAssistant?: {
     enabled?: boolean | null;
@@ -6275,6 +6298,9 @@ export interface Homepage {
           | 'advanced-techniques'
           | 'our-experts'
           | 'news-portal'
+          | 'patient-portal-services'
+          | 'vaccination-portal-services'
+          | 'custom-carousel'
           | 'organization'
           | 'notices'
           | 'schedules'
@@ -6618,6 +6644,103 @@ export interface Homepage {
                     id?: string | null;
                   }[]
                 | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Thêm, bớt, sắp xếp các Tab dịch vụ hiển thị trên Trang chủ. Bạn có thể chọn nguồn dữ liệu từ Gói khám, Quy trình khám, Điều trị nội trú, Sơ đồ bệnh viện, Cổng tiện ích hoặc tự soạn nội dung.
+         */
+        portalServiceTabs?:
+          | {
+              enabled?: boolean | null;
+              label: string;
+              source: 'packages' | 'flow' | 'inpatient' | 'map' | 'portal-cards' | 'manual';
+              /**
+               * Quy định số lượng thẻ hiển thị trong tab này trên Trang chủ (Mặc định: 6).
+               */
+              limit?: number | null;
+              customBadge?: string | null;
+              seeMoreUrl?: string | null;
+              manualItems?:
+                | {
+                    title: string;
+                    desc?: string | null;
+                    badge?: string | null;
+                    icon?: string | null;
+                    href: string;
+                    buttonText?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Tự do thêm, bớt, chọn nguồn (Vắc xin, Đợt tiêm, Thông báo lịch tiêm hoặc tự nhập thủ công) và sắp xếp thứ tự tab tiêm chủng trên Trang chủ.
+         */
+        portalVaccinationTabs?:
+          | {
+              enabled?: boolean | null;
+              label: string;
+              source: 'vaccines' | 'campaigns' | 'announcements' | 'manual';
+              /**
+               * Quy định số lượng thẻ hiển thị trong tab này trên Trang chủ (Mặc định: 8).
+               */
+              limit?: number | null;
+              customBadge?: string | null;
+              seeMoreUrl?: string | null;
+              manualItems?:
+                | {
+                    title: string;
+                    desc?: string | null;
+                    badge?: string | null;
+                    icon?: string | null;
+                    priceText?: string | null;
+                    href: string;
+                    buttonText?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Khuyên dùng 3 thẻ để cân đối giao diện.
+         */
+        carouselItemsPerView?: number | null;
+        /**
+         * Mặc định 5s. Đặt 0 nếu muốn tắt tự động trượt.
+         */
+        carouselAutoplaySeconds?: number | null;
+        carouselDetailBtnText?: string | null;
+        carouselActionBtnText?: string | null;
+        carouselSeeMoreText?: string | null;
+        carouselSeeMoreUrl?: string | null;
+        /**
+         * Mỗi thẻ được thiết kế chuẩn y tế hiện đại: Badge trạng thái, Xuất xứ/Đơn vị, Mã, Tiêu đề, Mô tả, Bảng thông số, Giá niêm yết và 2 nút bấm.
+         */
+        customCarouselCards?:
+          | {
+              enabled?: boolean | null;
+              title: string;
+              code?: string | null;
+              statusText?: string | null;
+              statusType?: ('available' | 'info' | 'warning' | 'unavailable') | null;
+              origin?: string | null;
+              image?: (number | null) | Media;
+              summary?: string | null;
+              spec1Key?: string | null;
+              spec1Val?: string | null;
+              spec2Key?: string | null;
+              spec2Val?: string | null;
+              spec3Key?: string | null;
+              spec3Val?: string | null;
+              priceLabel?: string | null;
+              priceValue?: string | null;
+              detailUrl?: string | null;
+              detailBtnText?: string | null;
+              actionUrl?: string | null;
+              actionBtnText?: string | null;
               id?: string | null;
             }[]
           | null;
@@ -8040,19 +8163,31 @@ export interface SeoSetting {
   createdAt?: string | null;
 }
 /**
+ * Trung tâm quản lý tập trung: Bật/tắt chatbot, trợ lý nổi, lời chào, câu hỏi nhanh, giao diện và kịch bản hỗ trợ người bệnh.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "chatbot-settings".
  */
 export interface ChatbotSetting {
   id: number;
   enabled?: boolean | null;
+  backToTopEnabled?: boolean | null;
+  /**
+   * Chọn ảnh đại diện cho chatbot. Để trống sẽ tự dùng Logo bệnh viện.
+   */
+  assistantLogo?: (number | null) | Media;
   assistantName?: string | null;
   statusText?: string | null;
   greeting?: string | null;
   inputPlaceholder?: string | null;
-  fallbackResponse?: string | null;
-  handoffEnabled?: boolean | null;
-  logConversations?: boolean | null;
+  noticeText?: string | null;
+  /**
+   * Nhập mã màu HEX (ví dụ: #0878D1) hoặc dùng bảng chọn màu.
+   */
+  primaryColor?: string | null;
+  /**
+   * Tự do thêm, sửa, xóa hoặc kéo thả để đổi thứ tự các nút gợi ý hiển thị trong khung chat.
+   */
   quickTopics?:
     | {
         label: string;
@@ -8060,6 +8195,11 @@ export interface ChatbotSetting {
         id?: string | null;
       }[]
     | null;
+  fallbackResponse?: string | null;
+  fallbackLinkLabel?: string | null;
+  fallbackLinkUrl?: string | null;
+  handoffEnabled?: boolean | null;
+  logConversations?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -8586,6 +8726,88 @@ export interface ArticleDetailSetting {
     relatedSectionTitle?: string | null;
     showBackToList?: boolean | null;
   };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Tùy chỉnh tiêu đề, thông báo lưu ý, quy trình tiêm chủng, bật/tắt các nút tác vụ và bài viết hướng dẫn chuyên sâu trên trang /tiem-chung.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vaccination-settings".
+ */
+export interface VaccinationSetting {
+  id: number;
+  eyebrow?: string | null;
+  title: string;
+  description?: string | null;
+  showNoticeBanner?: boolean | null;
+  noticeTitle?: string | null;
+  noticeContent?: string | null;
+  noticeAlign?: ('left' | 'center' | 'justify') | null;
+  showSearch?: boolean | null;
+  showAgeFilter?: boolean | null;
+  showPrice?: boolean | null;
+  showBookButton?: boolean | null;
+  showWorkflowSection?: boolean | null;
+  showSupportBanner?: boolean | null;
+  /**
+   * Mặc định là 3 ô. Trên màn hình máy tính bảng sẽ tự chia 2 ô, điện thoại hiển thị 1 ô.
+   */
+  itemsPerView?: number | null;
+  /**
+   * Mặc định là 5 giây tự trượt xoay vòng tuần tự. Đặt là 0 nếu muốn tắt tự động chuyển động.
+   */
+  autoplaySeconds?: number | null;
+  bookButtonText?: string | null;
+  detailButtonText?: string | null;
+  bookButtonUrl?: string | null;
+  consultHotline?: string | null;
+  contentBlock?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    subtitle?: string | null;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
+  };
+  customBlocks?:
+    | {
+        enabled?: boolean | null;
+        kicker?: string | null;
+        title: string;
+        subtitle?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        textAlign?: ('left' | 'center' | 'justify') | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -9697,6 +9919,82 @@ export interface HomepageSelect<T extends boolean = true> {
                   };
               id?: T;
             };
+        portalServiceTabs?:
+          | T
+          | {
+              enabled?: T;
+              label?: T;
+              source?: T;
+              limit?: T;
+              customBadge?: T;
+              seeMoreUrl?: T;
+              manualItems?:
+                | T
+                | {
+                    title?: T;
+                    desc?: T;
+                    badge?: T;
+                    icon?: T;
+                    href?: T;
+                    buttonText?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        portalVaccinationTabs?:
+          | T
+          | {
+              enabled?: T;
+              label?: T;
+              source?: T;
+              limit?: T;
+              customBadge?: T;
+              seeMoreUrl?: T;
+              manualItems?:
+                | T
+                | {
+                    title?: T;
+                    desc?: T;
+                    badge?: T;
+                    icon?: T;
+                    priceText?: T;
+                    href?: T;
+                    buttonText?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        carouselItemsPerView?: T;
+        carouselAutoplaySeconds?: T;
+        carouselDetailBtnText?: T;
+        carouselActionBtnText?: T;
+        carouselSeeMoreText?: T;
+        carouselSeeMoreUrl?: T;
+        customCarouselCards?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              code?: T;
+              statusText?: T;
+              statusType?: T;
+              origin?: T;
+              image?: T;
+              summary?: T;
+              spec1Key?: T;
+              spec1Val?: T;
+              spec2Key?: T;
+              spec2Val?: T;
+              spec3Key?: T;
+              spec3Val?: T;
+              priceLabel?: T;
+              priceValue?: T;
+              detailUrl?: T;
+              detailBtnText?: T;
+              actionUrl?: T;
+              actionBtnText?: T;
+              id?: T;
+            };
         linkedContentSection?: T;
         linkedContentLimit?: T;
         dynamicModule?: T;
@@ -10753,13 +11051,14 @@ export interface SeoSettingsSelect<T extends boolean = true> {
  */
 export interface ChatbotSettingsSelect<T extends boolean = true> {
   enabled?: T;
+  backToTopEnabled?: T;
+  assistantLogo?: T;
   assistantName?: T;
   statusText?: T;
   greeting?: T;
   inputPlaceholder?: T;
-  fallbackResponse?: T;
-  handoffEnabled?: T;
-  logConversations?: T;
+  noticeText?: T;
+  primaryColor?: T;
   quickTopics?:
     | T
     | {
@@ -10767,6 +11066,11 @@ export interface ChatbotSettingsSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  fallbackResponse?: T;
+  fallbackLinkLabel?: T;
+  fallbackLinkUrl?: T;
+  handoffEnabled?: T;
+  logConversations?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -11114,6 +11418,54 @@ export interface ArticleDetailSettingsSelect<T extends boolean = true> {
         showRelatedSection?: T;
         relatedSectionTitle?: T;
         showBackToList?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "vaccination-settings_select".
+ */
+export interface VaccinationSettingsSelect<T extends boolean = true> {
+  eyebrow?: T;
+  title?: T;
+  description?: T;
+  showNoticeBanner?: T;
+  noticeTitle?: T;
+  noticeContent?: T;
+  noticeAlign?: T;
+  showSearch?: T;
+  showAgeFilter?: T;
+  showPrice?: T;
+  showBookButton?: T;
+  showWorkflowSection?: T;
+  showSupportBanner?: T;
+  itemsPerView?: T;
+  autoplaySeconds?: T;
+  bookButtonText?: T;
+  detailButtonText?: T;
+  bookButtonUrl?: T;
+  consultHotline?: T;
+  contentBlock?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+      };
+  customBlocks?:
+    | T
+    | {
+        enabled?: T;
+        kicker?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

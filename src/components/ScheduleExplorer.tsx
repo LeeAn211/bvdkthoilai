@@ -52,13 +52,21 @@ export function ScheduleExplorer({ daily, weekly, attachments, emergency = [], t
   }
   const tabDefinitions = useMemo(() => {
     const valid = (configuredTabs || []).filter((item) => item.label?.trim() || item.kind || item.manualItems?.some((entry) => entry.title?.trim()))
-    if (valid.length) return valid.map((item, index) => {
-      const builtIn = item.kind ? builtInMeta[item.kind] : undefined
-      const manualItems = (item.manualItems || []).filter((entry) => entry.title?.trim())
-      return { key: `${item.kind || 'manual'}-${index}`, queryKey: item.kind || `manual-${index}`, label: item.label?.trim() || builtIn?.label || `Lịch khám ${index + 1}`, kind: builtIn?.kind || 'attachments' as ScheduleKind, items: [...(builtIn?.items || []), ...manualItems], empty: builtIn?.empty || 'Nội dung đang được cập nhật.' }
-    })
-    const keys = tabOrder.length ? tabOrder : ['emergency', 'attachments', 'daily', 'weekly']
-    return keys.filter((key) => builtInMeta[key]).map((key, index) => ({ key: `${key}-${index}`, queryKey: key, ...builtInMeta[key] }))
+    let rawTabs = []
+    if (valid.length) {
+      rawTabs = valid.map((item, index) => {
+        const builtIn = item.kind ? builtInMeta[item.kind] : undefined
+        const manualItems = (item.manualItems || []).filter((entry) => entry.title?.trim())
+        return { key: `${item.kind || 'manual'}-${index}`, queryKey: item.kind || `manual-${index}`, label: item.label?.trim() || builtIn?.label || `Lịch khám ${index + 1}`, kind: builtIn?.kind || 'attachments' as ScheduleKind, items: [...(builtIn?.items || []), ...manualItems], empty: builtIn?.empty || 'Nội dung đang được cập nhật.' }
+      })
+    } else {
+      const keys = tabOrder.length ? tabOrder : ['emergency', 'attachments', 'daily', 'weekly']
+      rawTabs = keys.filter((key) => builtInMeta[key]).map((key, index) => ({ key: `${key}-${index}`, queryKey: key, ...builtInMeta[key] }))
+    }
+
+    // Chỉ giữ lại những tab THỰC SỰ CÓ DỮ LIỆU để không bao giờ hiện tab trống
+    const activeWithItems = rawTabs.filter((tab) => tab.items && tab.items.length > 0)
+    return activeWithItems.length > 0 ? activeWithItems : rawTabs
   }, [attachments, configuredTabs, daily, emergency, tabOrder, weekly])
 
   // Chọn tab đầu tiên có dữ liệu nếu có thể để người dùng không nhìn thấy tab trống
@@ -123,9 +131,11 @@ export function ScheduleExplorer({ daily, weekly, attachments, emergency = [], t
   const activeDefinition = tabDefinitions.find((item) => item.key === tab) || tabDefinitions[0]
 
   return <div className={`scheduleExplorer ${compact ? 'compactScheduleExplorer' : ''}`}>
-    <div className="scheduleTabs" role="tablist">
-      {tabDefinitions.map((item) => <button key={item.key} className={tab === item.key ? 'active' : ''} onClick={() => { setTab(item.key); setExpandedTab(null) }}>{item.label} <span>{item.items.length}</span></button>)}
-    </div>
+    {tabDefinitions.length > 1 && (
+      <div className="scheduleTabs" role="tablist">
+        {tabDefinitions.map((item) => <button key={item.key} className={tab === item.key ? 'active' : ''} onClick={() => { setTab(item.key); setExpandedTab(null) }}>{item.label} <span>{item.items.length}</span></button>)}
+      </div>
+    )}
 
     {activeDefinition?.kind === 'daily' && <>
       {dates.length > 1 && <div className="scheduleDateFilter"><label>Chọn ngày xem lịch</label><select value={selectedDate} onChange={event => { setSelectedDate(event.target.value); setExpandedTab(null) }}><option value="all">Tất cả các ngày</option>{dates.map(date => <option value={date as string} key={date as string}>{formatDate(date as string)}</option>)}</select></div>}

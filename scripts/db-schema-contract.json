@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260918_034_add_gemini_api_key_to_schedule_settings",
-  "schemaSha256": "716e1f280b6266300e5220bec47f5e938705dd9b2fdea67451db30f692fe6088"
+  "migrationId": "20260918_042_add_custom_carousel_section_to_homepage",
+  "schemaSha256": "c6f5f6500fcad2bef846a3ba821330effd7f2d9e46b8eff9b6240b15fc342fc8"
 }

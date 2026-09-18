@@ -11,6 +11,7 @@ export const OurExperts: CollectionConfig = {
     group: '🩺 Chuyên môn & Tổ chức',
     defaultColumns: ['name', 'position', 'doctorRef', 'badge', 'order', 'active', 'updatedAt'],
     description: 'Quản lý danh sách chuyên gia, bác sĩ xuất hiện trong mục Chuyên gia của chúng tôi trên Trang chủ.',
+    hidden: true,
   },
   access: {
     read: anyone,

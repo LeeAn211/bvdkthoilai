@@ -121,16 +121,48 @@ function NewsCard({
 
 export function HomeNewsTabs({ items, tabs: configuredTabs }: { items: NewsItem[]; tabs?: NewsTab[] }) {
   const tabs = useMemo(() => {
-    const valid = (configuredTabs || []).filter(
-      (tab) => tab.label?.trim() || tab.categories?.some(Boolean) || tab.manualItems?.some((item) => item.title?.trim()),
-    )
-    return (valid.length ? valid : defaultTabs).map((tab, index) => ({
-      ...tab,
-      label: tab.label?.trim() || `Chuyên mục ${index + 1}`,
-      categories: (tab.categories || []).filter(Boolean),
-      manualItems: (tab.manualItems || []).filter((item) => item.title?.trim()),
-    }))
-  }, [configuredTabs])
+    // 1. Nếu admin có cấu hình tabs thủ công: chỉ giữ lại các tab THỰC SỰ CÓ BÀI VIẾT
+    if (Array.isArray(configuredTabs) && configuredTabs.length > 0) {
+      const activeConfigured = configuredTabs
+        .map((tab, index) => {
+          const label = tab.label?.trim() || `Chuyên mục ${index + 1}`
+          const categories = (tab.categories || []).filter(Boolean)
+          const manualItems = (tab.manualItems || []).filter((item) => item.title?.trim())
+          const matchingArticles = items.filter((item) => categories.includes(item.category || ''))
+          const totalCount = matchingArticles.length + manualItems.length
+          return {
+            ...tab,
+            label,
+            categories,
+            manualItems,
+            totalCount,
+          }
+        })
+        .filter((tab) => tab.totalCount > 0)
+
+      if (activeConfigured.length > 0) {
+        return activeConfigured
+      }
+    }
+
+    // 2. Tự động sinh danh sách Tabs từ chính các Chuyên mục THỰC TẾ của các bài viết đang có
+    const categoryMap = new Map<string, number>()
+    for (const item of items) {
+      const cat = item.category?.trim() || 'Tin tức chung'
+      categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1)
+    }
+
+    if (categoryMap.size > 0) {
+      return Array.from(categoryMap.keys()).map((cat) => ({
+        label: cat,
+        categories: [cat],
+        manualItems: [],
+        totalCount: categoryMap.get(cat) || 0,
+      }))
+    }
+
+    return []
+  }, [configuredTabs, items])
 
   const [activeTab, setActiveTab] = useState(tabs[0]?.label || '')
 
@@ -152,36 +184,32 @@ export function HomeNewsTabs({ items, tabs: configuredTabs }: { items: NewsItem[
 
   return (
     <>
-      {/* Tab buttons */}
-      <div className="portalTabs newsTabButtons" role="tablist" aria-label="Các chuyên mục tin tức">
-        {tabs.map((tab) => (
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab.label}
-            className={activeTab === tab.label ? 'active' : ''}
-            onClick={() => setActiveTab(tab.label)}
-            key={tab.label}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {/* Tab buttons: Chỉ hiển thị khi có từ 2 chuyên mục trở lên */}
+      {tabs.length > 1 && (
+        <div className="portalTabs newsTabButtons" role="tablist" aria-label="Các chuyên mục tin tức">
+          {tabs.map((tab) => (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.label}
+              className={activeTab === tab.label ? 'active' : ''}
+              onClick={() => setActiveTab(tab.label)}
+              key={tab.label}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Panel — dùng cùng form homeEditorialGrid của section Thông báo */}
       {filteredItems.length > 0 ? (
-        <div role="tabpanel" className="homeEditorialGrid" style={{ marginTop: 22 }}>
-          {featured ? (
-            <NewsCard item={featured} isFeatured={true} activeTab={activeTab} />
-          ) : (
-            <EmptyCard />
-          )}
-          {sideItems.map((item, idx) =>
+        <div role="tabpanel" className="homeEditorialGrid" style={{ marginTop: tabs.length > 1 ? 22 : 0 }}>
+          {featured && <NewsCard item={featured} isFeatured={true} activeTab={activeTab} />}
+          {sideItems.map((item) =>
             item ? (
               <NewsCard key={item.id} item={item} isFeatured={false} activeTab={activeTab} />
-            ) : (
-              <EmptyCard key={`empty-${idx}`} />
-            ),
+            ) : null,
           )}
         </div>
       ) : (

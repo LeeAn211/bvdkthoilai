@@ -288,6 +288,9 @@ export const Homepage: GlobalConfig = {
             { label: 'Kỹ thuật chuyên sâu (Carousel/Slider)', value: 'advanced-techniques' },
             { label: 'Chuyên gia của chúng tôi (Carousel/Slider)', value: 'our-experts' },
             { label: 'Cổng thông tin bệnh viện', value: 'news-portal' },
+            { label: 'Cổng tiện ích & Dịch vụ người bệnh (Đa Tab: Gói khám, Quy trình, Nội trú...)', value: 'patient-portal-services' },
+            { label: 'Cổng tiêm chủng đa năng (Đa Tab: Vắc xin, Đợt tiêm, Thông báo...)', value: 'vaccination-portal-services' },
+            { label: 'Khối Thẻ Slider 3 ô Tùy Biến (Custom 3-Card Carousel)', value: 'custom-carousel' },
             { label: 'Tổ chức bệnh viện', value: 'organization' },
             { label: 'Thông báo', value: 'notices' },
             { label: 'Lịch khám', value: 'schedules' },
@@ -352,28 +355,6 @@ export const Homepage: GlobalConfig = {
             description: 'Thêm, sửa, xóa và kéo thả thay đổi thứ tự các thẻ kỹ thuật chuyên sâu.',
             initCollapsed: false,
           },
-          defaultValue: [
-            {
-              title: 'Ứng dụng các kỹ thuật hiện đại trong điều trị bệnh da',
-              badge: 'Phòng khám Da - Thẩm mỹ Da',
-              visible: true,
-            },
-            {
-              title: 'Ứng dụng kỹ thuật quang - điện (TruScreen) trong tầm soát ung thư cổ tử cung',
-              badge: 'Tầm soát chuyên sâu',
-              visible: true,
-            },
-            {
-              title: 'Kỹ thuật truyền dịch vào buồng ối',
-              badge: 'Sản phụ khoa',
-              visible: true,
-            },
-            {
-              title: 'Phẫu thuật nội soi tán sỏi niệu quản ngược dòng bằng Laser',
-              badge: 'Ngoại Thận - Tiết niệu',
-              visible: true,
-            },
-          ],
           fields: [
             {
               name: 'techniqueRef',
@@ -477,28 +458,6 @@ export const Homepage: GlobalConfig = {
             description: 'Thêm, sửa, xóa và kéo thả thay đổi thứ tự các chuyên gia hiển thị.',
             initCollapsed: false,
           },
-          defaultValue: [
-            {
-              name: 'BS.CKII. Nguyễn Thụy Thúy Ái',
-              position: 'Giám đốc Bệnh viện',
-              visible: true,
-            },
-            {
-              name: 'BS.CKII. Ngô Văn Dũng',
-              position: 'Phó Giám đốc Bệnh viện',
-              visible: true,
-            },
-            {
-              name: 'BS.CKII. Huỳnh Thanh Liêm',
-              position: 'Phó Giám đốc Bệnh viện',
-              visible: true,
-            },
-            {
-              name: 'BS.CKI. Nguyễn Thành Công',
-              position: 'Trưởng phòng Kế hoạch Tổng hợp',
-              visible: true,
-            },
-          ],
           fields: [
             {
               name: 'doctorRef',
@@ -854,6 +813,322 @@ export const Homepage: GlobalConfig = {
                 { name: 'description', label: 'Mô tả', type: 'textarea' },
                 ...smartLinkFields(),
                 { name: 'image', label: 'Hình ảnh', type: 'upload', relationTo: 'media' },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'portalServiceTabs',
+          dbName: 'hp_svc_tabs',
+          label: 'Cấu hình các tab tiện ích dịch vụ người bệnh',
+          type: 'array',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'patient-portal-services',
+            description: 'Thêm, bớt, sắp xếp các Tab dịch vụ hiển thị trên Trang chủ. Bạn có thể chọn nguồn dữ liệu từ Gói khám, Quy trình khám, Điều trị nội trú, Sơ đồ bệnh viện, Cổng tiện ích hoặc tự soạn nội dung.',
+            initCollapsed: false,
+          },
+          defaultValue: [
+            { label: 'Gói khám sức khỏe', source: 'packages', enabled: true },
+            { label: 'Quy trình khám bệnh', source: 'flow', enabled: true },
+            { label: 'Hướng dẫn nội trú', source: 'inpatient', enabled: true },
+          ],
+          fields: [
+            { name: 'enabled', label: 'Bật hiển thị tab này', type: 'checkbox', defaultValue: true },
+            { name: 'label', label: 'Tên tab hiển thị', type: 'text', required: true, admin: { placeholder: 'Ví dụ: Gói khám sức khỏe, Quy trình khám...' } },
+            {
+              name: 'source',
+              label: 'Nguồn dữ liệu gắn vào tab',
+              type: 'select',
+              required: true,
+              defaultValue: 'packages',
+              options: [
+                { label: '📦 Gói khám sức khỏe & Tầm soát (Lấy từ /goi-kham)', value: 'packages' },
+                { label: '🩺 Sơ đồ & Quy trình khám bệnh (Lấy từ /quy-trinh-kham-benh)', value: 'flow' },
+                { label: '🛏️ Hướng dẫn điều trị nội trú (Lấy từ /dieu-tri-noi-tru)', value: 'inpatient' },
+                { label: '🗺️ Sơ đồ các tầng & Tiện ích (Lấy từ /so-do-benh-vien)', value: 'map' },
+                { label: '📋 Thẻ tiện ích Cổng người bệnh (Lấy từ /danh-cho-nguoi-benh)', value: 'portal-cards' },
+                { label: '✍️ Tự nhập danh sách thẻ thủ công', value: 'manual' },
+              ],
+            },
+            {
+              name: 'limit',
+              label: 'Số mục hiển thị tối đa',
+              type: 'number',
+              min: 1,
+              max: 20,
+              defaultValue: 6,
+              admin: {
+                description: 'Quy định số lượng thẻ hiển thị trong tab này trên Trang chủ (Mặc định: 6).',
+              },
+            },
+            {
+              name: 'customBadge',
+              label: 'Nhãn phụ nổi bật trên Tab (Badge)',
+              type: 'text',
+              admin: { placeholder: 'Ví dụ: HOT, Mới, 24/7 (để trống nếu không dùng)' },
+            },
+            {
+              name: 'seeMoreUrl',
+              label: 'Đường dẫn xem thêm riêng cho tab này',
+              type: 'text',
+              admin: { placeholder: 'Ví dụ: /goi-kham, /quy-trinh-kham-benh (để trống sẽ tự động lấy theo nguồn)' },
+            },
+            {
+              name: 'manualItems',
+              dbName: 'hp_svc_manual',
+              label: 'Danh sách thẻ tự nhập thủ công (khi chọn nguồn Tự nhập)',
+              type: 'array',
+              admin: {
+                condition: (_data, siblingData) => siblingData?.source === 'manual',
+              },
+              fields: [
+                { name: 'title', label: 'Tiêu đề thẻ', type: 'text', required: true },
+                { name: 'desc', label: 'Mô tả tóm tắt', type: 'textarea' },
+                { name: 'badge', label: 'Huy hiệu', type: 'text' },
+                { name: 'icon', label: 'Biểu tượng (Icon / Emoji)', type: 'text', defaultValue: '🩺' },
+                { name: 'href', label: 'Đường dẫn liên kết khi bấm', type: 'text', required: true },
+                { name: 'buttonText', label: 'Chữ trên nút', type: 'text', defaultValue: 'Xem chi tiết →' },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'portalVaccinationTabs',
+          dbName: 'hp_vax_tabs_cfg',
+          label: 'Cấu hình các tab Cổng tiêm chủng đa năng',
+          type: 'array',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'vaccination-portal-services',
+            description: 'Tự do thêm, bớt, chọn nguồn (Vắc xin, Đợt tiêm, Thông báo lịch tiêm hoặc tự nhập thủ công) và sắp xếp thứ tự tab tiêm chủng trên Trang chủ.',
+            initCollapsed: false,
+          },
+          defaultValue: [
+            { label: 'Các loại vắc xin', source: 'vaccines', enabled: true },
+            { label: 'Tiêm ngừa theo đợt', source: 'campaigns', enabled: true },
+            { label: 'Thông báo lịch tiêm', source: 'announcements', enabled: true },
+          ],
+          fields: [
+            { name: 'enabled', label: 'Bật hiển thị tab này', type: 'checkbox', defaultValue: true },
+            { name: 'label', label: 'Tên tab hiển thị', type: 'text', required: true, admin: { placeholder: 'Ví dụ: Các loại vắc xin, Đợt tiêm chủng...' } },
+            {
+              name: 'source',
+              label: 'Nguồn dữ liệu gắn vào tab',
+              type: 'select',
+              required: true,
+              defaultValue: 'vaccines',
+              options: [
+                { label: '💉 Danh mục các loại vắc xin (Có giá, độ tuổi, tình trạng)', value: 'vaccines' },
+                { label: '🗓️ Tiêm ngừa theo đợt / Chiến dịch tiêm', value: 'campaigns' },
+                { label: '📢 Thông báo lịch tiêm chủng của bệnh viện', value: 'announcements' },
+                { label: '✍️ Tự nhập danh sách thẻ tiêm chủng thủ công', value: 'manual' },
+              ],
+            },
+            {
+              name: 'limit',
+              label: 'Số mục hiển thị tối đa',
+              type: 'number',
+              min: 1,
+              max: 30,
+              defaultValue: 8,
+              admin: {
+                description: 'Quy định số lượng thẻ hiển thị trong tab này trên Trang chủ (Mặc định: 8).',
+              },
+            },
+            {
+              name: 'customBadge',
+              label: 'Nhãn phụ nổi bật trên Tab (Badge)',
+              type: 'text',
+              admin: { placeholder: 'Ví dụ: Đang có, Mới, Miễn phí (để trống nếu không dùng)' },
+            },
+            {
+              name: 'seeMoreUrl',
+              label: 'Đường dẫn xem thêm riêng cho tab này',
+              type: 'text',
+              admin: { placeholder: 'Ví dụ: /tiem-chung (để trống sẽ tự động trỏ /tiem-chung)' },
+            },
+            {
+              name: 'manualItems',
+              dbName: 'hp_vax_manual',
+              label: 'Danh sách thẻ tự nhập thủ công (khi chọn nguồn Tự nhập)',
+              type: 'array',
+              admin: {
+                condition: (_data, siblingData) => siblingData?.source === 'manual',
+              },
+              fields: [
+                { name: 'title', label: 'Tên vắc xin / Sự kiện', type: 'text', required: true },
+                { name: 'desc', label: 'Mô tả tóm tắt', type: 'textarea' },
+                { name: 'badge', label: 'Tình trạng / Huy hiệu', type: 'text', admin: { placeholder: 'Đang có, Sắp có...' } },
+                { name: 'icon', label: 'Biểu tượng (Icon / Emoji)', type: 'text', defaultValue: '💉' },
+                { name: 'priceText', label: 'Giá tiêm (nếu có)', type: 'text', admin: { placeholder: 'Ví dụ: 185.000đ hoặc Miễn phí' } },
+                { name: 'href', label: 'Đường dẫn chi tiết', type: 'text', required: true },
+                { name: 'buttonText', label: 'Chữ trên nút', type: 'text', defaultValue: 'Xem chi tiết →' },
+              ],
+            },
+          ],
+        },
+
+        /* ── CẤU HÌNH KHỐI THẺ SLIDER 3 Ô TÙY BIẾN (CUSTOM-CAROUSEL) ── */
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'carouselItemsPerView',
+              label: 'Số thẻ hiển thị cùng lúc trên màn hình lớn',
+              type: 'number',
+              min: 1,
+              max: 4,
+              defaultValue: 3,
+              admin: {
+                condition: (_data, siblingData) => siblingData?.type === 'custom-carousel',
+                width: '50%',
+                description: 'Khuyên dùng 3 thẻ để cân đối giao diện.',
+              },
+            },
+            {
+              name: 'carouselAutoplaySeconds',
+              label: 'Thời gian tự trượt sang ô khác (giây)',
+              type: 'number',
+              min: 0,
+              max: 60,
+              defaultValue: 5,
+              admin: {
+                condition: (_data, siblingData) => siblingData?.type === 'custom-carousel',
+                width: '50%',
+                description: 'Mặc định 5s. Đặt 0 nếu muốn tắt tự động trượt.',
+              },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'carouselDetailBtnText',
+              label: 'Chữ mặc định trên nút Chi tiết',
+              type: 'text',
+              defaultValue: 'Chi tiết',
+              admin: {
+                condition: (_data, siblingData) => siblingData?.type === 'custom-carousel',
+                width: '33.3%',
+              },
+            },
+            {
+              name: 'carouselActionBtnText',
+              label: 'Chữ mặc định trên nút Đăng ký / Hành động',
+              type: 'text',
+              defaultValue: 'Đăng ký ngay',
+              admin: {
+                condition: (_data, siblingData) => siblingData?.type === 'custom-carousel',
+                width: '33.3%',
+              },
+            },
+            {
+              name: 'carouselSeeMoreText',
+              label: 'Chữ liên kết xem tất cả (góc phải)',
+              type: 'text',
+              defaultValue: 'Xem tất cả →',
+              admin: {
+                condition: (_data, siblingData) => siblingData?.type === 'custom-carousel',
+                width: '33.3%',
+              },
+            },
+          ],
+        },
+        {
+          name: 'carouselSeeMoreUrl',
+          label: 'Đường dẫn liên kết khi bấm Xem tất cả',
+          type: 'text',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'custom-carousel',
+            placeholder: 'Ví dụ: /dich-vu, /tiem-chung, /kham-chuyen-khoa (để trống nếu không muốn hiện link Xem tất cả)',
+          },
+        },
+        {
+          name: 'customCarouselCards',
+          dbName: 'hp_custom_cards',
+          label: 'Danh sách các thẻ trong Slider (Kéo thả sắp xếp, thêm không giới hạn)',
+          type: 'array',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'custom-carousel',
+            description: 'Mỗi thẻ được thiết kế chuẩn y tế hiện đại: Badge trạng thái, Xuất xứ/Đơn vị, Mã, Tiêu đề, Mô tả, Bảng thông số, Giá niêm yết và 2 nút bấm.',
+            initCollapsed: false,
+          },
+          fields: [
+            { name: 'enabled', label: 'Bật hiển thị thẻ này', type: 'checkbox', defaultValue: true },
+            {
+              type: 'row',
+              fields: [
+                { name: 'title', label: 'Tiêu đề thẻ', type: 'text', required: true, admin: { width: '60%', placeholder: 'Ví dụ: Gói tầm soát tổng quát' } },
+                { name: 'code', label: 'Mã định danh (tùy chọn)', type: 'text', admin: { width: '40%', placeholder: 'Ví dụ: GK-01' } },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'statusText', label: 'Trạng thái / Huy hiệu', type: 'text', admin: { width: '50%', placeholder: '● ĐANG TRIỂN KHAI, ● ĐANG CÓ, HOT...' } },
+                {
+                  name: 'statusType',
+                  label: 'Màu trạng thái',
+                  type: 'select',
+                  defaultValue: 'available',
+                  options: [
+                    { label: 'Xanh lá (Đang có / Sẵn sàng)', value: 'available' },
+                    { label: 'Xanh dương (Nổi bật / Tiêu chuẩn)', value: 'info' },
+                    { label: 'Vàng cam (Sắp triển khai / Đặt trước)', value: 'warning' },
+                    { label: 'Đỏ (Tạm ngưng / Tạm hết)', value: 'unavailable' },
+                  ],
+                  admin: { width: '50%' },
+                },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'origin', label: 'Xuất xứ / Khoa phụ trách', type: 'text', admin: { width: '50%', placeholder: 'Xuất xứ: Bỉ hoặc Khoa Khám bệnh' } },
+                { name: 'image', label: 'Ảnh thẻ (tùy chọn)', type: 'upload', relationTo: 'media', admin: { width: '50%' } },
+              ],
+            },
+            { name: 'summary', label: 'Mô tả tóm tắt', type: 'textarea' },
+            {
+              type: 'row',
+              fields: [
+                { name: 'spec1Key', label: 'Thông số 1 (Tên)', type: 'text', admin: { width: '30%', placeholder: 'Phòng bệnh / Thời gian' } },
+                { name: 'spec1Val', label: 'Thông số 1 (Giá trị)', type: 'text', admin: { width: '70%', placeholder: 'Nội dung thông số 1' } },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'spec2Key', label: 'Thông số 2 (Tên)', type: 'text', admin: { width: '30%', placeholder: 'Đối tượng / Bác sĩ' } },
+                { name: 'spec2Val', label: 'Thông số 2 (Giá trị)', type: 'text', admin: { width: '70%', placeholder: 'Nội dung thông số 2' } },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'spec3Key', label: 'Thông số 3 (Tên)', type: 'text', admin: { width: '30%', placeholder: 'Đơn vị SX / Địa điểm' } },
+                { name: 'spec3Val', label: 'Thông số 3 (Giá trị)', type: 'text', admin: { width: '70%', placeholder: 'Nội dung thông số 3' } },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'priceLabel', label: 'Nhãn giá', type: 'text', defaultValue: 'GIÁ NIÊM YẾT', admin: { width: '40%' } },
+                { name: 'priceValue', label: 'Mức giá / Chi phí', type: 'text', admin: { width: '60%', placeholder: 'Ví dụ: 850.000 đ hoặc Miễn phí' } },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'detailUrl', label: 'Link nút Chi tiết', type: 'text', admin: { width: '50%', placeholder: 'Ví dụ: /dich-vu/goi-kham-1' } },
+                { name: 'detailBtnText', label: 'Chữ nút Chi tiết riêng (tùy chọn)', type: 'text', admin: { width: '50%', placeholder: 'Để trống sẽ lấy mặc định' } },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'actionUrl', label: 'Link nút Đăng ký / Hành động', type: 'text', admin: { width: '50%', placeholder: 'Ví dụ: https://medpro.vn/ hoặc hotline:02923861234' } },
+                { name: 'actionBtnText', label: 'Chữ nút Đăng ký riêng (tùy chọn)', type: 'text', admin: { width: '50%', placeholder: 'Để trống sẽ lấy mặc định' } },
               ],
             },
           ],

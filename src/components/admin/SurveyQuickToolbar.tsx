@@ -153,9 +153,9 @@ export default function SurveyQuickToolbar() {
     <section className={styles.container}>
       <div className={styles.header}>
         <div className={styles.badge}>HỆ THỐNG KHẢO SÁT Ý KIẾN BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI</div>
-        <h2 className={styles.title}>Bảng Điều Khiển Khảo Sát, Thống Kê & Báo Cáo Theo Thời Gian</h2>
+        <h2 className={styles.title}>Quản Lý Khảo Sát Ý Kiến & Kết Quả Đánh Giá</h2>
         <p className={styles.desc}>
-          Theo dõi số lượt khảo sát theo <strong>ngày, tuần, tháng, quý, 6 tháng, 9 tháng, năm</strong> cho từng loại hoặc tất cả các loại khảo sát; phân bổ biểu đồ hài lòng và xuất file Excel (.xlsx) chi tiết.
+          Khu vực quản lý thống nhất: Quản lý các đợt khảo sát, theo dõi số lượt tham gia theo <strong>ngày, tuần, tháng, quý, năm</strong>, xem chi tiết từng phiếu đánh giá, biểu đồ phân tích và xuất báo cáo Excel (.xlsx).
         </p>
       </div>
 
@@ -170,7 +170,7 @@ export default function SurveyQuickToolbar() {
           boxShadow: '0 4px 16px rgba(2, 132, 199, 0.08)',
         }}
       >
-        {/* Hàng 1: Thanh chọn đợt khảo sát & Nút xuất file Excel */}
+        {/* Hàng 1: Thanh chọn đợt khảo sát & Các nút tác vụ */}
         <div
           style={{
             display: 'flex',
@@ -218,33 +218,55 @@ export default function SurveyQuickToolbar() {
             </select>
           </div>
 
-          {/* Nút xuất file Excel */}
-          <button
-            type="button"
-            onClick={handleExportExcel}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '8px 20px',
-              borderRadius: 8,
-              border: 0,
-              background: 'linear-gradient(135deg, #107c41, #059669)',
-              color: '#ffffff',
-              fontSize: 13,
-              fontWeight: 800,
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(16, 124, 65, 0.25)',
-            }}
-            title="Bấm để tải về file Excel danh sách các lượt khảo sát theo mốc thời gian đã chọn"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            <span>📥 Xuất file Excel (.xlsx) mốc này</span>
-          </button>
+          {/* Các nút tác vụ: Xem chi tiết phiếu & Xuất file Excel */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <Link
+              href="/admin/collections/survey-responses"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 16px',
+                borderRadius: 8,
+                border: '1px solid #cbd5e1',
+                background: '#f8fafc',
+                color: '#0369a1',
+                fontSize: 13,
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+              title="Mở bảng lưu trữ toàn bộ các phiếu trả lời chi tiết trong hệ thống"
+            >
+              <span>📑 Xem bảng tất cả phiếu gửi về →</span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleExportExcel}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '8px 20px',
+                borderRadius: 8,
+                border: 0,
+                background: 'linear-gradient(135deg, #107c41, #059669)',
+                color: '#ffffff',
+                fontSize: 13,
+                fontWeight: 800,
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(16, 124, 65, 0.25)',
+              }}
+              title="Bấm để tải về file Excel danh sách các lượt khảo sát theo mốc thời gian đã chọn"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              <span>📥 Xuất file Excel (.xlsx) mốc này</span>
+            </button>
+          </div>
         </div>
 
         {/* Hàng 2: Bộ lọc thời gian: Ngày, Tuần, Tháng, Quý, 6 tháng, 9 tháng, Năm */}

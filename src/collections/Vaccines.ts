@@ -20,7 +20,56 @@ export const Vaccines: CollectionConfig = {
     { name: 'manufacturer', label: 'Nhà sản xuất', type: 'text' },
     { name: 'origin', label: 'Nước sản xuất', type: 'text' },
     { name: 'prevents', label: 'Phòng bệnh', type: 'textarea' },
-    { name: 'ageGroup', label: 'Độ tuổi / đối tượng', type: 'text' },
+    {
+      name: 'targetGroup',
+      label: 'Nhóm đối tượng / Độ tuổi (Dùng để lọc nhanh trên Website & Trang chủ)',
+      type: 'select',
+      defaultValue: 'all',
+      options: [
+        { label: 'Tất cả lứa tuổi / Mọi đối tượng', value: 'all' },
+        { label: 'Trẻ sơ sinh (< 1 tuổi)', value: 'infant' },
+        { label: 'Trẻ em (1 - 15 tuổi)', value: 'child' },
+        { label: 'Phụ nữ mang thai', value: 'pregnancy' },
+        { label: 'Người lớn & Cao tuổi', value: 'adult' },
+      ],
+      admin: {
+        description: 'Chọn nhóm độ tuổi chuẩn để bộ lọc trên trang chủ và trang /tiem-chung nhận diện chính xác 100%.',
+      },
+    },
+    {
+      name: 'ageGroup',
+      label: 'Chi tiết độ tuổi / Chỉ định cụ thể (Hiển thị chi tiết)',
+      type: 'text',
+      admin: {
+        placeholder: 'Ví dụ: Trẻ từ 2 tháng đến 24 tháng tuổi, Người lớn từ 18 tuổi...',
+        description: 'Dòng chữ hiển thị chi tiết trên thẻ vắc xin và trang chi tiết vắc xin.',
+      },
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'price',
+          label: 'Giá tiêm niêm yết (VNĐ)',
+          type: 'number',
+          min: 0,
+          admin: {
+            placeholder: 'Ví dụ: 850000 (để trống nếu Liên hệ, nhập 0 nếu Miễn phí)',
+            width: '50%',
+            description: 'Nhập trực tiếp giá tiêm tại đây. Có thể quản lý lịch sử giá trong Lịch sử giá vắc xin.',
+          },
+        },
+        {
+          name: 'priceNote',
+          label: 'Ghi chú giá tiêm',
+          type: 'text',
+          admin: {
+            placeholder: 'Ví dụ: Đã bao gồm công khám & tư vấn',
+            width: '50%',
+          },
+        },
+      ],
+    },
     { name: 'image', label: 'Ảnh vắc xin', type: 'upload', relationTo: 'media', admin: { description: 'Không bắt buộc. Nếu bỏ trống website dùng ảnh mặc định Lịch tiêm chủng / Tiêm ngừa.' } },
     { name: 'detailContent', label: 'Nội dung chi tiết', type: 'richText' },
     { name: 'availability', label: 'Tình trạng', type: 'select', defaultValue: 'available', options: [

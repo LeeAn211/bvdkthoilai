@@ -2,6 +2,7 @@ import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { HomeNewsTabs } from '@/components/HomeNewsTabs'
 import { HomeScienceTabs } from '@/components/HomeScienceTabs'
+import { HomePatientServiceTabs } from '@/components/HomePatientServiceTabs'
 import { RichText } from '@/components/RichText'
 import { ScheduleExplorer } from '@/components/ScheduleExplorer'
 import { VaccinationTabs } from '@/components/VaccinationTabs'
@@ -10,6 +11,7 @@ import { FeaturedContentCarousel } from '@/components/FeaturedContentCarousel'
 import { AdvancedTechniquesCarousel } from '@/components/AdvancedTechniquesCarousel'
 import { OurExpertsCarousel } from '@/components/OurExpertsCarousel'
 import { SpecialtiesCarousel } from '@/components/SpecialtiesCarousel'
+import { CustomCardsCarousel } from '@/components/CustomCardsCarousel'
 import { HomeScrollSnapHandler } from '@/components/HomeScrollSnapHandler'
 import { getCMS, getGlobal, getHomepage } from '@/lib/payload'
 import { mediaFormat, mediaLabel, mediaUrl } from '@/lib/media'
@@ -116,6 +118,33 @@ export default async function HomePage() {
     console.error('[HomePage] Error loading initial data:', err)
   }
 
+  // Tải dữ liệu các chuyên mục Dịch vụ Người bệnh (Gói khám, Quy trình, Nội trú, Sơ đồ, Cổng người bệnh, Tiêm chủng)
+  let checkupPackagesData: any = null
+  let examinationFlowData: any = null
+  let inpatientGuideData: any = null
+  let hospitalMapData: any = null
+  let patientPortalData: any = null
+  let vaxSettingsData: any = null
+
+  try {
+    const [pkgRes, flowRes, inpatRes, mapRes, portalRes, vaxRes] = await Promise.all([
+      getGlobal('checkup-packages-settings').catch(() => null),
+      getGlobal('examination-flow-settings').catch(() => null),
+      getGlobal('inpatient-guide-settings').catch(() => null),
+      getGlobal('hospital-map-settings').catch(() => null),
+      getGlobal('patient-portal-settings').catch(() => null),
+      getGlobal('vaccination-settings' as any).catch(() => null),
+    ])
+    checkupPackagesData = pkgRes
+    examinationFlowData = flowRes
+    inpatientGuideData = inpatRes
+    hospitalMapData = mapRes
+    patientPortalData = portalRes
+    vaxSettingsData = vaxRes
+  } catch (e) {
+    console.error('[HomePage] Error loading patient care globals:', e)
+  }
+
   const medpro = siteSettings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'
   const builtInHeroImage = '/banners/banner-bvdk-thoi-lai-1920x600.png'
   const configuredHeroSlides = (Array.isArray(home?.banners) ? home.banners : [])
@@ -161,29 +190,7 @@ export default async function HomePage() {
       techniqueAutoplaySeconds: 5,
       cardBarBgColor: '#f0f7fd',
       cardBarTextColor: '#0754a8',
-      techniqueItems: [
-        {
-          title: 'Ứng dụng các kỹ thuật hiện đại trong điều trị bệnh da',
-          badge: 'Phòng khám Da - Thẩm mỹ Da',
-          image: '',
-          url: '/chuyen-khoa',
-          visible: true,
-        },
-        {
-          title: 'Ứng dụng kỹ thuật quang - điện (TruScreen) trong tầm soát ung thư cổ tử cung',
-          badge: 'Tầm soát chuyên sâu',
-          image: '',
-          url: '/chuyen-khoa',
-          visible: true,
-        },
-        {
-          title: 'Kỹ thuật truyền dịch vào buồng ối',
-          badge: 'Sản phụ khoa',
-          image: '',
-          url: '/chuyen-khoa',
-          visible: true,
-        },
-      ],
+      techniqueItems: [],
     }
     const featuredIdx = rawSections.findIndex((s: any) => s?.type === 'featured-news' || s?.type === 'news')
     if (featuredIdx >= 0) {
@@ -236,6 +243,8 @@ export default async function HomePage() {
     'advanced-techniques': { eyebrow: '', title: 'Kỹ thuật chuyên sâu', description: '', order: 1 },
     'our-experts': { eyebrow: 'ĐỘI NGŨ Y BÁC SĨ', title: 'Chuyên gia của chúng tôi', description: '', order: 2 },
     'news-portal': { eyebrow: 'CỔNG THÔNG TIN BỆNH VIỆN', title: 'Các chuyên mục tin tức', order: 3 },
+    'patient-portal-services': { eyebrow: 'DÀNH CHO NGƯỜI BỆNH', title: 'Tiện ích & Dịch vụ y tế', description: 'Chủ động tra cứu gói khám sức khỏe, quy trình khám chữa bệnh và các tiện ích nội trú tại bệnh viện.', order: 3.5 },
+    'vaccination-portal-services': { eyebrow: 'LỊCH TIÊM CHỦNG', title: 'Cổng thông tin & Lịch tiêm ngừa', description: 'Tra cứu danh mục vắc xin, các đợt tiêm chủng định kỳ và thông báo tiêm chủng mới nhất.', order: 7.5 },
     organization: { eyebrow: 'CHUYÊN KHOA', title: 'Hệ thống chuyên khoa', description: 'Đội ngũ tận tâm, quy trình chuyên nghiệp và trang thiết bị phù hợp.', order: 3 },
     notices: { eyebrow: 'THÔNG BÁO', title: 'Thông báo mới', description: 'Thông tin dành cho người bệnh và cộng đồng.', order: 4 },
     procurement: { eyebrow: 'CÔNG KHAI', title: 'Đấu thầu – Mua sắm', description: 'Thông tin mời thầu và kết quả mua sắm.', order: 5 },
@@ -331,7 +340,26 @@ export default async function HomePage() {
   }
   const homeVaccinationAnnouncements = vaccinationSchedules.filter(item => item.scheduleKind === 'announcement').map(item => ({ id: item.id, title: item.title, summary: item.summary, content: item.detailContent, imageUrl: mediaUrl(item.scheduleImage) || defaultMedia.vaccinations, fileUrl: mediaUrl(item.scheduleFile), fileName: mediaLabel(item.scheduleFile), fileFormat: mediaFormat(item.scheduleFile), href: `/tiem-chung/${item.id}?type=schedule` }))
   const homeVaccinationCampaigns = vaccinationSchedules.filter(item => item.scheduleKind !== 'announcement').map(item => ({ id: item.id, title: item.title, summary: item.summary, target: item.target, date: item.date, endDate: item.endDate, startTime: item.startTime, endTime: item.endTime, location: item.location, registrationUrl: item.registrationUrl, note: item.note, imageUrl: mediaUrl(item.scheduleImage) || defaultMedia.vaccinations, href: `/tiem-chung/${item.id}?type=schedule` }))
-  const homeVaccines = vaccines.map(item => ({ id: item.id, title: item.name, summary: item.summary, manufacturer: item.manufacturer, origin: item.origin, prevents: item.prevents, ageGroup: item.ageGroup, availability: item.availability, fee: currentVaccinePrice.get(String(item.id)), imageUrl: mediaUrl(item.image) || defaultMedia.vaccinations, registrationUrl: item.registrationUrl, href: `/tiem-chung/${item.id}?type=vaccine` }))
+  const homeVaccines = vaccines.map(item => {
+    const resolvedFee = typeof item.price === 'number' ? item.price : currentVaccinePrice.get(String(item.id))
+    return {
+      id: item.id,
+      code: item.code,
+      slug: item.slug,
+      title: item.name,
+      summary: item.summary,
+      manufacturer: item.manufacturer,
+      origin: item.origin,
+      prevents: item.prevents,
+      targetGroup: item.targetGroup || 'all',
+      ageGroup: item.ageGroup,
+      availability: item.availability,
+      fee: resolvedFee,
+      imageUrl: mediaUrl(item.image) || defaultMedia.vaccinations,
+      registrationUrl: item.registrationUrl,
+      href: `/tiem-chung/${item.id}?type=vaccine`,
+    }
+  })
   const vaccinationTabOrder = (sectionConfig('vaccinations')?.vaccinationTabOrder || []).filter((item: any) => item.visible !== false && item.tab).map((item: any) => item.tab)
   const contentTabsFor = (key: 'news-portal' | 'science') => (sectionConfig(key)?.contentTabs || []).map((tab: any, tabIndex: number) => ({
     label: tab.label?.trim() || `Chuyên mục ${tabIndex + 1}`,
@@ -505,38 +533,43 @@ export default async function HomePage() {
 
     if (!items || items.length === 0) return <div className="professionalEmpty">{emptyText}</div>
 
-    // ── MẪU 1: Editorial Grid (chuẩn thông báo — 1 lớn + nhiều nhỏ) ──
+    // ── MẪU 1: Editorial Grid (Phương án 3: 1 Thẻ Lớn Nổi Bật Trái + Danh Sách Hàng Ngang Phải) ──
     if (layout === 'editorial-grid') {
-      const editorialSlots = Array.from({ length: 5 }, (_, index) => items[index] || null)
+      const mainEntry = items[0] || null
+      const subEntries = items.slice(1, 5)
+
+      const renderImageProps = (entry: any) => {
+        const fit = (entry.coverFit === 'fill' ? 'fill' : (entry.coverFit === 'contain' ? 'contain' : 'cover')) as React.CSSProperties['objectFit']
+        const pos = entry.coverFit === 'cover-top' || entry.coverPosition === 'top'
+          ? 'top center'
+          : (entry.coverFit === 'cover-bottom' || entry.coverPosition === 'bottom'
+            ? 'bottom center'
+            : 'center center')
+        return { fit, pos }
+      }
+
       return (
-        <div className="homeEditorialGrid">
-          {editorialSlots.map((entry: any, idx: number) => {
-            if (!entry) return <div className="homeEditorialEmptyCard" aria-hidden="true" key={`empty-${idx}`} />
-            const isMain = idx === 0
-            const fit = entry.coverFit === 'fill' ? 'fill' : (entry.coverFit === 'contain' ? 'contain' : 'cover')
-            const pos = entry.coverFit === 'cover-top' || entry.coverPosition === 'top'
-              ? 'top center'
-              : (entry.coverFit === 'cover-bottom' || entry.coverPosition === 'bottom'
-                ? 'bottom center'
-                : 'center center')
-            if (isMain) {
-              // Ô lớn: ảnh trên (kèm badge), nội dung dưới (kèm excerpt)
+        <div className="homeEditorialGrid editorialVariant3">
+          {/* CỘT TRÁI: 1 THẺ LỚN NỔI BẬT (FEATURED HERO CARD) */}
+          {mainEntry ? (
+            (() => {
+              const { fit, pos } = renderImageProps(mainEntry)
               return (
                 <a
-                  href={entry.href}
-                  className="featured"
-                  key={entry.id}
+                  href={mainEntry.href}
+                  className="editorialHeroCard"
+                  key={mainEntry.id}
                 >
                   <div
-                    className="homeEditorialImage"
+                    className="editorialHeroThumb"
                     style={{
-                      background: entry.coverFit === 'contain' ? '#eaf4fc' : undefined,
+                      background: mainEntry.coverFit === 'contain' ? '#eaf4fc' : undefined,
                     }}
                   >
                     <img
-                      src={entry.cover}
-                      alt={entry.title}
-                      className="editorialImg"
+                      src={mainEntry.cover}
+                      alt={mainEntry.title}
+                      className="editorialHeroImg"
                       loading="lazy"
                       style={{
                         objectFit: fit,
@@ -544,71 +577,100 @@ export default async function HomePage() {
                       }}
                     />
                     {showCategory && (
-                      <span>{badgeOverride || entry.category || 'NỘI DUNG'}</span>
+                      <span className="editorialHeroBadge">
+                        {badgeOverride || mainEntry.category || 'THÔNG BÁO'}
+                      </span>
                     )}
                   </div>
-                  <div className="homeEditorialCopy">
-                    {showDate && <small>{entry.date || 'Mới cập nhật'}</small>}
-                    <h3>{entry.title}</h3>
-                    {showExcerpt && <p>{entry.excerpt || ''}</p>}
+                  <div className="editorialHeroBody">
+                    {showDate && (
+                      <div className="editorialHeroDate">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                          <line x1="16" y1="2" x2="16" y2="6" />
+                          <line x1="8" y1="2" x2="8" y2="6" />
+                          <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        <span>{mainEntry.date || 'Mới cập nhật'}</span>
+                      </div>
+                    )}
+                    <h3 className="editorialHeroTitle">{mainEntry.title}</h3>
+                    {showExcerpt && (
+                      <p className="editorialHeroExcerpt">{mainEntry.excerpt || ''}</p>
+                    )}
+                    <div className="editorialHeroAction">
+                      <span>Xem chi tiết thông báo</span>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </div>
                   </div>
                 </a>
               )
-            }
-            // 4 ô nhỏ: giữ nguyên layout dọc (ảnh trên, text dưới)
-            return (
-              <a
-                href={entry.href}
-                className=""
-                key={entry.id}
-                style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}
-              >
-                <div
-                  className="homeEditorialImage"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '16 / 10.5',
-                    maxHeight: '175px',
-                    flexShrink: 0,
-                    position: 'relative',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: entry.coverFit === 'contain' ? '#f4f8fb' : undefined,
-                  }}
-                >
-                  <img
-                    src={entry.cover}
-                    alt={entry.title}
-                    className="editorialImg"
-                    loading="lazy"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: fit,
-                      objectPosition: pos,
-                      display: 'block',
-                    }}
-                  />
-                </div>
-                <div
-                  className="homeEditorialCopy"
-                  style={{
-                    padding: '16px 18px 18px',
-                    flex: '1 1 auto',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-start',
-                  }}
-                >
-                  {showDate && <small>{entry.date || 'Mới cập nhật'}</small>}
-                  <h3>{entry.title}</h3>
-                  {showExcerpt && <p>{entry.excerpt || ''}</p>}
-                </div>
-              </a>
-            )
-          })}
+            })()
+          ) : (
+            <div className="homeEditorialEmptyCard" aria-hidden="true" />
+          )}
+
+          {/* CỘT PHẢI: DANH SÁCH CÁC HÀNG NGANG (SUB LIST ROWS) */}
+          <div className="editorialRowList">
+            {subEntries.length > 0 ? (
+              subEntries.map((entry: any) => {
+                const { fit, pos } = renderImageProps(entry)
+                return (
+                  <a
+                    href={entry.href}
+                    className="editorialRowItem"
+                    key={entry.id}
+                  >
+                    <div
+                      className="editorialRowThumb"
+                      style={{
+                        background: entry.coverFit === 'contain' ? '#f4f8fb' : undefined,
+                      }}
+                    >
+                      <img
+                        src={entry.cover}
+                        alt={entry.title}
+                        className="editorialRowImg"
+                        loading="lazy"
+                        style={{
+                          objectFit: fit,
+                          objectPosition: pos,
+                        }}
+                      />
+                    </div>
+                    <div className="editorialRowContent">
+                      <div className="editorialRowMeta">
+                        {showCategory && (entry.category || badgeOverride) && (
+                          <span className="editorialRowBadge">
+                            {badgeOverride || entry.category}
+                          </span>
+                        )}
+                        {showDate && (
+                          <span className="editorialRowDate">
+                            {entry.date || 'Mới cập nhật'}
+                          </span>
+                        )}
+                      </div>
+                      <h4 className="editorialRowTitle">{entry.title}</h4>
+                      {showExcerpt && entry.excerpt && (
+                        <p className="editorialRowExcerpt">{entry.excerpt}</p>
+                      )}
+                    </div>
+                    <div className="editorialRowArrow" aria-hidden="true">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="9 18 15 12 9 6" />
+                      </svg>
+                    </div>
+                  </a>
+                )
+              })
+            ) : (
+              <div className="editorialRowEmpty">Chưa có thêm thông tin trong mục này.</div>
+            )}
+          </div>
         </div>
       )
     }
@@ -779,36 +841,6 @@ export default async function HomePage() {
           }
 
           if (type === 'advanced-techniques') {
-            const fallbackTechniques = [
-              {
-                title: 'Ứng dụng các kỹ thuật hiện đại trong điều trị bệnh da',
-                badge: 'Phòng khám Da - Thẩm mỹ Da',
-                image: '',
-                url: '/chuyen-khoa',
-                visible: true,
-              },
-              {
-                title: 'Ứng dụng kỹ thuật quang - điện (TruScreen) trong tầm soát ung thư cổ tử cung',
-                badge: 'Tầm soát chuyên sâu',
-                image: '',
-                url: '/chuyen-khoa',
-                visible: true,
-              },
-              {
-                title: 'Kỹ thuật truyền dịch vào buồng ối',
-                badge: 'Sản phụ khoa',
-                image: '',
-                url: '/chuyen-khoa',
-                visible: true,
-              },
-              {
-                title: 'Phẫu thuật nội soi tán sỏi niệu quản ngược dòng bằng Laser',
-                badge: 'Ngoại Thận - Tiết niệu',
-                image: '',
-                url: '/chuyen-khoa',
-                visible: true,
-              },
-            ]
             const collectionSlides = advancedTechniques.map((tech: any) => {
               const isLinkEnabled = tech.enableLink !== false
               const autoUrl = isLinkEnabled ? (tech.customUrl || `/ky-thuat-chuyen-sau/${tech.slug}`) : undefined
@@ -850,7 +882,7 @@ export default async function HomePage() {
             // Ưu tiên hiển thị từ mục quản trị Kỹ thuật chuyên sâu nếu có bài viết, hoặc các thẻ được cấu hình có liên kết
             const techniqueSlides = collectionSlides.length > 0
               ? collectionSlides
-              : (hasCustomList ? configuredSlides : fallbackTechniques)
+              : (hasCustomList ? configuredSlides : [])
 
             const isPinkish = (val?: string) => !val || val === '#fce4f0' || val === '#fce8f3' || val === '#d42d7d' || val === '#c92372' || val.toLowerCase().includes('fc')
             const finalCardBg = isPinkish(item.cardBarBgColor) ? '#f0f7fd' : item.cardBarBgColor
@@ -880,40 +912,6 @@ export default async function HomePage() {
           }
 
           if (type === 'our-experts') {
-            const fallbackExperts = [
-              {
-                name: 'BS.CKII. Nguyễn Thụy Thúy Ái',
-                position: 'Giám đốc Bệnh viện',
-                badge: 'Ban Giám đốc',
-                image: '',
-                url: '/chuyen-khoa',
-                visible: true,
-              },
-              {
-                name: 'BS.CKII. Ngô Văn Dũng',
-                position: 'Phó Giám đốc Bệnh viện',
-                badge: 'Ban Giám đốc',
-                image: '',
-                url: '/chuyen-khoa',
-                visible: true,
-              },
-              {
-                name: 'BS.CKII. Huỳnh Thanh Liêm',
-                position: 'Phó Giám đốc Bệnh viện',
-                badge: 'Ban Giám đốc',
-                image: '',
-                url: '/chuyen-khoa',
-                visible: true,
-              },
-              {
-                name: 'BS.CKI. Nguyễn Thành Công',
-                position: 'Trưởng phòng Kế hoạch Tổng hợp',
-                badge: 'Lãnh đạo Khoa/Phòng',
-                image: '',
-                url: '/chuyen-khoa',
-                visible: true,
-              },
-            ]
             // Helper loại bỏ tiền tố chức danh quản lý/chức vụ trước tên (ví dụ "Phó Giám Đốc", "Giám đốc", "Trưởng Phòng")
             const cleanTitleFromName = (rawName: string, title?: string): string => {
               if (!rawName) return ''
@@ -1105,7 +1103,7 @@ export default async function HomePage() {
               ? ourExpertsCollectionSlides
               : (hasCustomExpertList
                   ? configuredExpertSlides
-                  : (collectionDoctorSlides.length > 0 ? collectionDoctorSlides : fallbackExperts))
+                  : (collectionDoctorSlides.length > 0 ? collectionDoctorSlides : []))
 
             const isPinkish = (val?: string) => !val || val === '#fce4f0' || val === '#fce8f3' || val === '#d42d7d' || val === '#c92372' || val.toLowerCase().includes('fc')
             const finalCardBg = isPinkish(item.expertCardBgColor) ? '#f0f7fd' : item.expertCardBgColor
@@ -1149,7 +1147,170 @@ export default async function HomePage() {
             )
           }
 
-          if (type === 'news-portal') return <section className="sectionPro configurableHomeSection homePortalNewsSection homePortalPage" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem toàn bộ bài viết →</a></div><HomeNewsTabs items={news.map((article) => ({ id: article.id, title: article.title, slug: article.slug, excerpt: article.excerpt, category: article.category, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news, coverFit: article.coverFit || 'cover', coverPosition: article.coverPosition || 'top' }))} tabs={contentTabsFor('news-portal')} /></div></section>
+          if (type === 'news-portal') {
+            if (!news || news.length === 0) return null
+            return <section className="sectionPro configurableHomeSection homePortalNewsSection homePortalPage" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/tin-tuc">Xem toàn bộ bài viết →</a></div><HomeNewsTabs items={news.map((article) => ({ id: article.id, title: article.title, slug: article.slug, excerpt: article.excerpt, category: article.category, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news, coverFit: article.coverFit || 'cover', coverPosition: article.coverPosition || 'top' }))} tabs={contentTabsFor('news-portal')} /></div></section>
+          }
+
+          if (type === 'patient-portal-services') {
+            // Nguồn 1: Gói khám sức khỏe
+            const rawPkgs = Array.isArray(checkupPackagesData?.packages) ? checkupPackagesData.packages : []
+            const packagesItems = rawPkgs
+              .filter((p: any) => p?.enabled !== false && p?.title)
+              .map((p: any, pIdx: number) => ({
+                id: `pkg-${pIdx}`,
+                title: p.title,
+                desc: p.desc,
+                badge: p.badge,
+                targetUser: p.targetUser,
+                priceText: p.priceText,
+                features: typeof p.features === 'string' ? p.features.split('\n').filter(Boolean) : (Array.isArray(p.features) ? p.features : []),
+                href: '/goi-kham',
+                buttonText: p.buttonText || 'Đăng ký / Xem chi tiết →',
+              }))
+
+            // Nguồn 2: Quy trình khám bệnh
+            const rawFlowSteps = Array.isArray(examinationFlowData?.steps) ? examinationFlowData.steps : []
+            const flowItems = rawFlowSteps
+              .filter((s: any) => s?.enabled !== false && s?.title)
+              .map((s: any, sIdx: number) => ({
+                id: `flow-${sIdx}`,
+                title: s.title,
+                desc: s.desc,
+                badge: s.badge || `Bước ${s.step || sIdx + 1}`,
+                icon: s.icon || '🩺',
+                href: '/quy-trinh-kham-benh',
+                buttonText: 'Xem quy trình →',
+              }))
+
+            // Nguồn 3: Hướng dẫn điều trị nội trú
+            const rawInpatientSteps = Array.isArray(inpatientGuideData?.steps) ? inpatientGuideData.steps : []
+            const inpatientItems = rawInpatientSteps
+              .filter((s: any) => s?.enabled !== false && s?.title)
+              .map((s: any, sIdx: number) => ({
+                id: `inpat-${sIdx}`,
+                title: s.title,
+                desc: s.desc,
+                badge: `Bước ${s.step || sIdx + 1}`,
+                icon: '🛏️',
+                href: '/dieu-tri-noi-tru',
+                buttonText: 'Xem hướng dẫn nội trú →',
+              }))
+
+            // Nguồn 4: Sơ đồ các tầng
+            const rawFloors = Array.isArray(hospitalMapData?.floors) ? hospitalMapData.floors : []
+            const mapItems = rawFloors
+              .filter((f: any) => f?.enabled !== false && f?.floorName)
+              .map((f: any, fIdx: number) => ({
+                id: `map-${fIdx}`,
+                title: f.floorName,
+                desc: f.overview,
+                badge: `Tầng ${fIdx + 1}`,
+                icon: '🗺️',
+                href: '/so-do-benh-vien',
+                buttonText: 'Xem sơ đồ tầng →',
+              }))
+
+            // Nguồn 5: Thẻ Cổng người bệnh
+            const rawPortalGroups = Array.isArray(patientPortalData?.serviceGroups) ? patientPortalData.serviceGroups : []
+            const portalCardsItems: any[] = []
+            for (const grp of rawPortalGroups) {
+              if (grp?.enabled === false) continue
+              const items = Array.isArray(grp?.items) ? grp.items : []
+              for (const itm of items) {
+                if (itm?.enabled !== false && itm?.title) {
+                  portalCardsItems.push({
+                    id: `portal-${portalCardsItems.length}`,
+                    title: itm.title,
+                    desc: itm.desc,
+                    badge: itm.badge,
+                    icon: itm.icon || '🏥',
+                    href: itm.href || '/danh-cho-nguoi-benh',
+                    buttonText: itm.buttonText || 'Truy cập dịch vụ →',
+                  })
+                }
+              }
+            }
+
+            // Xử lý các tab được cấu hình trong mục này
+            const rawConfiguredTabs = Array.isArray(item.portalServiceTabs) ? item.portalServiceTabs : []
+            const defaultSourceTabs = [
+              { label: 'Gói khám sức khỏe', source: 'packages', enabled: true },
+              { label: 'Quy trình khám bệnh', source: 'flow', enabled: true },
+              { label: 'Hướng dẫn nội trú', source: 'inpatient', enabled: true },
+            ]
+            const sourceTabs = rawConfiguredTabs.length > 0 ? rawConfiguredTabs : defaultSourceTabs
+
+            const resolvedTabs: any[] = []
+            for (const tabCfg of sourceTabs) {
+              if (tabCfg.enabled === false) continue
+              const limit = Math.min(20, Math.max(1, Number(tabCfg.limit || 6)))
+              let resolvedItems: any[] = []
+              let defaultSeeMore = '/danh-cho-nguoi-benh'
+
+              if (tabCfg.source === 'packages') {
+                resolvedItems = packagesItems.slice(0, limit)
+                defaultSeeMore = '/goi-kham'
+              } else if (tabCfg.source === 'flow') {
+                resolvedItems = flowItems.slice(0, limit)
+                defaultSeeMore = '/quy-trinh-kham-benh'
+              } else if (tabCfg.source === 'inpatient') {
+                resolvedItems = inpatientItems.slice(0, limit)
+                defaultSeeMore = '/dieu-tri-noi-tru'
+              } else if (tabCfg.source === 'map') {
+                resolvedItems = mapItems.slice(0, limit)
+                defaultSeeMore = '/so-do-benh-vien'
+              } else if (tabCfg.source === 'portal-cards') {
+                resolvedItems = portalCardsItems.slice(0, limit)
+                defaultSeeMore = '/danh-cho-nguoi-benh'
+              } else if (tabCfg.source === 'manual') {
+                const manualList = Array.isArray(tabCfg.manualItems) ? tabCfg.manualItems : []
+                resolvedItems = manualList.slice(0, limit).map((m: any, mIdx: number) => ({
+                  id: `manual-${mIdx}`,
+                  title: m.title,
+                  desc: m.desc,
+                  badge: m.badge,
+                  icon: m.icon || '🩺',
+                  href: m.href || '#',
+                  buttonText: m.buttonText || 'Xem chi tiết →',
+                }))
+                defaultSeeMore = tabCfg.seeMoreUrl || '/danh-cho-nguoi-benh'
+              }
+
+              // Chỉ thêm tab nếu có items thực tế
+              if (resolvedItems.length > 0) {
+                resolvedTabs.push({
+                  label: tabCfg.label || 'Dịch vụ',
+                  source: tabCfg.source,
+                  limit,
+                  customBadge: tabCfg.customBadge,
+                  seeMoreUrl: tabCfg.seeMoreUrl || defaultSeeMore,
+                  items: resolvedItems,
+                })
+              }
+            }
+
+            // Nếu không có bất kỳ tab nào có dữ liệu -> Tự động ẩn toàn bộ Section khỏi Trang chủ
+            if (resolvedTabs.length === 0) return null
+
+            const topSeeMoreUrl = resolvedTabs[0]?.seeMoreUrl || '/danh-cho-nguoi-benh'
+
+            return (
+              <section className="sectionPro configurableHomeSection homePatientServicesSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead">
+                    <div>
+                      <span className="sectionKicker">{cfg.eyebrow}</span>
+                      <h2>{cfg.title}</h2>
+                      {cfg.description && <p>{cfg.description}</p>}
+                    </div>
+                    <a href={topSeeMoreUrl}>Xem tất cả dịch vụ →</a>
+                  </div>
+                  <HomePatientServiceTabs tabs={resolvedTabs} />
+                </div>
+              </section>
+            )
+          }
 
           if (type === 'notices') {
             const noticeLayout = item.sectionLayout || 'editorial-grid'
@@ -1201,9 +1362,121 @@ export default async function HomePage() {
 
           if (type === 'schedules') return <section id="schedules" className="sectionPro configurableHomeSection homeScheduleSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/lich-kham">Xem tất cả →</a></div><ScheduleExplorer daily={homeDailySchedules} weekly={homeWeeklySchedules} attachments={homeAttachedSchedules} emergency={homeEmergencySchedules} medpro={medpro} tabOrder={scheduleTabOrder.length ? scheduleTabOrder : undefined} tabs={scheduleTabs.length ? scheduleTabs : undefined} compact /></div></section>
 
-          if (type === 'vaccinations') return <section className="sectionPro configurableHomeSection homeVaccinationSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2><p>{cfg.description}</p></div><a href="/tiem-chung">Xem tất cả →</a></div><VaccinationTabs announcements={homeVaccinationAnnouncements} campaigns={homeVaccinationCampaigns} vaccines={homeVaccines} medpro={medpro} tabOrder={vaccinationTabOrder.length ? vaccinationTabOrder : undefined} tabs={vaccinationTabs.length ? vaccinationTabs : undefined} compact /></div></section>
+          if (type === 'vaccination-portal-services') {
+            const rawVaxTabs = Array.isArray(item.portalVaccinationTabs) ? item.portalVaccinationTabs : []
+            const defaultVaxSourceTabs = [
+              { label: 'Các loại vắc xin', source: 'vaccines', enabled: true },
+              { label: 'Tiêm ngừa theo đợt', source: 'campaigns', enabled: true },
+              { label: 'Thông báo lịch tiêm', source: 'announcements', enabled: true },
+            ]
+            const sourceVaxTabs = rawVaxTabs.length > 0 ? rawVaxTabs : defaultVaxSourceTabs
 
-          if (type === 'science') return <section className="sectionPro configurableHomeSection homePortalNewsSection homePortalPage homeScienceSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/hoat-dong-khoa-hoc">Xem toàn bộ bài viết →</a></div><HomeScienceTabs items={scientificActivities.map((article) => ({ id: article.id, title: article.title, slug: article.slug, category: scientificActivityGroupName(article), excerpt: article.excerpt, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news, href: `/hoat-dong-khoa-hoc/${article.slug}` }))} tabs={scientificActivityGroups.map((group) => ({ label: group.name, categories: [group.name] }))} /></div></section>
+            const customVaxTabs: any[] = []
+            for (const tCfg of sourceVaxTabs) {
+              if (tCfg.enabled === false) continue
+              const tLimit = Math.min(30, Math.max(1, Number(tCfg.limit || 8)))
+              const manualItems = (tCfg.manualItems || []).map((m: any, mIdx: number) => ({
+                id: `vax-manual-${mIdx}`,
+                title: m.title,
+                desc: m.desc,
+                badge: m.badge,
+                icon: m.icon || '💉',
+                priceText: m.priceText,
+                href: m.href || '/tiem-chung',
+                buttonText: m.buttonText || 'Xem chi tiết →',
+              }))
+
+              customVaxTabs.push({
+                label: tCfg.label?.trim() || 'Tiêm chủng',
+                kind: tCfg.source,
+                limit: tLimit,
+                customBadge: tCfg.customBadge,
+                seeMoreUrl: tCfg.seeMoreUrl || '/tiem-chung',
+                manualItems,
+              })
+            }
+
+            // Kiểm tra xem có dữ liệu nào không
+            const hasAnyData = (
+              homeVaccines.length > 0 ||
+              homeVaccinationCampaigns.length > 0 ||
+              homeVaccinationAnnouncements.length > 0 ||
+              customVaxTabs.some(t => t.manualItems?.length > 0)
+            )
+            if (!hasAnyData) return null
+
+            const vaxBookBtnText = vaxSettingsData?.bookButtonText || 'Đăng ký tiêm'
+            const vaxDetailBtnText = vaxSettingsData?.detailButtonText || 'Chi tiết'
+            const vaxItemsPerView = typeof vaxSettingsData?.itemsPerView === 'number' ? vaxSettingsData.itemsPerView : 3
+            const vaxAutoplaySec = typeof vaxSettingsData?.autoplaySeconds === 'number' ? vaxSettingsData.autoplaySeconds : 5
+
+            return (
+              <section className="sectionPro configurableHomeSection homeVaccinationSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead">
+                    <div>
+                      <span className="sectionKicker">{cfg.eyebrow}</span>
+                      <h2>{cfg.title}</h2>
+                      <p>{cfg.description}</p>
+                    </div>
+                    <a href="/tiem-chung">Xem tất cả →</a>
+                  </div>
+                  <VaccinationTabs
+                    announcements={homeVaccinationAnnouncements}
+                    campaigns={homeVaccinationCampaigns}
+                    vaccines={homeVaccines}
+                    medpro={medpro}
+                    tabs={customVaxTabs}
+                    bookButtonText={vaxBookBtnText}
+                    detailButtonText={vaxDetailBtnText}
+                    itemsPerView={vaxItemsPerView}
+                    autoplaySeconds={vaxAutoplaySec}
+                    compact
+                  />
+                </div>
+              </section>
+            )
+          }
+
+          if (type === 'vaccinations') {
+            const vaxBookBtnText = vaxSettingsData?.bookButtonText || 'Đăng ký tiêm'
+            const vaxDetailBtnText = vaxSettingsData?.detailButtonText || 'Chi tiết'
+            const vaxItemsPerView = typeof vaxSettingsData?.itemsPerView === 'number' ? vaxSettingsData.itemsPerView : 3
+            const vaxAutoplaySec = typeof vaxSettingsData?.autoplaySeconds === 'number' ? vaxSettingsData.autoplaySeconds : 5
+
+            return (
+              <section className="sectionPro configurableHomeSection homeVaccinationSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead">
+                    <div>
+                      <span className="sectionKicker">{cfg.eyebrow}</span>
+                      <h2>{cfg.title}</h2>
+                      <p>{cfg.description}</p>
+                    </div>
+                    <a href="/tiem-chung">Xem tất cả →</a>
+                  </div>
+                  <VaccinationTabs
+                    announcements={homeVaccinationAnnouncements}
+                    campaigns={homeVaccinationCampaigns}
+                    vaccines={homeVaccines}
+                    medpro={medpro}
+                    tabOrder={vaccinationTabOrder.length ? vaccinationTabOrder : undefined}
+                    tabs={vaccinationTabs.length ? vaccinationTabs : undefined}
+                    bookButtonText={vaxBookBtnText}
+                    detailButtonText={vaxDetailBtnText}
+                    itemsPerView={vaxItemsPerView}
+                    autoplaySeconds={vaxAutoplaySec}
+                    compact
+                  />
+                </div>
+              </section>
+            )
+          }
+
+          if (type === 'science') {
+            if (!scientificActivities || scientificActivities.length === 0) return null
+            return <section className="sectionPro configurableHomeSection homePortalNewsSection homePortalPage homeScienceSection" style={style} key={key}><div className="container"><div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/hoat-dong-khoa-hoc">Xem toàn bộ bài viết →</a></div><HomeScienceTabs items={scientificActivities.map((article) => ({ id: article.id, title: article.title, slug: article.slug, category: scientificActivityGroupName(article), excerpt: article.excerpt, date: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('vi-VN') : '', coverUrl: mediaUrl(article.cover || article.seoImage) || defaultMedia.news, href: `/hoat-dong-khoa-hoc/${article.slug}` }))} tabs={scientificActivityGroups.map((group) => ({ label: group.name, categories: [group.name] }))} /></div></section>
+          }
 
           if (type === 'documents') {
             const docLayout = item.sectionLayout || 'editorial-grid'
@@ -1289,6 +1562,65 @@ export default async function HomePage() {
             if (!module || module.active === false) return null
             const image = mediaUrl(module.image, 'article')
             return <section className="sectionPro configurableHomeSection customHomepageSection" style={style} key={key}><div className={`container customHomepageLayout left ${image ? 'hasImage' : 'withoutImage'}`}>{image && <div className="customHomepageImage"><img src={image} alt={module.title || cfg.title || 'Hình ảnh module'} /></div>}<div className="customHomepageContent">{(cfg.eyebrow || module.eyebrow) && <span className="sectionKicker">{cfg.eyebrow || module.eyebrow}</span>}<h2>{cfg.title || module.title}</h2>{(cfg.description || module.description) && <p className="sectionDescription">{cfg.description || module.description}</p>}{module.content && <div className="customRichText"><RichText data={module.content} /></div>}{module.buttonLabel && module.buttonUrl && <a className="homeSolidButton customSectionButton" href={module.buttonUrl}>{module.buttonLabel} →</a>}</div></div></section>
+          }
+
+          if (type === 'custom-carousel') {
+            const rawCards = Array.isArray(item.customCarouselCards) ? item.customCarouselCards : []
+            const activeCards = rawCards.filter((c: any) => c && c.enabled !== false && c.title)
+            if (activeCards.length === 0) return null
+
+            const itemsPerView = typeof item.carouselItemsPerView === 'number' ? item.carouselItemsPerView : 3
+            const autoplaySeconds = typeof item.carouselAutoplaySeconds === 'number' ? item.carouselAutoplaySeconds : 5
+            const defaultDetailText = item.carouselDetailBtnText || 'Chi tiết'
+            const defaultActionText = item.carouselActionBtnText || 'Đăng ký ngay'
+            const seeMoreUrl = item.carouselSeeMoreUrl
+            const seeMoreText = item.carouselSeeMoreText || 'Xem tất cả →'
+
+            return (
+              <section className="sectionPro configurableHomeSection homeCustomCarouselSection" style={style} key={key}>
+                <div className="container">
+                  <div className="homeSectionHead">
+                    <div>
+                      {cfg.eyebrow && <span className="sectionKicker">{cfg.eyebrow}</span>}
+                      <h2>{cfg.title}</h2>
+                      {cfg.description && <p>{cfg.description}</p>}
+                    </div>
+                    {seeMoreUrl && (
+                      <a href={seeMoreUrl}>{seeMoreText}</a>
+                    )}
+                  </div>
+                  <CustomCardsCarousel
+                    cards={activeCards.map((c: any) => ({
+                      id: c.id,
+                      enabled: c.enabled,
+                      title: c.title,
+                      code: c.code,
+                      statusText: c.statusText,
+                      statusType: c.statusType,
+                      origin: c.origin,
+                      image: c.image,
+                      summary: c.summary,
+                      spec1Key: c.spec1Key,
+                      spec1Val: c.spec1Val,
+                      spec2Key: c.spec2Key,
+                      spec2Val: c.spec2Val,
+                      spec3Key: c.spec3Key,
+                      spec3Val: c.spec3Val,
+                      priceLabel: c.priceLabel,
+                      priceValue: c.priceValue,
+                      detailUrl: c.detailUrl,
+                      detailBtnText: c.detailBtnText,
+                      actionUrl: c.actionUrl,
+                      actionBtnText: c.actionBtnText,
+                    }))}
+                    itemsPerView={itemsPerView}
+                    autoplaySeconds={autoplaySeconds}
+                    defaultDetailBtnText={defaultDetailText}
+                    defaultActionBtnText={defaultActionText}
+                  />
+                </div>
+              </section>
+            )
           }
 
           if (type === 'custom') {

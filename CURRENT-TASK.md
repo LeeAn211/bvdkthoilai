@@ -1,26 +1,52 @@
 # CURRENT TASK
 
-## Trang thai: HOAN THANH
+## Trang thai: HOAN THANH - TÁI THIẾT KẾ KHỐI THÔNG BÁO THEO PHƯƠNG ÁN 3 (1 THẺ LỚN TRÁI + LIST HÀNG NGANG PHẢI)
 
-## Nhiem vu vua thuc hien
-- Tích hợp tính năng **Quét ảnh lịch trực tự động bằng AI (Google Gemini Vision OCR)** trong Admin CMS tại trang Lịch trực cấp cứu (`schedules?mode=emergency`).
-- Cho phép quản trị viên chụp ảnh hoặc tải lên ảnh ma trận lịch trực tuần của bệnh viện; AI tự động nhận diện tuần trực, ngày trực, phân ca từng khoa phòng (Lãnh đạo, Bác sĩ, Điều dưỡng, Sản, Nội, Cận lâm sàng, Xe cấp cứu...) và danh bạ khẩn cấp.
-- Cung cấp giao diện xem trước kết quả trực quan và nút "✓ Điền vào bảng bên dưới" tự động điền vào form Payload CMS.
-- Bổ sung cấu hình `geminiApiKey` trong Global `schedule-settings` và hỗ trợ biến môi trường `GEMINI_API_KEY`.
-- Đóng gói và triển khai Database Migration 034 (`20260918_034_add_gemini_api_key_to_schedule_settings`), seal schema contract và deploy thành công (34 applied, 0 pending). Kiểm tra TypeScript đạt 0 lỗi.
+### Đã hoàn thành:
+1. **Triển khai Bố cục Phương án 3 cho Khối Thông báo & Editorial Grid**:
+   - Chỉnh sửa `renderEditorialSection` cho mẫu `editorial-grid` trong `src/app/(frontend)/page.tsx`.
+   - **Cột trái (1 Thẻ Lớn Nổi Bật - `editorialHeroCard`)**:
+     - Tỷ lệ khung ảnh `16:9.6` góc bo 16px, badge danh mục nổi bật góc dưới ảnh.
+     - Xóa triệt để lỗi dấu phẩy thừa trước ngày tháng (biểu tượng lịch SVG + ngày đăng rõ ràng).
+     - Tiêu đề `h3` cỡ 18px đậm đà `#0f2e47`, đoạn tóm tắt 3 dòng, nút "Xem chi tiết thông báo →".
+   - **Cột phải (Danh sách 4 hàng ngang - `editorialRowList`)**:
+     - 4 thông báo phụ xếp hàng ngang gọn gàng, chia đều theo chiều cao cột trái.
+     - Thumbnail 96x72px bên trái, badge chuyên mục nhỏ + ngày tháng, tiêu đề 2 dòng đậm đà, nút mũi tên tròn chỉ báo điều hướng.
+2. **Cập nhật Styling & Responsive trong `30-home-editorial.css`**:
+   - Cân đối tỷ lệ 2 cột `1.15fr : 1fr` với gap 22px, không còn khoảng trống thừa thị giác.
+   - Hỗ trợ dàn 1 cột mượt mà trên Tablet (< 900px) và thu gọn thông số trên Mobile (< 600px).
+3. **Kiểm tra chất lượng**:
+   - `npx tsc --noEmit`: Đạt 0 lỗi.
+   - Ghi nhận đầy đủ vào `CHANGELOG.md` theo Core Mandates.
 
-## Muc tieu
-- Thực hiện yêu cầu của người dùng:
-  *"các bài viết hiển thị các tab tren danh-cho-nguoi-benh phải được vào admin để tôi điều chỉnh. bạn thiết kế mẫu sẵn nhưng phải đưa vào admin để tôi chỉnh lại cho phù hợp với đơn vị của tôi"*
-- Toàn bộ nội dung và bài viết hiển thị trên các tab của chuyên mục Dành cho người bệnh:
-  - Cổng tổng hợp (`/danh-cho-nguoi-benh` - `PatientPortalSettings.ts`)
-  - Quy trình khám bệnh (`/quy-trinh-kham-benh` - `ExaminationFlowSettings.ts`)
-  - Điều trị nội trú (`/dieu-tri-noi-tru` - `InpatientGuideSettings.ts`)
-  - Gói khám sức khỏe (`/goi-kham` - `CheckupPackagesSettings.ts`)
-  - Sơ đồ bệnh viện (`/so-do-benh-vien` - `HospitalMapSettings.ts`)
-  - Chất lượng bệnh viện (`/chat-luong-benh-vien` - `HospitalQualitySettings.ts`)
-  phải được đưa 100% vào Admin CMS để người quản trị tùy chỉnh, thay đổi, thêm bớt bài viết/nội dung phù hợp với Bệnh viện Đa khoa Khu vực Thới Lai.
-- Cài đặt sẵn văn bản mẫu chuẩn y tế bệnh viện vào CMS và cơ chế Fallback ở Frontend, không hardcode cố định.
+## Tong ket 4 Dot Toi uu He thong Admin CMS:
+1. **ĐỢT 1: HỢP NHẤT CHATBOT & KHẢO SÁT & GÓP Ý**:
+   - Chuyển toàn bộ cấu hình giao diện, logo, màu sắc, phím tắt vào `ChatbotSettings.ts`.
+   - Ẩn nhóm `websiteAssistant` trùng lặp trong `SiteSettings.ts`.
+   - Gộp `SurveyResponses` vào trung tâm `SurveyCampaigns` kèm nút mở bảng thô.
+   - Ẩn `FeedbackCases` trùng lặp, giữ `Feedback` làm trung tâm quản lý tiếp nhận phản ánh duy nhất.
+   - Đóng gói & triển khai Migration Database 038 an toàn.
+
+2. **ĐỢT 2: KHÁM BỆNH & DỊCH VỤ Y TẾ**:
+   - Ẩn `ServicePrices` khỏi menu ngoài, tích hợp nút "Xem lịch sử biến động giá" trực tiếp trên thanh công cụ `ServicesExcelImport`.
+   - Ẩn `VaccinePrices` khỏi menu ngoài, tập trung nhập giá vắc xin trực tiếp trong `Vaccines`.
+   - Nhóm Khám bệnh trở nên mạch lạc và rõ ràng.
+
+3. **ĐỢT 3: TỔ CHỨC NHÂN SỰ & CHUYÊN KHOA**:
+   - Ẩn `OurExperts` khỏi menu, chấm dứt việc nhập bác sĩ 2 lần.
+   - Nâng cấp `Doctors.ts` thành **"Đội ngũ Bác sĩ & Chuyên gia"** kèm cột công tắc `showOnHome` ở bảng ngoài.
+   - Ẩn `ScientificActivityGroups` khỏi menu chính, giữ `ScientificActivities` làm trung tâm bài viết nghiên cứu.
+
+4. **ĐỢT 4: TRANG CHỦ & CẤU HÌNH WEBSITE (SITESETTINGS)**:
+   - Ẩn các nhóm trang con cũ khỏi `SiteSettings` (`lichTrucPage`, `scienceActivityPage`, `clinicalProtocolPage`).
+   - Đưa `SiteSettings` về đúng chức năng cốt lõi: Nhận diện thương hiệu (Logo, Tên viện, Slogan, Màu sắc, Hotline, Email SMTP, Bản đồ, Mã PIN bảo mật).
+   - 100% dữ liệu database được bảo toàn nguyên vẹn.
+
+## Kiem thu chat luong:
+- `npm run typecheck`: **0 loi**.
+- `npm run db:schema:check` & `npm run db:migrate:status`: **Hop le 100% (38 applied, 0 pending)**.
+
+
 
 ## Da hoan thanh
 1. Cấu hình Schema Admin CMS (Mandate 13.2):

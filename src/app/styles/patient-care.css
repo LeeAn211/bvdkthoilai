@@ -887,3 +887,385 @@ details[open] .faqSummaryIcon {
     border-radius: 16px;
   }
 }
+
+/* ==========================================================================
+   THẺ VẮC XIN CHUẨN Y TẾ HIỆN ĐẠI (MEDICAL VACCINE CARD DESIGN SYSTEM)
+   ========================================================================== */
+.vaccineModernGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+  margin-top: 10px;
+}
+
+.vaccineModernCard {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2eaf2;
+  box-shadow: 0 4px 20px rgba(15, 60, 95, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  text-decoration: none;
+}
+
+.vaccineModernCard:hover {
+  transform: translateY(-4px);
+  border-color: #93c5fd;
+  box-shadow: 0 14px 32px rgba(8, 120, 209, 0.12);
+}
+
+.vaccineCardTopHeader {
+  padding: 18px 20px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.vaccineCardTopBadges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vaccineStatusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.vaccineStatusPill.available {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.vaccineStatusPill.coming {
+  background: #fef9c3;
+  color: #a16207;
+  border: 1px solid #fef08a;
+}
+
+.vaccineStatusPill.unavailable {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.vaccineStatusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+}
+
+.vaccineOriginPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 99px;
+  background: #f0f9ff;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.vaccineCodeTag {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.5px;
+}
+
+.vaccineCardMainBody {
+  padding: 18px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vaccineMainTitle {
+  margin: 0;
+  font-size: 18.5px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #0c2d48;
+}
+
+.vaccineMainTitle a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.vaccineMainTitle a:hover {
+  color: #0878d1;
+}
+
+.vaccineShortSummary {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #64748b;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.vaccineInfoTableBox {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 14px 16px;
+  border: 1px solid #edf2f7;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.vaccineInfoRow {
+  display: flex;
+  font-size: 13.5px;
+  line-height: 1.45;
+  gap: 12px;
+}
+
+.vaccineInfoKey {
+  color: #64748b;
+  min-width: 86px;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.vaccineInfoVal {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.vaccineInfoVal.preventVal {
+  color: #0369a1;
+}
+
+.vaccineBottomBar {
+  padding: 16px 20px 18px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  gap: 12px;
+}
+
+.vaccinePriceBox {
+  display: flex;
+  flex-direction: column;
+}
+
+.vaccinePriceSub {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.vaccinePriceNum {
+  font-size: 21px;
+  font-weight: 900;
+  color: #e11d48;
+  line-height: 1.1;
+  font-family: inherit;
+}
+
+.vaccinePriceNum.free {
+  color: #16a34a;
+}
+
+.vaccineCardBtns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vaccineBtnDetail {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 9px;
+  border: 1.5px solid #0878d1;
+  background: #ffffff;
+  color: #0878d1;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.25;
+  transition: all 0.15s ease;
+}
+
+.vaccineBtnDetail:hover {
+  background: #f0f7ff;
+  border-color: #0754a8;
+  color: #0754a8;
+}
+
+.vaccineBtnRegister {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 9px;
+  background: #0878d1;
+  color: #ffffff !important;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.25;
+  transition: all 0.15s ease;
+  border: 1.5px solid #0878d1;
+  box-shadow: 0 3px 8px rgba(8, 120, 209, 0.22);
+  cursor: pointer;
+}
+
+.vaccineBtnRegister:hover {
+  background: #0754a8;
+  border-color: #0754a8;
+  box-shadow: 0 4px 12px rgba(8, 120, 209, 0.32);
+}
+
+@media (max-width: 480px) {
+  .vaccineModernGrid {
+    grid-template-columns: 1fr;
+  }
+  .vaccineBottomBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .vaccineCardBtns {
+    width: 100%;
+  }
+  .vaccineBtnDetail,
+  .vaccineBtnRegister {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* ==========================================================================
+   CAROUSEL TRƯỢT 3 Ô VẮC XIN (3-ITEM VACCINE SLIDER & CONTROLS)
+   ========================================================================== */
+.vaccineCarouselWrapper {
+  position: relative;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.vaccineCarouselTrack {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  width: 100%;
+}
+
+@media (max-width: 992px) {
+  .vaccineCarouselTrack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .vaccineCarouselTrack {
+    grid-template-columns: 1fr;
+  }
+}
+
+.vaccineCarouselControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.vaccineNavBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid #0878d1;
+  background-color: #ffffff;
+  color: #0878d1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(8, 120, 209, 0.15);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.vaccineNavBtn svg {
+  stroke: #0878d1;
+  transition: stroke 0.2s ease;
+}
+
+.vaccineNavBtn:hover {
+  background-color: #0878d1;
+  border-color: #0754a8;
+  color: #ffffff;
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(8, 120, 209, 0.28);
+}
+
+.vaccineNavBtn:hover svg {
+  stroke: #ffffff;
+}
+
+.vaccineNavBtn:active {
+  transform: scale(0.95);
+}
+
+.vaccineCarouselDots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vaccineCarouselDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: #cbd5e1;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.vaccineCarouselDot.active {
+  width: 24px;
+  background: #0878d1;
+}
+

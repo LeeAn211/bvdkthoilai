@@ -26,11 +26,17 @@ export default async function VaccinationDetailPage({ params, searchParams }: Pr
   let currentPrice: any
   let medpro = process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'
   let hotline = '0292 3861 234'
+  let pageSettings: any = {}
 
   try {
-    const [payload, settings] = await Promise.all([getCMS(), getGlobal('site-settings')])
-    medpro = (settings as any)?.medproUrl || medpro
-    hotline = (settings as any)?.hotline || hotline
+    const [payload, vaxSettings, settings] = await Promise.all([
+      getCMS(),
+      getGlobal('vaccination-settings' as any).catch(() => null),
+      getGlobal('site-settings').catch(() => ({})),
+    ])
+    pageSettings = (vaxSettings && Object.keys(vaxSettings).length > 0) ? vaxSettings : (settings as any)?.vaccinationPage || {}
+    medpro = pageSettings?.bookButtonUrl || (settings as any)?.medproUrl || medpro
+    hotline = pageSettings?.consultHotline || (settings as any)?.hotline || hotline
 
     if (kind === 'vaccine') {
       item = await payload.findByID({ collection: 'vaccines', id, depth: 2 })
@@ -61,6 +67,7 @@ export default async function VaccinationDetailPage({ params, searchParams }: Pr
     const isAvail = item.availability !== 'unavailable' && item.availability !== 'coming'
     const isComing = item.availability === 'coming'
     const image = mediaUrl(item.image, 'article')
+    const displayPrice = typeof item.price === 'number' ? item.price : currentPrice?.price
 
     return (
       <>
@@ -94,10 +101,12 @@ export default async function VaccinationDetailPage({ params, searchParams }: Pr
               <div className="vaccineDetailGrid">
                 <div className="vaccineDetailFactBox">
                   <span className="vaccineDetailFactLabel">Giá tiêm niêm yết</span>
-                  <span className="vaccineDetailFactPrice">{money(currentPrice?.price)}</span>
-                  {currentPrice?.decisionNo && (
+                  <span className="vaccineDetailFactPrice">{money(displayPrice)}</span>
+                  {item.priceNote ? (
+                    <small style={{ color: '#64748b', fontSize: '11px' }}>{item.priceNote}</small>
+                  ) : currentPrice?.decisionNo ? (
                     <small style={{ color: '#64748b', fontSize: '11px' }}>QĐ: {currentPrice.decisionNo}</small>
-                  )}
+                  ) : null}
                 </div>
 
                 <div className="vaccineDetailFactBox">
@@ -159,15 +168,17 @@ export default async function VaccinationDetailPage({ params, searchParams }: Pr
                   >
                     📞 Gọi tư vấn: {hotline}
                   </a>
-                  <a
-                    href={item.registrationUrl || medpro}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="vaccineBookBtn"
-                    style={{ padding: '10px 20px', fontSize: '14px' }}
-                  >
-                    Đăng ký tiêm chủng ngay
-                  </a>
+                  {pageSettings?.showBookButton !== false && (
+                    <a
+                      href={item.registrationUrl || medpro}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="vaccineBookBtn"
+                      style={{ padding: '10px 20px', fontSize: '14px' }}
+                    >
+                      {pageSettings?.bookButtonText ? `${pageSettings.bookButtonText} ngay` : 'Đăng ký tiêm chủng ngay'}
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

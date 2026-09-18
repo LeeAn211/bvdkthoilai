@@ -104,17 +104,48 @@ function ScienceCard({
 
 export function HomeScienceTabs({ items, tabs: configuredTabs }: { items: ScienceItem[]; tabs?: ScienceTab[] }) {
   const tabs = useMemo(() => {
-    const valid = (configuredTabs || []).filter(
-      (tab) => tab.label?.trim() || tab.categories?.some(Boolean) || tab.manualItems?.some((item) => item.title?.trim()),
-    )
-    const source = configuredTabs === undefined ? (valid.length ? valid : defaultTabs) : valid
-    return source.map((tab, index) => ({
-      ...tab,
-      label: tab.label?.trim() || `Chuyên mục ${index + 1}`,
-      categories: (tab.categories || []).filter(Boolean),
-      manualItems: (tab.manualItems || []).filter((item) => item.title?.trim()),
-    }))
-  }, [configuredTabs])
+    // 1. Nếu có cấu hình tabs: chỉ giữ lại các tab THỰC SỰ CÓ BÀI VIẾT
+    if (Array.isArray(configuredTabs) && configuredTabs.length > 0) {
+      const activeConfigured = configuredTabs
+        .map((tab, index) => {
+          const label = tab.label?.trim() || `Chuyên mục ${index + 1}`
+          const categories = (tab.categories || []).filter(Boolean)
+          const manualItems = (tab.manualItems || []).filter((item) => item.title?.trim())
+          const matchingArticles = items.filter((item) => categories.includes(item.category || ''))
+          const totalCount = matchingArticles.length + manualItems.length
+          return {
+            ...tab,
+            label,
+            categories,
+            manualItems,
+            totalCount,
+          }
+        })
+        .filter((tab) => tab.totalCount > 0)
+
+      if (activeConfigured.length > 0) {
+        return activeConfigured
+      }
+    }
+
+    // 2. Tự động sinh danh sách Tabs từ chính các Chuyên mục THỰC TẾ của các bài viết đang có
+    const categoryMap = new Map<string, number>()
+    for (const item of items) {
+      const cat = item.category?.trim() || 'Nghiên cứu khoa học'
+      categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1)
+    }
+
+    if (categoryMap.size > 0) {
+      return Array.from(categoryMap.keys()).map((cat) => ({
+        label: cat,
+        categories: [cat],
+        manualItems: [],
+        totalCount: categoryMap.get(cat) || 0,
+      }))
+    }
+
+    return []
+  }, [configuredTabs, items])
 
   const [activeTab, setActiveTab] = useState(tabs[0]?.label || '')
 
@@ -131,44 +162,41 @@ export function HomeScienceTabs({ items, tabs: configuredTabs }: { items: Scienc
     ]
   }, [activeTab, items, tabs])
 
-  if (!tabs.length) {
-    return <div className="professionalEmpty tabEmptyState">Chưa có nhóm Hoạt động khoa học đang sử dụng.</div>
+  if (!tabs.length || filteredItems.length === 0) {
+    return null
   }
 
-  // Luôn 5 slot: [0] = ô lớn, [1..4] = 4 ô nhỏ (null nếu thiếu bài)
-  const slots = Array.from({ length: 5 }, (_, i) => filteredItems[i] || null)
-  const [featured, ...sideItems] = slots
+  // 1 ô lớn nổi bật, các ô còn lại trong filteredItems (tối đa 4 ô nhỏ)
+  const [featured, ...sideItems] = filteredItems.slice(0, 5)
 
   return (
     <>
-      <div className="portalTabs newsTabButtons" role="tablist" aria-label="Nhóm hoạt động khoa học">
-        {tabs.map((tab) => (
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab.label}
-            className={activeTab === tab.label ? 'active' : ''}
-            onClick={() => setActiveTab(tab.label)}
-            key={tab.label}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {/* Tab buttons: Chỉ hiển thị khi có từ 2 chuyên mục trở lên */}
+      {tabs.length > 1 && (
+        <div className="portalTabs newsTabButtons" role="tablist" aria-label="Nhóm hoạt động khoa học">
+          {tabs.map((tab) => (
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.label}
+              className={activeTab === tab.label ? 'active' : ''}
+              onClick={() => setActiveTab(tab.label)}
+              key={tab.label}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {filteredItems.length > 0 ? (
-        <div role="tabpanel" className="homeEditorialGrid" style={{ marginTop: 22 }}>
-          {featured ? (
-            <ScienceCard item={featured} isFeatured={true} activeTab={activeTab} />
-          ) : (
-            <EmptyCard />
-          )}
-          {sideItems.map((item, idx) =>
+      {/* Panel — dùng cùng form homeEditorialGrid của section Thông báo */}
+      {featured ? (
+        <div role="tabpanel" className="homeEditorialGrid" style={{ marginTop: tabs.length > 1 ? 22 : 0 }}>
+          <ScienceCard item={featured} isFeatured={true} activeTab={activeTab} />
+          {sideItems.map((item) =>
             item ? (
               <ScienceCard key={item.id} item={item} isFeatured={false} activeTab={activeTab} />
-            ) : (
-              <EmptyCard key={`empty-${idx}`} />
-            ),
+            ) : null,
           )}
         </div>
       ) : (

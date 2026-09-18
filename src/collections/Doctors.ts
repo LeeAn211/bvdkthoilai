@@ -5,11 +5,11 @@ import { detachNavigationReference } from '@/hooks/detachNavigationReference'
 
 export const Doctors: CollectionConfig = {
   slug: 'doctors',
-  labels: { singular: 'Bác sĩ', plural: 'Bác sĩ' },
+  labels: { singular: 'Bác sĩ / Chuyên gia', plural: 'Đội ngũ Bác sĩ & Chuyên gia' },
   admin: {
     useAsTitle: 'name', group: '🩺 Chuyên môn & Tổ chức',
-    defaultColumns: ['name', 'department', 'specialtyRef', 'title', 'active', 'order'],
-    description: 'Khoa/Phòng là quan hệ tổ chức chính của bác sĩ. Chuyên khoa chỉ chọn khi bác sĩ thực sự thuộc một lĩnh vực chuyên môn riêng.',
+    defaultColumns: ['name', 'department', 'specialtyRef', 'title', 'active', 'showOnHome', 'order'],
+    description: 'Hệ thống quản lý thống nhất toàn bộ Thầy thuốc, Bác sĩ và Chuyên gia hiển thị trên Trang chủ cũng như toàn bộ website.',
   },
   access: {
     read: anyone,

@@ -4,12 +4,15 @@ import { slugField } from '@/fields/common'
 
 export const SurveyCampaigns: CollectionConfig = {
   slug: 'survey-campaigns',
-  labels: { singular: 'Đợt khảo sát', plural: 'Đợt khảo sát' },
+  labels: {
+    singular: 'Đợt khảo sát & Phiếu trả lời',
+    plural: 'Khảo sát ý kiến & Kết quả đánh giá',
+  },
   admin: {
     useAsTitle: 'title',
     group: '💬 Chăm sóc người bệnh & Khảo sát',
     defaultColumns: ['title', 'slug', 'active', 'startAt', 'endAt'],
-    description: 'Quản lý toàn bộ đợt khảo sát ý kiến người bệnh & nhân viên. Tùy chỉnh danh mục phòng khám, khoa điều trị, chức danh và địa bàn được liên kết trực tiếp tại bảng điều khiển phía trên.',
+    description: 'Hệ thống quản lý thống nhất: Quản lý các đợt khảo sát, câu hỏi, theo dõi số lượt tham gia, xem chi tiết phiếu trả lời, biểu đồ mức độ hài lòng và xuất báo cáo Excel.',
     components: {
       beforeList: ['/src/components/admin/SurveyQuickToolbar#default'],
     },

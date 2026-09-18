@@ -1,6 +1,557 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-18] - Tích Hợp Tính Năng Quét Ảnh Lịch Trực Bằng AI (Google Gemini Vision OCR) & Migration 034
+## [2026-09-18] - Tái Thiết Kế Khối Thông Báo & Editorial Grid: Phương Án 3 (1 Thẻ Lớn Nổi Bật + Danh Sách Hàng Ngang)
+
+- **Thời gian thực hiện:** 22:30 - 22:36 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Tôi thấy phần thông báo các ô nội dung hiển thị bị mất cân đối quá hãy thiết kế lại cho chuyên nghiệp.*
+  - *Người dùng lựa chọn: "Phương án 3: Bố cục 1 Thẻ Lớn Nổi Bật (Trái) + Danh Sách Hàng Ngang (Phải)".*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Tái cấu trúc bố cục `renderEditorialSection` cho mẫu `editorial-grid` (`src/app/(frontend)/page.tsx`):**
+     - Thay thế layout dạng lưới cũ (vốn bị kéo giãn mất cân đối giữa thẻ dọc bên trái và 4 ô nhỏ bên phải) sang cấu trúc phân tầng 2 cột hiện đại:
+       - **Cột trái (1 Thẻ Spotlight Lớn Nổi Bật - `editorialHeroCard`):**
+         - Tỷ lệ khung ảnh chuẩn `16:9.6` góc bo 16px sắc nét, hỗ trợ `objectFit` và `objectPosition` linh hoạt.
+         - Badge danh mục chuẩn y tế (`THÔNG BÁO`, `ĐẤU THẦU – MUA SẮM`, `VĂN BẢN`...) nổi bật ở góc ảnh với hiệu ứng phủ gradient vi mô.
+         - Phần thông tin: Biểu tượng lịch SVG + Ngày tháng rõ ràng (xóa bỏ triệt để lỗi dấu phẩy đơn độc `, 12/9/2026`), Tiêu đề `h3` cỡ chữ 18px font-weight 800 màu `#0f2e47`, đoạn tóm tắt 3 dòng thanh thoát.
+         - Chân thẻ: Nút hành động "Xem chi tiết thông báo →" tích hợp hiệu ứng chuyển dịch mũi tên tinh tế khi hover.
+       - **Cột phải (Danh sách hàng ngang - `editorialRowList`):**
+         - Hiển thị 4 thông báo tiếp theo dưới dạng các thẻ hàng ngang (`editorialRowItem`) gọn gàng, chia đều khoảng cách theo chiều cao thẻ chính.
+         - Thumbnail vuông bo góc chuẩn 96x72px nằm bên trái.
+         - Thân hàng: Tag chuyên mục nhỏ in hoa (`10px` nền `#eef6fd` chữ xanh y tế `#0754a8`), ngày cập nhật, tiêu đề in đậm 2 dòng (`14px` màu `#12344d`), và dòng trích đoạn tóm lược.
+         - Nút mũi tên tròn `editorialRowArrow` bên phải hỗ trợ chỉ báo điều hướng sang trang chi tiết.
+  2. **Tối ưu hóa Styling & Trải nghiệm Responsive (`30-home-editorial.css`):**
+     - Desktop: Tỷ lệ 2 cột `1.15fr : 1fr` với khoảng cách `gap: 22px`, cân bằng chiều cao hoàn hảo, không còn khoảng trống thừa.
+     - Tablet (<= 900px): Tự động dàn 1 cột mượt mà, thẻ lớn phía trên, danh sách hàng ngang phía dưới.
+     - Mobile (<= 600px): Tối ưu thumbnail hàng ngang về 84x64px, ẩn dòng tóm tắt phụ để bảo vệ diện tích màn hình, chống tràn layout.
+  3. **Kiểm tra chất lượng:**
+     - `npx tsc --noEmit`: 0 lỗi.
+     - Không cần migration database mới do tận dụng schema dữ liệu hiện có.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/app/(frontend)/page.tsx`
+  - `src/app/styles/30-home-editorial.css`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-18] - Tạo Mẫu Section "Khối Thẻ Slider 3 Ô Tùy Biến" & Đồng Bộ Cụm Điều Hướng Chuyên Gia / Kỹ Thuật
+
+- **Thời gian thực hiện:** 22:12 - 22:19 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *TẠO MẪU SETTION THEO CHUẨN ĐÓ ĐỂ SAU NÀY TÔI CÓ THỂ THÊM VÀ CÁC MẪU HIỆN CÓ HỎI TÔI RỒI MỚI LÀM.*
+  - *Đồng ý và sẵn đồng bộ kiểu điều hướng cho giống nhau. Các điều hướng của chuyên gia của tôi và kỹ thuật chuyên sâu làm giống của các loại vắc xin.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Tạo Mẫu Section "Khối Thẻ Slider 3 ô Tùy Biến" (Custom 3-Card Carousel) trên Trang chủ:**
+     - Bổ sung loại Section mới `custom-carousel` vào enum `homepage_sections.type` trong `Homepage.ts`.
+     - Cho phép quản trị viên thêm không giới hạn các Section dạng Slider 3 ô trên Trang chủ với đầy đủ cấu hình:
+       - `carouselItemsPerView`: Tùy chỉnh số thẻ hiển thị cùng lúc (1 - 4 thẻ, mặc định 3 thẻ).
+       - `carouselAutoplaySeconds`: Thời gian tự động chuyển sang thẻ khác (mặc định 5s, đặt 0 để tắt).
+       - `carouselDetailBtnText`: Chữ mặc định trên nút Chi tiết (mặc định "Chi tiết").
+       - `carouselActionBtnText`: Chữ mặc định trên nút Đăng ký/Hành động (mặc định "Đăng ký ngay").
+       - `carouselSeeMoreText` & `carouselSeeMoreUrl`: Tùy chỉnh link và chữ "Xem tất cả →".
+     - Mảng thẻ tùy biến `customCarouselCards` (`hp_custom_cards`): Cho phép thêm/sửa/xóa/kéo thả sắp xếp các thẻ theo đúng chuẩn thẻ hiện đại:
+       - Header: Badge trạng thái (xanh lá, xanh dương, vàng cam, đỏ), Xuất xứ / Đơn vị, Mã định danh.
+       - Body: Tiêu đề, Mô tả tóm tắt, Bảng 3 thông số chi tiết (Tên thông số + Giá trị).
+       - Footer: Nhãn giá, Mức giá/Chi phí (nổi bật màu đỏ hoặc xanh lá khi miễn phí), Nút Chi tiết, Nút Đăng ký (hỗ trợ link riêng từng thẻ hoặc fallback mặc định).
+  2. **Tạo Component Frontend `CustomCardsCarousel.tsx`:**
+     - Hiển thị đúng chuẩn 3 ô trên PC, 2 ô trên Tablet, 1 ô trên Mobile.
+     - Tự động chuyển động tuần tự mượt mà, tự dừng khi rê chuột (`pause on hover`), hỗ trợ vuốt chạm (`touch swipe`) trên điện thoại/máy tính bảng.
+     - Tích hợp cụm điều hướng Trước/Sau tròn và các chấm tròn (`dots`) chỉ báo đồng bộ.
+  3. **Đồng bộ cụm điều hướng của "Chuyên gia của chúng tôi" & "Kỹ thuật chuyên sâu" giống hệt Vắc xin:**
+     - Nâng cấp `OurExpertsCarousel.tsx` & `OurExpertsCarousel.module.css`:
+       - Thay thế cụm nút cũ bằng cụm điều hướng chuẩn: Nút Trước (`<`) + Dải chấm tròn (`dots` với active dẹt 24px) + Nút Kế tiếp (`>`).
+       - Đồng bộ kích thước nút tròn `38px x 38px`, viền xanh y tế `#0878d1`, hiệu ứng hover scale `1.08`.
+     - Nâng cấp `AdvancedTechniquesCarousel.tsx` & `AdvancedTechniquesCarousel.module.css`:
+       - Tích hợp thanh chấm tròn `techCarouselDots` chuyển động theo `currentIndex`.
+       - Đồng bộ thiết kế nút tròn `38px x 38px` và hiệu ứng tương tác 100% giống mục Vắc xin.
+  4. **Đóng gói Migration Database 042 & Seal Schema Contract:**
+     - Tạo file migration: `scripts/db-migrations/20260918_042_add_custom_carousel_section_to_homepage.mjs`.
+     - Thêm giá trị enum `custom-carousel` vào PostgreSQL.
+     - Bổ sung các cột carousel vào bảng `homepage_sections` và bảng phiên bản `_homepage_v_version_sections`.
+     - Tạo bảng phụ `hp_custom_cards` và `_hp_custom_cards_v` với đầy đủ ràng buộc khóa ngoại `CASCADE`.
+     - Seal schema contract: `npm run db:schema:seal -- 20260918_042_add_custom_carousel_section_to_homepage`.
+     - Deploy thành công: `npm run db:migrate:deploy` (42 applied, 0 pending).
+- **Tệp tin đã chỉnh sửa:**
+  - `src/globals/Homepage.ts`
+  - `src/components/CustomCardsCarousel.tsx` (Mới)
+  - `src/components/OurExpertsCarousel.tsx`
+  - `src/components/OurExpertsCarousel.module.css`
+  - `src/components/AdvancedTechniquesCarousel.tsx`
+  - `src/components/AdvancedTechniquesCarousel.module.css`
+  - `src/app/(frontend)/page.tsx`
+  - `scripts/db-migrations/20260918_042_add_custom_carousel_section_to_homepage.mjs` (Mới)
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+- **Kiểm thử chất lượng:**
+  - `npx tsc --noEmit` đạt **0 lỗi**.
+  - `npm run db:schema:check` & `npm run db:migrate:status`: **Hợp lệ 100% (42 applied, 0 pending)**.
+
+## [2026-09-18] - Nâng Cấp Slider 3 Ô Vắc Xin Chuyển Động Tự Động & Chống Rớt Dòng Nút Bấm
+
+- **Thời gian thực hiện:** 21:50 - 21:58 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Chỉ cho phép hiển thị 3 ô thôi rồi chuyển động qua các ô khác. Sửa lại kích thước chữ cho đừng bị rớt dòng ở ô chi tiết và đăng ký tiêm, nhớ đưa vào admin để chỉnh nhá có thể mặc định chung với mục tiêm chủng.*
+  - *1. Hiển thị đúng 3 ô vắc xin và tự động chuyển động tuần tự (Carousel Slider 3 items): PHẦN NÀY CÓ ĐƯA VÀO ADMIN CHƯA*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Đưa toàn bộ cấu hình Carousel Slider và Nút bấm vắc xin vào Admin CMS (Global "Trang Tiêm chủng & Vắc xin"):**
+     - Đã tích hợp đầy đủ trong Admin CMS tại mục **"🏥 Khám bệnh & Dịch vụ Y tế"** -> **"Trang Tiêm chủng & Vắc xin"** (`VaccinationSettings.ts`):
+       - `itemsPerView`: Số ô vắc xin hiển thị cùng lúc trên màn hình lớn (Mặc định: 3 ô, hỗ trợ tùy chỉnh 1 - 4 ô).
+       - `autoplaySeconds`: Thời gian tự động chuyển động qua ô khác (Mặc định: 5 giây, hỗ trợ từ 0 - 60 giây, đặt 0 nếu muốn tắt tự động trượt).
+       - `bookButtonText`: Chữ hiển thị trên nút Đăng ký (Mặc định: "Đăng ký tiêm").
+       - `detailButtonText`: Chữ hiển thị trên nút Chi tiết (Mặc định: "Chi tiết").
+       - `bookButtonUrl`: Đường dẫn liên kết mặc định khi bấm Đăng ký tiêm.
+  2. **Hiển thị đúng 3 ô vắc xin và chuyển động xoay vòng tuần tự (Carousel Slider 3 items):**
+     - Tại `VaccinationTabs.tsx`, tích hợp cơ chế Slider 3 ô cho danh mục vắc xin:
+       - Mặc định chỉ hiển thị đúng 3 ô vắc xin cùng lúc trên desktop (`grid-template-columns: repeat(3, minmax(0, 1fr))`), 2 ô trên tablet và 1 ô trên mobile.
+       - Tự động chuyển động xoay vòng mượt mà theo cấu hình trong Admin CMS (mặc định 5s), tự động dừng khi hover chuột (`pause on hover`).
+       - Bổ sung cụm nút điều hướng Trước / Sau (`prevVaccine`, `nextVaccine`) và thanh chỉ báo chấm tròn (`vaccineCarouselDots`) trực quan.
+       - Hỗ trợ vuốt cảm ứng chạm (`touch swipe`) mượt mà trên điện thoại và máy tính bảng.
+       - Nút chuyển đổi linh hoạt giữa dạng Slider 3 ô và dạng Lưới xem tất cả vắc xin.
+  3. **Khắc phục triệt để lỗi rớt dòng nút "Chi tiết" và "Đăng ký tiêm":**
+     - Tại `src/app/styles/patient-care.css` và `src/app/(frontend)/tiem-chung/tiem-chung.css`:
+       - Điều chỉnh kích thước chữ nút về `font-size: 12px`, padding gọn gàng `6px 12px` (nút Chi tiết) và `6px 14px` (nút Đăng ký tiêm).
+       - Thêm thuộc tính bắt buộc `white-space: nowrap !important` và `flex-shrink: 0`, `line-height: 1.25` đảm bảo chữ "Chi tiết" và "Đăng ký tiêm" tuyệt đối không bị ngắt xuống 2 dòng trên bất kỳ kích thước màn hình nào.
+  4. **Đóng gói Migration Database 041 & Seal Schema Contract:**
+     - Tạo migration `scripts/db-migrations/20260918_041_add_carousel_controls_to_vaccination_settings.mjs`.
+     - Thêm các cột mới vào bảng `vaccination_settings`: `items_per_view` (numeric default 3), `autoplay_seconds` (numeric default 5), `detail_button_text` (varchar default 'Chi tiết').
+     - Seal schema contract: `npm run db:schema:seal -- 20260918_041_add_carousel_controls_to_vaccination_settings`.
+     - Chạy deploy migration: `npm run db:migrate:deploy` (41 applied, 0 pending).
+- **Tệp tin đã chỉnh sửa:**
+  - `src/globals/VaccinationSettings.ts`
+  - `src/components/VaccinationTabs.tsx`
+  - `src/app/styles/patient-care.css`
+  - `src/app/(frontend)/tiem-chung/tiem-chung.css`
+  - `src/app/(frontend)/page.tsx`
+  - `scripts/db-migrations/20260918_041_add_carousel_controls_to_vaccination_settings.mjs`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+- **Kiểm thử chất lượng:**
+  - `npx tsc --noEmit` đạt **0 lỗi**.
+  - `npm run db:schema:check` và `npm run db:migrate:status`: **Hợp lệ 100% (41 applied, 0 pending)**.
+
+- **Thời gian thực hiện:** 21:22 - 21:27 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Tôi muốn phần tiêm chủng các loại vắc xin hiển thị ô kiểu này (kèm hình ảnh mẫu thiết kế thẻ vắc xin chuẩn: Header có badge trạng thái ● ĐANG CÓ VẮC XIN, Xuất xứ, Mã vắc xin; Body có Tiêu đề đậm, Mô tả tóm tắt, Bảng thông tin Phòng bệnh, Đối tượng, Hãng SX; Footer có GIÁ TIÊM NIÊM YẾT màu đỏ nổi bật và 2 nút "Chi tiết" + "Đăng ký tiêm").*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Tạo Component `ModernVaccineItemCard` (`VaccinationTabs.tsx`):**
+     - Thiết kế chính xác theo ảnh mẫu 100%:
+       - **Header:**
+         - Badge trạng thái `vaccineStatusPill`: Chấm tròn trạng thái `vaccineStatusDot` + Chữ in hoa `● ĐANG CÓ VẮC XIN` (xanh lá nhạt), `⏱ SẮP CÓ VẮC XIN` (vàng), hoặc `✕ TẠM HẾT` (đỏ nhạt).
+         - Badge `vaccineOriginPill`: `Xuất xứ: [Nước sản xuất]` (nền xanh lam nhạt).
+         - Mã vắc xin `vaccineCodeTag`: Font monospace tinh tế (như `VX-6IN1`).
+       - **Body:**
+         - Tiêu đề vắc xin lớn, in đậm (`18.5px`, font-weight 800, màu xanh đen y tế sang trọng `#0c2d48`).
+         - Dòng tóm tắt mô tả ngắn gọn (giới hạn 2 dòng với `line-clamp`).
+         - Hộp thông số `vaccineInfoTableBox` (nền xám nhạt bo tròn 14px, viền mờ 1px):
+           - **Phòng bệnh:** Text xanh dương `#0369a1` in đậm.
+           - **Đối tượng:** Text đen đậm (Trẻ từ 2 tháng tuổi đến 24 tháng tuổi...).
+           - **Hãng SX:** Nhà sản xuất (Sanofi Pasteur / GSK...).
+       - **Footer:**
+         - Khối giá: `GIÁ TIÊM NIÊM YẾT` (in hoa, màu ghi xám thanh thoát) + Con số giá màu đỏ đậm `#e11d48` font size 21px siêu sắc nét (hoặc màu xanh lá nếu Miễn phí).
+         - Cụm nút tác vụ: Nút viền xanh `Chi tiết` dẫn tới bài chi tiết vắc xin + Nút nền xanh dương đậm `Đăng ký tiêm` dẫn tới hệ thống đặt lịch / Medpro.
+  2. **Hiển thị linh hoạt dạng Lưới (`vaccineModernGrid`):**
+     - Khi người dùng chọn tab **"Các loại vắc xin"**, giao diện tự động kích hoạt lưới thẻ hiện đại `vaccineModernGrid` (tối ưu responsive từ màn hình máy tính đến điện thoại di động).
+     - Khi chọn các tab khác (như Thông báo lịch tiêm, Đợt tiêm...), hệ thống giữ định dạng bài viết/thông báo tin tức chuẩn mực.
+  3. **Đồng bộ CSS & Dữ liệu:**
+     - Bổ sung toàn bộ class CSS chuẩn y tế vào `src/app/styles/patient-care.css` (được nạp tự động toàn trang).
+     - Bổ sung truyền trường `code`, `slug` trong `homeVaccines` tại `src/app/(frontend)/page.tsx`.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/VaccinationTabs.tsx`
+  - `src/app/styles/patient-care.css`
+  - `src/app/(frontend)/page.tsx`
+- **Kiểm thử chất lượng:**
+  - `npx tsc --noEmit` đạt **0 lỗi**.
+  - Kiểm tra Trang chủ `http://localhost:3000` đạt **HTTP 200 OK**, hiển thị thẻ vắc xin chuẩn xác theo hình mẫu.
+
+## [2026-09-18] - Bổ Sung Loại Section Mới "Cổng Tiêm Chủng Đa Năng (Đa Tab)" Cho Trang Chủ (Quản Trị 100% Linh Hoạt Không Cần Code Lại)
+
+- **Thời gian thực hiện:** 21:10 - 21:18 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Phần tiêm chủng tôi cũng muốn làm giống vậy (cơ chế thêm tab linh hoạt, chọn nguồn dữ liệu Vắc xin, Đợt tiêm, Thông báo hoặc Tự nhập thủ công 100% từ Admin CMS).*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Thêm loại Section mới vào Admin CMS Trang chủ (`Homepage.ts`):**
+     - Đã bổ sung loại mục: **"Cổng tiêm chủng đa năng (Đa Tab: Vắc xin, Đợt tiêm, Thông báo...)"** (`vaccination-portal-services`).
+     - Tích hợp mảng cấu hình đa tab `portalVaccinationTabs` (`hp_vax_tabs_cfg`), cho phép quản trị viên:
+       - Tự do thêm không giới hạn các Tab tiêm chủng theo nhu cầu thực tế.
+       - Tùy chọn nguồn dữ liệu (`source`) cho từng Tab:
+         - 💉 **Danh mục các loại vắc xin** (`vaccines`): Tự động nạp vắc xin kèm giá, độ tuổi, tình trạng vắc xin từ hệ thống.
+         - 🗓️ **Tiêm ngừa theo đợt / Chiến dịch tiêm** (`campaigns`): Nạp các đợt tiêm chủng định kỳ / đột xuất.
+         - 📢 **Thông báo lịch tiêm chủng** (`announcements`): Nạp các văn bản, hướng dẫn tiêm phòng của bệnh viện.
+         - ✍️ **Tự nhập danh sách thẻ thủ công** (`manual`): Cho phép tự nhập tên vắc xin / sự kiện, mô tả, giá tiêm, huy hiệu và liên kết riêng (`hp_vax_manual`).
+       - Tùy chỉnh số lượng thẻ hiển thị tối đa (`limit`).
+       - Thêm huy hiệu nổi bật cho Tab (`customBadge` như ĐANG CÓ, MỚI, MIỄN PHÍ).
+       - Tùy chỉnh đường dẫn "Xem thêm" riêng cho từng tab (`seeMoreUrl`).
+  2. **Cơ chế hiển thị thông minh & Thẩm mỹ cao (`VaccinationTabs.tsx` & `page.tsx`):**
+     - Hỗ trợ hiển thị huy hiệu `customBadge` nổi bật trên từng tab button.
+     - Kế thừa toàn bộ nguyên tắc chống rỗng: Chỉ những tab **thực sự có dữ liệu** mới hiển thị.
+     - Nếu chỉ có 1 tab có dữ liệu: Tự động ẩn thanh nút tab, hiển thị thẳng lưới nội dung vắc xin/thông báo liền mạch.
+     - Nếu có >= 2 tab có dữ liệu: Render thanh tab buttons chuyển đổi mượt mà với badge số lượng trực quan.
+     - Nếu chưa có bất kỳ dữ liệu tiêm chủng nào: Tự động ẩn toàn bộ Section khỏi Trang chủ (không để lộ khung rỗng).
+  3. **Đóng gói Migration Database chuẩn Mandate 13 & 15:**
+     - Đã sinh lại schema Payload: `npm run generate:db-schema`.
+     - Tạo file migration: `scripts/db-migrations/20260918_040_add_vaccination_portal_services_to_homepage.mjs` (bổ sung giá trị enum và tạo 4 bảng `hp_vax_tabs_cfg`, `hp_vax_manual`, `_hp_vax_tabs_cfg_v`, `_hp_vax_manual_v`).
+     - Đã seal schema contract: `npm run db:schema:seal -- 20260918_040_add_vaccination_portal_services_to_homepage`.
+     - Đã kiểm tra contract hợp lệ: `npm run db:schema:check`.
+     - Đã deploy và verify tại database local: `npm run db:migrate:deploy` thành công (40 migrations verified).
+- **Tệp tin đã tạo & chỉnh sửa:**
+  - `src/globals/Homepage.ts`
+  - `src/components/VaccinationTabs.tsx`
+  - `src/app/(frontend)/page.tsx`
+  - `scripts/db-migrations/20260918_040_add_vaccination_portal_services_to_homepage.mjs` *(Mới tạo)*
+- **Kiểm thử chất lượng:**
+  - `npx tsc --noEmit` đạt **0 lỗi**.
+  - Truy vấn Trang chủ `http://localhost:3000` đạt **HTTP 200 OK**, hoạt động mượt mà, không phát sinh bất kỳ lỗi nào.
+
+## [2026-09-18] - Bổ Sung Section Đa Nguồn Linh Hoạt "Cổng Tiện Ích & Dịch Vụ Người Bệnh (Đa Tab)" Cho Trang Chủ (Quản Trị 100% Không Cần Viết Code)
+
+- **Thời gian thực hiện:** 20:55 - 21:03 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Tôi muốn thêm 1 section mới gắn tab gói khám và các tab khác trong trang dành cho người bệnh, có thể cho các tab khác không chỉ riêng tab gói khám vì sau này có thể tự thêm mà không cần code lại.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Thêm loại Section mới vào Admin CMS Trang chủ (`Homepage.ts`):**
+     - Đã bổ sung loại mục: **"Cổng tiện ích & Dịch vụ người bệnh (Đa Tab: Gói khám, Quy trình, Nội trú...)"** (`patient-portal-services`).
+     - Tích hợp mảng cấu hình đa tab `portalServiceTabs` (`hp_svc_tabs`), cho phép quản trị viên:
+       - Tự do thêm không giới hạn các Tab dịch vụ.
+       - Tùy chọn nguồn dữ liệu (`source`) cho từng Tab:
+         - 📦 **Gói khám sức khỏe & Tầm soát** (`packages`): Tự động nạp các gói khám từ trang `/goi-kham` (Hiển thị Tên gói, Huy hiệu, Giá niêm yết, Đối tượng, Danh mục kỹ thuật, Nút Đăng ký).
+         - 🩺 **Sơ đồ & Quy trình khám bệnh** (`flow`): Tự động nạp các bước quy trình khám từ trang `/quy-trinh-kham-benh`.
+         - 🛏️ **Hướng dẫn điều trị nội trú** (`inpatient`): Tự động nạp các bước và lưu ý nhập viện từ trang `/dieu-tri-noi-tru`.
+         - 🗺️ **Sơ đồ các tầng & Tiện ích** (`map`): Tự động nạp phân tầng khoa phòng từ trang `/so-do-benh-vien`.
+         - 📋 **Thẻ tiện ích Cổng người bệnh** (`portal-cards`): Lấy trực tiếp danh mục tiện ích từ trang `/danh-cho-nguoi-benh`.
+         - ✍️ **Tự nhập danh sách thẻ thủ công** (`manual`): Cho phép tự nhập tiêu đề, mô tả, huy hiệu, icon và liên kết riêng.
+       - Tùy chỉnh số lượng mục hiển thị tối đa (`limit`).
+       - Thêm huy hiệu nổi bật cho Tab (`customBadge` như HOT, MỚI, 24/7).
+       - Tự động nhận diện hoặc ghi đè link nút "Xem tất cả →" (`seeMoreUrl`).
+  2. **Cơ chế hiển thị thông minh & An toàn tuyệt đối:**
+     - Kế thừa toàn bộ nguyên tắc chống rỗng: Chỉ những tab **thực sự có dữ liệu** mới hiển thị.
+     - Nếu cấu hình 1 tab duy nhất: Tự động ẩn thanh nút bấm tab, hiển thị thẳng lưới nội dung đẹp mắt.
+     - Nếu cấu hình >= 2 tab: Tự động render thanh tab buttons tương tác mượt mà.
+     - Nếu chưa có nội dung hoặc tất cả tab bị ẩn: Tự động ẩn toàn bộ Section khỏi Trang chủ (không bao giờ lộ khung rỗng).
+  3. **Đóng gói Migration Database chuẩn Mandate 13 & 15:**
+     - Đã sinh lại schema Payload: `npm run generate:db-schema`.
+     - Tạo file migration: `scripts/db-migrations/20260918_039_add_patient_portal_services_to_homepage.mjs` (bổ sung giá trị enum và tạo 4 bảng `hp_svc_tabs`, `hp_svc_manual`, `_hp_svc_tabs_v`, `_hp_svc_manual_v`).
+     - Đã seal schema contract: `npm run db:schema:seal -- 20260918_039_add_patient_portal_services_to_homepage`.
+     - Đã deploy và verify tại database local: `npm run db:migrate:deploy` thành công (39 migrations verified).
+- **Tệp tin đã tạo & chỉnh sửa:**
+  - `src/globals/Homepage.ts`
+  - `src/components/HomePatientServiceTabs.tsx` *(Mới tạo)*
+  - `src/app/(frontend)/page.tsx`
+  - `scripts/db-migrations/20260918_039_add_patient_portal_services_to_homepage.mjs` *(Mới tạo)*
+- **Kiểm thử chất lượng:**
+  - `npx tsc --noEmit` đạt **0 lỗi**.
+  - Truy vấn Trang chủ `http://localhost:3000` đạt **HTTP 200 OK**, hoạt động mượt mà, không phát sinh bất kỳ lỗi nào.
+
+
+- **Thời gian thực hiện:** 20:30 - 20:42 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Phần tin tức khi tôi viết bài và tạo Chuyên mục chuẩn có bài viết thì mới hiện ra section ở ngoài trang chủ có được không, nếu có 2 chuyên mục thì thành 2 tab. Chứ khi tạo các tab mà không có nội dung thì xấu.*
+  - *Đồng ý và áp dụng cho các mục khác có cơ chế chọn nhiều tab giống như tin tức.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Tin tức Bệnh viện (`news-portal` / `HomeNewsTabs.tsx` & `page.tsx`):**
+     - Section trên Trang chủ chỉ xuất hiện khi cơ sở dữ liệu **thực sự đã có bài viết xuất bản** (`news.length > 0`). Nếu chưa có bài, tự động ẩn trọn vẹn section khỏi Trang chủ.
+     - Thanh Tabs chỉ lọc và hiển thị những Chuyên mục **thực sự có bài viết** (nếu admin cấu hình tab thủ công nhưng tab đó 0 bài thì tự động ẩn tab; nếu không cấu hình tab thì tự động nhận diện danh sách các Chuyên mục từ chính bài viết).
+     - **Tối ưu hiển thị thanh Tab buttons**:
+       - Nếu chỉ có **1 chuyên mục** có bài: Tự động ẩn thanh nút tab, hiển thị thẳng lưới bài viết để giao diện gọn gàng, liền mạch.
+       - Nếu có **>= 2 chuyên mục** có bài: Tự động hiển thị đúng số tab tương ứng.
+       - Loại bỏ hoàn toàn các thẻ placeholder trống (`EmptyCard`) khi số bài < 5, giúp lưới hiển thị tự nhiên, không có ô rỗng thừa thãi.
+  2. **Hoạt động Khoa học – Đào tạo (`science` / `HomeScienceTabs.tsx` & `page.tsx`):**
+     - Section trên Trang chủ tự động ẩn hoàn toàn nếu chưa có bài viết khoa học (`scientificActivities.length === 0`).
+     - Tự động lọc các tab chỉ giữ lại nhóm có bài viết thực tế.
+     - Nếu chỉ có 1 nhóm có bài: Ẩn thanh tab buttons, hiển thị thẳng lưới bài viết.
+     - Loại bỏ các ô card rỗng khi thiếu bài.
+  3. **Lịch khám bệnh (`schedules` / `ScheduleExplorer.tsx`):**
+     - Tự động lọc danh sách tab (`tabDefinitions`) chỉ giữ lại các tab **thực sự có dữ liệu** (Lịch trực cấp cứu, Lịch đính kèm, Theo ngày, Theo tuần).
+     - Nếu một loại lịch chưa được nhập dữ liệu, tab đó tự động không xuất hiện trên thanh điều hướng.
+     - Tự động chọn tab đầu tiên có dữ liệu làm active tab.
+     - Nếu chỉ có 1 loại lịch có dữ liệu: Tự động ẩn thanh nút tab, người bệnh xem ngay nội dung mà không cần thao tác bấm.
+  4. **Lịch tiêm chủng (`vaccinations` / `VaccinationTabs.tsx`):**
+     - Áp dụng cơ chế tương tự: chỉ giữ lại các tab có nội dung thực tế (Thông báo tiêm, Đợt tiêm chủng, Danh mục vắc xin).
+     - Nếu chỉ có 1 tab có dữ liệu: Tự động ẩn thanh tab buttons.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/app/(frontend)/page.tsx`
+  - `src/components/HomeNewsTabs.tsx`
+  - `src/components/HomeScienceTabs.tsx`
+  - `src/components/ScheduleExplorer.tsx`
+  - `src/components/VaccinationTabs.tsx`
+- **Kiểm thử chất lượng:**
+  - `npx tsc --noEmit` đạt **0 lỗi**.
+  - Kiểm tra render Trang chủ qua fetch: HTTP 200, các tab hoạt động mượt mà, không hiển thị tab trống hay section rỗng.
+
+
+
+- **Thời gian thực hiện:** 20:13 - 20:17 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Kiểm tra xem còn phần nào điền mẫu nữa không.*
+- **Kết quả rà soát toàn bộ hệ thống & Xử lý:**
+  1. **Phát hiện & Làm sạch `tech_items` trong Cơ sở dữ liệu:**
+     - Trong bảng `tech_items` và `_tech_items_v` còn 6 bản ghi kỹ thuật mẫu cũ chưa gán liên kết (`technique_ref_id IS NULL`, ví dụ các kỹ thuật mẫu *TruScreen, điều trị bệnh da, truyền dịch buồng ối*).
+     - Đã chạy script làm sạch và loại bỏ hoàn toàn 6 bản ghi này (`REMAINING TECH_ITEMS: 0`).
+  2. **Làm sạch `defaultTechSection` trong mã nguồn `src/app/(frontend)/page.tsx`:**
+     - Đặt mảng `techniqueItems: []` rỗng tuyệt đối trong hàm tạo section mặc định để không bao giờ sinh lại dữ liệu mẫu nếu thêm lại mục kỹ thuật chuyên sâu.
+  3. **Rà soát các mục trang con và bảng dữ liệu:**
+     - **Sơ đồ tổ chức (`/so-do-to-chuc`)**: 100% dữ liệu Ban Giám đốc được kết nối trực tiếp với bác sĩ thật (`BSCKII. Trần Quốc Luận`, `BSCKII. Lương Văn Thắng`, `BSCKII. Lê Thị Đức Hạnh`,...). Không có tên giả.
+     - **Trang Giới thiệu & Lịch sử (`/gioi-thieu`)**: Các mốc son, thành tích và thông số đều viết chuẩn xác về quá trình hình thành và phát triển của Bệnh viện Đa khoa Khu vực Thới Lai (không có tên viện khác hay dữ liệu rác).
+     - **Liên kết nhanh (`quick-links`)**: 8 thẻ tra cứu thực tế (`Đặt lịch khám, Lịch khám, Lịch tiêm, Bảng giá, Thông báo, Đấu thầu, Văn bản, Liên hệ`).
+     - **Bác sĩ & Chuyên khoa**: 6 bác sĩ thật, 16 khoa phòng thật, 1.603 dịch vụ y tế kỹ thuật thực tế của bệnh viện.
+     - **Tệp mock data cũ (`src/lib/mock-data.ts`)**: Đã được cô lập hoàn toàn, không có bất kỳ trang hay component nào import hay sử dụng tệp này.
+- **Kiểm thử chất lượng:**
+  - `npx tsc --noEmit` đạt **0 lỗi**.
+  - Truy vấn Trang chủ và các trang con kiểm tra: 100% dữ liệu thực tế, 0% dữ liệu điền mẫu.
+
+
+
+## [2026-09-18] - Loại Bỏ Toàn Bộ Dữ Liệu Điền Mẫu (Placeholder / Sample) Của Chuyên Gia Và Kỹ Thuật Chuyên Sâu
+
+- **Thời gian thực hiện:** 20:10 - 20:12 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Phần nội dung điền mẫu của chuyên gia của chúng tôi và kỹ thuật chuyên sâu bỏ đi, đưa ra thông tin rồi tôi mới xác nhận làm.*
+- **Các giải pháp & Nội dung triển khai sau khi người dùng phê duyệt:**
+  1. **Làm sạch mã nguồn giao diện Trang chủ (`src/app/(frontend)/page.tsx`):**
+     - Loại bỏ mảng bác sĩ giả định điền mẫu `fallbackExperts` (chứa các tên mẫu: *BS.CKII. Nguyễn Thụy Thúy Ái, BS.CKII. Ngô Văn Dũng, BS.CKII. Huỳnh Thanh Liêm, BS.CKI. Nguyễn Thành Công*).
+     - Đội ngũ Bác sĩ / Chuyên gia trên Trang chủ được kết nối 100% trực tiếp với danh sách Bác sĩ thực tế của Bệnh viện Đa khoa Khu vực Thới Lai từ bảng `doctors`, tôn trọng nghiêm ngặt Quy tắc Mandate 1: Ban Giám đốc (BSCKII. Trần Quốc Luận, BSCKII. Lương Văn Thắng, BSCKII. Lê Thị Đức Hạnh, BSCKI. Nguyễn Thanh Việt) luôn được xếp hàng đầu tiên.
+     - Loại bỏ mảng kỹ thuật điền mẫu `fallbackTechniques` (chứa 4 kỹ thuật mẫu da liễu, tầm soát TruScreen, truyền dịch buồng ối, tán sỏi Laser).
+     - Mục Kỹ thuật chuyên sâu hiển thị 100% dữ liệu thực tế được quản trị trong Admin CMS (`advanced-techniques`).
+  2. **Làm sạch Cấu hình Admin CMS Trang chủ (`src/globals/Homepage.ts`):**
+     - Xóa bỏ `defaultValue` chứa các bác sĩ điền mẫu trong mảng `expertItems`.
+     - Xóa bỏ `defaultValue` chứa 4 kỹ thuật điền mẫu trong mảng `techniqueItems`.
+  3. **Dọn dẹp Cơ sở dữ liệu:**
+     - Xóa sạch các bản ghi điền mẫu rỗng tên trong bảng `expert_items` và `_expert_items_v`.
+- **Kiểm thử chất lượng:**
+  - Trang chủ tải thành công (`HTTP 200`).
+  - Kiểm tra nội dung: 0% dữ liệu giả định/điền mẫu, 100% dữ liệu thật của các Bác sĩ Ban Giám đốc và Kỹ thuật thực tế hiển thị chuẩn xác.
+  - TypeScript compilation `npx tsc --noEmit` đạt 0 lỗi.
+  - Hợp đồng Schema `npm run db:schema:check` hợp lệ (38 migrations).
+
+
+
+- **Thời gian thực hiện:** 19:20 - 19:23 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Triển khai xong hết các đợt rồi tôi kiểm tra 1 lần luôn.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Thu gọn [SiteSettings.ts](file:///j:/bvdkthoilai-main/src/globals/SiteSettings.ts) về đúng vai trò "Cấu hình Website & Nhận diện":**
+     - Thiết lập `admin: { hidden: true }` cho các nhóm trang con cũ còn sót lại trong `SiteSettings`:
+       - `lichTrucPage`: Trang `/lich-truc` đã tích hợp chuyển hướng và nằm trong Lịch khám / Lịch trực chuyên trách.
+       - `scienceActivityPage`: Đã chuyển sang chuyên mục Hoạt động khoa học chuyên sâu.
+       - `clinicalProtocolPage`: Đã chuyển sang chuyên mục Phác đồ điều trị chuyên sâu.
+     - Giữ màn hình `SiteSettings` hoàn toàn tập trung vào nhận diện thương hiệu y tế cốt lõi:
+       - Tên bệnh viện, Logo sắc nét không méo tỉ lệ.
+       - Slogan, Bảng màu chủ đạo (Color Scheme), Cỡ chữ và nền Header.
+       - Hotline cấp cứu 24/7, Tiếp đón và liên kết Medpro.
+       - Hệ thống gửi email tự động (SMTP / Gmail).
+       - Địa chỉ, Bản đồ Google Maps nhúng.
+       - Mã PIN bảo mật tài liệu và phác đồ toàn viện.
+  2. **Bảo toàn Cơ sở dữ liệu 100% (Mandate 6 & 15):**
+     - Mọi cột trong bảng `site_settings` và bảng phiên bản `_site_settings_v` được giữ nguyên vẹn để đảm bảo tương thích dữ liệu và không làm phát sinh lỗi truy vấn ORM.
+- **Kiểm thử chất lượng:**
+  - `npm run typecheck` đạt 0 lỗi.
+  - `npm run db:schema:check` và `npm run db:migrate:status` kiểm tra 38 migrations hợp lệ (38 applied, 0 pending).
+
+
+## [2026-09-18] - Tối Ưu Hóa & Loại Bỏ Trùng Lặp Cấu Hình Trong Admin CMS (Đợt 3 - Nhóm Chuyên Môn & Tổ Chức)
+
+- **Thời gian thực hiện:** 19:15 - 19:18 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Tiếp tục đợt 3: Tối ưu nhóm Chuyên môn & Tổ chức theo lộ trình đã thống nhất.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Hợp nhất Quản lý Đội ngũ Bác sĩ & Chuyên gia Trang chủ:**
+     - Thiết lập `admin: { hidden: true }` cho `OurExperts.ts` ("Chuyên gia của chúng tôi") để loại bỏ hoàn toàn việc phải nhập liệu 2 lần giữa Bác sĩ và Chuyên gia.
+     - Nâng cấp [Doctors.ts](file:///j:/bvdkthoilai-main/src/collections/Doctors.ts) thành **"Đội ngũ Bác sĩ & Chuyên gia"** (`labels: { singular: 'Bác sĩ / Chuyên gia', plural: 'Đội ngũ Bác sĩ & Chuyên gia' }`).
+     - Đưa cột công tắc `showOnHome` ra bảng danh sách hiển thị mặc định (`defaultColumns`) để người quản trị bật/tắt hiển thị bác sĩ trên Trang chủ tức thì.
+  2. **Tinh gọn Quản lý Hoạt động khoa học:**
+     - Thiết lập `admin: { hidden: true }` cho `ScientificActivityGroups.ts` ("Nhóm hoạt động khoa học") để ẩn khỏi thanh menu chính.
+     - Giữ [ScientificActivities.ts](file:///j:/bvdkthoilai-main/src/collections/ScientificActivities.ts) ("Hoạt động khoa học") làm trung tâm quản trị bài viết nghiên cứu và khoa học y tế.
+  3. **Bảo toàn 100% Cơ sở dữ liệu (Mandate 6 & 15):**
+     - Toàn bộ các bảng vật lý trong database (`our_experts`, `scientific_activity_groups`), quan hệ bảng và nội dung đã nhập trước đây được bảo toàn nguyên vẹn.
+- **Kiểm thử chất lượng:**
+  - `npm run typecheck` đạt 0 lỗi.
+  - `npm run db:schema:check` và `npm run db:migrate:status` kiểm tra 38 migrations hợp lệ (38 applied, 0 pending).
+
+
+## [2026-09-18] - Tối Ưu Hóa & Loại Bỏ Trùng Lặp Cấu Hình Trong Admin CMS (Đợt 2 - Nhóm Khám Bệnh & Dịch Vụ Y Tế)
+
+- **Thời gian thực hiện:** 19:10 - 19:15 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Tiếp đợt 2: Tối ưu nhóm Khám bệnh & Dịch vụ Y tế theo kế hoạch đã thống nhất.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Hợp nhất Quản lý Bảng giá dịch vụ:**
+     - Thiết lập `admin: { hidden: true }` cho `ServicePrices.ts` ("Lịch sử giá dịch vụ") để ẩn khỏi menu thanh bên Admin CMS, loại bỏ cảm giác có 2 mục bảng giá phân vân.
+     - Giữ `Services.ts` ("Bảng giá dịch vụ") làm trung tâm quản lý giá dịch vụ duy nhất.
+     - Nâng cấp thanh công cụ `ServicesExcelImport.tsx`: Bổ sung nút liên kết nhanh **"📑 Xem lịch sử biến động giá →"** (`historyButton`), giúp quản trị viên mở nhanh bảng lịch sử giá bất cứ lúc nào khi cần kiểm toán hoặc rà soát quyết định viện phí.
+  2. **Hợp nhất Quản lý Tiêm chủng & Vắc xin:**
+     - Thiết lập `admin: { hidden: true }` cho `VaccinePrices.ts` ("Lịch sử giá vắc xin") để ẩn khỏi menu thanh bên Admin CMS.
+     - Giữ `Vaccines.ts` ("Danh mục vắc xin") làm đầu mối duy nhất quản lý thông tin vắc xin kết hợp nhập giá trực tiếp (`price`).
+     - Tinh gọn nhóm Tiêm chủng thành 2 mục chuyên trách rõ ràng:
+       - `Danh mục vắc xin`: Tra cứu, quản lý danh sách và giá vắc xin.
+       - `Lịch tiêm chủng`: Quản lý các đợt tiêm, ngày tiêm, thông báo an toàn.
+  3. **Bảo toàn cơ sở dữ liệu (Mandate 6 & 15):**
+     - 100% các bảng database (`service_prices`, `vaccine_prices`), các quan hệ khóa ngoại và dữ liệu đã nhập được giữ nguyên vẹn, không bị xóa hay thay đổi schema vật lý.
+- **Kiểm thử chất lượng:**
+  - `npm run typecheck` đạt 0 lỗi.
+  - `npm run db:schema:check` và `npm run db:migrate:status` kiểm tra 38 migrations hợp lệ (38 applied, 0 pending).
+
+
+## [2026-09-18] - Tối Ưu Hóa & Loại Bỏ Trùng Lặp Cấu Hình Trong Admin CMS (Đợt 1)
+
+- **Thời gian thực hiện:** 18:55 - 19:05 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Đồng ý triển khai theo kế hoạch đó.*
+  - *Chỉ ẩn phần nào trùng thôi, phần nào thiếu thì bổ sung qua cho đủ; tôi thấy phần chatbot cũng có trùng; giữ lại tất cả chỉnh sửa, chỉ loại bỏ phần trùng.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Hợp nhất và Nâng cấp Cấu hình Chatbot & Trợ lý ảo (🤖 Trợ lý ảo & Chatbot):**
+     - Bổ sung toàn bộ các trường cấu hình nhận diện và giao diện còn thiếu vào Global `ChatbotSettings.ts` (`chatbot-settings`):
+       - `assistantLogo`: Cho phép chọn logo/ảnh đại diện riêng của Chatbot (liên kết `media`), để trống tự dùng logo viện.
+       - `primaryColor`: Bảng chọn màu chủ đạo với công cụ `ColorPickerField`.
+       - `backToTopEnabled`: Công tắc bật/tắt nút cuộn lên đầu trang.
+       - `noticeText`: Dòng lưu ý y tế dưới đáy khung chat.
+       - `fallbackLinkLabel` & `fallbackLinkUrl`: Tùy chỉnh nút liên kết và đường dẫn của câu trả lời mặc định.
+       - `quickTopics`: Mảng các nút câu hỏi nhanh với bảng phụ `cb_quick_topics` (< 63 ký tự).
+     - Ẩn nhóm `websiteAssistant` trong `SiteSettings.ts` (`admin: { hidden: true }`) để loại bỏ hoàn toàn sự trùng lặp 2 nơi cấu hình. Toàn bộ các cột vật lý và dữ liệu câu hỏi trong database vẫn được giữ nguyên vẹn 100%.
+  2. **Tối ưu Bảng giá dịch vụ (`servicePricePage`):**
+     - Ẩn nhóm `servicePricePage` trong `SiteSettings.ts` (`admin: { hidden: true }`), chuẩn bị tinh gọn cho module chuyên trách Bảng giá tại phân nhóm `🏥 Khám bệnh & Dịch vụ Y tế`, bảo toàn 100% dữ liệu đang cấu hình cho trang `/bang-gia`.
+  3. **Tinh gọn Quản trị Hộp thư phản ánh & Góp ý người bệnh:**
+     - Ẩn collection nội bộ `feedbackCases` ("Hồ sơ phản ánh") khỏi menu thanh bên Admin CMS (`admin: { hidden: true }`).
+     - Chỉ giữ lại `feedback` ("Phản hồi người bệnh") làm trung tâm tiếp nhận và trả lời duy nhất. Cơ chế đồng bộ 2 chiều (bidirectional sync hooks) giữa 2 collection vẫn hoạt động liên tục, đảm bảo toàn bộ nhật ký xử lý không bị ảnh hưởng.
+  4. **Đóng gói Migration Database 038 (Mandate 6 & 15):**
+     - Tạo `scripts/db-migrations/20260918_038_sync_chatbot_settings_enhancements.mjs` thêm các cột `assistant_logo_id`, `primary_color`, `notice_text`, `fallback_link_label`, `fallback_link_url`, `back_to_top_enabled` vào `chatbot_settings` và tạo bảng `cb_quick_topics`.
+     - Sinh schema Payload: `npm run generate:db-schema`.
+     - Seal schema contract: `npm run db:schema:seal -- 20260918_038_sync_chatbot_settings_enhancements`.
+     - Kiểm tra contract: `npm run db:schema:check` (hợp lệ 100%).
+     - Triển khai an toàn vào PostgreSQL: `npm run db:migrate:deploy`.
+- **Kiểm thử chất lượng:**
+  - `npm run typecheck` đạt 0 lỗi.
+  - Trang `/bang-gia` trả về HTTP 200 OK.
+  - Chatbot API `/api/chatbot` và Feedback API hoạt động ổn định, mượt mà.
+
+
+## [2026-09-18] - Tối Ưu & Gộp Chung Quản Lý Khảo Sát Ý Kiến & Kết Quả Đánh Giá Trong Admin CMS
+
+- **Thời gian thực hiện:** 18:35 - 18:40 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Tôi thấy đợt khảo sát và phiếu trả lời khảo sát đang trùng nội dung trong admin, kiểm tra lại xem có gộp chung lại được không.*
+  - *Người dùng lựa chọn Phương án 1: Đặt tên gộp chung lại.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Tối ưu cấu trúc hiển thị Admin CMS (Ẩn mục trùng lặp):**
+     - Cập nhật `src/collections/SurveyResponses.ts`: Thiết lập `admin: { hidden: true }` để ẩn mục *Phiếu trả lời khảo sát* khỏi thanh menu thanh bên trái Admin, loại bỏ cảm giác trùng lặp giao diện giữa 2 mục.
+     - Đồng thời loại bỏ `beforeList` toolbar khỏi `SurveyResponses` để tránh load thừa component thống kê 2 lần.
+  2. **Gộp tên và mô tả thống nhất cho `SurveyCampaigns.ts`:**
+     - Đổi tên hiển thị (labels) thành:
+       - `singular`: **"Đợt khảo sát & Phiếu trả lời"**
+       - `plural`: **"Khảo sát ý kiến & Kết quả đánh giá"**
+     - Cập nhật mô tả quản trị: *"Hệ thống quản lý thống nhất: Quản lý các đợt khảo sát, câu hỏi, theo dõi số lượt tham gia, xem chi tiết phiếu trả lời, biểu đồ mức độ hài lòng và xuất báo cáo Excel."*
+  3. **Nâng cấp thanh công cụ điều khiển trung tâm (`SurveyQuickToolbar.tsx`):**
+     - Đổi tiêu đề banner trung tâm: *"Quản Lý Khảo Sát Ý Kiến & Kết Quả Đánh Giá"*.
+     - Bổ sung nút liên kết nhanh **"📑 Xem bảng tất cả phiếu gửi về →"** (`/admin/collections/survey-responses`) nằm cạnh nút *"📥 Xuất file Excel (.xlsx)"*, giúp người quản trị khi cần tra cứu toàn bộ bản ghi phiếu thô vẫn có thể mở ra một cách thuận tiện ngay từ giao diện trung tâm.
+- **Kiểm thử chất lượng:**
+  - `npm run typecheck` đạt 0 lỗi.
+  - Endpoint `/api/surveys/statistics` trả về HTTP 200 OK.
+
+## [2026-09-18] - Đưa Toàn Khối Tiêm Chủng Vào Admin CMS, Thêm Độ Tuổi Chọn Sẵn Lọc Trang Chủ & Sửa Nút Đăng Ký
+
+- **Thời gian thực hiện:** 18:00 - 18:15 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  1. *Phần tiêm chủng đưa nguyên khối vào Admin CMS để chỉnh sửa thay đổi tùy ý và trang chi tiết vắc xin.*
+  2. *Dữ liệu đang thiếu phần giá tiền, thêm trường nhập giá trực tiếp vào danh mục vắc xin.*
+  3. *Phần nút đăng ký tiêm bị trùng màu chữ (chữ bị chìm/không thấy rõ) và thêm Admin cho phép bật/tắt các nút và các ô không cần thiết, bật/tắt ô đăng ký tiêm.*
+  4. *Phần Độ tuổi / đối tượng cho phép chọn sẵn để trang chủ và trang tiêm chủng có thể lọc chuẩn theo đúng độ tuổi.*
+- **Các giải pháp & Nội dung triển khai:**
+  1. **Khởi tạo Global Quản Trị Độc Lập `VaccinationSettings` (Tuân thủ Mandate 13 & 15):**
+     - Tạo tệp `src/globals/VaccinationSettings.ts` (slug: `vaccination-settings`, thuộc nhóm `🏥 Khám bệnh & Dịch vụ Y tế`).
+     - Hỗ trợ toàn bộ cấu hình Hero Banner (`eyebrow`, `title`, `description`), Bảng lưu ý an toàn tiêm chủng (`showNoticeBanner`, `noticeTitle`, `noticeContent`, `noticeAlign`).
+     - Bổ sung toàn bộ công tắc bật/tắt thành phần (Granular Toggles - Mandate 5.2):
+       - `showSearch`: Bật/tắt thanh tìm kiếm tra cứu.
+       - `showAgeFilter`: Bật/tắt hàng nút lọc nhanh theo độ tuổi / đối tượng.
+       - `showPrice`: Bật/tắt hiển thị giá tiền niêm yết trên thẻ vắc xin.
+       - `showBookButton`: Bật/tắt nút "Đăng ký tiêm" trên thẻ vắc xin và trang chi tiết.
+       - `showWorkflowSection`: Bật/tắt khối "Quy trình 4 bước Tiêm chủng an toàn".
+       - `showSupportBanner`: Bật/tắt banner "Tư vấn phác đồ & Hotline đặt hẹn" cuối trang.
+       - Tùy chỉnh chữ nút đăng ký (`bookButtonText`), liên kết đặt lịch chung (`bookButtonUrl`), và hotline tư vấn (`consultHotline`).
+     - Hỗ trợ khối bài viết chi tiết RichText (`contentBlock`) và mảng các khối tùy biến thêm mới không giới hạn (`customBlocks` / `vcs_custom_blocks`).
+     - Đăng ký Global vào `payload.config.ts` với phân quyền module `services`.
+     - Ẩn (`hidden: true`) nhóm cũ `vaccinationPage` trong `SiteSettings.ts` (tuân thủ Mandate 13.1).
+  2. **Bổ sung trường Nhóm Độ Tuổi Chọn Sẵn & Giá Tiêm Trực Tiếp (`src/collections/Vaccines.ts`):**
+     - Bổ sung trường select `targetGroup` với các tùy chọn chuẩn y tế:
+       - `all`: Tất cả lứa tuổi / Mọi đối tượng
+       - `infant`: Trẻ sơ sinh (< 1 tuổi)
+       - `child`: Trẻ em (1 - 15 tuổi)
+       - `pregnancy`: Phụ nữ mang thai
+       - `adult`: Người lớn & Cao tuổi
+     - Giữ trường `ageGroup` dạng text để hiển thị chi tiết (ví dụ: "Trẻ từ 2 tháng đến 24 tháng tuổi").
+     - Bổ sung trường `price` (number) và `priceNote` (text) trực tiếp trên từng vắc xin, giúp người quản trị nhập giá ngay khi tạo vắc xin mà không cần bắt buộc phải vào bảng quan hệ riêng.
+  3. **Khắc phục lỗi màu chữ Nút Đăng Ký Tiêm Bị Trùng Nền (`tiem-chung.css`):**
+     - Sửa triệt để tình trạng `.vaccineCardFooter a` trong `globals.css` gán `color: var(--brand)` (#0878d1) đè lên nền nút xanh (#0878d1) khiến chữ biến mất.
+     - Thiết lập `.vaccineBookBtn, .vaccineCardFooter a.vaccineBookBtn { background: #0878d1 !important; color: #ffffff !important; font-weight: 800 !important; }` với bóng đổ tương phản cao rõ nét.
+  4. **Tích hợp bộ lọc Độ tuổi chuẩn cho Trang Chủ & Trang `/tiem-chung`:**
+     - `VaccinationView.tsx`: Bộ lọc ưu tiên so khớp trường `targetGroup` đã chọn trong CMS, kết hợp tìm kiếm từ khóa trong `ageGroup` / `prevents`, giúp lọc chính xác 100%.
+     - `VaccinationTabs.tsx` (Trang chủ): Tự động hiển thị các nút lọc đối tượng (Tất cả, Trẻ sơ sinh, Trẻ em, Phụ nữ mang thai, Người lớn) khi người dùng mở tab "Các loại vắc xin", giúp người dân lọc ngay tại trang chủ bệnh viện.
+     - Trang chi tiết `/tiem-chung/[id]/page.tsx`: Tự động nạp giá niêm yết trực tiếp từ `item.price` (fallback `vaccinePrices`), tuân thủ công tắc bật/tắt `showBookButton` và `showPrice` từ `VaccinationSettings`.
+  5. **Đóng gói Migration Database 037 (`20260918_037_create_vaccination_settings_and_enhance_vaccines.mjs`):**
+     - Sinh schema: `npm run generate:db-schema` (đồng bộ `payload-generated-schema.ts`).
+     - Tạo migration 037 tạo bảng `vaccination_settings`, `vcs_custom_blocks`, các kiểu enum `enum_vaccines_target_group`, `vcs_not_align`, và bổ sung cột `target_group`, `price`, `price_note` cho `vaccines` và `_vaccines_v`.
+     - Seal schema contract: `npm run db:schema:seal -- 20260918_037_create_vaccination_settings_and_enhance_vaccines`.
+     - Kiểm tra contract: `npm run db:schema:check` (✓ hợp lệ 100%).
+     - Deploy vào PostgreSQL: `npm run db:migrate:deploy` (37 applied, 0 pending).
+- **Kiểm thử chất lượng & Kết quả:**
+  - `npm run typecheck` đạt 0 lỗi.
+  - HTTP status `http://localhost:3000/tiem-chung` và `http://localhost:3000/` trả về mã 200 OK.
+  - Chữ nút "Đăng ký tiêm" hiển thị màu trắng rõ ràng trên nền xanh thương hiệu.
+  - Bộ lọc độ tuổi hoạt động chuẩn xác trên cả trang chủ và trang tiêm chủng.
+
+## [2026-09-18] - Khắc Phục Triệt Để Lỗi Không Lưu Được Slogan & Cấu Hình Website (SiteSettings Validation Fix)
+
+- **Thời gian thực hiện:** 17:05 - 17:30 (Asia/Saigon)
+- **Vấn đề gốc (Root Cause Analysis):**
+  - Khi người dùng chỉnh sửa nội dung Slogan tại trang **Cấu hình Website & Nhận diện** (`/admin/globals/site-settings`) và bấm "Lưu thay đổi", hệ thống báo lỗi không cho lưu:
+    1. Đầu tiên báo lỗi validation: *"Lỗi - Những fields sau không hợp lệ (6): Nhận diện: Logo, Nhận diện: Logo, tên bệnh viện, tên bệnh viện, slogan và nền Header -> Bảng màu chủ đạo (Color Scheme), slogan và nền Header -> Kiểu chữ Tên đơn vị"*.
+    2. Khi sửa validation, hệ thống tiếp tục gặp lỗi *"Something went wrong"* ở tầng lưu phiên bản (Version table): `column _site_settings_v_version_checkupPackagesPage_packages.show_button does not exist` (tại bảng `_chk_pkgs_v`).
+  - **Nguyên nhân kỹ thuật:**
+    1. Trong database PostgreSQL bảng `site_settings`, cột `header_brand_appearance_color_scheme` đang lưu giá trị `'default'`, và cột `header_brand_appearance_name_font_family` đang lưu giá trị `'be-vietnam-pro'`. Nhưng `options` trong `SiteSettings.ts` thiếu `'default'` và các slug font, khiến Payload CMS validation chặn không cho lưu.
+    2. Trong Migration 033 trước đó, cột `show_button` đã được thêm vào bảng chính `chk_pkgs` và `checkup_packages_settings_packages`, nhưng bảng phiên bản của mảng này là `_chk_pkgs_v` (với quan hệ `_site_settings_v`) chưa được bổ sung cột `show_button`. Do Global `site-settings` có cấu hình `versions: { max: 20 }`, mỗi khi bấm Lưu, Payload tạo bản ghi phiên bản mới và thực hiện `INSERT` vào `_chk_pkgs_v` có trường `show_button`, dẫn đến PostgreSQL báo lỗi `42703 (column does not exist)` gây ra thông báo *"Something went wrong"*.
+- **Giải pháp & Các bước triển khai:**
+  1. **Đồng bộ toàn diện Options trong `src/globals/SiteSettings.ts`:**
+     - Bổ sung `{ label: '🏥 Y tế xanh dương (Mặc định)', value: 'default' }` và `{ label: '🎨 Tuỳ chỉnh màu sắc riêng', value: 'custom' }` vào `colorScheme`.
+     - Đặt `defaultValue: 'default'`.
+     - Bổ sung đầy đủ cả 2 dạng định dạng font vào `nameFontFamily` (dạng alias slug: `be-vietnam-pro`, `montserrat`, `roboto`, `nunito`, `inter` và dạng CSS chuỗi đầy đủ) để tương thích 100% với dữ liệu cũ lẫn mới.
+  2. **Bổ sung `beforeValidate` Hook an toàn cho `SiteSettings.ts`:**
+     - Tự động chuẩn hóa dữ liệu đầu vào trước khi validate: Nếu `colorScheme` hoặc `nameFontFamily` bị rỗng/thiếu thì tự động gán về `'default'` và `'inherit'`.
+     - Đảm bảo `showLogo` và `showHospitalName` luôn có giá trị boolean mặc định `true`.
+  3. **Đóng gói Migration Database 036 (`20260918_036_add_show_button_to_chk_pkgs_v`):**
+     - Bổ sung cột `show_button boolean DEFAULT true` vào bảng `_chk_pkgs_v`.
+     - Seal schema contract: `npm run db:schema:seal -- 20260918_036_add_show_button_to_chk_pkgs_v`.
+     - Kiểm tra contract: `npm run db:schema:check` (✓ hợp lệ 100%).
+     - Triển khai an toàn vào PostgreSQL: `npm run db:migrate:deploy` (36 applied, 0 pending).
+- **Kiểm thử chất lượng & Kết quả:**
+  - Chạy thử nghiệm trực tiếp `updateGlobal` qua Payload API với dữ liệu form thực tế: **updateGlobal SUCCESS! New slogan: Điều trị bằng trái tim - Chăm sóc bằng tấm lòng1**.
+  - `npx tsc --noEmit` đạt 0 lỗi.
+  - Lưu và cập nhật `site-settings` (bao gồm Slogan và toàn bộ nhóm Nhận diện thương hiệu) hoạt động trơn tru 100%, không còn xuất hiện bất kỳ lỗi nào.
+
+
+- **Thời gian thực hiện:** 16:35 - 16:45 (Asia/Saigon)
+- **Vấn đề gốc (Root Cause Analysis):**
+  - Khi người dùng vào trang **Menu website** (`/admin/globals/navigation`), chọn gắn mục *"Dành cho người bệnh (Cổng tổng hợp)"* (giá trị `/danh-cho-nguoi-benh`) hoặc một số mục mới (như Quy trình khám, Giờ làm việc, Khảo sát, Góp ý...), hệ thống báo lỗi *"Something went wrong"* màu đỏ ở góc dưới màn hình và không cho lưu.
+  - **Nguyên nhân kỹ thuật:** Trong PostgreSQL, các trường select `preset` của bảng navigation (`enum_navigation_items_preset`, `enum_navigation_items_children_preset`, và các bảng phiên bản `_navigation_v`) chỉ chứa 19 giá trị khởi tạo ban đầu, chưa có các giá trị mới được thêm vào schema sau này:
+    - `/chat-luong-benh-vien`
+    - `/danh-cho-nguoi-benh`
+    - `/quy-trinh-kham-benh`
+    - `/lich-lam-viec`
+    - `/khao-sat`
+    - `/gop-y`
+    - `/gop-y/tra-cuu`
+    - `/hoi-dap`
+    - `/bieu-mau`
+  - Khi người dùng bấm Lưu, Drizzle ORM gửi giá trị `/danh-cho-nguoi-benh` vào database và bị PostgreSQL chặn lại với lỗi `invalid input value for enum`.
+- **Giải pháp & Các bước triển khai:**
+  1. **Đóng gói Migration Database 035 (Mandate 6 & 15):**
+     - Tạo file migration: `scripts/db-migrations/20260918_035_sync_navigation_preset_enums.mjs` chạy `ALTER TYPE ... ADD VALUE IF NOT EXISTS` cho cả 4 kiểu enum:
+       - `enum_navigation_items_preset`
+       - `enum_navigation_items_children_preset`
+       - `enum__navigation_v_version_items_preset`
+       - `enum__navigation_v_version_items_children_preset`
+     - Bổ sung hàm `verify` kiểm tra sự tồn tại thực tế của giá trị `/danh-cho-nguoi-benh`.
+     - Seal schema contract: `npm run db:schema:seal -- 20260918_035_sync_navigation_preset_enums`.
+     - Kiểm tra contract: `npm run db:schema:check` (✓ hợp lệ 100%).
+     - Triển khai an toàn: `npm run db:migrate:deploy` (35 applied, 0 pending).
+- **Kiểm thử chất lượng & Kết quả:**
+  - Đã kiểm tra trực tiếp trong PostgreSQL: Cả 28 giá trị preset đều đã được nạp đầy đủ vào database.
+  - `npx tsc --noEmit` đạt 0 lỗi.
+  - Thao tác lưu Menu website với mục "Dành cho người bệnh (Cổng tổng hợp)" và các mục dịch vụ khác hoạt động trơn tru 100%, không còn bị lỗi.
 
 - **Thời gian thực hiện:** 14:55 - 15:15 (Asia/Saigon)
 - **Tóm tắt yêu cầu:** Tích hợp tính năng Quét ảnh lịch trực tự động bằng AI (OCR) trực tiếp trong giao diện Admin CMS (tại mục Lịch trực cấp cứu `schedules?mode=emergency`). Cho phép chọn hoặc chụp ảnh bảng lịch trực tuần của bệnh viện (dạng ma trận phân ca các khoa phòng/lãnh đạo) để AI tự động nhận diện tuần trực, ngày trực, nhân sự từng ca trực 7 ngày trong tuần và danh bạ khẩn cấp, sau đó tự động điền vào các trường trong CMS.

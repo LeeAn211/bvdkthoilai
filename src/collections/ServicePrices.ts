@@ -9,6 +9,7 @@ export const ServicePrices: CollectionConfig = {
     group: '🏥 Khám bệnh & Dịch vụ Y tế',
     description: 'Lưu lịch sử giá theo thời gian hiệu lực. Không ghi đè lịch sử khi có quyết định giá mới.',
     defaultColumns: ['service', 'insurancePrice', 'servicePrice', 'effectiveFrom', 'effectiveTo', 'active'],
+    hidden: true,
   },
   access: {
     read: publicActiveFor('services'),

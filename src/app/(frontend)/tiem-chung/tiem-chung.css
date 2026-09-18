@@ -375,14 +375,17 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 14px;
-  border-radius: 10px;
+  padding: 6px 12px;
+  border-radius: 9px;
   border: 1.5px solid #0878d1;
   background: #ffffff;
   color: #0878d1;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.25;
   transition: all 0.15s ease;
 }
 
@@ -392,24 +395,33 @@
   color: #0754a8;
 }
 
-.vaccineBookBtn {
+.vaccineBookBtn,
+.vaccineCardFooter a.vaccineBookBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 14px;
-  border-radius: 10px;
-  background: #0878d1;
-  color: #ffffff;
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 9px;
+  background: #0878d1 !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  flex-shrink: 0;
+  line-height: 1.25;
   transition: all 0.15s ease;
-  border: 1.5px solid #0878d1;
+  border: 1.5px solid #0878d1 !important;
+  box-shadow: 0 2px 6px rgba(8, 120, 209, 0.22);
+  cursor: pointer;
 }
 
-.vaccineBookBtn:hover {
-  background: #065b9e;
-  border-color: #065b9e;
+.vaccineBookBtn:hover,
+.vaccineCardFooter a.vaccineBookBtn:hover {
+  background: #065b9e !important;
+  border-color: #065b9e !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(8, 120, 209, 0.35);
 }
 
 /* Danh sách Lịch tiêm chủng */

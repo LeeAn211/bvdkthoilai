@@ -1,266 +1,313 @@
 /* Canonical homepage editorial cards - Bệnh viện Đa khoa Khu vực Thới Lai
-   Layout: 1 Thẻ chính (Hero Spotlight) + 4 Thẻ phụ dạng tạp chí tin tức cao cấp */
-.homePortalPage .homeEditorialGrid {
+   Layout: PHƯƠNG ÁN 3 - 1 Thẻ Lớn Nổi Bật (Trái) + Danh Sách Hàng Ngang (Phải) */
+.homePortalPage .homeEditorialGrid.editorialVariant3 {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) repeat(2, minmax(0, 1fr));
-  grid-template-rows: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   align-items: stretch;
-  gap: 18px;
+  gap: 22px;
 }
 
-/* Thẻ chung */
-.homePortalPage .homeEditorialGrid > a {
+/* 1. CỘT TRÁI: 1 THẺ LỚN NỔI BẬT (FEATURED HERO CARD) */
+.homePortalPage .editorialHeroCard {
   min-width: 0;
-  overflow: hidden;
-  border: 1px solid #e2ecf3;
-  border-radius: 14px;
-  background: #ffffff;
-  box-shadow: 0 4px 14px rgba(10, 42, 74, 0.05);
-  transition: transform .25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .25s cubic-bezier(0.16, 1, 0.3, 1), border-color .2s ease;
-  text-decoration: none;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #dce8f2;
+  box-shadow: 0 4px 18px rgba(10, 42, 74, 0.06);
+  text-decoration: none;
+  transition: transform .28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .28s cubic-bezier(0.16, 1, 0.3, 1), border-color .22s ease;
 }
 
-.homePortalPage .homeEditorialGrid > a:hover {
+.homePortalPage .editorialHeroCard:hover {
   transform: translateY(-4px);
   border-color: #0878d1;
-  box-shadow: 0 10px 24px rgba(8, 120, 209, 0.14);
+  box-shadow: 0 14px 30px rgba(8, 120, 209, 0.16);
 }
 
-/* 1. Ô CHÍNH (FEATURED HERO CARD BÊN TRÁI) - Mẫu chung: 60% ảnh, 40% nội dung */
-.homePortalPage .homeEditorialGrid > a.featured {
-  grid-row: 1 / span 2;
-  flex-direction: column;
-  height: 100%;
-}
-
-.homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage {
+.homePortalPage .editorialHeroThumb {
   position: relative;
   width: 100%;
-  flex: 0 0 60%;
-  height: 60%;
-  min-height: 60%;
-  max-height: 60%;
+  aspect-ratio: 16 / 9.6;
+  max-height: 290px;
   overflow: hidden;
-  background: linear-gradient(135deg, #f0f7fd 0%, #e2eef7 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid #edf4f8;
-}
-
-.homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage .editorialImg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
-  transition: transform .4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.homePortalPage .homeEditorialGrid > a.featured:hover .homeEditorialImage .editorialImg {
-  transform: scale(1.04);
-}
-
-.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy {
-  padding: 18px 22px 20px;
-  flex: 0 0 40%;
-  height: 40%;
-  min-height: 40%;
-  max-height: 40%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  background: #ffffff;
-}
-
-.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy small {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #0878d1;
-  font-size: 13.5px;
-  font-weight: 700;
-  margin-bottom: 9px;
-}
-
-.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy small::before {
-  content: "•";
-  color: #0878d1;
-  font-size: 15px;
-  line-height: 1;
-}
-
-.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy h3 {
-  color: #0f2e47;
-  font-size: 14.5px;
-  font-weight: 800;
-  line-height: 1.4;
-  margin: 0 0 12px;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  max-height: 4.2em;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  transition: color .2s ease;
-}
-
-.homePortalPage .homeEditorialGrid > a.featured:hover .homeEditorialCopy h3 {
-  color: #0878d1;
-}
-
-.homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy p {
-  color: #526e85;
-  font-size: 15px;
-  line-height: 1.6;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-}
-
-/* Giữ đủ 1 ô chính + 4 ô phụ khi một section có ít bài. */
-.homePortalPage .homeEditorialGrid > .homeEditorialEmptyCard {
-  min-height: 228px;
-  border: 1px solid transparent;
-  border-radius: 14px;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* 2. BỐN Ô PHỤ (4 SUB CARDS BÊN PHẢI) - Ô NỘI DUNG RỘNG RÃI & CHIỀU CAO ẢNH LỚN */
-.homePortalPage .homeEditorialGrid > a:not(.featured) {
-  flex-direction: column;
-  align-items: stretch;
-  height: 100%;
-}
-
-.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 10.5;
-  max-height: 175px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #f8fbfd 0%, #edf4f9 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: linear-gradient(135deg, #eff6fc 0%, #e2eff9 100%);
   flex-shrink: 0;
   border-bottom: 1px solid #edf4f8;
-  border-right: none;
 }
 
-.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage .editorialImg {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
-  transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.homePortalPage .homeEditorialGrid > a:not(.featured):hover .homeEditorialImage .editorialImg {
-  transform: scale(1.05);
-}
-
-.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy {
-  padding: 16px 18px 18px;
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  background: #ffffff;
-}
-
-.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy small {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: #7b94a7;
-  font-size: 11px;
-  font-weight: 600;
-  margin-bottom: 5px;
-}
-
-.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy small::before {
-  content: "•";
-  color: #0878d1;
-  font-size: 12px;
-  line-height: 1;
-}
-
-.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy h3 {
-  color: #12344d;
-  font-size: 14.5px;
-  font-weight: 700;
-  line-height: 1.4;
-  margin: 0 0 6px;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  max-height: 4.2em;
-  text-overflow: ellipsis;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-  transition: color .2s ease;
-}
-
-.homePortalPage .homeEditorialGrid > a:not(.featured):hover .homeEditorialCopy h3 {
-  color: #0878d1;
-}
-
-.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy p {
-  color: #647f95;
-  font-size: 12.5px;
-  line-height: 1.5;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
-
-/* BADGE DANH MỤC */
-.homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage::after {
+.homePortalPage .editorialHeroThumb::after {
   content: "";
   position: absolute;
   inset: auto 0 0 0;
-  height: 48%;
+  height: 40%;
   pointer-events: none;
-  background: linear-gradient(to top, rgba(8, 38, 66, 0.58) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(7, 43, 76, 0.45) 0%, transparent 100%);
   z-index: 1;
 }
 
-.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage::after,
-.homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage span {
-  display: none; /* Ẩn badge ở 4 ô nhỏ để ảnh thông thoáng, hiển thị trọn vẹn đúng mẫu */
+.homePortalPage .editorialHeroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform .45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage span {
+.homePortalPage .editorialHeroCard:hover .editorialHeroImg {
+  transform: scale(1.04);
+}
+
+.homePortalPage .editorialHeroBadge {
   position: absolute;
   z-index: 2;
-  left: 14px;
-  bottom: 12px;
-  max-width: calc(100% - 28px);
+  left: 16px;
+  bottom: 14px;
+  max-width: calc(100% - 32px);
   overflow: hidden;
   border-radius: 999px;
   padding: 5px 13px;
-  color: #065ea9;
+  color: #055497;
   background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 11.5px;
   font-weight: 850;
   letter-spacing: 0.4px;
   text-transform: uppercase;
+}
+
+.homePortalPage .editorialHeroBody {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  background: #ffffff;
+}
+
+.homePortalPage .editorialHeroDate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0878d1;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.homePortalPage .editorialHeroDate svg {
+  color: #0878d1;
+  flex-shrink: 0;
+}
+
+.homePortalPage .editorialHeroTitle {
+  color: #0f2e47;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.4;
+  margin: 0 0 10px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  transition: color .2s ease;
+  text-wrap: balance;
+}
+
+.homePortalPage .editorialHeroCard:hover .editorialHeroTitle {
+  color: #0878d1;
+}
+
+.homePortalPage .editorialHeroExcerpt {
+  color: #526e85;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 18px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  flex: 1 1 auto;
+}
+
+.homePortalPage .editorialHeroAction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0754a8;
+  font-size: 13.5px;
+  font-weight: 750;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid #f0f5fa;
+  transition: gap .2s ease, color .2s ease;
+}
+
+.homePortalPage .editorialHeroCard:hover .editorialHeroAction {
+  color: #0878d1;
+  gap: 10px;
+}
+
+/* 2. CỘT PHẢI: DANH SÁCH CÁC HÀNG NGANG (SUB LIST ROWS) */
+.homePortalPage .editorialRowList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.homePortalPage .editorialRowItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e3edf5;
+  box-shadow: 0 2px 8px rgba(10, 42, 74, 0.04);
+  text-decoration: none;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .2s ease;
+  flex: 1 1 auto;
+}
+
+.homePortalPage .editorialRowItem:hover {
+  transform: translateX(4px);
+  border-color: #0878d1;
+  box-shadow: 0 6px 18px rgba(8, 120, 209, 0.12);
+  background: #fafcfe;
+}
+
+.homePortalPage .editorialRowThumb {
+  width: 96px;
+  min-width: 96px;
+  height: 72px;
+  border-radius: 9px;
+  overflow: hidden;
+  background: #f1f6fa;
+  position: relative;
+  flex-shrink: 0;
+  border: 1px solid #e7f0f6;
+}
+
+.homePortalPage .editorialRowImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform .3s ease;
+}
+
+.homePortalPage .editorialRowItem:hover .editorialRowImg {
+  transform: scale(1.05);
+}
+
+.homePortalPage .editorialRowContent {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.homePortalPage .editorialRowMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.homePortalPage .editorialRowBadge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #0754a8;
+  background: #eef6fd;
+  border: 1px solid #d4e7f7;
+  padding: 1px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.homePortalPage .editorialRowDate {
+  font-size: 11.5px;
+  color: #64748b;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.homePortalPage .editorialRowTitle {
+  color: #12344d;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  transition: color .2s ease;
+}
+
+.homePortalPage .editorialRowItem:hover .editorialRowTitle {
+  color: #0878d1;
+}
+
+.homePortalPage .editorialRowExcerpt {
+  color: #647f95;
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 4px 0 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.homePortalPage .editorialRowArrow {
+  color: #a0b8cc;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #f3f7fb;
+  transition: color .2s ease, background-color .2s ease, transform .2s ease;
+}
+
+.homePortalPage .editorialRowItem:hover .editorialRowArrow {
+  color: #ffffff;
+  background: #0878d1;
+  transform: translateX(2px);
+}
+
+.homePortalPage .editorialRowEmpty {
+  padding: 24px;
+  text-align: center;
+  color: #8397a7;
+  font-size: 13.5px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px dashed #dce6ed;
+}
+
+/* Giữ đủ 1 ô chính khi có ít bài */
+.homePortalPage .homeEditorialGrid > .homeEditorialEmptyCard {
+  min-height: 280px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Canonical homepage tab cards.
@@ -355,6 +402,13 @@
     max-height: 310px;
     flex-basis: auto;
   }
+  .homePortalPage .homeEditorialGrid.editorialVariant3 {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .homePortalPage .editorialHeroThumb {
+    max-height: 340px;
+  }
   .homePortalPage .homeEditorialGrid {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: auto;
@@ -388,6 +442,41 @@
   }
 }
 @media (max-width: 600px) {
+  .homePortalPage .homeEditorialGrid.editorialVariant3 {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .homePortalPage .editorialHeroThumb {
+    max-height: 220px;
+    aspect-ratio: 16 / 10;
+  }
+  .homePortalPage .editorialHeroBody {
+    padding: 16px 18px 18px;
+  }
+  .homePortalPage .editorialHeroTitle {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  .homePortalPage .editorialHeroExcerpt {
+    font-size: 13px;
+    -webkit-line-clamp: 2;
+    margin-bottom: 12px;
+  }
+  .homePortalPage .editorialRowItem {
+    gap: 12px;
+    padding: 10px 12px;
+  }
+  .homePortalPage .editorialRowThumb {
+    width: 84px;
+    min-width: 84px;
+    height: 64px;
+  }
+  .homePortalPage .editorialRowTitle {
+    font-size: 13.5px;
+  }
+  .homePortalPage .editorialRowExcerpt {
+    display: none;
+  }
   .homePortalPage .homeEditorialGrid {
     grid-template-columns: 1fr;
     gap: 14px;

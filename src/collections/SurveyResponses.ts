@@ -6,9 +6,7 @@ export const SurveyResponses: CollectionConfig = {
   admin: {
     useAsTitle: 'responseCode',
     group: '💬 Chăm sóc người bệnh & Khảo sát',
-    components: {
-      beforeList: ['/src/components/admin/SurveyQuickToolbar#default'],
-    },
+    hidden: true,
   },
   access: {
     read: moduleAccess('surveys', 'view'),

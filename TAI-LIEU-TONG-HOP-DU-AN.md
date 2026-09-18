@@ -3,6 +3,26 @@
 Tài liệu này hợp nhất 60 file Markdown rời của dự án đến phiên bản
 v4.4.3. Nội dung từng tài liệu được giữ nguyên và phân cách theo tên
 file nguồn.
+----------
+#câu lệnh kiểm tra audit
+
+Đọc toàn bộ file AUDIT_PROJECT.md và bắt đầu kiểm tra toàn bộ dự án theo đúng quy trình trong file.
+
+Hiện tại chỉ AUDIT READ-ONLY.
+Không sửa code.
+Không thay đổi database.
+Không chạy migration.
+Sau khi hoàn tất hãy tạo FULL_PROJECT_AUDIT.md.
+#Khi audit vòng đầu xong, tôi khuyên dùng tiếp:
+Đọc AUDIT_PROJECT.md và FULL_PROJECT_AUDIT.md.
+
+Thực hiện audit vòng 2 độc lập.
+Kiểm chứng lại toàn bộ P0/P1.
+Tìm false positive.
+Tìm lỗi vòng 1 bỏ sót.
+Không sửa code.
+
+Tạo SECOND_AUDIT.md.
 
 ------------------------------------------------------------------------
 

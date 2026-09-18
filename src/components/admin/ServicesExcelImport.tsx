@@ -20,7 +20,19 @@ export default function ServicesExcelImport() {
     try {
       const form = new FormData(); form.append('file', file); form.append('mode', mode)
       const response = await fetch('/api/services-import', { method: 'POST', body: form })
-      const data = await response.json()
+      const text = await response.text()
+      let data: any
+      try {
+        data = JSON.parse(text)
+      } catch {
+        throw new Error(
+          response.status === 413 || text.includes('Payload Too Large')
+            ? 'Tệp Excel quá lớn vượt quá giới hạn tải lên của máy chủ.'
+            : text.includes('upstream')
+            ? 'Máy chủ bị ngắt kết nối (Upstream Error). Nguyên nhân thường do tệp Excel quá nặng hoặc mạng bị gián đoạn.'
+            : `Máy chủ phản hồi lỗi (${response.status}): ${text.slice(0, 150)}`
+        )
+      }
       if (!response.ok) throw new Error(data.error || 'Không thể xử lý file Excel.')
       if (mode === 'preview') setPreview(data)
       else {
@@ -38,6 +50,7 @@ export default function ServicesExcelImport() {
       <label className={styles.filePicker}><input ref={inputRef} type="file" accept=".xlsx" onChange={event => { setFile(event.target.files?.[0] || null); setError(''); setPreview(null); setResult(null) }}/><span>▣ {file ? file.name : 'Chọn file Excel'}</span></label>
       <button className={styles.importButton} type="button" disabled={!file || busy} onClick={() => send('preview')}>{busy ? 'Đang kiểm tra…' : 'Kiểm tra dữ liệu'}</button>
       {preview?.canImport && <button className={styles.importButton} type="button" disabled={busy} onClick={() => send('import')}>{busy ? 'Đang nhập…' : 'Xác nhận nhập dữ liệu'}</button>}
+      <a className={styles.historyButton} href="/admin/collections/service-prices">📑 Xem lịch sử biến động giá →</a>
     </div>
     <div className={styles.notes}><span>✓ Bắt buộc kiểm tra trước khi nhập</span><span>↻ Mã dịch vụ cũ được cập nhật danh mục</span><span>◷ Giá mới tạo lịch sử theo ngày hiệu lực</span><span>! Tối đa 10.000 dòng / 20 MB</span></div>
     {preview && <div className={preview.canImport ? styles.success : styles.error}><strong>Kết quả kiểm tra</strong><span>Tổng: <b>{preview.total}</b></span><span>Hợp lệ: <b>{preview.valid}</b></span><span>Lỗi: <b>{preview.invalid}</b></span>{preview.duplicateCodes.length > 0 && <span>Mã trùng: <b>{preview.duplicateCodes.join(', ')}</b></span>}{preview.preview.some(x => x.errors.length > 0) && <details><summary>Xem các dòng cần sửa</summary><ul>{preview.preview.filter(x=>x.errors.length).map(x=><li key={x.row}>Dòng {x.row} · {x.code || '(chưa có mã)'}: {x.errors.join(', ')}</li>)}</ul></details>}</div>}

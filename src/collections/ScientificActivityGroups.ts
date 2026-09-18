@@ -13,6 +13,7 @@ export const ScientificActivityGroups: CollectionConfig = {
     group: '🩺 Chuyên môn & Tổ chức',
     defaultColumns: ['name', 'order', 'active', 'updatedAt'],
     description: 'Thêm, sửa, sắp xếp hoặc xóa các nhóm dùng cho bài viết Hoạt động khoa học.',
+    hidden: true,
   },
   access: {
     read: () => true,

@@ -1,6 +1,7 @@
 import { PageHero } from '@/components/PageHero'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
+import { RichText } from '@/components/RichText'
 import { VaccinationView } from './VaccinationView'
 import { getCMS, getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
@@ -19,10 +20,20 @@ export default async function VaccinationPage() {
   let hotline = '0292 3861 234'
 
   try {
-    const [payload, siteSettings] = await Promise.all([getCMS(), getGlobal('site-settings')])
-    pageSettings = (siteSettings as any)?.vaccinationPage || {}
-    medproUrl = (siteSettings as any)?.medproUrl || medproUrl
-    hotline = (siteSettings as any)?.hotline || hotline
+    const [payload, vaxSettingsData, siteSettingsData, contactSettingsData] = await Promise.all([
+      getCMS(),
+      getGlobal('vaccination-settings' as any).catch(() => null),
+      getGlobal('site-settings').catch(() => ({})),
+      getGlobal('contact-settings').catch(() => ({})),
+    ])
+    const siteSettings: any = siteSettingsData
+    const contactSettings: any = contactSettingsData
+    pageSettings = (vaxSettingsData && Object.keys(vaxSettingsData).length > 0)
+      ? vaxSettingsData
+      : (siteSettings?.vaccinationPage || {})
+
+    medproUrl = pageSettings?.bookButtonUrl || siteSettings?.medproUrl || medproUrl
+    hotline = pageSettings?.consultHotline || contactSettings?.hotline || siteSettings?.hotline || hotline
 
     const [scheduleResult, vaccineResult, priceResult, legacyResult, defaults] = await Promise.all([
       payload.find({ collection: 'vaccinationSchedules', where: { active: { equals: true } }, sort: '-date', limit: 300, depth: 1 }),
@@ -61,6 +72,13 @@ export default async function VaccinationPage() {
 
     vaccines = (vaccineResult.docs as any[]).map((x) => {
       const priceDoc = currentPrice.get(String(x.id))
+      // Ưu tiên giá nhập trực tiếp trên thẻ vắc xin, fallback sang bảng giá vaccinePrices
+      const resolvedPrice = typeof x.price === 'number'
+        ? x.price
+        : typeof priceDoc?.price === 'number'
+          ? priceDoc.price
+          : undefined
+
       return {
         id: String(x.id),
         name: x.name,
@@ -70,9 +88,10 @@ export default async function VaccinationPage() {
         manufacturer: x.manufacturer,
         origin: x.origin,
         prevents: x.prevents,
+        targetGroup: x.targetGroup || 'all',
         ageGroup: x.ageGroup,
         availability: x.availability || 'available',
-        price: typeof priceDoc?.price === 'number' ? priceDoc.price : undefined,
+        price: resolvedPrice,
         decisionNo: priceDoc?.decisionNo,
         note: x.note,
         registrationUrl: x.registrationUrl,
@@ -82,7 +101,6 @@ export default async function VaccinationPage() {
     })
 
     // Chỉ dùng dữ liệu legacy khi collection chuẩn tương ứng chưa có dữ liệu.
-    // Điều này giữ tương thích sau nâng cấp mà không tạo bản ghi trùng trên giao diện.
     const legacyDocs = legacyResult.docs as any[]
     if (schedules.length === 0) {
       schedules = legacyDocs
@@ -115,6 +133,7 @@ export default async function VaccinationPage() {
           manufacturer: x.manufacturer,
           origin: x.origin,
           prevents: x.prevents,
+          targetGroup: 'all',
           ageGroup: x.ageGroup,
           availability: x.availability || 'available',
           price: typeof x.fee === 'number' ? x.fee : undefined,
@@ -189,7 +208,82 @@ export default async function VaccinationPage() {
             schedules={schedules}
             medproUrl={medproUrl}
             hotline={hotline}
+            showSearch={pageSettings.showSearch !== false}
+            showAgeFilter={pageSettings.showAgeFilter !== false}
+            showPrice={pageSettings.showPrice !== false}
+            showBookButton={pageSettings.showBookButton !== false}
+            showWorkflowSection={pageSettings.showWorkflowSection !== false}
+            showSupportBanner={pageSettings.showSupportBanner !== false}
+            bookButtonText={pageSettings.bookButtonText || 'Đăng ký tiêm'}
+            bookButtonUrl={pageSettings.bookButtonUrl}
           />
+
+          {/* Khối bài viết chi tiết & Hướng dẫn tiêm chủng RichText */}
+          {pageSettings.contentBlock?.enabled && (pageSettings.contentBlock?.title || pageSettings.contentBlock?.content) && (
+            <article
+              className="vaccineDetailCard"
+              style={{
+                marginTop: '44px',
+                padding: '32px 36px',
+                textAlign: (pageSettings.contentBlock?.textAlign || 'left') as any,
+              }}
+            >
+              {pageSettings.contentBlock?.title && (
+                <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#0f2744', marginBottom: '12px' }}>
+                  {pageSettings.contentBlock.title}
+                </h2>
+              )}
+              {pageSettings.contentBlock?.subtitle && (
+                <p style={{ fontSize: '15px', color: '#475569', lineHeight: 1.6, marginBottom: '24px' }}>
+                  {pageSettings.contentBlock.subtitle}
+                </p>
+              )}
+              {pageSettings.contentBlock?.content && (
+                <div className="vaccineDetailContent" style={{ padding: 0 }}>
+                  <RichText data={pageSettings.contentBlock.content} />
+                </div>
+              )}
+            </article>
+          )}
+
+          {/* Các khối nội dung tùy biến thêm mới (Custom Blocks) */}
+          {Array.isArray(pageSettings.customBlocks) && pageSettings.customBlocks.filter((b: any) => b?.enabled !== false).length > 0 && (
+            <section style={{ marginTop: '28px', marginBottom: '40px' }}>
+              {pageSettings.customBlocks.filter((b: any) => b?.enabled !== false).map((block: any, bIdx: number) => {
+                const bAlign = block.textAlign || 'left'
+                return (
+                  <div
+                    key={block.id || bIdx}
+                    className="vaccineDetailCard"
+                    style={{
+                      padding: '28px 32px',
+                      marginBottom: '20px',
+                      textAlign: bAlign !== 'left' ? bAlign : undefined,
+                    }}
+                  >
+                    {block.kicker && (
+                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#0284c7', letterSpacing: '0.8px', display: 'block', marginBottom: '6px' }}>
+                        {block.kicker}
+                      </span>
+                    )}
+                    <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0f2744', margin: '0 0 10px' }}>
+                      {block.title}
+                    </h3>
+                    {block.subtitle && (
+                      <p style={{ fontSize: '14px', color: '#475569', lineHeight: 1.6, margin: '0 0 18px' }}>
+                        {block.subtitle}
+                      </p>
+                    )}
+                    {block.content && (
+                      <div className="vaccineDetailContent" style={{ padding: 0 }}>
+                        <RichText data={block.content} />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </section>
+          )}
         </div>
       </main>
       <SiteFooter />

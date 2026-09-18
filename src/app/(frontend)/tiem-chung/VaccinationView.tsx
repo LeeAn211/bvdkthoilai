@@ -12,6 +12,7 @@ interface VaccineItem {
   manufacturer?: string
   origin?: string
   prevents?: string
+  targetGroup?: string
   ageGroup?: string
   availability?: 'available' | 'coming' | 'unavailable'
   price?: number
@@ -44,17 +45,38 @@ interface VaccinationViewProps {
   schedules: ScheduleItem[]
   medproUrl: string
   hotline?: string
+  showSearch?: boolean
+  showAgeFilter?: boolean
+  showPrice?: boolean
+  showBookButton?: boolean
+  showWorkflowSection?: boolean
+  showSupportBanner?: boolean
+  bookButtonText?: string
+  bookButtonUrl?: string
 }
 
 const AGE_FILTER_OPTIONS = [
-  { label: 'Tất cả lứa tuổi', value: 'all' },
-  { label: 'Trẻ sơ sinh (< 1 tuổi)', value: 'infant', match: ['tháng', 'sơ sinh', 'tuần'] },
-  { label: 'Trẻ em (1 - 15 tuổi)', value: 'child', match: ['trẻ em', 'tuổi', 'trẻ'] },
-  { label: 'Phụ nữ mang thai', value: 'pregnancy', match: ['mang thai', 'phụ nữ'] },
-  { label: 'Người lớn & Cao tuổi', value: 'adult', match: ['người lớn', 'mọi lứa tuổi', 'cao tuổi', 'bệnh nền'] },
+  { label: 'Tất cả lứa tuổi', value: 'all', matches: [] },
+  { label: 'Trẻ sơ sinh (< 1 tuổi)', value: 'infant', matches: ['infant', 'tháng', 'sơ sinh', 'tuần', '< 1'] },
+  { label: 'Trẻ em (1 - 15 tuổi)', value: 'child', matches: ['child', 'trẻ em', 'tuổi', 'trẻ'] },
+  { label: 'Phụ nữ mang thai', value: 'pregnancy', matches: ['pregnancy', 'mang thai', 'phụ nữ', 'thai kỳ'] },
+  { label: 'Người lớn & Cao tuổi', value: 'adult', matches: ['adult', 'người lớn', 'mọi lứa tuổi', 'cao tuổi', 'bệnh nền', 'trưởng thành'] },
 ]
 
-export function VaccinationView({ vaccines, schedules, medproUrl, hotline = '0292 3861 234' }: VaccinationViewProps) {
+export function VaccinationView({
+  vaccines,
+  schedules,
+  medproUrl,
+  hotline = '0292 3861 234',
+  showSearch = true,
+  showAgeFilter = true,
+  showPrice = true,
+  showBookButton = true,
+  showWorkflowSection = true,
+  showSupportBanner = true,
+  bookButtonText = 'Đăng ký tiêm',
+  bookButtonUrl,
+}: VaccinationViewProps) {
   const [activeTab, setActiveTab] = useState<'vaccines' | 'schedules'>('vaccines')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedAge, setSelectedAge] = useState('all')
@@ -75,10 +97,17 @@ export function VaccinationView({ vaccines, schedules, medproUrl, hotline = '029
 
       if (selectedAge === 'all') return true
       const opt = AGE_FILTER_OPTIONS.find((o) => o.value === selectedAge)
-      if (!opt?.match) return true
+      if (!opt) return true
 
-      const ageText = (item.ageGroup || '').toLowerCase()
-      return opt.match.some((keyword) => ageText.includes(keyword))
+      // 1. Kiểm tra trường targetGroup chọn từ Admin CMS
+      if (item.targetGroup) {
+        if (item.targetGroup === selectedAge) return true
+        if (item.targetGroup === 'all') return true
+      }
+
+      // 2. Fallback kiểm tra từ khóa trong ageGroup / prevents
+      const ageText = `${item.ageGroup || ''} ${item.prevents || ''}`.toLowerCase()
+      return opt.matches.some((keyword) => ageText.includes(keyword))
     })
   }, [vaccines, searchQuery, selectedAge])
 
@@ -132,44 +161,48 @@ export function VaccinationView({ vaccines, schedules, medproUrl, hotline = '029
       </div>
 
       {/* 2. THANH CÔNG CỤ TÌM KIẾM & BỘ LỌC */}
-      <div className="vaccineFilterBar">
-        <div className="vaccineSearchRow">
-          <div className="vaccineSearchInputWrap">
-            <span className="vaccineSearchIcon" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </span>
-            <input
-              type="text"
-              className="vaccineSearchInput"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={activeTab === 'vaccines' ? 'Tìm theo tên vắc xin, bệnh phòng ngừa, xuất xứ...' : 'Tìm kiếm theo tiêu đề lịch tiêm, đối tượng, địa điểm...'}
-            />
-          </div>
-          <div className="vaccineCountBadge">
-            Hiển thị <strong>{activeTab === 'vaccines' ? filteredVaccines.length : filteredSchedules.length}</strong> / {activeTab === 'vaccines' ? vaccines.length : schedules.length} kết quả
-          </div>
-        </div>
+      {(showSearch || showAgeFilter) && (
+        <div className="vaccineFilterBar">
+          {showSearch && (
+            <div className="vaccineSearchRow">
+              <div className="vaccineSearchInputWrap">
+                <span className="vaccineSearchIcon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </span>
+                <input
+                  type="text"
+                  className="vaccineSearchInput"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={activeTab === 'vaccines' ? 'Tìm theo tên vắc xin, bệnh phòng ngừa, xuất xứ...' : 'Tìm kiếm theo tiêu đề lịch tiêm, đối tượng, địa điểm...'}
+                />
+              </div>
+              <div className="vaccineCountBadge">
+                Hiển thị <strong>{activeTab === 'vaccines' ? filteredVaccines.length : filteredSchedules.length}</strong> / {activeTab === 'vaccines' ? vaccines.length : schedules.length} kết quả
+              </div>
+            </div>
+          )}
 
-        {activeTab === 'vaccines' && (
-          <div className="vaccineAgeFilters">
-            <span className="vaccineAgeFilterLabel">Đối tượng tiêm:</span>
-            {AGE_FILTER_OPTIONS.map((opt) => (
-              <button
-                type="button"
-                key={opt.value}
-                className={`vaccineAgePill ${selectedAge === opt.value ? 'active' : ''}`}
-                onClick={() => setSelectedAge(opt.value)}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+          {showAgeFilter && activeTab === 'vaccines' && (
+            <div className="vaccineAgeFilters">
+              <span className="vaccineAgeFilterLabel">Đối tượng tiêm:</span>
+              {AGE_FILTER_OPTIONS.map((opt) => (
+                <button
+                  type="button"
+                  key={opt.value}
+                  className={`vaccineAgePill ${selectedAge === opt.value ? 'active' : ''}`}
+                  onClick={() => setSelectedAge(opt.value)}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* 3. NỘI DUNG TAB 1: DANH MỤC & GIÁ VẮC XIN */}
       {activeTab === 'vaccines' && (
@@ -227,23 +260,27 @@ export function VaccinationView({ vaccines, schedules, medproUrl, hotline = '029
                     </div>
 
                     <div className="vaccineCardFooter">
-                      <div className="vaccinePriceWrap">
-                        <span className="vaccinePriceLabel">Giá tiêm niêm yết</span>
-                        <span className={`vaccinePriceValue ${v.price === 0 ? 'free' : ''}`}>{formatPrice(v.price)}</span>
-                      </div>
+                      {showPrice ? (
+                        <div className="vaccinePriceWrap">
+                          <span className="vaccinePriceLabel">Giá tiêm niêm yết</span>
+                          <span className={`vaccinePriceValue ${v.price === 0 ? 'free' : ''}`}>{formatPrice(v.price)}</span>
+                        </div>
+                      ) : <div />}
 
                       <div className="vaccineCardActions">
                         <Link href={v.href} className="vaccineDetailBtn">
                           Chi tiết
                         </Link>
-                        <a
-                          href={v.registrationUrl || medproUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="vaccineBookBtn"
-                        >
-                          Đăng ký tiêm
-                        </a>
+                        {showBookButton && (
+                          <a
+                            href={v.registrationUrl || bookButtonUrl || medproUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="vaccineBookBtn"
+                          >
+                            {bookButtonText || 'Đăng ký tiêm'}
+                          </a>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -337,67 +374,71 @@ export function VaccinationView({ vaccines, schedules, medproUrl, hotline = '029
       )}
 
       {/* 5. KHỐI QUY TRÌNH TIÊM CHỦNG AN TOÀN 4 BƯỚC */}
-      <section className="vaccineWorkflowSection">
-        <div className="workflowHeader">
-          <span className="workflowEyebrow">QUY CHUẨN AN TOÀN BỘ Y TẾ</span>
-          <h2 className="workflowTitle">Quy trình 4 bước Tiêm chủng An toàn tại Bệnh viện Đa khoa Khu vực Thới Lai</h2>
-          <p className="workflowDesc">
-            Mọi khách hàng và bệnh nhi đều được khám sàng lọc kỹ lưỡng, tư vấn phác đồ tiêm tối ưu và theo dõi sau tiêm bởi đội ngũ bác sĩ chuyên khoa.
-          </p>
-        </div>
-
-        <div className="workflowGrid">
-          <div className="workflowStepCard">
-            <span className="workflowStepNum">1</span>
-            <h4 className="workflowStepTitle">Tiếp đón & Đăng ký</h4>
-            <p className="workflowStepDesc">
-              Khách hàng làm thủ tục tại quầy tiếp đón tiêm chủng, kiểm tra sổ tiêm và cập nhật thông tin tiêm chủng quốc gia.
+      {showWorkflowSection && (
+        <section className="vaccineWorkflowSection">
+          <div className="workflowHeader">
+            <span className="workflowEyebrow">QUY CHUẨN AN TOÀN BỘ Y TẾ</span>
+            <h2 className="workflowTitle">Quy trình 4 bước Tiêm chủng An toàn tại Bệnh viện Đa khoa Khu vực Thới Lai</h2>
+            <p className="workflowDesc">
+              Mọi khách hàng và bệnh nhi đều được khám sàng lọc kỹ lưỡng, tư vấn phác đồ tiêm tối ưu và theo dõi sau tiêm bởi đội ngũ bác sĩ chuyên khoa.
             </p>
           </div>
 
-          <div className="workflowStepCard">
-            <span className="workflowStepNum">2</span>
-            <h4 className="workflowStepTitle">Khám sàng lọc trước tiêm</h4>
-            <p className="workflowStepDesc">
-              Bác sĩ chuyên khoa tiến hành đo sinh hiệu, đánh giá thể trạng, kiểm tra tiền sử dị ứng và tư vấn phác đồ vắc xin phù hợp.
-            </p>
-          </div>
+          <div className="workflowGrid">
+            <div className="workflowStepCard">
+              <span className="workflowStepNum">1</span>
+              <h4 className="workflowStepTitle">Tiếp đón & Đăng ký</h4>
+              <p className="workflowStepDesc">
+                Khách hàng làm thủ tục tại quầy tiếp đón tiêm chủng, kiểm tra sổ tiêm và cập nhật thông tin tiêm chủng quốc gia.
+              </p>
+            </div>
 
-          <div className="workflowStepCard">
-            <span className="workflowStepNum">3</span>
-            <h4 className="workflowStepTitle">Thực hiện tiêm chủng</h4>
-            <p className="workflowStepDesc">
-              Điều dưỡng đối chiếu thông tin vắc xin (hạn sử dụng, liều dùng, xuất xứ) trước sự chứng kiến của người tiêm và tiêm đúng kỹ thuật.
-            </p>
-          </div>
+            <div className="workflowStepCard">
+              <span className="workflowStepNum">2</span>
+              <h4 className="workflowStepTitle">Khám sàng lọc trước tiêm</h4>
+              <p className="workflowStepDesc">
+                Bác sĩ chuyên khoa tiến hành đo sinh hiệu, đánh giá thể trạng, kiểm tra tiền sử dị ứng và tư vấn phác đồ vắc xin phù hợp.
+              </p>
+            </div>
 
-          <div className="workflowStepCard">
-            <span className="workflowStepNum">4</span>
-            <h4 className="workflowStepTitle">Theo dõi & Hướng dẫn</h4>
-            <p className="workflowStepDesc">
-              Khách hàng được theo dõi phản ứng sau tiêm tại chỗ tối thiểu 30 phút, kiểm tra lại sức khỏe và hướng dẫn chăm sóc tại nhà.
-            </p>
+            <div className="workflowStepCard">
+              <span className="workflowStepNum">3</span>
+              <h4 className="workflowStepTitle">Thực hiện tiêm chủng</h4>
+              <p className="workflowStepDesc">
+                Điều dưỡng đối chiếu thông tin vắc xin (hạn sử dụng, liều dùng, xuất xứ) trước sự chứng kiến của người tiêm và tiêm đúng kỹ thuật.
+              </p>
+            </div>
+
+            <div className="workflowStepCard">
+              <span className="workflowStepNum">4</span>
+              <h4 className="workflowStepTitle">Theo dõi & Hướng dẫn</h4>
+              <p className="workflowStepDesc">
+                Khách hàng được theo dõi phản ứng sau tiêm tại chỗ tối thiểu 30 phút, kiểm tra lại sức khỏe và hướng dẫn chăm sóc tại nhà.
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 6. BANNER LIÊN HỆ ĐẶT LỊCH & TƯ VẤN */}
-      <div className="vaccineSupportBanner">
-        <div className="vaccineSupportContent">
-          <h3>Tư vấn phác đồ vắc xin & Đặt lịch tiêm chủng</h3>
-          <p>
-            Quý khách có nhu cầu tiêm ngừa cho trẻ hoặc người lớn, vui lòng liên hệ trực tiếp phòng tiêm chủng Bệnh viện Đa khoa Khu vực Thới Lai để được tư vấn tận tâm.
-          </p>
+      {showSupportBanner && (
+        <div className="vaccineSupportBanner">
+          <div className="vaccineSupportContent">
+            <h3>Tư vấn phác đồ vắc xin & Đặt lịch tiêm chủng</h3>
+            <p>
+              Quý khách có nhu cầu tiêm ngừa cho trẻ hoặc người lớn, vui lòng liên hệ trực tiếp phòng tiêm chủng Bệnh viện Đa khoa Khu vực Thới Lai để được tư vấn tận tâm.
+            </p>
+          </div>
+          <div className="vaccineSupportActions">
+            <a href={bookButtonUrl || medproUrl} target="_blank" rel="noopener noreferrer" className="vaccineSupportBtn">
+              <span>📅 {bookButtonText ? `${bookButtonText} trực tuyến` : 'Đặt hẹn trực tuyến'}</span>
+            </a>
+            <a href={`tel:${hotline.replace(/\s+/g, '')}`} className="vaccineHotlineBtn">
+              <span>📞 Hotline: {hotline}</span>
+            </a>
+          </div>
         </div>
-        <div className="vaccineSupportActions">
-          <a href={medproUrl} target="_blank" rel="noopener noreferrer" className="vaccineSupportBtn">
-            <span>📅 Đặt hẹn trực tuyến</span>
-          </a>
-          <a href={`tel:${hotline.replace(/\s+/g, '')}`} className="vaccineHotlineBtn">
-            <span>📞 Hotline: {hotline}</span>
-          </a>
-        </div>
-      </div>
+      )}
     </div>
   )
 }

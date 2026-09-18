@@ -154,7 +154,10 @@ export async function POST(request: Request) {
       await payload.create({ collection: 'importJobs', data: { module: 'services', fileName: upload.name, status: errors.length ? 'failed' : 'completed', createdCount: created, updatedCount: updated, skippedCount: skipped, errorCount: errors.length, errors, importedBy: user.id }, overrideAccess: true })
     } catch {}
     return NextResponse.json({ mode: 'import', created, updated, skipped, errors })
-  } catch {
-    return NextResponse.json({ error: 'Không thể xử lý file Excel. Hãy tải mẫu và kiểm tra lại dữ liệu.' }, { status: 500 })
+  } catch (error: any) {
+    console.error('Lỗi import bảng giá:', error)
+    return NextResponse.json({
+      error: error?.message ? `Lỗi xử lý file Excel: ${error.message}` : 'Không thể xử lý file Excel. Hãy tải mẫu và kiểm tra lại dữ liệu.'
+    }, { status: 500 })
   }
 }
