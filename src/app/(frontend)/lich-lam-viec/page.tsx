@@ -4,7 +4,8 @@ import { SiteFooter } from '@/components/SiteFooter'
 import { getGlobal } from '@/lib/payload'
 import './lich-lam-viec.css'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Lịch làm việc & Thời gian khám bệnh — Bệnh viện Đa khoa Khu vực Thới Lai',

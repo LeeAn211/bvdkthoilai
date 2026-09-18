@@ -1,5 +1,511 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-18] - Tích Hợp Tính Năng Quét Ảnh Lịch Trực Bằng AI (Google Gemini Vision OCR) & Migration 034
+
+- **Thời gian thực hiện:** 14:55 - 15:15 (Asia/Saigon)
+- **Tóm tắt yêu cầu:** Tích hợp tính năng Quét ảnh lịch trực tự động bằng AI (OCR) trực tiếp trong giao diện Admin CMS (tại mục Lịch trực cấp cứu `schedules?mode=emergency`). Cho phép chọn hoặc chụp ảnh bảng lịch trực tuần của bệnh viện (dạng ma trận phân ca các khoa phòng/lãnh đạo) để AI tự động nhận diện tuần trực, ngày trực, nhân sự từng ca trực 7 ngày trong tuần và danh bạ khẩn cấp, sau đó tự động điền vào các trường trong CMS.
+- **Giải pháp & Các bước triển khai:**
+  1. **API Endpoint Nhận diện Lịch Trực AI (`src/app/api/ai-schedule-ocr/route.ts`):**
+     - Xây dựng API tiếp nhận ảnh lịch trực (FormData multipart).
+     - Hỗ trợ lấy Google Gemini API Key linh hoạt: ưu tiên cấu hình trong Admin CMS (`ScheduleSettings.geminiApiKey`), fallback về biến môi trường `.env` (`GEMINI_API_KEY`), hoặc do người dùng truyền trực tiếp qua header `x-gemini-api-key`.
+     - Sử dụng model `gemini-1.5-flash` / `gemini-1.5-pro` với cấu trúc system prompt chuyên sâu về chuẩn ma trận lịch trực bệnh viện Việt Nam: nhận diện đúng các khoa phòng (Lãnh đạo, Cấp cứu tổng hợp, Bác sĩ, Điều dưỡng, Sản, Ngoại, Nội-Nhi, Dược, X-Quang, Xét nghiệm, Lái xe cấp cứu, Viện phí, Điện nước...) và phân bổ vào 7 ngày trong tuần (Thứ Hai đến Chủ Nhật).
+  2. **Nâng cấp Giao diện Admin CMS (`src/components/admin/EmergencyTemplateDownload.tsx`):**
+     - Thiết kế giao diện trực quan với 2 phương thức nhập liệu song song:
+       - **CÁCH 1: ✨ QUÉT ẢNH LỊCH TRỰC BẰNG AI (GEMINI VISION)**: Chọn tệp ảnh (`.jpg`, `.jpeg`, `.png`, `.webp`), có ô nhập Gemini API Key nhanh (nếu chưa lưu cấu hình), xem trước ảnh thu nhỏ (thumbnail), nút "✨ Quét ảnh bằng AI" kèm trạng thái xử lý sống động.
+       - **CÁCH 2: 📥 IMPORT TỆP EXCEL (.XLSX)**: Giữ nguyên phương thức import bảng tính Excel mẫu truyền thống.
+     - Sau khi AI quét xong: hiển thị bảng xem trước (preview table) trực quan gồm tuần trực, ghi chú chung, danh bạ khẩn cấp và toàn bộ danh sách phân ca các khoa phòng; cung cấp nút bấm "✓ Điền vào bảng bên dưới" để tự động đưa toàn bộ dữ liệu vào form Payload CMS.
+  3. **Cấu hình Schema Admin CMS (`src/globals/ScheduleSettings.ts`):**
+     - Bổ sung trường `geminiApiKey` (Text, kiểu password) trong Cấu hình Lịch khám / tiêm (`/admin/globals/schedule-settings`), có hướng dẫn lấy key miễn phí từ Google AI Studio (`aistudio.google.com`).
+  4. **Đóng gói Migration Database 034 (Mandate 6 & 15):**
+     - Sinh schema mới: `npm run generate:db-schema` (cập nhật `src/payload-generated-schema.ts`).
+     - Tạo file migration: `scripts/db-migrations/20260918_034_add_gemini_api_key_to_schedule_settings.mjs` thêm cột `gemini_api_key` vào bảng `schedule_settings`.
+     - Seal schema contract: `npm run db:schema:seal -- 20260918_034_add_gemini_api_key_to_schedule_settings`.
+     - Kiểm tra contract: `npm run db:schema:check` (✓ hợp lệ 100%).
+     - Triển khai an toàn: `npm run db:migrate:deploy` (34 applied, 0 pending).
+- **Kiểm thử chất lượng & Kết quả:**
+  - `npx tsc --noEmit` đạt 0 lỗi.
+  - Toàn bộ 34 migration đã được áp dụng đầy đủ. Server chạy mượt mà không lỗi.
+
+- **Thời gian thực hiện:** 14:35 - 14:45 (Asia/Saigon)
+- **Tóm tắt yêu cầu:** Phần Gói khám sức khỏe (`/goi-kham`) cho phép quản trị viên bật hoặc tắt nút "Đăng ký gói khám" độc lập trên từng gói theo nhu cầu thực tế của bệnh viện.
+- **Giải pháp & Các bước triển khai:**
+  1. **Cấu hình Schema Admin CMS (Mandate 5.2 & 13.2):**
+     - Bổ sung trường checkbox `showButton` ("Bật hiển thị nút Đăng ký gói khám", `defaultValue: true`) vào mảng `packages` trong `CheckupPackagesSettings.ts` (và `SiteSettings.ts` để đồng bộ fallback).
+  2. **Giao diện Frontend (`src/app/(frontend)/goi-kham/page.tsx`):**
+     - Bọc nút `<Link className="btnCarePrimary">` bằng điều kiện `{pkg.showButton !== false && (...)}`.
+     - Khi quản trị viên bỏ tích chọn "Bật hiển thị nút Đăng ký gói khám" ở bất kỳ gói nào, nút đăng ký của gói đó sẽ ẩn ngay lập tức, danh mục kỹ thuật và thông tin chi phí của gói vẫn hiển thị đẹp mắt, cân đối.
+  3. **Đóng gói Migration Database 033 (Mandate 6 & 15):**
+     - Sinh schema: `npm run generate:db-schema`.
+     - Tạo file migration: `scripts/db-migrations/20260918_033_add_show_button_to_checkup_packages.mjs` thêm cột `show_button` (boolean, default true) vào bảng `checkup_packages_settings_packages` và `chk_pkgs`.
+     - Seal schema contract: `npm run db:schema:seal -- 20260918_033_add_show_button_to_checkup_packages`.
+     - Kiểm tra contract: `npm run db:schema:check` (✓ hợp lệ 100%).
+     - Triển khai an toàn: `npm run db:migrate:deploy` (33 applied, 0 pending).
+- **Kiểm thử chất lượng & Kết quả:**
+  - `npx tsc --noEmit` đạt 0 lỗi.
+  - Cột `show_button` đã tồn tại và hoạt động ổn định trong CSDL PostgreSQL.
+  - Phản hồi từ Admin CMS và trang `/goi-kham` đều đạt chuẩn HTTP 200 OK.
+
+## [2026-09-18] - Sửa Lỗi Hiển Thị Tab Bị Tắt Trên Sub-Nav Dành Cho Người Bệnh & Đồng Bộ Tức Thì Frontend
+
+- **Thời gian thực hiện:** 14:05 - 14:15 (Asia/Saigon)
+- **Tóm tắt yêu cầu:** Người dùng tắt hiển thị các Tab trong Admin CMS (ví dụ Tab 03 "Điều trị nội trú" và Tab 05 "Sơ đồ bệnh viện" bỏ chọn "Bật hiển thị Tab này"), dữ liệu đã lưu thành công vào cơ sở dữ liệu (`enabled: false`), nhưng ngoài giao diện frontend các tab này vẫn còn hiển thị.
+- **Nguyên nhân gốc rễ (Root Cause Analysis):**
+  1. **Lọc thiếu điều kiện `enabled` trong `PatientCareSubNav.tsx`**: Khi component `PatientCareSubNav` nhận mảng `customTabs` từ trang `danh-cho-nguoi-benh`, trước đó component gán thẳng `navItems = customTabs` mà không qua bước lọc `filter((t) => t?.enabled !== false)`. Do đó, dù trường `enabled` trong database là `false`, toàn bộ 12 tab vẫn bị render ra DOM.
+  2. **Bộ nhớ đệm Next.js ISR (Cache delay)**: Trang `/danh-cho-nguoi-benh` và các trang liên quan (`quy-trinh-kham-benh`, `so-do-benh-vien`, `goi-kham`, `dieu-tri-noi-tru`, `chat-luong-benh-vien`) có cấu hình `revalidate = 60` hoặc `revalidate = 300` (5 phút), khiến Next.js tiếp tục trả về trang HTML cũ đã cache thay vì nạp ngay dữ liệu mới nhất từ database khi người dùng F5/tải lại trang.
+- **Các tệp tin đã chỉnh sửa (Files Modified):**
+  1. `src/components/PatientCareSubNav.tsx`:
+     - Bổ sung bộ lọc bắt buộc `filter((t: any) => t?.enabled !== false)` cả khi truyền qua props `customTabs` lẫn khi component tự truy vấn `getGlobal('patient-portal-settings')`.
+     - Tự động ẩn toàn bộ thanh Sub-Nav (`return null`) nếu tất cả các tab đều bị tắt.
+  2. `src/app/(frontend)/danh-cho-nguoi-benh/page.tsx`:
+     - Lọc `subNavTabs.filter((t: any) => t?.enabled !== false)` trước khi truyền xuống props.
+     - Cập nhật cấu hình sang `dynamic = 'force-dynamic'` và `revalidate = 0` để giao diện phản hồi tức thì với mọi thay đổi trong Admin CMS.
+  3. `src/app/(frontend)/quy-trinh-kham-benh/page.tsx`, `src/app/(frontend)/dieu-tri-noi-tru/page.tsx`, `src/app/(frontend)/goi-kham/page.tsx`, `src/app/(frontend)/so-do-benh-vien/page.tsx`, `src/app/(frontend)/chat-luong-benh-vien/page.tsx`:
+     - Cập nhật `dynamic = 'force-dynamic'` và `revalidate = 0` loại bỏ hoàn toàn độ trễ cache 300s.
+- **Kiểm thử chất lượng & Kết quả:**
+  - Kiểm tra thực tế HTML phản hồi từ `http://localhost:3000/danh-cho-nguoi-benh`: Tab "Điều trị nội trú" (`noi-tru`) và "Sơ đồ bệnh viện" (`so-do`) đã hoàn toàn biến mất khỏi thanh điều hướng; các tab đang bật còn lại vẫn hiển thị đầy đủ và chuẩn xác.
+  - Kiểm tra các trang chuyên mục con (`quy-trinh-kham-benh`, `goi-kham`): Cả hai tab đã tắt đều không xuất hiện.
+  - `npx tsc --noEmit` đạt 0 lỗi.
+
+## [2026-09-18] - Sửa Triệt Để Lỗi Lưu Global & Cập Nhật Dữ Liệu Các Trang "Dành Cho Người Bệnh" (Migration 032)
+
+- **Thời gian thực hiện:** 13:45 - 14:00 (Asia/Saigon)
+- **Vấn đề gốc (Root Cause Analysis):**
+  1. **Lỗi "Field sau không hợp lệ: id" (ValidationError / duplicate key on pps_svc_items_pkey / ef_tabs_steps_pkey)**:
+     - Trong Payload CMS khi thực hiện `updateGlobal`, hệ thống xóa các hàng trong bảng mảng cấp 1 (`pps_svc_groups`, `examination_flow_settings_flow_tabs`), nhưng các bảng mảng con lồng nhau (`pps_svc_items`, `examination_flow_settings_flow_tabs_steps`, `ef_steps`) chưa có ràng buộc `FOREIGN KEY ... ON DELETE CASCADE` trong PostgreSQL.
+     - Dẫn đến khi bảng cha bị xóa để cập nhật mới, các dòng con trong bảng phụ trở thành mồ côi (orphans). Khi Payload tiến hành INSERT lại các dòng con với cùng `id`, PostgreSQL trả về mã lỗi `23505 (duplicate key value violates unique constraint)`, và Payload wrapper ném ngược lại `ValidationError: Lỗi - Field sau không hợp lệ: id`.
+  2. **Ràng buộc NOT NULL trên các cột schema cũ của `hospital_map_settings_floors` và `checkup_packages_settings_packages`**:
+     - Các cột cũ `level`, `name`, `departments` (trên bảng floors) và `name`, `target`, `price`, `features` (trên bảng packages) vẫn còn ràng buộc `NOT NULL`, khiến thao tác lưu dữ liệu mới từ Admin CMS bị viễn cảnh lỗi `23502 (null value violates not-null constraint)`.
+  3. **Thiếu cột và lệch tên trường trên `hospital_quality_settings`**:
+     - Bảng `hospital_quality_settings` thiếu các cột boolean: `show_quality_cards`, `show_dimensions`, `show_programs`, `show_feedback_box`.
+     - Bảng `hospital_quality_settings_stat_cards` thiếu cột `val`, `unit` và vướng ràng buộc NOT NULL trên cột `value`.
+     - Bảng `hospital_quality_settings_dimensions` thiếu các cột `code`, `title`, `percent` và vướng NOT NULL trên cột `name`.
+     - Bảng `hospital_quality_settings_programs` thiếu cột `highlights`.
+- **Giải pháp & Các bước khắc phục triệt để:**
+  - Thiết lập ràng buộc `FOREIGN KEY ... ON DELETE CASCADE` cho tất cả các bảng mảng lồng nhau:
+    - `pps_svc_items` -> `pps_svc_groups(id) ON DELETE CASCADE`.
+    - `examination_flow_settings_flow_tabs_steps` -> `examination_flow_settings_flow_tabs(id) ON DELETE CASCADE`.
+    - `ef_steps` -> `ef_tabs(id) ON DELETE CASCADE`.
+  - Gỡ bỏ ràng buộc `NOT NULL` (DROP NOT NULL) trên các cột cũ của `hospital_map_settings_floors` và `checkup_packages_settings_packages`.
+  - Bổ sung đầy đủ 4 cột toggle cho `hospital_quality_settings`, đồng thời bổ sung các cột `val`, `unit`, `code`, `title`, `percent`, `highlights` và đồng bộ dữ liệu mẫu hợp lệ.
+- **Đóng gói Migration Database 032 (Mandate 6 & 15):**
+  - Tạo migration: `scripts/db-migrations/20260918_032_fix_patient_care_globals_cascade_fk_and_columns.mjs`.
+  - Seal contract: `npm run db:schema:seal -- 20260918_032_fix_patient_care_globals_cascade_fk_and_columns`.
+  - Kiểm tra contract: `npm run db:schema:check` (✓ hợp lệ 100%).
+  - Chạy migration deploy: `npm run db:migrate:deploy` (32 applied, 0 pending).
+- **Kết quả kiểm thử chất lượng:**
+  - Kiểm thử lưu `updateGlobal` độc lập và lặp lại trên toàn bộ 6 trang Global:
+    1. `patient-portal-settings` (Cổng tổng hợp): **THÀNH CÔNG (SUCCESS)**
+    2. `examination-flow-settings` (Quy trình khám bệnh): **THÀNH CÔNG (SUCCESS)**
+    3. `inpatient-guide-settings` (Điều trị nội trú): **THÀNH CÔNG (SUCCESS)**
+    4. `checkup-packages-settings` (Gói khám sức khỏe): **THÀNH CÔNG (SUCCESS)**
+    5. `hospital-map-settings` (Sơ đồ bệnh viện): **THÀNH CÔNG (SUCCESS)**
+    6. `hospital-quality-settings` (Chất lượng bệnh viện): **THÀNH CÔNG (SUCCESS)**
+  - Tỷ lệ thành công: **6/6 PASSED, 0 FAILED**.
+  - `npm run typecheck` đạt 0 lỗi.
+  - Toàn bộ 6 trang Frontend và 6 màn hình Admin CMS đều phản hồi HTTP 200 OK.
+
+
+- **Thời gian thực hiện:** 12:55 - 13:12 (Asia/Saigon)
+- **Nội dung thực hiện:**
+  - Nạp (seed) đầy đủ 100% dữ liệu mẫu chuẩn y tế vào tất cả các Global trang của Cổng Dành cho Người bệnh trong cơ sở dữ liệu:
+    1. **Trang Cổng tổng hợp (`/danh-cho-nguoi-benh` - `patient-portal-settings`)**: 12 tab điều hướng Sub-Nav, 3 ô cam kết phục vụ, 2 nhóm dịch vụ với 13 thẻ card tiện ích.
+    2. **Trang Quy trình khám (`/quy-trinh-kham-benh` - `examination-flow-settings`)**: 3 tab quy trình lớn (Khám BHYT 7 bước, Khám Dịch vụ 6 bước, Cấp cứu 24/24 5 bước), 4 ô giấy tờ cần chuẩn bị và 6 nhóm đối tượng ưu tiên.
+    3. **Trang Điều trị nội trú (`/dieu-tri-noi-tru` - `inpatient-guide-settings`)**: 4 bước nhập viện, khung giờ thăm bệnh 3 buổi, danh sách checklist đồ dùng cần mang theo và cấm mang vào.
+    4. **Trang Gói khám sức khỏe (`/goi-kham` - `checkup-packages-settings`)**: 3 gói khám mẫu (Tổng quát định kỳ, Tầm soát tim mạch, Khám lái xe).
+    5. **Trang Sơ đồ bệnh viện (`/so-do-benh-vien` - `hospital-map-settings`)**: 4 tầng khoa phòng chức năng, 6 tiện ích công cộng phục vụ người bệnh.
+    6. **Trang Chất lượng bệnh viện (`/chat-luong-benh-vien` - `hospital-quality-settings`)**: 4 thẻ chỉ số thống kê, 5 nhóm tiêu chuẩn Phần A -> E theo Bộ 83 Tiêu chí Bộ Y tế, 3 chương trình cải tiến chất lượng.
+    7. **Trang Khảo sát ý kiến (`/khao-sat` - `survey-page-settings`)**: 3 khối hướng dẫn mẫu khảo sát (Ngoại trú, Nội trú, Nhân viên).
+    8. **Trang Góp ý – Phản ánh (`/gop-y` - `feedback-page-settings`)**: 3 hộp thông tin liên hệ và quy trình giải quyết.
+    9. **Trang Biểu mẫu điện tử (`/bieu-mau` - `forms-page-settings`)**: 3 khối biểu mẫu hồ sơ y tế thông dụng.
+    10. **Trang Hỏi đáp y tế (`/hoi-dap` - `faq-page-settings`)**: Thông báo và hướng dẫn hỏi đáp trực tuyến.
+  - Quản trị viên mở bất kỳ mục nào trong Admin CMS ra cũng thấy ngay toàn bộ nội dung đã được điền sẵn, chỉ cần chỉnh sửa sơ lại cho sát thực tế đơn vị mà không phải tự nhập thủ công từ đầu.
+  - **Khắc phục lỗi xác thực ID (Field sau không hợp lệ: id)**: Chuẩn hóa toàn bộ mã định danh `id` của các hàng trong mảng dữ liệu sang định dạng chuẩn 24-ký tự hex (ObjectID của Payload CMS), giải quyết triệt để lỗi khi người dùng bật/tắt checkbox `enabled` hoặc lưu thay đổi.
+
+## [2026-09-18] - Đưa Toàn Bộ Nội Dung & Bài Viết Các Tab Trên "Dành Cho Người Bệnh" Vào Admin CMS
+
+- **Thời gian thực hiện:** 12:35 - 12:46 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Đáp ứng yêu cầu người dùng: *"các bài viết hiển thị các tab tren danh-cho-nguoi-benh phải được vào admin để tôi điều chỉnh. bạn thiết kế mẫu sẵn nhưng phải đưa vào admin để tôi chỉnh lại cho phù hợp với đơn vị của tôi"*.
+  - Toàn bộ nội dung bài viết hướng dẫn trên các tab của Cổng Dành Cho Người Bệnh:
+    1. Cổng tổng hợp (`/danh-cho-nguoi-benh` - `PatientPortalSettings.ts`)
+    2. Quy trình khám bệnh (`/quy-trinh-kham-benh` - `ExaminationFlowSettings.ts`)
+    3. Điều trị nội trú (`/dieu-tri-noi-tru` - `InpatientGuideSettings.ts`)
+    4. Gói khám sức khỏe (`/goi-kham` - `CheckupPackagesSettings.ts`)
+    5. Sơ đồ bệnh viện (`/so-do-benh-vien` - `HospitalMapSettings.ts`)
+    6. Chất lượng bệnh viện (`/chat-luong-benh-vien` - `HospitalQualitySettings.ts`)
+    được đưa vào Admin CMS, cho phép người quản trị tùy biến tiêu đề, mô tả, nội dung RichText bài viết chuyên sâu và thêm mới không giới hạn các khối nội dung (`customBlocks`).
+  - Thiết kế sẵn văn bản mẫu chuẩn y tế mang đậm nhận diện **Bệnh viện Đa khoa Khu vực Thới Lai** (tuân thủ tuyệt đối MANDATE 4), có cơ chế Fallback an toàn, không làm hỏng giao diện khi CMS chưa nhập liệu.
+- **Nội dung Database Migration & Schema (Mandate 6, 13.2, 15):**
+  - Schema Globals:
+    - Bổ sung nhóm `contentBlock` (`enabled`, `title`, `subtitle`, `content: richText`, `textAlign: select`).
+    - Bổ sung mảng `customBlocks` (`enabled`, `kicker`, `title`, `subtitle`, `content: richText`, `textAlign: select`).
+    - Đặt tên bảng phụ mảng ngắn gọn (`dbName` < 60 ký tự): `pps_custom_blocks`, `efs_custom_blocks`, `igs_custom_blocks`, `cps_custom_blocks`, `hms_custom_blocks`, `hqs_custom_blocks`.
+  - Sinh schema: `npm run generate:db-schema` (cập nhật `src/payload-generated-schema.ts`).
+  - Tạo Migration: `scripts/db-migrations/20260918_031_add_content_and_custom_blocks_to_patient_care_globals.mjs` với `CREATE TYPE IF NOT EXISTS`, `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`, `CREATE TABLE IF NOT EXISTS` và `verify`.
+  - Seal contract: `npm run db:schema:seal -- 20260918_031_add_content_and_custom_blocks_to_patient_care_globals`.
+  - Kiểm tra contract: `npm run db:schema:check` (hợp lệ).
+  - Deploy migration: `npm run db:migrate:deploy` (`31 applied, 0 pending`).
+- **Giao diện Frontend & Styling:**
+  - Bổ sung lớp kiểu dáng `.patientCareArticleCard`, `.patientCareArticleTitle`, `.patientCareArticleSubtitle`, `.patientCareArticleBody`, `.patientCareCustomBlockCard`, `.patientCareCustomKicker` trong `src/app/styles/patient-care.css`.
+  - Tích hợp component `<RichText />` và hiển thị bài viết chi tiết, khối tùy biến trên toàn bộ 6 trang frontend.
+- **Kết quả kiểm thử:**
+  - `npm run typecheck` đạt 0 lỗi.
+  - Toàn bộ 6 trang Admin CMS: `/admin/globals/patient-portal-settings`, `/admin/globals/inpatient-guide-settings`, `/admin/globals/checkup-packages-settings`, `/admin/globals/hospital-map-settings`, `/admin/globals/examination-flow-settings`, `/admin/globals/hospital-quality-settings` đều trả về HTTP 200 OK.
+  - Toàn bộ 6 trang Frontend đều hiển thị mượt mà với mã trạng thái HTTP 200 OK.
+- **Tập tin chỉnh sửa & tạo mới:**
+  - `src/globals/PatientPortalSettings.ts` [MODIFY]
+  - `src/globals/InpatientGuideSettings.ts` [MODIFY]
+  - `src/globals/CheckupPackagesSettings.ts` [MODIFY]
+  - `src/globals/HospitalMapSettings.ts` [MODIFY]
+  - `src/globals/ExaminationFlowSettings.ts` [MODIFY]
+  - `src/globals/HospitalQualitySettings.ts` [MODIFY]
+  - `scripts/db-migrations/20260918_031_add_content_and_custom_blocks_to_patient_care_globals.mjs` [NEW]
+  - `scripts/db-schema-contract.json` [MODIFY]
+  - `src/payload-generated-schema.ts` [MODIFY]
+  - `src/app/styles/patient-care.css` [MODIFY]
+  - `src/app/(frontend)/dieu-tri-noi-tru/page.tsx` [MODIFY]
+  - `src/app/(frontend)/goi-kham/page.tsx` [MODIFY]
+  - `src/app/(frontend)/so-do-benh-vien/page.tsx` [MODIFY]
+  - `src/app/(frontend)/quy-trinh-kham-benh/page.tsx` [MODIFY]
+  - `src/app/(frontend)/danh-cho-nguoi-benh/page.tsx` [MODIFY]
+  - `src/app/(frontend)/chat-luong-benh-vien/page.tsx` [MODIFY]
+  - `CURRENT-TASK.md` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+
+## [2026-09-18] - Sửa Lỗi Tải Trang Quản Trị Admin CMS Cho Gói Khám Sức Khỏe & Sơ Đồ Bệnh Viện (checkup-packages-settings & hospital-map-settings)
+
+- **Thời gian thực hiện:** 12:28 - 12:30 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Khắc phục lỗi khi người quản trị truy cập 2 trang Global trong Admin CMS:
+    - `http://localhost:3000/admin/globals/checkup-packages-settings` (Gói khám sức khỏe)
+    - `http://localhost:3000/admin/globals/hospital-map-settings` (Sơ đồ & Chỉ dẫn khoa phòng)
+  - **Nguyên nhân cốt lõi**:
+    - Bảng phụ mảng `checkup_packages_settings_packages` trong PostgreSQL thiếu các cột tương ứng với schema Payload: `title`, `target_user`, `price_text`, `desc`.
+    - Bảng phụ mảng `hospital_map_settings_floors` thiếu các cột: `floor_name`, `overview`, `rooms`.
+    - Bảng phụ mảng `hospital_map_settings_facilities` thiếu các cột: `hours`, `desc`.
+    - Khi Admin CMS load form, Drizzle ORM thực hiện câu lệnh `SELECT` các cột này nhưng PostgreSQL báo lỗi thiếu cột khiến trang Admin bị văng lỗi.
+- **Nội dung Database Migration & Schema (Mandate 6, 14, 15):**
+  - Tạo Migration: `scripts/db-migrations/20260918_030_fix_checkup_packages_and_hospital_map_columns.mjs`:
+    - `ALTER TABLE public."checkup_packages_settings_packages" ADD COLUMN IF NOT EXISTS "title" varchar, ADD COLUMN IF NOT EXISTS "target_user" varchar, ADD COLUMN IF NOT EXISTS "price_text" varchar, ADD COLUMN IF NOT EXISTS "desc" text;`
+    - `ALTER TABLE public."hospital_map_settings_floors" ADD COLUMN IF NOT EXISTS "floor_name" varchar, ADD COLUMN IF NOT EXISTS "overview" varchar, ADD COLUMN IF NOT EXISTS "rooms" text;`
+    - `ALTER TABLE public."hospital_map_settings_facilities" ADD COLUMN IF NOT EXISTS "hours" varchar DEFAULT '24/24 hoặc Giờ hành chính', ADD COLUMN IF NOT EXISTS "desc" text;`
+    - Đồng bộ và di chuyển dữ liệu an toàn qua câu lệnh `UPDATE ... SET ... = COALESCE(...)`.
+  - Seal schema contract: `npm run db:schema:seal -- 20260918_030_fix_checkup_packages_and_hospital_map_columns`.
+  - Kiểm tra contract: `npm run db:schema:check`.
+  - Deploy migration: `npm run db:migrate:deploy` (`30 applied, 0 pending`).
+- **Kết quả kiểm thử:**
+  - API Payload CMS `/api/globals/checkup-packages-settings` và `/api/globals/hospital-map-settings` trả về HTTP 200 OK.
+  - Trang quản trị `/admin/globals/checkup-packages-settings` và `/admin/globals/hospital-map-settings` tải thành công hoàn toàn, không còn lỗi.
+  - `npm run typecheck` đạt 0 lỗi.
+- **Tập tin chỉnh sửa & tạo mới:**
+  - `scripts/db-migrations/20260918_030_fix_checkup_packages_and_hospital_map_columns.mjs` [NEW]
+  - `scripts/db-schema-contract.json` [MODIFY]
+  - `CURRENT-TASK.md` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+
+## [2026-09-18] - Bổ sung Giới thiệu Chuyên môn, Tiêu đề Chung cho Nhân sự Khoa/Phòng & Cờ Bật/Tắt Thành viên Độc lập (Khoa/Phòng vs Chuyên khoa)
+
+- **Thời gian thực hiện:** 12:05 - 12:12 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  1. **Khối Giới thiệu chuyên môn & Ảnh đại diện Khoa/Phòng**:
+     - Cố định tiêu đề mục chính là **Giới thiệu chuyên môn** trên trang chi tiết Khoa/Phòng (`/khoa-phong/[slug]`).
+     - Tự động hiển thị `dep.content` (RichText), `dep.summary` và nếu chưa có nội dung sẽ hiển thị dòng thông báo chuẩn y tế trang trọng: *"Thông tin giới thiệu chuyên môn đang được cập nhật chuẩn hóa bởi Hội đồng Chuyên môn Bệnh viện Đa khoa Khu vực Thới Lai"* (không bao giờ bị trống trang).
+     - Phân định rõ mục con **Chức năng – Nhiệm vụ** (`dep.functions`) nằm ngay sau nếu đơn vị có cấu hình.
+     - Khung ảnh đại diện `dep.cover` hỗ trợ các class chống méo ảnh theo chuẩn tỷ lệ y tế (`fitContain`, `fitCoverTop`, `fitCoverCenter`, `fitCoverBottom`, `fitFill`).
+  2. **Tiêu đề chung cho Khối Nhân sự Khoa/Phòng**:
+     - Khoa/Phòng có nhiều chức danh chuyên môn (bác sĩ, điều dưỡng, kỹ sư, nhân viên chuyên trách).
+     - Tiêu đề khối chuyển sang tiêu đề chung linh hoạt: mặc định là **"Đội ngũ Cán bộ – Nhân viên"** hoặc có thể nhập tùy chỉnh tự do trong Admin CMS qua trường `membersSectionTitle` (ví dụ: *Đội ngũ Bác sĩ*, *Đội ngũ Cán bộ - Kỹ sư - Điều dưỡng*).
+     - Hỗ trợ công tắc bật/tắt toàn bộ khối nhân sự qua `showMembersSection` trong `Departments.ts`.
+     - Nhãn vai trò hiển thị phù hợp: `d.title || d.specialty || d.professionalTitle || 'Cán bộ y tế'`.
+  3. **Cờ Bật/Tắt hiển thị Thành viên Độc lập (Chuyên khoa vs Khoa/Phòng)**:
+     - Trong `src/collections/Doctors.ts`, bổ sung 2 trường checkbox độc lập:
+       - `showInSpecialty` (boolean, default true): Hiển thị ở trang Chi tiết Chuyên khoa (`/chuyen-khoa/[slug]`).
+       - `showInDepartment` (boolean, default true): Hiển thị ở trang Chi tiết Khoa / Phòng (`/khoa-phong/[slug]`).
+     - Nếu tắt cả 2 checkbox, nhân sự sẽ không hiển thị trên cả 2 trang chi tiết chuyên môn nhưng vẫn có trong danh bạ `/bac-si`.
+     - Frontend `/chuyen-khoa/[slug]` lọc thành viên theo `d.showInSpecialty !== false`.
+     - Frontend `/khoa-phong/[slug]` lọc thành viên theo `d.showInDepartment !== false`.
+- **Nội dung Database Migration & Schema (Mandate 6, 14, 15):**
+  - Collection `src/collections/Doctors.ts`: Thêm trường `showInSpecialty`, `showInDepartment` (boolean, default true).
+  - Collection `src/collections/Departments.ts`: Thêm trường `showMembersSection` (boolean, default true), `membersSectionTitle` (text).
+  - Tạo Migration `scripts/db-migrations/20260918_029_add_doctor_and_department_member_toggles.mjs`:
+    - `ALTER TABLE public."doctors" ADD COLUMN IF NOT EXISTS "show_in_specialty" boolean DEFAULT true;`
+    - `ALTER TABLE public."doctors" ADD COLUMN IF NOT EXISTS "show_in_department" boolean DEFAULT true;`
+    - `ALTER TABLE public."_doctors_v" ADD COLUMN IF NOT EXISTS "version_show_in_specialty" boolean DEFAULT true;`
+    - `ALTER TABLE public."_doctors_v" ADD COLUMN IF NOT EXISTS "version_show_in_department" boolean DEFAULT true;`
+    - `ALTER TABLE public."departments" ADD COLUMN IF NOT EXISTS "show_members_section" boolean DEFAULT true;`
+    - `ALTER TABLE public."departments" ADD COLUMN IF NOT EXISTS "members_section_title" varchar;`
+  - Sinh schema: `npm run generate:db-schema`.
+  - Seal schema contract: `npm run db:schema:seal -- 20260918_029_add_doctor_and_department_member_toggles`.
+  - Deploy migration: `npm run db:migrate:deploy` (`29 applied, 0 pending`).
+- **Tập tin chỉnh sửa & tạo mới:**
+  - `src/collections/Doctors.ts` [MODIFY]
+  - `src/collections/Departments.ts` [MODIFY]
+  - `src/app/(frontend)/khoa-phong/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/chuyen-khoa/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/khoa-phong/[slug]/department-detail.css` [MODIFY]
+  - `scripts/db-migrations/20260918_029_add_doctor_and_department_member_toggles.mjs` [NEW]
+  - `scripts/db-schema-contract.json` [MODIFY]
+  - `src/payload-generated-schema.ts` [MODIFY]
+  - `CURRENT-TASK.md` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+
+## [2026-09-18] - Nâng cấp Trang Chi tiết Khoa/Phòng Chuẩn Y tế Hiện đại, Bổ sung Toggle Chuyên khoa & Tự động Lấy Tên Khoa/Phòng cho Chuyên khoa
+
+- **Thời gian thực hiện:** 11:54 - 11:58 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Nâng cấp toàn diện trang chi tiết Khoa / Phòng (`/khoa-phong/[slug]`) theo giao diện 2 cột chuẩn y tế hiện đại tương tự như trang chi tiết chuyên khoa (`/chuyen-khoa/[slug]`):
+    - Hero banner với Breadcrumb điều hướng, badge phân loại đơn vị, tiêu đề `h1` lớn và tóm tắt giới thiệu ngắn.
+    - Sidebar tiện ích bên trái: Card thông tin đơn vị (Trưởng khoa, Phó trưởng khoa, Vị trí phòng khám, Số điện thoại, Email), Card Đặt lịch khám trực tuyến qua Medpro & Hotline bệnh viện Thới Lai, Hộp lưu ý BHYT & Cấp cứu 24/7.
+    - Cột nội dung chính bên phải: Khung ảnh đại diện đơn vị, Khối Chức năng – Nhiệm vụ, Khối Hoạt động chuyên môn, Khối Chuyên khoa trực thuộc, Khối Đội ngũ Bác sĩ trực thuộc (áp dụng đúng Mandate 1 xếp hạng Ban Giám đốc -> Trưởng khoa -> Phó khoa -> Bác sĩ, và Mandate 2 khung ảnh chân dung tỷ lệ 3:4 chuẩn chống biến dạng), Khối Thành tích / Điểm nổi bật và nút quay lại danh sách khoa/phòng.
+  - Bổ sung nút/cờ toggle `showSpecialtiesSection` trong Admin CMS của Khoa/Phòng (`Departments.ts`): cho phép quản trị viên chủ động bật hiển thị khối Chuyên khoa trực thuộc hoặc tắt đi khi không muốn hiện.
+  - Phần Chuyên khoa (`Specialties.ts`): Khi quản trị viên chọn "Khoa / Phòng phụ trách" (`department`), trường "Tên chuyên khoa" (`name`) không bắt buộc phải nhập lại nếu muốn lấy luôn tên của Khoa/Phòng đó; nếu để trống, hệ thống sẽ tự động lấy tên Khoa/Phòng phụ trách làm mặc định hiển thị và sinh slug. Nếu có nhập tên riêng thì ưu tiên hiển thị tên riêng đó.
+- **Nội dung Database Migration & Schema (Mandate 6, 14, 15):**
+  - Collection `src/collections/Departments.ts`: Thêm trường checkbox `showSpecialtiesSection` (mặc định `true`).
+  - Collection `src/collections/Specialties.ts`: Đổi trường `name` sang `required: false`, hàm validate mềm nếu cả tên và khoa phòng đều trống; bổ sung hook `beforeValidate` tự động tìm kiếm khoa phòng và gán `record.name = dept.name` khi bỏ trống.
+  - Tạo Migration: `scripts/db-migrations/20260918_028_add_department_show_specialties.mjs`:
+    - `ALTER TABLE public."departments" ADD COLUMN IF NOT EXISTS "show_specialties_section" boolean DEFAULT true;`
+  - Sinh schema: `npm run generate:db-schema`.
+  - Seal schema contract: `npm run db:schema:seal -- 20260918_028_add_department_show_specialties`.
+  - Kiểm tra contract: `npm run db:schema:check`.
+  - Deploy migration: `npm run db:migrate:deploy` (`28 applied, 0 pending`).
+- **Nâng cấp Frontend UI & Component:**
+  - `src/app/(frontend)/khoa-phong/[slug]/page.tsx`: Tái cấu trúc toàn diện thành layout 2 cột hiện đại, nạp dữ liệu song song với `getGlobal('site-settings')`, áp dụng Mandate 1 cho danh sách bác sĩ và lọc khối chuyên khoa theo `dep.showSpecialtiesSection !== false && specialties.length > 0`.
+  - `src/app/(frontend)/khoa-phong/[slug]/department-detail.css`: Hệ thống styles CSS y tế đồng bộ cao cấp, hiệu ứng hover card mượt mà, tối ưu responsive trên tablet và mobile.
+- **Tập tin chỉnh sửa & tạo mới:**
+  - `src/collections/Departments.ts` [MODIFY]
+  - `src/collections/Specialties.ts` [MODIFY]
+  - `src/app/(frontend)/khoa-phong/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/khoa-phong/[slug]/department-detail.css` [NEW]
+  - `scripts/db-migrations/20260918_028_add_department_show_specialties.mjs` [NEW]
+  - `scripts/db-schema-contract.json` [MODIFY]
+  - `src/payload-generated-schema.ts` [MODIFY]
+  - `CURRENT-TASK.md` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+
+## [2026-09-18] - Chuyển chữ "Giá trị cốt lõi" vào Ô Badge Kicker phía trên 4 Ô Giá trị cốt lõi (/gioi-thieu/lich-su-phat-trien)
+
+- **Thời gian thực hiện:** 11:39 - 11:41 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Bỏ dòng chữ `CHUẨN MỰC HÀNH NGHỀ & VĂN HÓA BỆNH VIỆN` và dòng `h3` tách rời bên dưới.
+  - Đưa trực tiếp chữ `GIÁ TRỊ CỐT LÕI` vào ô badge pill nổi bật (`.coreValuesSubKicker`), viền xanh `#7dd3fc`, nền gradient xanh nhạt y tế (`#e0f2fe` -> `#bae6fd`), đổ bóng nhẹ và căn giữa ngay ngắn phía trên 4 ô giá trị cốt lõi.
+  - Giao diện trở nên tinh giản, thanh thoát, người dùng nhận diện ngay phân khu bên dưới là 4 Giá trị cốt lõi mà không bị rối mắt bởi quá nhiều tầng tiêu đề.
+  - Xử lý dứt điểm tình trạng khối Giá trị cốt lõi chưa phản ánh tức thì trên frontend.
+  - Cập nhật trang `page.tsx` sang `force-dynamic` và `revalidate = 0`, cô lập độc lập lỗi truy vấn `.catch(() => null)`.
+  - Tăng cường khả năng nạp dữ liệu 3 lớp an toàn cho `rawValuesList`: hỗ trợ `coreValues.valuesList`, root `valuesList` và bộ fallback 4 giá trị chuẩn y tế (TẬN TÂM, CHUYÊN NGHIỆP, Y ĐỨC, ĐOÀN KẾT).
+  - Nâng cấp bộ Icon SVG y tế sắc nét (Trái tim, Ngôi sao y tế, Cây gậy y học, Bắt tay đoàn kết) cùng hệ 4 màu sắc chủ đề trực quan (`coreTheme0`, `coreTheme1`, `coreTheme2`, `coreTheme3`) đồng bộ với trang Giới thiệu chung.
+  - Hoàn thiện căn giữa tiêu đề, căn đều 2 bên nội dung mô tả (`white-space: pre-line`), icon căn giữa ô và hiệu ứng hover co giãn mượt mà.
+  - Khắc phục tình trạng ô Giá trị cốt lõi bị rỗng/thiếu nội dung: đảm bảo dữ liệu fallback chuẩn y tế 4 giá trị (TẬN TÂM, CHUYÊN NGHIỆP, Y ĐỨC, ĐOÀN KẾT).
+  - Cho phép tùy chỉnh icon (chọn mẫu hoặc upload ảnh/SVG riêng), icon căn giữa ô (`margin: 0 auto 16px`).
+  - Tiêu đề ô căn giữa (`center`), nội dung mô tả căn đều hai bên (`justify`) kèm khả năng xuống dòng tự do (`white-space: pre-line`).
+  - Cho phép tùy chỉnh kích thước ô (`coreValueCardMinWidth`, `coreValueCardPadding`) trong Admin CMS để chữ dàn trải đều đẹp mắt trên dòng, không bị rớt chữ hoặc ngắt hàng xấu.
+  - Sửa triệt để lỗi ô CTA cuối trang (*"Tiếp tục phát triển vì sức khỏe của bạn và gia đình"*) trên thiết bị di động (mobile) bị co rút hẹp thành 1 từ/hàng do flex layout; chuyển sang dạng cột `flex-direction: column` và nút bấm full width trên mobile.
+  - Cho phép bật/tắt (`enabled`) độc lập từng phần tử trong các danh sách: Quick stats, Milestones, Core values, Journey steps, Achievements.
+  - Bổ sung thanh điều hướng phụ (`aboutSubNav`) trên đầu trang đồng bộ với trang Giới thiệu chung (`/gioi-thieu`).
+  - Thêm mảng các Khối nội dung tùy biến thêm mới (`customBlocks` với `dbName: 'hist_custom_blocks'`) cho phép người quản trị thêm không giới hạn các section bài viết/tư liệu mới trực tiếp từ Admin CMS.
+- **Nội dung Database Migration & Schema (Mandate 13, 14, 15):**
+  - Cập nhật Global `src/globals/HospitalHistory.ts`:
+    - Thêm checkbox `enabled` cho từng item của: `quickStats`, `milestones`, `valuesList`, `journeySteps`, `achievements`.
+    - Thêm trường căn lề cho từng ô giá trị cốt lõi: `titleAlign` (`hist_val_title_align`), `descAlign` (`hist_val_desc_align`).
+    - Thêm trường tùy chỉnh kích thước ô: `coreValueCardMinWidth` (number, default 260px), `coreValueCardPadding` (number, default 24px).
+    - Thêm Tab 9 Khối tùy biến thêm mới `customBlocks` (`dbName: 'hist_custom_blocks'`): gồm `enabled`, `kicker`, `title`, `subtitle`, `content` (RichText), `textAlign` (`hist_cb_align`).
+  - Tạo tệp Migration: `scripts/db-migrations/20260918_027_enhance_hospital_history_toggles_and_blocks.mjs`.
+    - Tạo các kiểu ENUM: `hist_val_title_align`, `hist_val_desc_align`, `hist_cb_align`.
+    - Thêm cột `enabled` vào 8 bảng phụ mảng con: `hospital_history_quick_stats`, `_hospital_history_v_version_quick_stats`, `hospital_history_milestones`, `_hospital_history_v_version_milestones`, `hospital_history_journey_steps`, `_hospital_history_v_version_journey_steps`, `hospital_history_achievements`, `_hospital_history_v_version_achievements`.
+    - Thêm cột `enabled`, `title_align`, `desc_align` vào `history_core_values` và `_history_core_values_v`.
+    - Thêm cột `core_value_card_min_width`, `core_value_card_padding` vào `hospital_history` và `_hospital_history_v`.
+    - Tạo bảng mảng `hist_custom_blocks` và `_hist_custom_blocks_v` có foreign keys và indexes chuẩn PostgreSQL.
+  - Đã seal schema contract và deploy migration thành công (`27 applied, 0 pending`).
+- **Nâng cấp Frontend UI & Component:**
+  - Trong `src/app/(frontend)/gioi-thieu/lich-su-phat-trien/page.tsx`:
+    - Thêm dải menu phụ điều hướng `aboutSubNav`.
+    - Lọc dữ liệu hiển thị theo `enabled !== false` cho toàn bộ các danh sách con.
+    - Render ô Giá trị cốt lõi với icon căn giữa, tiêu đề căn giữa và mô tả căn đều 2 bên theo cấu hình CMS.
+    - Render danh sách các khối nội dung tùy biến mới `customBlocks`.
+  - Trong `src/app/(frontend)/gioi-thieu/lich-su-phat-trien/history.css`:
+    - Định dạng `.coreValueIcon`: căn giữa ô `margin: 0 auto 16px`.
+    - Định dạng `.coreValueCard h3`: căn giữa `text-align: center`, `text-wrap: balance`.
+    - Định dạng `.coreValueCard p`: căn đều `text-align: justify`, `text-justify: inter-word`, `white-space: pre-line`.
+    - Sửa triệt để lỗi CTA mobile trong `@media (max-width: 768px)`: `.historyCtaBox { flex-direction: column !important; align-items: stretch !important; text-align: center !important; }`, các nút bấm giãn rộng full width `width: 100% !important;`.
+    - Bổ sung styles cho `.aboutSubNav` và `.histCustomBlockCard`.
+- **Tập tin chỉnh sửa & tạo mới:**
+  - `src/globals/HospitalHistory.ts` [MODIFY]
+  - `src/app/(frontend)/gioi-thieu/lich-su-phat-trien/page.tsx` [MODIFY]
+  - `src/app/(frontend)/gioi-thieu/lich-su-phat-trien/history.css` [MODIFY]
+  - `scripts/db-migrations/20260918_027_enhance_hospital_history_toggles_and_blocks.mjs` [NEW]
+  - `scripts/db-schema-contract.json` [MODIFY]
+  - `src/payload-generated-schema.ts` [MODIFY]
+  - `CURRENT-TASK.md` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+
+## [2026-09-18] - Bổ sung Quyền Bật/Tắt Khối, Bài viết Chi tiết và Thêm mới Khối Tùy biến cho Trang Giới thiệu chung (/gioi-thieu)
+
+- **Thời gian thực hiện:** 10:40 - 10:46 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Cho phép người quản trị bật/tắt độc lập từng khối nội dung hiện tại trên trang Giới thiệu chung (`/gioi-thieu`).
+  - Bổ sung khối Bài viết chi tiết Giới thiệu (`contentBlock`) với trình soạn thảo Lexical RichText đầy đủ để đăng bài viết tổng quan, lịch sử, cơ cấu tổ chức và định hướng phát triển.
+  - Bổ sung mảng các Khối nội dung tùy biến thêm mới (`customBlocks`) cho phép thêm không giới hạn các section nội dung mới trực tiếp từ Admin CMS.
+- **Nội dung Database Migration & Schema (Mandate 13, 14, 15):**
+  - Cập nhật Global `src/globals/AboutPage.ts`:
+    - Rà soát và đảm bảo mọi section đều có checkbox `enabled` riêng biệt: `hero.enabled`, `stats[].enabled`, `corePrinciples.enabled`, `corePrinciples.items[].enabled`, `facilities.enabled`, `facilities.items[].enabled`, `commitment.enabled`, `relatedLinks.enabled`, `relatedLinks.links[].enabled`.
+    - Bổ sung nhóm trường `contentBlock`: `enabled`, `title`, `subtitle`, `content` (RichText), `textAlign` (canh lề Trái / Giữa / Đều hai bên).
+    - Bổ sung mảng `customBlocks` (`dbName: 'ab_custom_blocks'`): `enabled`, `kicker`, `title`, `subtitle`, `content` (RichText), `textAlign`.
+  - Tạo tệp Migration: `scripts/db-migrations/20260918_026_add_about_page_content_and_custom_blocks.mjs`.
+    - Tạo các kiểu enum `ab_cb_align`, `enum_ab_custom_blocks_text_align`, `enum__ab_custom_blocks_v_text_align`.
+    - Bổ sung 5 cột `content_block_*` vào bảng `about_page` và 5 cột `version_content_block_*` vào bảng `_about_page_v`.
+    - Tạo bảng phụ `ab_custom_blocks` và `_ab_custom_blocks_v` với foreign key và indexes chuẩn xác.
+  - Đã seal schema contract và deploy migration thành công (`26 applied, 0 pending`).
+- **Nâng cấp Frontend UI & Component:**
+  - Trong `src/app/(frontend)/gioi-thieu/page.tsx`:
+    - Tích hợp component `RichText` từ `@/components/RichText`.
+    - Render khối bài viết chi tiết (`aboutArticleSection`) có fallback nội dung mẫu y tế đầy đủ nếu CMS chưa cập nhật.
+    - Render danh sách mảng các khối tùy biến (`customBlocks`).
+    - Kiểm tra điều kiện `enabled !== false` trên từng section.
+  - Trong `src/app/(frontend)/gioi-thieu/gioi-thieu.css`:
+    - Định dạng giao diện bài viết chi tiết thẻ card y tế cao cấp (`.aboutArticleSection`, `.aboutArticleCard`, `.aboutArticleHead`, `.aboutArticleBody`, `.aboutCustomBlockCard`).
+- **Tập tin chỉnh sửa & tạo mới:**
+  - `src/globals/AboutPage.ts` [MODIFY]
+  - `src/app/(frontend)/gioi-thieu/page.tsx` [MODIFY]
+  - `src/app/(frontend)/gioi-thieu/gioi-thieu.css` [MODIFY]
+  - `scripts/db-migrations/20260918_026_add_about_page_content_and_custom_blocks.mjs` [NEW]
+  - `scripts/db-schema-contract.json` [MODIFY]
+  - `src/payload-generated-schema.ts` [MODIFY]
+  - `CURRENT-TASK.md` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+
+## [2026-09-18] - Bổ sung Tùy chỉnh Icon & Đường dẫn chia sẻ và Cho phép Thêm các Nút Icon Chia sẻ mới
+
+- **Thời gian thực hiện:** 10:20 - 10:25 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Cho phép người quản trị tùy chỉnh icon (tải ảnh/icon riêng) cũng như đường dẫn liên kết của từng nút chia sẻ hiện có (Facebook, Zalo, Copy link, Print).
+  - Cho phép người quản trị tự do thêm không giới hạn các nút icon chia sẻ mới trực tiếp từ Admin CMS (`ArticleDetailSettings` -> Tab `📤 Thanh Chia sẻ`).
+  - Hỗ trợ các tham số linh hoạt `{url}` và `{title}` trong mẫu URL chia sẻ, hoặc các giao thức liên lạc trực tiếp như `tel:` (gọi điện), `mailto:` (gửi email).
+- **Nội dung Database Migration & Schema (Mandate 13, 14, 15):**
+  - Cập nhật Global `src/globals/ArticleDetailSettings.ts`:
+    - Thêm các trường upload icon tùy chỉnh: `facebookCustomIcon`, `zaloCustomIcon`, `copyLinkCustomIcon`, `printCustomIcon`.
+    - Thêm các trường mẫu URL: `facebookUrlTemplate`, `zaloUrlTemplate`.
+    - Thêm mảng động `customButtons` (`type: 'array'`, `dbName: 'ads_share_btns'`): gồm `enabled`, `title`, `customIcon` (upload media), `shareUrlTemplate`, `openNewTab`.
+  - Tạo tệp Migration: `scripts/db-migrations/20260918_025_enhance_share_settings_custom_icons_and_links.mjs`.
+    - Bổ sung 6 cột vào bảng `article_detail_settings`:
+      - `share_settings_facebook_custom_icon_id` (integer)
+      - `share_settings_facebook_url_template` (varchar)
+      - `share_settings_zalo_custom_icon_id` (integer)
+      - `share_settings_zalo_url_template` (varchar)
+      - `share_settings_copy_link_custom_icon_id` (integer)
+      - `share_settings_print_custom_icon_id` (integer)
+    - Tạo bảng phụ `ads_share_btns` cùng các index và ràng buộc khóa ngoại tới `article_detail_settings(id)` kèm `ON DELETE CASCADE`.
+  - Đã seal schema contract và deploy migration thành công (`25 applied, 0 pending`).
+- **Nâng cấp Frontend UI & Component:**
+  - Trong `src/app/(frontend)/thong-bao/[slug]/ShareButtons.tsx`:
+    - Hỗ trợ render ảnh upload riêng cho Facebook, Zalo, Copy, Print; tự động fallback về icon SVG chuẩn y tế nếu để trống.
+    - Hỗ trợ thay thế `{url}` và `{title}` theo URL bài viết thực tế khi chia sẻ.
+    - Render danh sách các nút `customButtons` được thêm mới từ CMS với đầy đủ hành vi mở tab mới hoặc thực thi giao thức `tel:`, `mailto:`.
+- **Tập tin chỉnh sửa & tạo mới:**
+  - `src/globals/ArticleDetailSettings.ts` [MODIFY]
+  - `src/app/(frontend)/thong-bao/[slug]/ShareButtons.tsx` [MODIFY]
+  - `scripts/db-migrations/20260918_025_enhance_share_settings_custom_icons_and_links.mjs` [NEW]
+  - `scripts/db-schema-contract.json` [MODIFY]
+  - `src/payload-generated-schema.ts` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+  - `CURRENT-TASK.md` [MODIFY]
+
+## [2026-09-18] - Tách riêng Trang Quản trị "Bố cục & Chi tiết Bài viết" (ArticleDetailSettings) & Tùy chọn vị trí Tiêu đề
+
+- **Thời gian thực hiện:** 10:15 - 10:20 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Tách riêng toàn bộ cài đặt mẫu chi tiết bài viết thành một trang Quản trị độc lập trong Admin CMS (`Bố cục & Chi tiết Bài viết`, slug: `article-detail-settings`) thuộc nhóm `🌐 Trang chủ & Giao diện Website` để người quản trị dễ dàng nhận biết và quản lý.
+  - Cung cấp tùy chọn vị trí Tiêu đề bài viết (`titlePosition`):
+    1. `hero`: Tiêu đề bài viết nằm trên Dải Hero nền xanh thương hiệu (ngay dưới Breadcrumb, chữ trắng đậm trang trọng, cỡ chữ linh hoạt `clamp(20px, 2.6vw, 28px)`, tương đồng 100% với trang Chuyên gia / Đội ngũ bác sĩ).
+    2. `body`: Tiêu đề bài viết nằm ở Thân bài viết bên dưới (kiểu truyền thống).
+  - Khắc phục hiện tượng chữ trên Dải Hero bị tự động ngắt dòng sớm: loại bỏ `text-wrap: balance`, thiết lập độ rộng `width: 100%; max-width: 100%` giúp tiêu đề trải dài trọn vẹn trên 1 hàng, chỉ tự động xuống hàng khi chạm hết chiều dài của khung container.
+  - Tùy chọn khoảng cách đệm Dải Hero xanh (`heroPadding`): `standard` (32px), `spacious` (42px), `compact` (22px).
+  - Bảo đảm cơ chế Fallback an toàn 2 lớp (`ArticleDetailSettings` -> `ThemeSettings.detailLayout`).
+- **Nội dung Database Migration & Schema (Mandate 13 & 15):**
+  - Tạo Global độc lập: `src/globals/ArticleDetailSettings.ts`.
+  - Bổ sung migration: `scripts/db-migrations/20260918_024_create_article_detail_settings_table.mjs`.
+  - Tạo các kiểu ENUM:
+    - `enum_article_detail_settings_title_position`: `'hero', 'body'`.
+    - `enum_article_detail_settings_hero_padding`: `'standard', 'spacious', 'compact'`.
+    - `enum_article_detail_settings_share_position`: `'left', 'right', 'top', 'bottom'`.
+    - `enum_article_detail_settings_banner_position`: `'aboveLatest', 'belowLatest'`.
+  - Tạo bảng `article_detail_settings` với đầy đủ các trường quản lý chia sẻ, banner sidebar, phạm vi áp dụng và tùy chọn hiển thị.
+  - Đã seal schema contract và deploy migration thành công tại local (`24 applied, 0 pending`).
+- **Tập tin chỉnh sửa & tạo mới:**
+  - `src/globals/ArticleDetailSettings.ts` [NEW]
+  - `payload.config.ts` [MODIFY]
+  - `src/components/ArticleDetailTemplate.tsx` [MODIFY]
+  - `src/components/ArticleDetailTemplate.module.css` [MODIFY]
+  - `src/app/(frontend)/tin-tuc/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/thong-bao/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/dau-thau-mua-sam/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/tuyen-dung/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/ky-thuat-chuyen-sau/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/hoat-dong-khoa-hoc/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/noi-dung/[sectionSlug]/[slug]/page.tsx` [MODIFY]
+  - `src/app/(frontend)/[...path]/page.tsx` [MODIFY]
+  - `scripts/db-migrations/20260918_024_create_article_detail_settings_table.mjs` [NEW]
+  - `scripts/db-schema-contract.json` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+
+## [2026-09-18] - Chuẩn hóa căn lề Breadcrumb dải xanh Chi tiết bài viết thẳng hàng container theo mẫu Chuyên gia (Đồng bộ Máy tính & Điện thoại)
+
+- **Thời gian thực hiện:** 10:00 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Khắc phục hiện tượng dải breadcrumbs `Trang chủ / Tin tức / Tin Y tế` trên nền xanh ở trang chi tiết bài viết (`/tin-tuc/[slug]`, `/thong-bao/[slug]`,...) bị dính sát mép lề trái màn hình.
+  - Đồng bộ căn lề lùi vào trong theo container chuẩn (`width: min(1180px, calc(100% - 36px)); margin: auto`) thẳng hàng với nội dung bài viết bên dưới và giống hệt trang Chuyên gia / Đội ngũ bác sĩ (`.docDetailHero`).
+  - Đồng bộ tỷ lệ và khoảng cách đệm trên điện thoại di động (Responsive mobile).
+- **Các nội dung & tính năng đã thực hiện:**
+  - Trong `src/components/ArticleDetailTemplate.module.css`:
+    - Loại bỏ thuộc tính `display: flex; align-items: center; min-height: 98px;` trên `.articleHeroBar` (nguyên nhân khiến thẻ `<div className="container">` bên trong trở thành flex item và bị mất cơ chế căn giữa `margin: auto`).
+    - Giữ bố cục dạng khối block chuẩn mực như `.docDetailHero` của trang Bác sĩ với `padding: 32px 0 30px;`.
+    - Bổ sung quy tắc responsive trên thiết bị di động `@media (max-width: 860px)`: tinh chỉnh `padding: 22px 0 20px;` tương đồng tuyệt đối với `.docDetailHero` và hệ thống `.page-hero` toàn viện.
+    - Thẻ `.container` trên cả điện thoại lẫn máy tính tự động đệm cách mép màn hình `18px` mỗi bên (`calc(100% - 36px)`), giúp đường dẫn breadcrumb thẳng hàng tuyệt đối với cột nội dung chính bên dưới, không bao giờ bị dính sát mép kính điện thoại.
+- **Tập tin chỉnh sửa:**
+  - `src/components/ArticleDetailTemplate.module.css` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+
+## [2026-09-18] - Khắc phục lỗi Hydration `<figure>` trong `<p>` & Đồng bộ chiều cao dải Hero Breadcrumb
+
+- **Thời gian thực hiện:** 09:25 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Khắc phục triệt để lỗi Hydration Error từ Next.js/React: `In HTML, <figure> cannot be a descendant of <p>. This will cause a hydration error. src\components\RichText.tsx (24:7) @ upload`.
+  - Đồng bộ chiều cao dải Hero Breadcrumb trên các trang chi tiết bài viết/tin tức/thông báo (`ArticleDetailTemplate`) cho bằng nhau và hài hòa với dải Hero của trang Chuyên gia / Đội ngũ bác sĩ.
+- **Các nội dung & tính năng đã thực hiện:**
+  1. **Khắc phục triệt để Hydration Error trong `src/components/RichText.tsx`:**
+     - Thay thẻ `<figure>` và `<figcaption>` trong bộ chuyển đổi tùy biến Lexical Upload Node bằng thẻ `<span>` có kiểu hiển thị `display: block`.
+     - Lý do kỹ thuật: Nội dung Lexical editor thường đặt upload node trong một block `<p>`. Theo chuẩn ngữ nghĩa HTML5, thẻ `<p>` không thể chứa thẻ phân đoạn `<figure>` (trình duyệt tự động chèn thẻ đóng `</p>` gây chênh lệch cấu trúc cây DOM giữa máy chủ SSR và client Hydration).
+     - Bảo toàn 100% kiểu dáng hình ảnh (bo góc `12px`, bóng đổ nhẹ, viền xám y tế, chú thích ảnh in nghiêng trang trọng).
+  2. **Đồng bộ chuẩn chiều cao dải Hero Breadcrumbs trong `src/components/ArticleDetailTemplate.module.css`:**
+     - Nâng khoảng cách đệm `padding: 38px 0 34px` và thiết lập `min-height: 98px; display: flex; align-items: center` cho `.articleHeroBar`.
+     - Điều chỉnh vầng sáng vi mô `width: 450px; height: 450px` góc phải dải hero tương xứng với trang Bác sĩ.
+     - Tăng kích cỡ chữ breadcrumbs lên `13.5px`, căn lề dọc chuẩn xác với container toàn viện, tạo cảm giác thoáng đãng, bề thế và đồng bộ 100% với phong cách Hero chuyên gia/bác sĩ.
+- **Tập tin chỉnh sửa:**
+  - `src/components/RichText.tsx` [MODIFY]
+  - `src/components/ArticleDetailTemplate.module.css` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+
+## [2026-09-18] - Nâng cấp dải Hero Breadcrumb nền xanh thương hiệu cho Chi tiết bài viết & Tin tức
+
+- **Thời gian thực hiện:** 09:05 (Asia/Saigon)
+- **Yêu cầu & Mục tiêu:**
+  - Cập nhật phần đường dẫn liên kết (Breadcrumbs) `Trang chủ › Tin tức › Tin Y tế` trên trang chi tiết tin tức (`/tin-tuc/[slug]`) và các trang chi tiết bài viết sang dải Hero nền xanh chuẩn nhận diện thương hiệu y tế, tương tự trang chi tiết bác sĩ (`/bac-si/[slug]`).
+  - Đảm bảo tính nổi bật, thẩm mỹ cao và đồng bộ với quy chuẩn thiết kế hero của bệnh viện.
+- **Các nội dung & tính năng đã thực hiện:**
+  1. **Nâng cấp `src/components/ArticleDetailTemplate.tsx`**:
+     - Đưa khối breadcrumbs ra ngoài `main.container`, bọc vào khối `<section className={styles.articleHeroBar}>` trải dài toàn màn hình (full-width) ngay dưới Header.
+     - Giữ nguyên các cơ chế bật/tắt thiết bị (`isBreadcrumbsVisible`, `getVisibilityClass(dsBreadcrumbs)`).
+     - Thay đổi ký tự phân cách sang dấu gạch chéo `/` thanh lịch (`<span className={styles.breadcrumbSep} aria-hidden="true">/</span>`).
+  2. **Tạo kiểu giao diện y tế hiện đại trong `src/components/ArticleDetailTemplate.module.css`**:
+     - Thiết lập nền gradient 3 lớp nhận diện thương hiệu bệnh viện: `linear-gradient(135deg, #072b4c 0%, #0754a8 60%, #0878d1 100%)`.
+     - Thêm hiệu ứng vầng sáng vi mô mờ ảo `radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 70%)` ở góc phải.
+     - Viền dưới tinh tế `border-bottom: 1px solid rgba(255, 255, 255, 0.12)`.
+     - Màu chữ breadcrumbs: Link cấp trên màu `#e0f2fe`, hover sáng `#ffffff` kèm gạch chân; Dấu phân tách màu xanh sáng `#7dd3fc`; Nhãn mục hiện tại màu `#ffffff` sắc nét.
+     - Cân chỉnh khoảng cách đệm `postDetailContainer` phía dưới còn `24px` giúp bố cục gọn gàng, liền mạch.
+- **Tập tin chỉnh sửa:**
+  - `src/components/ArticleDetailTemplate.tsx` [MODIFY]
+  - `src/components/ArticleDetailTemplate.module.css` [MODIFY]
+  - `CHANGELOG.md` [MODIFY]
+
+
 ## [2026-09-17] - Xây Dựng Mục Quản Trị Bố Cục & Hiển Thị Đa Thiết Bị Độc Lập (DisplaySettings)
 
 - **Thời gian thực hiện:** 21:00 (Asia/Saigon)
@@ -5692,26 +6198,26 @@ Tài liệu này lưu trữ toàn bộ các thay đổi về mã nguồn, cấu 
 - src/components/SiteHeader.module.css — Rewrote mobile override block
 
 
-## [2026-09-17] - Mobile Top Bar: Th�m khung logo + t�n don v? n?i b?t
+## [2026-09-17] - Mobile Top Bar: Th�m khung logo + t�n don v? n?i b?t
 
-### Y�u c?u
-Ph�n khung � ch?a logo v� t�n don v? (n?n tr?ng) tr�ng v?i n?n header, l�m cho khung n?i b?t hon v?i du?ng vi?n r� r�ng.
-
-### Files Modified
-- `src/components/MobileTopBar.tsx`: Th�m props `logo`, `hospitalName`; th�m element `.mobileTopBrand` (card n?i b?t, link v? trang ch?) v�o d?u top bar.
-- `src/components/SiteHeader.tsx`: Truy?n `logo` v� `hospitalName` xu?ng MobileTopBar.
-- `src/app/styles/mobile-medpro.css`: Th�m CSS cho `.mobileTopBrand`, `.mobileTopBrandLogo`, `.mobileTopBrandLogoImg`, `.mobileTopBrandName` � n?n tr?ng, vi?n xanh `rgba(7, 84, 168, 0.22)`, border-radius 10px, box-shadow tinh t?.
-
-## [2026-09-17] - Thi?t k? l?i trang Khoa Ph�ng (/khoa-phong)
-
-### Y�u c?u
-Thi?t k? l?i trang khoa ph�ng theo hu?ng Card Grid nh�m theo lo?i don v? - ph? bi?n tr�n website b?nh vi?n hi?n d?i.
+### Y�u c?u
+Ph�n khung � ch?a logo v� t�n don v? (n?n tr?ng) tr�ng v?i n?n header, l�m cho khung n?i b?t hon v?i du?ng vi?n r� r�ng.
 
 ### Files Modified
-- `src/app/(frontend)/khoa-phong/page.tsx`: Vi?t l?i ho�n to�n � nh�m departments theo classifyUnit(), render filter tab bar (URL param ?kind=), sections ri�ng bi?t v?i m�u accent kh�c nhau, cards c� icon gradient/badge/arrow.
-- `src/app/(frontend)/khoa-phong/khoa-phong.css` (NEW): CSS m?i cho trang � filter bar, section headers (border tr�i m�u), grid 3?2?1 c?t, card hover animation (translateY + border accent + arrow).
+- `src/components/MobileTopBar.tsx`: Th�m props `logo`, `hospitalName`; th�m element `.mobileTopBrand` (card n?i b?t, link v? trang ch?) v�o d?u top bar.
+- `src/components/SiteHeader.tsx`: Truy?n `logo` v� `hospitalName` xu?ng MobileTopBar.
+- `src/app/styles/mobile-medpro.css`: Th�m CSS cho `.mobileTopBrand`, `.mobileTopBrandLogo`, `.mobileTopBrandLogoImg`, `.mobileTopBrandName` � n?n tr?ng, vi?n xanh `rgba(7, 84, 168, 0.22)`, border-radius 10px, box-shadow tinh t?.
+
+## [2026-09-17] - Thi?t k? l?i trang Khoa Ph�ng (/khoa-phong)
+
+### Y�u c?u
+Thi?t k? l?i trang khoa ph�ng theo hu?ng Card Grid nh�m theo lo?i don v? - ph? bi?n tr�n website b?nh vi?n hi?n d?i.
+
+### Files Modified
+- `src/app/(frontend)/khoa-phong/page.tsx`: Vi?t l?i ho�n to�n � nh�m departments theo classifyUnit(), render filter tab bar (URL param ?kind=), sections ri�ng bi?t v?i m�u accent kh�c nhau, cards c� icon gradient/badge/arrow.
+- `src/app/(frontend)/khoa-phong/khoa-phong.css` (NEW): CSS m?i cho trang � filter bar, section headers (border tr�i m�u), grid 3?2?1 c?t, card hover animation (translateY + border accent + arrow).
 
 ### Thi?t k?
-- 4 nh�m: L�nh d?o (v�ng), Ph�ng ch?c nang (t�m), Khoa l�m s�ng (xanh l�), Khoa c?n l�m s�ng (xanh duong)
-- Filter tabs: URL-param based, server-side (ho?t d?ng kh�ng c?n JS)
+- 4 nh�m: L�nh d?o (v�ng), Ph�ng ch?c nang (t�m), Khoa l�m s�ng (xanh l�), Khoa c?n l�m s�ng (xanh duong)
+- Filter tabs: URL-param based, server-side (ho?t d?ng kh�ng c?n JS)
 - Responsive: 3 c?t desktop ? 2 c?t tablet ? 1 c?t mobile

@@ -4,7 +4,8 @@ import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { getCMS, getGlobal } from '@/lib/payload'
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 export const metadata: Metadata = { title: 'Bảng giá dịch vụ', description: 'Tra cứu giá BHYT và giá dịch vụ tại Bệnh viện Đa khoa Khu vực Thới Lai.' }
 type Props = { searchParams: Promise<{ q?: string; page?: string }> }
 const money = (value: any) => typeof value === 'number' ? `${new Intl.NumberFormat('vi-VN').format(value)}đ` : '-'

@@ -153,6 +153,9 @@ export interface ArticleDetailTemplateProps {
   // Cấu hình hiển thị đa thiết bị từ Global DisplaySettings (Desktop / Mobile / Cả hai / Tắt)
   displaySettings?: any
 
+  // Cấu hình trang quản trị độc lập Bố cục & Chi tiết Bài viết (ArticleDetailSettings)
+  articleDetailSettings?: any
+
   baseHref: string // ví dụ: "/thong-bao", "/tin-tuc", "/dau-thau-mua-sam", "/ky-thuat-chuyen-sau"
 }
 
@@ -194,11 +197,25 @@ export function ArticleDetailTemplate({
   showBackToList,
   adminConfig,
   displaySettings,
+  articleDetailSettings,
   baseHref,
 }: ArticleDetailTemplateProps) {
-  const shareConfig = adminConfig?.shareSettings
-  const bannerConfig = adminConfig?.sidebarBanner
-  const displayConfig = adminConfig?.displayOptions
+  // Ưu tiên cấu hình từ trang độc lập ArticleDetailSettings, fallback về adminConfig (ThemeSettings)
+  const effectiveConfig = articleDetailSettings || adminConfig
+  const shareConfig = effectiveConfig?.shareSettings || adminConfig?.shareSettings
+  const bannerConfig = effectiveConfig?.sidebarBanner || adminConfig?.sidebarBanner
+  const displayConfig = effectiveConfig?.displayOptions || adminConfig?.displayOptions
+
+  // Vị trí tiêu đề: 'hero' (trên dải Hero xanh) | 'body' (thân bài viết)
+  const titlePosition = effectiveConfig?.titlePosition || 'hero'
+  const isTitleInHero = titlePosition === 'hero'
+  const isTitleInBody = titlePosition === 'body'
+
+  // Kiểu khoảng cách đệm Dải Hero: 'standard' (32px) | 'spacious' (42px) | 'compact' (22px)
+  const heroPadding = effectiveConfig?.heroPadding || 'standard'
+  let heroPaddingClass = ''
+  if (heroPadding === 'spacious') heroPaddingClass = styles.articleHeroBarSpacious
+  else if (heroPadding === 'compact') heroPaddingClass = styles.articleHeroBarCompact
 
   // Chế độ hiển thị đa thiết bị từ Global displaySettings ('both' | 'desktop_only' | 'mobile_only' | 'hidden')
   const dsBreadcrumbs = displaySettings?.articleBreadcrumbs || 'both'
@@ -408,18 +425,27 @@ export function ArticleDetailTemplate({
   return (
     <>
       <SiteHeader />
+      {/* ── DẢI HERO BREADCRUMB NỀN XANH THƯƠNG HIỆU Y TẾ ───────────────── */}
+      {isBreadcrumbsVisible && breadcrumbs && breadcrumbs.length > 0 && (
+        <section className={`${styles.articleHeroBar} ${heroPaddingClass} ${getVisibilityClass(dsBreadcrumbs)}`}>
+          <div className="container">
+            <nav className={styles.postDetailBreadcrumb} aria-label="Đường dẫn">
+              {breadcrumbs.map((crumb, idx) => (
+                <React.Fragment key={idx}>
+                  {idx > 0 && <span className={styles.breadcrumbSep} aria-hidden="true">/</span>}
+                  {crumb.href ? <Link href={crumb.href}>{crumb.label}</Link> : <span>{crumb.label}</span>}
+                </React.Fragment>
+              ))}
+            </nav>
+            {/* Nếu bật tùy chọn hiển thị Tiêu đề trên dải Hero xanh (Khuyên dùng - Chuẩn y tế) */}
+            {isTitleInHero && (
+              <h1 className={styles.articleHeroTitle}>{title}</h1>
+            )}
+          </div>
+        </section>
+      )}
+
       <main className={`container ${styles.postDetailContainer}`}>
-        {/* Breadcrumb điều hướng */}
-        {isBreadcrumbsVisible && breadcrumbs && breadcrumbs.length > 0 && (
-          <nav className={`${styles.postDetailBreadcrumb} ${getVisibilityClass(dsBreadcrumbs)}`} aria-label="Đường dẫn">
-            {breadcrumbs.map((crumb, idx) => (
-              <React.Fragment key={idx}>
-                {idx > 0 && <span>›</span>}
-                {crumb.href ? <Link href={crumb.href}>{crumb.label}</Link> : <span>{crumb.label}</span>}
-              </React.Fragment>
-            ))}
-          </nav>
-        )}
 
         {/* Layout bài viết */}
         <div className={layoutGridClass}>
@@ -432,8 +458,10 @@ export function ArticleDetailTemplate({
 
           {/* Cột giữa: Nội dung chính */}
           <article className={styles.postDetailMainCol}>
-            {/* Tiêu đề thông báo / bài viết */}
-            <h1 className={styles.postDetailTitle}>{title}</h1>
+            {/* Tiêu đề thông báo / bài viết: Chỉ hiển thị ở đây nếu cấu hình chọn 'body' */}
+            {isTitleInBody && (
+              <h1 className={styles.postDetailTitle}>{title}</h1>
+            )}
 
             {/* Dòng metadata: Ngày đăng | Lượt xem | Chuyên mục */}
             {(isDateVisible || isViewsVisible || isCategoryVisible || expireDate) && (

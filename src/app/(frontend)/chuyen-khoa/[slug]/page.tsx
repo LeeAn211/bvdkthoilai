@@ -114,7 +114,7 @@ export default async function SpecialtyDetail({ params }: Props) {
     return 20
   }
 
-  const rawDoctors = docResult.docs as any[]
+  const rawDoctors = (docResult.docs as any[]).filter((d) => d.showInSpecialty !== false)
   const doctors = [...rawDoctors].sort((a, b) => {
     const rankA = getDoctorRank(a)
     const rankB = getDoctorRank(b)

@@ -29,17 +29,25 @@ export async function PatientCareSubNav({
   customTabs,
 }: {
   activeKey: string
-  customTabs?: NavItem[]
+  customTabs?: (NavItem | any)[]
 }) {
   let navItems = DEFAULT_CARE_NAV_ITEMS
 
   if (customTabs && customTabs.length > 0) {
-    navItems = customTabs
+    navItems = (customTabs as any[])
+      .filter((t: any) => t?.enabled !== false)
+      .map((t: any) => ({
+        key: t.key || '',
+        label: t.label || '',
+        href: t.href || '',
+        icon: t.icon || '🏥',
+        badge: t.badge || undefined,
+      }))
   } else {
     try {
       const portalSettings: any = await getGlobal('patient-portal-settings').catch(() => null)
       if (Array.isArray(portalSettings?.subNavTabs) && portalSettings.subNavTabs.length > 0) {
-        const activeTabs = portalSettings.subNavTabs
+        navItems = portalSettings.subNavTabs
           .filter((t: any) => t?.enabled !== false)
           .map((t: any) => ({
             key: t.key || '',
@@ -48,11 +56,12 @@ export async function PatientCareSubNav({
             icon: t.icon || '🏥',
             badge: t.badge || undefined,
           }))
-        if (activeTabs.length > 0) {
-          navItems = activeTabs
-        }
       }
     } catch {}
+  }
+
+  if (!navItems || navItems.length === 0) {
+    return null
   }
 
   return (

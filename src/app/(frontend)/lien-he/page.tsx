@@ -7,7 +7,8 @@ import { PatientCareSubNav } from '@/components/PatientCareSubNav'
 import { getGlobal } from '@/lib/payload'
 import './lien-he.css'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 const defaultAddress = 'Ấp Thới Phong, Xã Thới Lai, Thành phố Cần Thơ'
 

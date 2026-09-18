@@ -58,6 +58,36 @@ export const Departments: CollectionConfig = {
     ] },
     { name: 'order', label: 'Thứ tự hiển thị', type: 'number', defaultValue: 0, admin: { position: 'sidebar' } },
     { name: 'active', label: 'Hiển thị trên website', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar' } },
+    {
+      name: 'showSpecialtiesSection',
+      label: 'Hiển thị khối Chuyên khoa trực thuộc',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Bật để hiển thị danh sách các Chuyên khoa trực thuộc khoa/phòng này trên trang chi tiết, hoặc tắt nếu không muốn hiển thị.',
+      },
+    },
+    {
+      name: 'showMembersSection',
+      label: 'Hiển thị khối Đội ngũ nhân sự / Cán bộ y tế',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Bật để hiển thị khối danh sách các y bác sĩ, điều dưỡng, kỹ sư/cán bộ công tác tại khoa/phòng. Tắt nếu không muốn hiển thị.',
+      },
+    },
+    {
+      name: 'membersSectionTitle',
+      label: 'Tiêu đề khối nhân sự (Tùy chỉnh)',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        placeholder: 'Mặc định: Đội ngũ Cán bộ – Nhân viên y tế',
+        description: 'Tùy chỉnh tiêu đề hiển thị cho khối nhân sự (VD: Đội ngũ Bác sĩ, Đội ngũ Cán bộ - Kỹ sư - Điều dưỡng, v.v.).',
+      },
+    },
     ...seoFields,
   ],
 }

@@ -52,11 +52,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme, siteSettings, displaySettings] = await Promise.all([
+  const [{ item, related }, theme, siteSettings, displaySettings, articleDetailSettings] = await Promise.all([
     getData(slug),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
     getGlobal('site-settings').catch(() => null) as Promise<any>,
     getGlobal('display-settings').catch(() => null) as Promise<any>,
+    getGlobal('article-detail-settings').catch(() => null) as Promise<any>,
   ])
 
   if (!item) notFound()
@@ -106,6 +107,7 @@ export default async function Page({ params }: Props) {
       showSource={item.showSource ?? undefined}
       adminConfig={theme?.detailLayout}
       displaySettings={displaySettings}
+      articleDetailSettings={articleDetailSettings}
       sidebarTitle="Thông báo mới nhất"
       latestItems={mappedRelated}
       relatedTitle="Tin tức cùng chuyên mục"

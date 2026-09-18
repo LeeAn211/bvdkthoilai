@@ -124,6 +124,7 @@ export const HospitalHistory: GlobalConfig = {
                     { number: 'Khu vực', label: 'Mô hình Đa khoa hiện đại' },
                   ],
                   fields: [
+                    { name: 'enabled', label: 'Bật hiển thị', type: 'checkbox', defaultValue: true },
                     {
                       type: 'row',
                       fields: [
@@ -279,6 +280,7 @@ export const HospitalHistory: GlobalConfig = {
                 },
               ],
               fields: [
+                { name: 'enabled', label: 'Bật hiển thị mốc này', type: 'checkbox', defaultValue: true },
                 {
                   type: 'row',
                   fields: [
@@ -389,6 +391,7 @@ export const HospitalHistory: GlobalConfig = {
                     { iconType: 'handshake', title: 'ĐOÀN KẾT', description: 'Phát huy tinh thần phối hợp, chia sẻ và gắn kết giữa các khoa, phòng và các thế hệ viên chức, người lao động vì sự phát triển chung của Bệnh viện.' },
                   ],
                   fields: [
+                    { name: 'enabled', label: 'Bật hiển thị ô giá trị này', type: 'checkbox', defaultValue: true },
                     {
                       type: 'row',
                       fields: [
@@ -420,17 +423,79 @@ export const HospitalHistory: GlobalConfig = {
                       ],
                     },
                     {
-                      name: 'title',
-                      label: 'Tiêu đề giá trị cốt lõi',
-                      type: 'text',
-                      required: true,
+                      type: 'row',
+                      fields: [
+                        {
+                          name: 'title',
+                          label: 'Tiêu đề giá trị cốt lõi',
+                          type: 'text',
+                          required: true,
+                          admin: { width: '60%' },
+                        },
+                        {
+                          name: 'titleAlign',
+                          label: 'Căn lề tiêu đề ô',
+                          type: 'select',
+                          enumName: 'hist_val_title_align',
+                          dbName: 'title_align',
+                          defaultValue: 'center',
+                          options: [
+                            { label: 'Căn giữa (Mặc định)', value: 'center' },
+                            { label: 'Căn trái', value: 'left' },
+                            { label: 'Căn phải', value: 'right' },
+                          ],
+                          admin: { width: '40%' },
+                        },
+                      ],
                     },
                     {
                       name: 'description',
-                      label: 'Mô tả giá trị cốt lõi',
+                      label: 'Mô tả giá trị cốt lõi (xuống dòng tự do)',
                       type: 'textarea',
                       required: true,
-                      
+                    },
+                    {
+                      name: 'descAlign',
+                      label: 'Căn lề mô tả',
+                      type: 'select',
+                      enumName: 'hist_val_desc_align',
+                      dbName: 'desc_align',
+                      defaultValue: 'justify',
+                      options: [
+                        { label: 'Căn đều 2 bên (Justify - Khuyên dùng)', value: 'justify' },
+                        { label: 'Căn giữa', value: 'center' },
+                        { label: 'Căn trái', value: 'left' },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              type: 'collapsible',
+              label: '📐 Tùy chỉnh kích thước & bố cục các Ô Giá trị cốt lõi',
+              admin: { initCollapsed: true },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'coreValueCardMinWidth',
+                      label: 'Độ rộng tối thiểu mỗi ô (px) - Tăng để chữ trải rộng trên dòng đẹp hơn',
+                      type: 'number',
+                      defaultValue: 260,
+                      min: 200,
+                      max: 450,
+                      admin: { width: '50%' },
+                    },
+                    {
+                      name: 'coreValueCardPadding',
+                      label: 'Khoảng đệm trong ô (px)',
+                      type: 'number',
+                      defaultValue: 24,
+                      min: 12,
+                      max: 48,
+                      admin: { width: '50%' },
                     },
                   ],
                 },
@@ -487,6 +552,7 @@ export const HospitalHistory: GlobalConfig = {
                 { stepNumber: 'Hiện tại & Tương lai', title: 'BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI', isHighlight: true },
               ],
               fields: [
+                { name: 'enabled', label: 'Bật hiển thị bước này', type: 'checkbox', defaultValue: true },
                 {
                   type: 'row',
                   fields: [
@@ -554,6 +620,7 @@ export const HospitalHistory: GlobalConfig = {
                 { title: 'Chuyển đổi số & Đổi mới dịch vụ', description: 'Tích hợp hồ sơ bệnh án điện tử, lưu trữ truyền tải hình ảnh số và đặt lịch trực tuyến, giảm thiểu tối đa thời gian chờ đợi cho người dân.' },
               ],
               fields: [
+                { name: 'enabled', label: 'Bật hiển thị thành tựu này', type: 'checkbox', defaultValue: true },
                 { name: 'title', label: 'Tiêu đề thành tựu', type: 'text', required: true },
                 { name: 'description', label: 'Chi tiết thành tựu', type: 'textarea', required: true },
                 { name: 'image', label: 'Ảnh minh họa / Bằng khen / Cúp', type: 'upload', relationTo: 'media' },
@@ -624,7 +691,41 @@ export const HospitalHistory: GlobalConfig = {
           ],
         },
 
-        // ================= TAB 9: TÙY CHỈNH MÀU SẮC, FONT & KÍCH THƯỚC =================
+        // ================= TAB 9: CÁC KHỐI NỘI DUNG TÙY BIẾN (CUSTOM BLOCKS) =================
+        {
+          label: '➕ Khối tùy biến thêm mới',
+          fields: [
+            {
+              name: 'customBlocks',
+              label: 'Thêm mới các khối nội dung tùy biến (Không giới hạn)',
+              type: 'array',
+              dbName: 'hist_custom_blocks',
+              labels: { singular: 'Khối nội dung tùy biến', plural: 'Các khối nội dung tùy biến' },
+              fields: [
+                { name: 'enabled', label: 'Bật hiển thị khối này', type: 'checkbox', defaultValue: true },
+                { name: 'kicker', label: 'Nhãn nhỏ phía trên (Kicker)', type: 'text', admin: { placeholder: 'VÍ DỤ: TÀI LIỆU LỊCH SỬ HOẶC CHUYÊN ĐỀ' } },
+                { name: 'title', label: 'Tiêu đề khối', type: 'text', required: true },
+                { name: 'subtitle', label: 'Mô tả ngắn', type: 'textarea' },
+                { name: 'content', label: 'Nội dung chi tiết (RichText)', type: 'richText' },
+                {
+                  name: 'textAlign',
+                  label: 'Canh lề khối',
+                  type: 'select',
+                  enumName: 'hist_cb_align',
+                  dbName: 'text_align',
+                  defaultValue: 'left',
+                  options: [
+                    { label: 'Canh trái (Mặc định)', value: 'left' },
+                    { label: 'Canh giữa', value: 'center' },
+                    { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+
+        // ================= TAB 10: TÙY CHỈNH MÀU SẮC, FONT & KÍCH THƯỚC =================
         {
           label: '🎨 Màu sắc, Font chữ & Căn lề',
           fields: [

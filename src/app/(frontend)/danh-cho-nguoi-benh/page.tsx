@@ -4,9 +4,11 @@ import { PageHero } from '@/components/PageHero'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { PatientCareSubNav } from '@/components/PatientCareSubNav'
+import { RichText } from '@/components/RichText'
 import { getGlobal } from '@/lib/payload'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Dành cho người bệnh — Cổng tiện ích & Hướng dẫn y tế — BVĐK Khu vực Thới Lai',
@@ -207,7 +209,7 @@ export default async function PatientPortalPage() {
 
   // 2. Tabs Sub-Nav
   const subNavTabs = Array.isArray(portalSettings?.subNavTabs) && portalSettings.subNavTabs.length > 0
-    ? portalSettings.subNavTabs
+    ? portalSettings.subNavTabs.filter((t: any) => t?.enabled !== false)
     : undefined
 
   // 3. Cam kết phục vụ
@@ -247,6 +249,14 @@ export default async function PatientPortalPage() {
     if (type === 'closed') return 'patientCareCardBadge badgeClosed'
     return 'patientCareCardBadge badgeActive'
   }
+
+  // 6. Khối bài viết chi tiết & Khối tùy biến
+  const contentBlock = portalSettings?.contentBlock || {}
+  const showContentBlock = contentBlock.enabled !== false && (contentBlock.title || contentBlock.content)
+  const cbAlign = contentBlock.textAlign || 'left'
+
+  const rawCustomBlocks = Array.isArray(portalSettings?.customBlocks) ? portalSettings.customBlocks : []
+  const customBlocks = rawCustomBlocks.filter((b: any) => b?.enabled !== false)
 
   return (
     <>
@@ -336,6 +346,57 @@ export default async function PatientPortalPage() {
               </div>
             </div>
           ))}
+
+          {/* Bài viết chi tiết & Hướng dẫn tổng quan (RichText) */}
+          {showContentBlock && (
+            <article className="patientCareArticleCard" style={cbAlign !== 'left' ? { textAlign: cbAlign as any } : undefined}>
+              <div className="patientCareArticleHeader">
+                {contentBlock.title && <h2 className="patientCareArticleTitle">{contentBlock.title}</h2>}
+                {contentBlock.subtitle && <p className="patientCareArticleSubtitle">{contentBlock.subtitle}</p>}
+              </div>
+              {contentBlock.content ? (
+                <div className="patientCareArticleBody">
+                  <RichText data={contentBlock.content} />
+                </div>
+              ) : (
+                <div className="patientCareArticleBody">
+                  <p>
+                    Chào mừng quý người bệnh và thân nhân đến với <strong>Cổng tiện ích dành cho người bệnh</strong> của <strong>Bệnh viện Đa khoa Khu vực Thới Lai</strong>. Hệ thống được xây dựng nhằm mang đến sự thuận tiện, minh bạch và an toàn tối đa cho bà con trong suốt quá trình thăm khám và điều trị.
+                  </p>
+                  <p>
+                    <strong>Tiện ích nổi bật tại bệnh viện:</strong>
+                  </p>
+                  <ul>
+                    <li>Tra cứu lịch khám bệnh, lịch trực cấp cứu và danh sách bác sĩ chuyên khoa phụ trách hàng tuần.</li>
+                    <li>Đăng ký số thứ tự khám trực tuyến, khám sớm từ 06:30 sáng, giảm thiểu thời gian chờ đợi tại viện.</li>
+                    <li>Áp dụng thẻ Căn cước công dân gắn chip hoặc ứng dụng VNeID / VssID thay thế hoàn toàn thẻ BHYT giấy.</li>
+                    <li>Kênh tiếp nhận góp ý, phản ánh và khảo sát ý kiến người bệnh hoạt động liên tục 24/7 trực tiếp tới Ban Giám đốc.</li>
+                  </ul>
+                </div>
+              )}
+            </article>
+          )}
+
+          {/* Các khối nội dung tùy biến thêm mới (Custom Blocks) */}
+          {customBlocks.length > 0 && (
+            <section style={{ marginBottom: '40px' }}>
+              {customBlocks.map((block: any, bIdx: number) => {
+                const bAlign = block.textAlign || 'left'
+                return (
+                  <div key={block.id || bIdx} className="patientCareCustomBlockCard" style={bAlign !== 'left' ? { textAlign: bAlign } : undefined}>
+                    {block.kicker && <span className="patientCareCustomKicker">{block.kicker}</span>}
+                    <h3 className="patientCareCustomBlockTitle">{block.title}</h3>
+                    {block.subtitle && <p className="patientCareCustomBlockSub">{block.subtitle}</p>}
+                    {block.content && (
+                      <div className="patientCareArticleBody">
+                        <RichText data={block.content} />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </section>
+          )}
 
           {/* CTA Banner liên kết hotline */}
           {showCta && (

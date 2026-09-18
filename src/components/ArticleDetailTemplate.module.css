@@ -1,6 +1,26 @@
 /* Bố cục trang chi tiết bài viết chuẩn y tế (Dùng chung toàn hệ thống) */
+.articleHeroBar {
+  position: relative;
+  background: linear-gradient(135deg, #072b4c 0%, #0754a8 60%, #0878d1 100%);
+  color: #ffffff;
+  padding: 32px 0 30px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.articleHeroBar::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -5%;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+}
+
 .postDetailContainer {
-  padding-top: 32px;
+  padding-top: 24px;
   padding-bottom: 60px;
 }
 
@@ -9,23 +29,53 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 24px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #bae6fd;
+  margin-bottom: 0;
+  line-height: 1.5;
 }
 
 .postDetailBreadcrumb a {
-  color: #0878d1;
+  color: #e0f2fe;
   text-decoration: none;
   font-weight: 600;
+  transition: color 0.18s ease;
 }
 
 .postDetailBreadcrumb a:hover {
+  color: #ffffff;
   text-decoration: underline;
 }
 
 .postDetailBreadcrumb span {
-  color: #94a3b8;
+  color: #ffffff;
+}
+
+.postDetailBreadcrumb .breadcrumbSep {
+  color: #7dd3fc;
+  font-weight: 400;
+  user-select: none;
+}
+
+.articleHeroTitle {
+  font-size: clamp(20px, 2.6vw, 28px);
+  font-weight: 800;
+  color: #ffffff;
+  margin: 12px 0 0;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  width: 100%;
+  max-width: 100%;
+  display: block;
+}
+
+.articleHeroBarSpacious {
+  padding: 42px 0 38px;
+}
+
+.articleHeroBarCompact {
+  padding: 22px 0 20px;
 }
 
 .postDetailLayout {
@@ -401,6 +451,9 @@
 }
 
 @media (max-width: 860px) {
+  .articleHeroBar {
+    padding: 22px 0 20px;
+  }
   .postDetailContainer {
     padding-top: 20px;
     padding-bottom: 40px;
@@ -418,6 +471,11 @@
 }
 
 @media (max-width: 540px) {
+  .articleHeroTitle {
+    font-size: 20px;
+    line-height: 1.35;
+    margin-top: 10px;
+  }
   .postDetailTitle {
     font-size: 23px;
     line-height: 1.32;

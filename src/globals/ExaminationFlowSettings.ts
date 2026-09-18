@@ -116,5 +116,52 @@ export const ExaminationFlowSettings: GlobalConfig = {
         { name: 'text', label: 'Mô tả đối tượng ưu tiên', type: 'text', required: true },
       ],
     },
+    {
+      name: 'contentBlock',
+      label: 'Bài viết chi tiết & Hướng dẫn khám chữa bệnh (RichText)',
+      type: 'group',
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối bài viết này', type: 'checkbox', defaultValue: true },
+        { name: 'title', label: 'Tiêu đề bài viết', type: 'text', defaultValue: 'Nguyên tắc Tiếp đón & Quyền lợi Khám chữa bệnh BHYT Thông tuyến' },
+        { name: 'subtitle', label: 'Mô tả ngắn gọn / Phụ đề bài viết', type: 'textarea', defaultValue: 'Chính sách thông tuyến khám chữa bệnh BHYT toàn quốc, ứng dụng Căn cước công dân gắn chip / VNeID mức 2 trong tiếp nhận bệnh nhân và quy chế chuyển tuyến tại Bệnh viện Đa khoa Khu vực Thới Lai.' },
+        { name: 'content', label: 'Nội dung bài viết chi tiết (RichText)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề nội dung',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'customBlocks',
+      label: 'Các khối nội dung tùy biến thêm mới (Không giới hạn)',
+      type: 'array',
+      dbName: 'efs_custom_blocks',
+      labels: { singular: 'Khối nội dung tùy biến', plural: 'Các khối nội dung tùy biến' },
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối này', type: 'checkbox', defaultValue: true },
+        { name: 'kicker', label: 'Nhãn nhỏ phía trên (Kicker)', type: 'text', admin: { placeholder: 'VÍ DỤ: LƯU Ý BHYT HOẶC QUY TRÌNH MỚI' } },
+        { name: 'title', label: 'Tiêu đề khối', type: 'text', required: true },
+        { name: 'subtitle', label: 'Mô tả ngắn', type: 'textarea' },
+        { name: 'content', label: 'Nội dung chi tiết (RichText)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề khối',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
   ],
 }

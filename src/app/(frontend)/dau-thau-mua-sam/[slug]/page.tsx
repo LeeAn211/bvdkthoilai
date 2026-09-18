@@ -57,15 +57,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme, siteSettings] = await Promise.all([
+  const [{ item, related }, theme, siteSettings, displaySettings, articleDetailSettings] = await Promise.all([
     getData(slug),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
     getGlobal('site-settings').catch(() => null) as Promise<any>,
+    getGlobal('display-settings').catch(() => null) as Promise<any>,
+    getGlobal('article-detail-settings').catch(() => null) as Promise<any>,
   ])
 
   if (!item) notFound()
 
-  const isBạchMaiLayout = theme?.detailLayout?.applyProcurement !== false
+  const isBạchMaiLayout = (articleDetailSettings?.applyProcurement ?? theme?.detailLayout?.applyProcurement) !== false
   const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
   const publishedDate = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : ''
 
@@ -123,6 +125,8 @@ export default async function Page({ params }: Props) {
         hospitalName={hospitalName}
         showSource={item.showSource ?? undefined}
         adminConfig={theme?.detailLayout}
+        displaySettings={displaySettings}
+        articleDetailSettings={articleDetailSettings}
         sidebarTitle="Gói thầu mới nhất"
         latestItems={mappedRelated}
         relatedTitle="Thông tin đấu thầu liên quan"

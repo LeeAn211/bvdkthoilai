@@ -4,10 +4,12 @@ import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { ExaminationFlowView } from './ExaminationFlowView'
 import { PatientCareSubNav } from '@/components/PatientCareSubNav'
+import { RichText } from '@/components/RichText'
 import { getGlobal } from '@/lib/payload'
 import './quy-trinh-kham-benh.css'
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Quy trình Khám bệnh — Bệnh viện Đa khoa Khu vực Thới Lai',
@@ -113,6 +115,66 @@ export default async function ExaminationFlowPage() {
             emergencyHotline={emergencyHotline}
             settings={flowSettings}
           />
+
+          {/* Bài viết chi tiết & Hướng dẫn khám chữa bệnh (RichText) */}
+          {flowSettings.contentBlock?.enabled !== false && (flowSettings.contentBlock?.title || flowSettings.contentBlock?.content) && (
+            <article
+              className="patientCareArticleCard"
+              style={{
+                marginTop: '44px',
+                textAlign: (flowSettings.contentBlock?.textAlign || 'left') as any,
+              }}
+            >
+              <div className="patientCareArticleHeader">
+                {flowSettings.contentBlock?.title && (
+                  <h2 className="patientCareArticleTitle">{flowSettings.contentBlock.title}</h2>
+                )}
+                {flowSettings.contentBlock?.subtitle && (
+                  <p className="patientCareArticleSubtitle">{flowSettings.contentBlock.subtitle}</p>
+                )}
+              </div>
+              {flowSettings.contentBlock?.content ? (
+                <div className="patientCareArticleBody">
+                  <RichText data={flowSettings.contentBlock.content} />
+                </div>
+              ) : (
+                <div className="patientCareArticleBody">
+                  <p>
+                    <strong>Bệnh viện Đa khoa Khu vực Thới Lai</strong> áp dụng đầy đủ chính sách thông tuyến khám chữa bệnh Bảo hiểm Y tế (BHYT) theo quy định của Luật BHYT và Bộ Y tế. Người bệnh tham gia BHYT đăng ký nơi khám chữa bệnh ban đầu tại bất kỳ cơ sở y tế tuyến huyện/khu vực nào đều được tiếp nhận và hưởng 100% mức quyền lợi khi đến khám điều trị.
+                  </p>
+                  <p>
+                    <strong>Thủ tục tiếp nhận không dùng giấy tờ:</strong>
+                  </p>
+                  <ul>
+                    <li>Người bệnh có thể sử dụng Căn cước công dân gắn chip hoặc hình ảnh thẻ BHYT trên ứng dụng VNeID / VssID để đăng ký khám thay thế cho thẻ BHYT giấy.</li>
+                    <li>Thời gian tiếp nhận khám sớm bắt đầu từ 06:30 sáng tại các phòng khám trọng điểm để tạo điều kiện thuận lợi nhất cho bà con nhân dân.</li>
+                    <li>Người cao tuổi từ 75 tuổi trở lên, trẻ nhỏ dưới 6 tuổi và phụ nữ mang thai luôn được cấp số ưu tiên tại các quầy tiếp đón.</li>
+                  </ul>
+                </div>
+              )}
+            </article>
+          )}
+
+          {/* Các khối nội dung tùy biến thêm mới (Custom Blocks) */}
+          {Array.isArray(flowSettings.customBlocks) && flowSettings.customBlocks.filter((b: any) => b?.enabled !== false).length > 0 && (
+            <section style={{ marginTop: '24px', marginBottom: '40px' }}>
+              {flowSettings.customBlocks.filter((b: any) => b?.enabled !== false).map((block: any, bIdx: number) => {
+                const bAlign = block.textAlign || 'left'
+                return (
+                  <div key={block.id || bIdx} className="patientCareCustomBlockCard" style={bAlign !== 'left' ? { textAlign: bAlign } : undefined}>
+                    {block.kicker && <span className="patientCareCustomKicker">{block.kicker}</span>}
+                    <h3 className="patientCareCustomBlockTitle">{block.title}</h3>
+                    {block.subtitle && <p className="patientCareCustomBlockSub">{block.subtitle}</p>}
+                    {block.content && (
+                      <div className="patientCareArticleBody">
+                        <RichText data={block.content} />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </section>
+          )}
         </div>
       </main>
       <SiteFooter />

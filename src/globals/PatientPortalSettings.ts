@@ -372,5 +372,56 @@ export const PatientPortalSettings: GlobalConfig = {
         },
       ],
     },
+
+    // ── 6. KHỐI BÀI VIẾT CHI TIẾT & HƯỚNG DẪN TỔNG QUAN (RICHTEXT) ──
+    {
+      name: 'contentBlock',
+      label: '6. Bài viết chi tiết & Hướng dẫn tổng quan người bệnh (RichText)',
+      type: 'group',
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối bài viết này', type: 'checkbox', defaultValue: true },
+        { name: 'title', label: 'Tiêu đề bài viết', type: 'text', defaultValue: 'Cẩm nang Thông tin & Hướng dẫn Tiện ích dành cho Người bệnh' },
+        { name: 'subtitle', label: 'Mô tả ngắn gọn / Phụ đề bài viết', type: 'textarea', defaultValue: 'Bệnh viện Đa khoa Khu vực Thới Lai cung cấp đầy đủ các tiện ích trực tuyến và hướng dẫn cụ thể giúp người bệnh tiếp cận dịch vụ y tế an toàn, nhanh chóng và hiệu quả nhất.' },
+        { name: 'content', label: 'Nội dung bài viết chi tiết (RichText)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề nội dung',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
+
+    // ── 7. CÁC KHỐI NỘI DUNG TÙY BIẾN THÊM MỚI (CUSTOM BLOCKS) ──
+    {
+      name: 'customBlocks',
+      label: '7. Các khối nội dung tùy biến thêm mới (Không giới hạn)',
+      type: 'array',
+      dbName: 'pps_custom_blocks',
+      labels: { singular: 'Khối nội dung tùy biến', plural: 'Các khối nội dung tùy biến' },
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối này', type: 'checkbox', defaultValue: true },
+        { name: 'kicker', label: 'Nhãn nhỏ phía trên (Kicker)', type: 'text', admin: { placeholder: 'VÍ DỤ: TIỆN ÍCH MỚI HOẶC CHUYÊN ĐỀ' } },
+        { name: 'title', label: 'Tiêu đề khối', type: 'text', required: true },
+        { name: 'subtitle', label: 'Mô tả ngắn', type: 'textarea' },
+        { name: 'content', label: 'Nội dung chi tiết (RichText)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề khối',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
   ],
 }

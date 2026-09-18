@@ -21,7 +21,7 @@ const converters = ({ defaultConverters }: any) => ({
     if (!rawUrl) return null
 
     return (
-      <figure
+      <span
         style={{
           margin: '24px auto',
           textAlign: 'center',
@@ -47,8 +47,9 @@ const converters = ({ defaultConverters }: any) => ({
           }}
         />
         {caption && (
-          <figcaption
+          <span
             style={{
+              display: 'block',
               marginTop: '8px',
               fontSize: '14px',
               color: '#64748b',
@@ -57,9 +58,9 @@ const converters = ({ defaultConverters }: any) => ({
             }}
           >
             {caption}
-          </figcaption>
+          </span>
         )}
-      </figure>
+      </span>
     )
   },
   text: (args: any) => {

@@ -7,7 +7,8 @@ import { getCMS, getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
 import './org-chart.css'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Cơ cấu tổ chức - Bệnh viện Đa khoa Khu vực Thới Lai',

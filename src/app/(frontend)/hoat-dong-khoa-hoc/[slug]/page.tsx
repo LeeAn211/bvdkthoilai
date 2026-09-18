@@ -55,10 +55,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme, siteSettings] = await Promise.all([
+  const [{ item, related }, theme, siteSettings, displaySettings, articleDetailSettings] = await Promise.all([
     getData(slug),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
     getGlobal('site-settings').catch(() => null) as Promise<any>,
+    getGlobal('display-settings').catch(() => null) as Promise<any>,
+    getGlobal('article-detail-settings').catch(() => null) as Promise<any>,
   ])
 
   if (!item) notFound()
@@ -66,7 +68,7 @@ export default async function Page({ params }: Props) {
   const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
   const publishedDate = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : ''
   const category = scientificActivityGroupName(item) || 'Hoạt động khoa học'
-  const useArticleLayout = theme?.detailLayout?.applyNews !== false
+  const useArticleLayout = (articleDetailSettings?.applyNews ?? theme?.detailLayout?.applyNews) !== false
 
   if (useArticleLayout) {
     const mappedRelated = related.map((entry: any) => ({
@@ -98,6 +100,8 @@ export default async function Page({ params }: Props) {
         hospitalName={hospitalName}
         showSource={item.showSource ?? undefined}
         adminConfig={theme?.detailLayout}
+        displaySettings={displaySettings}
+        articleDetailSettings={articleDetailSettings}
         sidebarTitle="Hoạt động khoa học mới nhất"
         latestItems={mappedRelated}
         relatedTitle="Bài viết cùng nhóm"

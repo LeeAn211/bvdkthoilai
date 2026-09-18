@@ -118,5 +118,52 @@ export const HospitalQualitySettings: GlobalConfig = {
         { name: 'highlights', label: 'Điểm nổi bật (Mỗi dòng 1 gạch đầu dòng, nhấn Enter để xuống dòng)', type: 'textarea' },
       ],
     },
+    {
+      name: 'contentBlock',
+      label: 'Bài viết chi tiết & Báo cáo chất lượng (RichText)',
+      type: 'group',
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối bài viết này', type: 'checkbox', defaultValue: true },
+        { name: 'title', label: 'Tiêu đề bài viết', type: 'text', defaultValue: 'Báo cáo Đánh giá Chất lượng & Cam kết An toàn Người bệnh' },
+        { name: 'subtitle', label: 'Mô tả ngắn gọn / Phụ đề bài viết', type: 'textarea', defaultValue: 'Tổng hợp kết quả phúc tra 83 Tiêu chí Chất lượng của Bộ Y tế và các giải pháp cải tiến chất lượng khám chữa bệnh liên tục tại Bệnh viện Đa khoa Khu vực Thới Lai.' },
+        { name: 'content', label: 'Nội dung bài viết chi tiết (RichText)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề nội dung',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'customBlocks',
+      label: 'Các khối nội dung tùy biến thêm mới (Không giới hạn)',
+      type: 'array',
+      dbName: 'hqs_custom_blocks',
+      labels: { singular: 'Khối nội dung tùy biến', plural: 'Các khối nội dung tùy biến' },
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối này', type: 'checkbox', defaultValue: true },
+        { name: 'kicker', label: 'Nhãn nhỏ phía trên (Kicker)', type: 'text', admin: { placeholder: 'VÍ DỤ: CHUYÊN ĐỀ CHẤT LƯỢNG' } },
+        { name: 'title', label: 'Tiêu đề khối', type: 'text', required: true },
+        { name: 'subtitle', label: 'Mô tả ngắn', type: 'textarea' },
+        { name: 'content', label: 'Nội dung chi tiết (RichText)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề khối',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
   ],
 }

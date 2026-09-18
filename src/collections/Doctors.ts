@@ -228,6 +228,26 @@ export const Doctors: CollectionConfig = {
     { name: 'order', label: 'Thứ tự hiển thị', type: 'number', defaultValue: 0, admin: { position: 'sidebar' } },
     { name: 'featured', label: 'Bác sĩ nổi bật', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
     { name: 'active', label: 'Hiển thị trên website', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar' } },
+    {
+      name: 'showInSpecialty',
+      label: 'Hiển thị ở trang Chi tiết Chuyên khoa',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Bật để thành viên/bác sĩ này hiển thị trong khối nhân sự của trang Chi tiết Chuyên khoa. Tắt nếu không muốn hiện.',
+      },
+    },
+    {
+      name: 'showInDepartment',
+      label: 'Hiển thị ở trang Chi tiết Khoa / Phòng',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Bật để thành viên/bác sĩ này hiển thị trong khối nhân sự của trang Chi tiết Khoa / Phòng. Tắt nếu không muốn hiện.',
+      },
+    },
     ...seoFields,
   ],
 }

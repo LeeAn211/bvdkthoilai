@@ -273,6 +273,77 @@ export const AboutPage: GlobalConfig = {
       ],
     },
 
+    // ── NỘI DUNG BÀI VIẾT CHI TIẾT ─────────────────────────────────
+    {
+      name: 'contentBlock',
+      label: 'Bài viết chi tiết Giới thiệu (Văn bản, hình ảnh, tài liệu)',
+      type: 'group',
+      fields: [
+        {
+          name: 'enabled',
+          label: 'Hiển thị khối Bài viết chi tiết',
+          type: 'checkbox',
+          defaultValue: true,
+        },
+        {
+          name: 'title',
+          label: 'Tiêu đề bài viết chi tiết',
+          type: 'text',
+          defaultValue: 'Giới thiệu Tổng quan & Quá trình Phát triển',
+        },
+        {
+          name: 'subtitle',
+          label: 'Mô tả ngắn / Lời dẫn đầu bài viết',
+          type: 'textarea',
+          defaultValue: 'Thông tin chi tiết về cơ cấu, chức năng, đội ngũ thầy thuốc và định hướng nâng cao chất lượng khám chữa bệnh tại Bệnh viện Đa khoa Khu vực Thới Lai.',
+        },
+        {
+          name: 'content',
+          label: 'Nội dung bài viết chi tiết (Soạn thảo văn bản, chèn ảnh, bảng biểu)',
+          type: 'richText',
+        },
+        {
+          name: 'textAlign',
+          label: 'Canh lề tiêu đề & lời dẫn',
+          type: 'select',
+          dbName: 'ab_cb_align',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
+
+    // ── CÁC KHỐI NỘI DUNG BỔ SUNG TÙY BIẾN (CUSTOM BLOCKS) ─────────
+    {
+      name: 'customBlocks',
+      label: 'Thêm mới các khối nội dung tùy biến (Không giới hạn)',
+      type: 'array',
+      dbName: 'ab_custom_blocks',
+      labels: { singular: 'Khối nội dung tùy biến', plural: 'Các khối nội dung tùy biến' },
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối này', type: 'checkbox', defaultValue: true },
+        { name: 'kicker', label: 'Nhãn nhỏ phía trên (Kicker)', type: 'text', admin: { placeholder: 'VÍ DỤ: THÔNG BÁO HOẶC CHUYÊN ĐỀ' } },
+        { name: 'title', label: 'Tiêu đề khối', type: 'text', required: true },
+        { name: 'subtitle', label: 'Mô tả ngắn', type: 'textarea' },
+        { name: 'content', label: 'Nội dung chi tiết (RichText)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề khối',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
+
     // ── GỢI Ý ĐIỀU HƯỚNG TỚI CÁC TRANG CHUYÊN ĐỀ ───────────────────
     {
       name: 'relatedLinks',

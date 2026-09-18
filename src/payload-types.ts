@@ -215,6 +215,7 @@ export interface Config {
     'appointment-settings': AppointmentSetting;
     'quick-links-settings': QuickLinksSetting;
     'display-settings': DisplaySetting;
+    'article-detail-settings': ArticleDetailSetting;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -248,6 +249,7 @@ export interface Config {
     'appointment-settings': AppointmentSettingsSelect<false> | AppointmentSettingsSelect<true>;
     'quick-links-settings': QuickLinksSettingsSelect<false> | QuickLinksSettingsSelect<true>;
     'display-settings': DisplaySettingsSelect<false> | DisplaySettingsSelect<true>;
+    'article-detail-settings': ArticleDetailSettingsSelect<false> | ArticleDetailSettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -464,6 +466,18 @@ export interface Department {
     | null;
   order?: number | null;
   active?: boolean | null;
+  /**
+   * Bật để hiển thị danh sách các Chuyên khoa trực thuộc khoa/phòng này trên trang chi tiết, hoặc tắt nếu không muốn hiển thị.
+   */
+  showSpecialtiesSection?: boolean | null;
+  /**
+   * Bật để hiển thị khối danh sách các y bác sĩ, điều dưỡng, kỹ sư/cán bộ công tác tại khoa/phòng. Tắt nếu không muốn hiển thị.
+   */
+  showMembersSection?: boolean | null;
+  /**
+   * Tùy chỉnh tiêu đề hiển thị cho khối nhân sự (VD: Đội ngũ Bác sĩ, Đội ngũ Cán bộ - Kỹ sư - Điều dưỡng, v.v.).
+   */
+  membersSectionTitle?: string | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
@@ -1145,13 +1159,13 @@ export interface Specialty {
    */
   useDepartmentName?: boolean | null;
   /**
-   * Chọn đơn vị phụ trách chuyên khoa. Không tạo Chuyên khoa chỉ để lặp lại đúng tên Khoa/Phòng.
+   * Chọn đơn vị phụ trách chuyên khoa. Nếu để trống "Tên chuyên khoa" bên dưới, hệ thống sẽ tự động lấy tên Khoa/Phòng này làm tên hiển thị.
    */
   department: number | Department;
   /**
-   * Ví dụ: Tim mạch, Nội tiết, Hô hấp… Tên phải thể hiện chuyên môn, không sao chép tên đơn vị tổ chức.
+   * Nếu muốn đặt tên chuyên môn riêng biệt (VD: Tim mạch, Nội soi, Phục hồi chức năng...) thì nhập tại đây. Nếu để trống, hệ thống sẽ tự động lấy tên của Khoa/Phòng phụ trách làm mặc định hiển thị.
    */
-  name: string;
+  name?: string | null;
   /**
    * Tự động tạo từ Tên khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
@@ -1409,6 +1423,14 @@ export interface Doctor {
   order?: number | null;
   featured?: boolean | null;
   active?: boolean | null;
+  /**
+   * Bật để thành viên/bác sĩ này hiển thị trong khối nhân sự của trang Chi tiết Chuyên khoa. Tắt nếu không muốn hiện.
+   */
+  showInSpecialty?: boolean | null;
+  /**
+   * Bật để thành viên/bác sĩ này hiển thị trong khối nhân sự của trang Chi tiết Khoa / Phòng. Tắt nếu không muốn hiện.
+   */
+  showInDepartment?: boolean | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
@@ -3709,6 +3731,9 @@ export interface DepartmentsSelect<T extends boolean = true> {
       };
   order?: T;
   active?: T;
+  showSpecialtiesSection?: T;
+  showMembersSection?: T;
+  membersSectionTitle?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
@@ -3804,6 +3829,8 @@ export interface DoctorsSelect<T extends boolean = true> {
   order?: T;
   featured?: T;
   active?: T;
+  showInSpecialty?: T;
+  showInDepartment?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
@@ -5420,6 +5447,7 @@ export interface SiteSetting {
           priceText: string;
           desc: string;
           features: string;
+          showButton?: boolean | null;
           buttonText?: string | null;
           buttonLink?: string | null;
           id?: string | null;
@@ -6787,6 +6815,7 @@ export interface HospitalHistory {
   showQuickStats?: boolean | null;
   quickStats?:
     | {
+        enabled?: boolean | null;
         number: string;
         label: string;
         id?: string | null;
@@ -6802,6 +6831,7 @@ export interface HospitalHistory {
   timelineDesc?: string | null;
   milestones?:
     | {
+        enabled?: boolean | null;
         year: string;
         title: string;
         tag?: string | null;
@@ -6821,20 +6851,26 @@ export interface HospitalHistory {
     visionTitle?: string | null;
     valuesList?:
       | {
+          enabled?: boolean | null;
           iconType?: ('heart' | 'star' | 'caduceus' | 'handshake' | 'shield' | 'lightbulb' | 'custom') | null;
           customIcon?: (number | null) | Media;
           title: string;
+          titleAlign?: ('center' | 'left' | 'right') | null;
           description: string;
+          descAlign?: ('justify' | 'center' | 'left') | null;
           id?: string | null;
         }[]
       | null;
   };
+  coreValueCardMinWidth?: number | null;
+  coreValueCardPadding?: number | null;
   showJourney?: boolean | null;
   journeyKicker?: string | null;
   journeyTitle?: string | null;
   journeyDesc?: string | null;
   journeySteps?:
     | {
+        enabled?: boolean | null;
         stepNumber: string;
         title: string;
         isHighlight?: boolean | null;
@@ -6848,6 +6884,7 @@ export interface HospitalHistory {
   achievementsDesc?: string | null;
   achievements?:
     | {
+        enabled?: boolean | null;
         title: string;
         description: string;
         image?: (number | null) | Media;
@@ -6880,6 +6917,31 @@ export interface HospitalHistory {
   ctaBtnPrimaryUrl?: string | null;
   ctaBtnSecondaryText?: string | null;
   ctaBtnSecondaryUrl?: string | null;
+  customBlocks?:
+    | {
+        enabled?: boolean | null;
+        kicker?: string | null;
+        title: string;
+        subtitle?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        textAlign?: ('left' | 'center' | 'justify') | null;
+        id?: string | null;
+      }[]
+    | null;
   primaryColor?: string | null;
   accentColor?: string | null;
   headingColor?: string | null;
@@ -6963,6 +7025,52 @@ export interface AboutPage {
     author?: string | null;
     textAlign?: ('center' | 'left' | 'justify') | null;
   };
+  contentBlock?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    subtitle?: string | null;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
+  };
+  customBlocks?:
+    | {
+        enabled?: boolean | null;
+        kicker?: string | null;
+        title: string;
+        subtitle?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        textAlign?: ('left' | 'center' | 'justify') | null;
+        id?: string | null;
+      }[]
+    | null;
   relatedLinks?: {
     enabled?: boolean | null;
     title?: string | null;
@@ -7192,6 +7300,52 @@ export interface PatientPortalSetting {
     secondaryBtnText?: string | null;
     secondaryBtnLink?: string | null;
   };
+  contentBlock?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    subtitle?: string | null;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
+  };
+  customBlocks?:
+    | {
+        enabled?: boolean | null;
+        kicker?: string | null;
+        title: string;
+        subtitle?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        textAlign?: ('left' | 'center' | 'justify') | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -7260,6 +7414,52 @@ export interface ExaminationFlowSetting {
         id?: string | null;
       }[]
     | null;
+  contentBlock?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    subtitle?: string | null;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
+  };
+  customBlocks?:
+    | {
+        enabled?: boolean | null;
+        kicker?: string | null;
+        title: string;
+        subtitle?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        textAlign?: ('left' | 'center' | 'justify') | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -7308,6 +7508,52 @@ export interface InpatientGuideSetting {
         id?: string | null;
       }[]
     | null;
+  contentBlock?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    subtitle?: string | null;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
+  };
+  customBlocks?:
+    | {
+        enabled?: boolean | null;
+        kicker?: string | null;
+        title: string;
+        subtitle?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        textAlign?: ('left' | 'center' | 'justify') | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -7335,8 +7581,55 @@ export interface CheckupPackagesSetting {
         priceText: string;
         desc: string;
         features: string;
+        showButton?: boolean | null;
         buttonText?: string | null;
         buttonLink?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  contentBlock?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    subtitle?: string | null;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
+  };
+  customBlocks?:
+    | {
+        enabled?: boolean | null;
+        kicker?: string | null;
+        title: string;
+        subtitle?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        textAlign?: ('left' | 'center' | 'justify') | null;
         id?: string | null;
       }[]
     | null;
@@ -7375,6 +7668,52 @@ export interface HospitalMapSetting {
         location: string;
         hours?: string | null;
         desc?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  contentBlock?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    subtitle?: string | null;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
+  };
+  customBlocks?:
+    | {
+        enabled?: boolean | null;
+        kicker?: string | null;
+        title: string;
+        subtitle?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        textAlign?: ('left' | 'center' | 'justify') | null;
         id?: string | null;
       }[]
     | null;
@@ -7436,6 +7775,52 @@ export interface HospitalQualitySetting {
         title: string;
         desc: string;
         highlights?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  contentBlock?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    subtitle?: string | null;
+    content?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    textAlign?: ('left' | 'center' | 'justify') | null;
+  };
+  customBlocks?:
+    | {
+        enabled?: boolean | null;
+        kicker?: string | null;
+        title: string;
+        subtitle?: string | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        textAlign?: ('left' | 'center' | 'justify') | null;
         id?: string | null;
       }[]
     | null;
@@ -7764,6 +8149,10 @@ export interface ScheduleSetting {
   showWeeklyTab?: boolean | null;
   showAttachmentTab?: boolean | null;
   cacheMinutes?: number | null;
+  /**
+   * Khóa API Google AI Studio để tự động đọc và nhận diện bảng lịch trực từ ảnh chụp. Có thể bỏ trống nếu đã cài trong biến môi trường GEMINI_API_KEY.
+   */
+  geminiApiKey?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -8075,6 +8464,128 @@ export interface DisplaySetting {
    * Tùy chọn ẩn trên điện thoại nếu muốn tiết kiệm diện tích màn hình.
    */
   scrollingTicker?: ('both' | 'desktop_only' | 'mobile_only' | 'hidden') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Quản lý độc lập toàn diện mẫu giao diện chi tiết bài viết, tin tức, thông báo: Tùy chọn vị trí Tiêu đề (Trên dải Hero xanh hay Thân bài), thanh chia sẻ mạng xã hội, các banner hành động trên sidebar và khối tin liên quan.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "article-detail-settings".
+ */
+export interface ArticleDetailSetting {
+  id: number;
+  /**
+   * Khi chọn "Nằm trên Dải Hero xanh", tiêu đề bài viết sẽ hiển thị bằng chữ trắng đậm nổi bật ngay dưới thanh đường dẫn Breadcrumb trên dải xanh thương hiệu.
+   */
+  titlePosition?: ('hero' | 'body') | null;
+  heroPadding?: ('standard' | 'spacious' | 'compact') | null;
+  applyNews?: boolean | null;
+  applyNotices?: boolean | null;
+  applyAdvancedTechniques?: boolean | null;
+  applyProcurement?: boolean | null;
+  applyRecruitment?: boolean | null;
+  applyCustomPosts?: boolean | null;
+  /**
+   * Khi bật, bất kỳ mục menu/nội dung mới nào được tạo trong tương lai đều sẽ tự động dùng mẫu chuẩn này mà không cần cấu hình lại.
+   */
+  applyAllNewSections?: boolean | null;
+  /**
+   * Nhập các slug mục muốn áp dụng mẫu chuẩn, ngăn cách bằng dấu phẩy. Ví dụ: chuyen-doi-so, dao-tao, nghien-cuu-khoa-hoc, hoat-dong-doan-the
+   */
+  customSlugsText?: string | null;
+  shareSettings?: {
+    enabled?: boolean | null;
+    position?: ('left' | 'right' | 'top' | 'bottom') | null;
+    /**
+     * Sắp xếp thứ tự các nút bằng cách hoán đổi vị trí các từ: facebook, zalo, copy, print, custom (ngăn cách bằng dấu phẩy).
+     */
+    platformsOrder?: string | null;
+    showFacebook?: boolean | null;
+    /**
+     * Để trống sẽ dùng icon Facebook chuẩn SVG tích hợp.
+     */
+    facebookCustomIcon?: (number | null) | Media;
+    /**
+     * Hỗ trợ biến {url} tự động thay bằng địa chỉ trang hiện tại.
+     */
+    facebookUrlTemplate?: string | null;
+    showZalo?: boolean | null;
+    /**
+     * Để trống sẽ dùng icon Zalo chuẩn SVG tích hợp.
+     */
+    zaloCustomIcon?: (number | null) | Media;
+    /**
+     * Nhập link Zalo OA bệnh viện, nhóm hoặc chat Zalo (ví dụ: https://zalo.me/02923686115).
+     */
+    zaloUrlTemplate?: string | null;
+    showCopyLink?: boolean | null;
+    /**
+     * Để trống sẽ dùng icon mắt xích chuẩn SVG tích hợp.
+     */
+    copyLinkCustomIcon?: (number | null) | Media;
+    showPrint?: boolean | null;
+    /**
+     * Để trống sẽ dùng icon máy in chuẩn SVG tích hợp.
+     */
+    printCustomIcon?: (number | null) | Media;
+    customButtons?:
+      | {
+          enabled?: boolean | null;
+          title: string;
+          customIcon?: (number | null) | Media;
+          shareUrlTemplate: string;
+          openNewTab?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Dành cho kỹ thuật viên nhập nhanh hàng loạt mạng xã hội: [{"title": "Telegram", "shareUrlTemplate": "https://t.me/share/url?url={url}&text={title}"}]
+     */
+    customSharesJson?: string | null;
+  };
+  sidebarBanner?: {
+    enabled?: boolean | null;
+    position?: ('aboveLatest' | 'belowLatest') | null;
+    title?: string | null;
+    description?: string | null;
+    buttonText?: string | null;
+    buttonLink?: string | null;
+    openNewTab?: boolean | null;
+    customBannerImage?: (number | null) | Media;
+    banner2Enabled?: boolean | null;
+    banner2Title?: string | null;
+    banner2Description?: string | null;
+    banner2ButtonText?: string | null;
+    banner2ButtonLink?: string | null;
+    banner2OpenNewTab?: boolean | null;
+    banner2Image?: (number | null) | Media;
+    banner3Enabled?: boolean | null;
+    banner3Title?: string | null;
+    banner3Description?: string | null;
+    banner3ButtonText?: string | null;
+    banner3ButtonLink?: string | null;
+    banner3OpenNewTab?: boolean | null;
+    banner3Image?: (number | null) | Media;
+    extraBannersJson?: string | null;
+  };
+  displayOptions?: {
+    showBreadcrumbs?: boolean | null;
+    showDate?: boolean | null;
+    showViews?: boolean | null;
+    showCategory?: boolean | null;
+    showHighlights?: boolean | null;
+    showExcerpt?: boolean | null;
+    showSource?: boolean | null;
+    defaultSourceName?: string | null;
+    showSidebar?: boolean | null;
+    showSidebarLatest?: boolean | null;
+    sidebarLatestTitle?: string | null;
+    showSidebarBanners?: boolean | null;
+    showRelatedSection?: boolean | null;
+    relatedSectionTitle?: string | null;
+    showBackToList?: boolean | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -8498,6 +9009,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
               priceText?: T;
               desc?: T;
               features?: T;
+              showButton?: T;
               buttonText?: T;
               buttonLink?: T;
               id?: T;
@@ -9299,6 +9811,7 @@ export interface HospitalHistorySelect<T extends boolean = true> {
   quickStats?:
     | T
     | {
+        enabled?: T;
         number?: T;
         label?: T;
         id?: T;
@@ -9314,6 +9827,7 @@ export interface HospitalHistorySelect<T extends boolean = true> {
   milestones?:
     | T
     | {
+        enabled?: T;
         year?: T;
         title?: T;
         tag?: T;
@@ -9335,13 +9849,18 @@ export interface HospitalHistorySelect<T extends boolean = true> {
         valuesList?:
           | T
           | {
+              enabled?: T;
               iconType?: T;
               customIcon?: T;
               title?: T;
+              titleAlign?: T;
               description?: T;
+              descAlign?: T;
               id?: T;
             };
       };
+  coreValueCardMinWidth?: T;
+  coreValueCardPadding?: T;
   showJourney?: T;
   journeyKicker?: T;
   journeyTitle?: T;
@@ -9349,6 +9868,7 @@ export interface HospitalHistorySelect<T extends boolean = true> {
   journeySteps?:
     | T
     | {
+        enabled?: T;
         stepNumber?: T;
         title?: T;
         isHighlight?: T;
@@ -9362,6 +9882,7 @@ export interface HospitalHistorySelect<T extends boolean = true> {
   achievements?:
     | T
     | {
+        enabled?: T;
         title?: T;
         description?: T;
         image?: T;
@@ -9376,6 +9897,17 @@ export interface HospitalHistorySelect<T extends boolean = true> {
   ctaBtnPrimaryUrl?: T;
   ctaBtnSecondaryText?: T;
   ctaBtnSecondaryUrl?: T;
+  customBlocks?:
+    | T
+    | {
+        enabled?: T;
+        kicker?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+        id?: T;
+      };
   primaryColor?: T;
   accentColor?: T;
   headingColor?: T;
@@ -9452,6 +9984,26 @@ export interface AboutPageSelect<T extends boolean = true> {
         quote?: T;
         author?: T;
         textAlign?: T;
+      };
+  contentBlock?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+      };
+  customBlocks?:
+    | T
+    | {
+        enabled?: T;
+        kicker?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+        id?: T;
       };
   relatedLinks?:
     | T
@@ -9683,6 +10235,26 @@ export interface PatientPortalSettingsSelect<T extends boolean = true> {
         secondaryBtnText?: T;
         secondaryBtnLink?: T;
       };
+  contentBlock?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+      };
+  customBlocks?:
+    | T
+    | {
+        enabled?: T;
+        kicker?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -9743,6 +10315,26 @@ export interface ExaminationFlowSettingsSelect<T extends boolean = true> {
         text?: T;
         id?: T;
       };
+  contentBlock?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+      };
+  customBlocks?:
+    | T
+    | {
+        enabled?: T;
+        kicker?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -9789,6 +10381,26 @@ export interface InpatientGuideSettingsSelect<T extends boolean = true> {
         desc?: T;
         id?: T;
       };
+  contentBlock?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+      };
+  customBlocks?:
+    | T
+    | {
+        enabled?: T;
+        kicker?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -9815,8 +10427,29 @@ export interface CheckupPackagesSettingsSelect<T extends boolean = true> {
         priceText?: T;
         desc?: T;
         features?: T;
+        showButton?: T;
         buttonText?: T;
         buttonLink?: T;
+        id?: T;
+      };
+  contentBlock?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+      };
+  customBlocks?:
+    | T
+    | {
+        enabled?: T;
+        kicker?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -9853,6 +10486,26 @@ export interface HospitalMapSettingsSelect<T extends boolean = true> {
         location?: T;
         hours?: T;
         desc?: T;
+        id?: T;
+      };
+  contentBlock?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+      };
+  customBlocks?:
+    | T
+    | {
+        enabled?: T;
+        kicker?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -9903,6 +10556,26 @@ export interface HospitalQualitySettingsSelect<T extends boolean = true> {
         title?: T;
         desc?: T;
         highlights?: T;
+        id?: T;
+      };
+  contentBlock?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
+      };
+  customBlocks?:
+    | T
+    | {
+        enabled?: T;
+        kicker?: T;
+        title?: T;
+        subtitle?: T;
+        content?: T;
+        textAlign?: T;
         id?: T;
       };
   updatedAt?: T;
@@ -10181,6 +10854,7 @@ export interface ScheduleSettingsSelect<T extends boolean = true> {
   showWeeklyTab?: T;
   showAttachmentTab?: T;
   cacheMinutes?: T;
+  geminiApiKey?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -10348,6 +11022,99 @@ export interface DisplaySettingsSelect<T extends boolean = true> {
   floatingAssistant?: T;
   floatingBackToTop?: T;
   scrollingTicker?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "article-detail-settings_select".
+ */
+export interface ArticleDetailSettingsSelect<T extends boolean = true> {
+  titlePosition?: T;
+  heroPadding?: T;
+  applyNews?: T;
+  applyNotices?: T;
+  applyAdvancedTechniques?: T;
+  applyProcurement?: T;
+  applyRecruitment?: T;
+  applyCustomPosts?: T;
+  applyAllNewSections?: T;
+  customSlugsText?: T;
+  shareSettings?:
+    | T
+    | {
+        enabled?: T;
+        position?: T;
+        platformsOrder?: T;
+        showFacebook?: T;
+        facebookCustomIcon?: T;
+        facebookUrlTemplate?: T;
+        showZalo?: T;
+        zaloCustomIcon?: T;
+        zaloUrlTemplate?: T;
+        showCopyLink?: T;
+        copyLinkCustomIcon?: T;
+        showPrint?: T;
+        printCustomIcon?: T;
+        customButtons?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              customIcon?: T;
+              shareUrlTemplate?: T;
+              openNewTab?: T;
+              id?: T;
+            };
+        customSharesJson?: T;
+      };
+  sidebarBanner?:
+    | T
+    | {
+        enabled?: T;
+        position?: T;
+        title?: T;
+        description?: T;
+        buttonText?: T;
+        buttonLink?: T;
+        openNewTab?: T;
+        customBannerImage?: T;
+        banner2Enabled?: T;
+        banner2Title?: T;
+        banner2Description?: T;
+        banner2ButtonText?: T;
+        banner2ButtonLink?: T;
+        banner2OpenNewTab?: T;
+        banner2Image?: T;
+        banner3Enabled?: T;
+        banner3Title?: T;
+        banner3Description?: T;
+        banner3ButtonText?: T;
+        banner3ButtonLink?: T;
+        banner3OpenNewTab?: T;
+        banner3Image?: T;
+        extraBannersJson?: T;
+      };
+  displayOptions?:
+    | T
+    | {
+        showBreadcrumbs?: T;
+        showDate?: T;
+        showViews?: T;
+        showCategory?: T;
+        showHighlights?: T;
+        showExcerpt?: T;
+        showSource?: T;
+        defaultSourceName?: T;
+        showSidebar?: T;
+        showSidebarLatest?: T;
+        sidebarLatestTitle?: T;
+        showSidebarBanners?: T;
+        showRelatedSection?: T;
+        relatedSectionTitle?: T;
+        showBackToList?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -89,6 +89,7 @@ import { FaqPageSettings } from './src/globals/FaqPageSettings'
 import { FormsPageSettings } from './src/globals/FormsPageSettings'
 import { FeedbackPageSettings } from './src/globals/FeedbackPageSettings'
 import { DisplaySettings } from './src/globals/DisplaySettings'
+import { ArticleDetailSettings } from './src/globals/ArticleDetailSettings'
 import { withAudit, withGlobalAudit } from './src/lib/audit'
 import { hospitalEditor } from './src/editor/hospitalEditor'
 import { hasModulePermission } from './src/access'
@@ -202,6 +203,7 @@ const globalPermissionModules: Record<string, string> = {
   'faq-page-settings': 'faqs',
   'forms-page-settings': 'forms',
   'feedback-page-settings': 'feedback',
+  'article-detail-settings': 'site-settings',
 }
 
 const hideWithoutModulePermission = <T extends CollectionConfig | GlobalConfig>(
@@ -334,6 +336,6 @@ export default buildConfig({
     SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, WorkingHoursSettings, PatientPortalSettings,
     ExaminationFlowSettings, InpatientGuideSettings, CheckupPackagesSettings, HospitalMapSettings, HospitalQualitySettings, SurveyPageSettings, FaqPageSettings, FormsPageSettings, FeedbackPageSettings,
     UploadSettings, DefaultMediaSettings, SeoSettings, ChatbotSettings, SystemSettings, ScheduleSettings, AppointmentSettings, QuickLinksSettings,
-    DisplaySettings
+    DisplaySettings, ArticleDetailSettings
   ].map((global) => withGlobalAudit(applyGlobalPermissionVisibility(global)))
 })

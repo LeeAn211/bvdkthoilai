@@ -2,11 +2,13 @@ import type { CSSProperties, ReactNode } from 'react'
 import type { Metadata } from 'next'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
+import { RichText } from '@/components/RichText'
 import { getCMS, getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
 import './gioi-thieu.css'
 
-export const revalidate = 120
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export async function generateMetadata(): Promise<Metadata> {
   const aboutData: any = await getGlobal('about-page').catch(() => null)
@@ -179,6 +181,17 @@ export default async function AboutHospitalPage() {
   const commitQuote = commitment.quote || 'Mỗi cán bộ y tế Bệnh viện Đa khoa Khu vực Thới Lai luôn nêu cao tinh thần trách nhiệm, không ngừng học hỏi nâng cao tay nghề, coi sức khỏe và sự hài lòng của người bệnh là thước đo cao nhất cho hiệu quả công tác.'
   const commitAuthor = commitment.author || 'Ban Giám đốc Bệnh viện Đa khoa Khu vực Thới Lai'
 
+  // Content Block (Bài viết chi tiết Giới thiệu)
+  const contentBlock = aboutData?.contentBlock || {}
+  const showContentBlock = contentBlock.enabled !== false
+  const contentTitle = contentBlock.title || 'Giới thiệu Tổng quan & Quá trình Phát triển'
+  const contentSubtitle = contentBlock.subtitle || 'Thông tin chi tiết về cơ cấu, chức năng, đội ngũ thầy thuốc và định hướng nâng cao chất lượng khám chữa bệnh tại Bệnh viện Đa khoa Khu vực Thới Lai.'
+  const contentAlign = contentBlock.textAlign || 'left'
+
+  // Custom Blocks (Các khối nội dung bổ sung tùy biến)
+  const rawCustomBlocks = Array.isArray(aboutData?.customBlocks) ? aboutData.customBlocks : []
+  const customBlocks = rawCustomBlocks.filter((b: any) => b?.enabled !== false)
+
   // Related Topics / Chuyên đề liên kết
   const relatedLinksData = aboutData?.relatedLinks || {}
   const relTitle = relatedLinksData.title || 'Thông tin chuyên đề khác'
@@ -240,6 +253,39 @@ export default async function AboutHospitalPage() {
             <a href="/bac-si" className="aboutNavLink">Đội ngũ Bác sĩ</a>
           </div>
         </nav>
+
+        {/* ── BÀI VIẾT CHI TIẾT GIỚI THIỆU (NỘI DUNG VĂN BẢN, HÌNH ẢNH) ── */}
+        {showContentBlock && (
+          <section className="container aboutArticleSection">
+            <div className="aboutArticleCard">
+              <div
+                className="aboutArticleHead"
+                style={contentAlign !== 'left' ? { textAlign: contentAlign } : undefined}
+              >
+                <span className="aboutKicker">BÀI VIẾT GIỚI THIỆU</span>
+                <h2>{contentTitle}</h2>
+                {contentSubtitle && <p style={{ whiteSpace: 'pre-line' }}>{contentSubtitle}</p>}
+              </div>
+              <div className="aboutArticleBody">
+                {contentBlock.content ? (
+                  <RichText data={contentBlock.content} />
+                ) : (
+                  <div>
+                    <p>
+                      <strong>{hospitalName}</strong> được thành lập với sứ mệnh bảo vệ, chăm sóc và nâng cao sức khỏe nhân dân trên địa bàn huyện Thới Lai và các khu vực lân cận thuộc thành phố Cần Thơ.
+                    </p>
+                    <p>
+                      Trải qua quá trình hình thành và phát triển bền bỉ, bệnh viện không ngừng được đầu tư nâng cấp cơ sở vật chất khang trang, mua sắm trang thiết bị y tế hiện đại, kiện toàn bộ máy nhân lực chuyên môn cao với tinh thần y đức tận tâm, trách nhiệm, xem người bệnh là trung tâm phục vụ.
+                    </p>
+                    <p>
+                      Bệnh viện hiện đang triển khai đồng bộ các kỹ thuật khám chữa bệnh đa khoa, phẫu thuật nội soi, chẩn đoán hình ảnh kỹ thuật số, xét nghiệm tự động, cấp cứu 24/7 và ứng dụng toàn diện hồ sơ bệnh án điện tử (EMR), thanh toán viện phí không dùng tiền mặt, hướng tới xây dựng môi trường khám chữa bệnh văn minh, hiện đại và tin cậy cho mọi người dân.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── CHỨC NĂNG & NHIỆM VỤ TRỌNG TÂM ─────────── */}
         {corePrinciples.enabled !== false && coreItems.length > 0 && (
@@ -327,6 +373,29 @@ export default async function AboutHospitalPage() {
               <blockquote style={{ whiteSpace: 'pre-line', textWrap: 'balance' }}>"{commitQuote}"</blockquote>
               <p className="aboutCommitAuthor">— {commitAuthor}</p>
             </div>
+          </section>
+        )}
+
+        {/* ── CÁC KHỐI NỘI DUNG TÙY BIẾN THÊM MỚI (CUSTOM BLOCKS) ─── */}
+        {customBlocks.length > 0 && (
+          <section className="container">
+            {customBlocks.map((block: any, idx: number) => {
+              const bAlign = block.textAlign || 'left'
+              return (
+                <div key={block.id || idx} className="aboutCustomBlockCard">
+                  <div style={bAlign !== 'left' ? { textAlign: bAlign } : undefined}>
+                    {block.kicker && <span className="aboutKicker">{block.kicker}</span>}
+                    <h2>{block.title}</h2>
+                    {block.subtitle && <p className="aboutCustomBlockSub" style={{ whiteSpace: 'pre-line' }}>{block.subtitle}</p>}
+                  </div>
+                  {block.content && (
+                    <div className="aboutArticleBody">
+                      <RichText data={block.content} />
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </section>
         )}
 

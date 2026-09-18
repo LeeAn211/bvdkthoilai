@@ -25,8 +25,12 @@ type Contact = {
 
 export default function EmergencyTemplateDownload() {
   const inputRef = useRef<HTMLInputElement>(null)
+  const imgInputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [ocrBusy, setOcrBusy] = useState(false)
   const [slots, setSlots] = useState<DeptSlot[] | null>(null)
   const [contacts, setContacts] = useState<Contact[]>([])
   const [generalNote, setGeneralNote] = useState('')
@@ -37,6 +41,7 @@ export default function EmergencyTemplateDownload() {
 
   const { dispatchFields } = useForm()
 
+  // Xử lý đọc file Excel
   const handleUpload = async () => {
     if (!file || busy) return
     setBusy(true); setError(''); setSlots(null); setApplied(false)
@@ -57,6 +62,38 @@ export default function EmergencyTemplateDownload() {
       setError(e instanceof Error ? e.message : 'Lỗi xử lý file Excel.')
     } finally {
       setBusy(false)
+    }
+  }
+
+  // Xử lý Quét ảnh lịch trực bằng Gemini Vision AI
+  const handleScanImage = async () => {
+    if (!imageFile || ocrBusy) return
+    setOcrBusy(true); setError(''); setSlots(null); setApplied(false)
+    try {
+      const formData = new FormData()
+      formData.append('image', imageFile)
+
+      const res = await fetch('/api/ai-schedule-ocr', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const json = await res.json()
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || 'Quét ảnh thất bại. Vui lòng kiểm tra lại ảnh hoặc API Key.')
+      }
+
+      const data = json.data
+      setSlots(data.slots || [])
+      setContacts(data.contacts || [])
+      setGeneralNote(data.generalNote || '')
+      setWeekDates({ start: data.emergencyWeekStart, end: data.emergencyWeekEnd })
+      setMeta({ title: data.title, weekLabel: data.weekLabel, total: data.slots?.length })
+    } catch (e) {
+      console.error('Lỗi AI OCR:', e)
+      setError(e instanceof Error ? e.message : 'Lỗi nhận diện ảnh lịch trực.')
+    } finally {
+      setOcrBusy(false)
     }
   }
 
@@ -175,42 +212,131 @@ export default function EmergencyTemplateDownload() {
         </div>
       </div>
 
-      {/* ── Khu vực Upload ── */}
-      <div style={{
-        padding: '12px 16px', border: '1.5px dashed #fca5a5', borderRadius: 10,
-        background: '#fffbfb', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
-      }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
-        </svg>
-        <span style={{ fontSize: 12, fontWeight: 600, color: '#374151', flex: 1, minWidth: 0 }}>
-          <b>Upload file Excel lịch trực</b> — Hỗ trợ .xlsx
-        </span>
-
-        <input ref={inputRef} type="file" accept=".xlsx" style={{ display: 'none' }}
-          onChange={e => { setFile(e.target.files?.[0] || null); setError(''); setSlots(null); setApplied(false) }} />
-
-        <div onClick={() => inputRef.current?.click()} style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '7px 14px', borderRadius: 7,
-          border: '1.5px dashed #fca5a5', background: '#fff',
-          color: '#b91c1c', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-          whiteSpace: 'nowrap', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis',
+      {/* ── Khu vực Upload 2 Phương thức: Excel & AI Scan Ảnh ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 10 }}>
+        {/* Phương thức 1: Quét ảnh AI */}
+        <div style={{
+          padding: '14px 16px', border: '1.5px solid #38bdf8', borderRadius: 10,
+          background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
+          display: 'flex', flexDirection: 'column', gap: 10,
+          boxShadow: '0 2px 8px rgba(2, 132, 199, 0.08)',
         }}>
-          📂 {file ? file.name : 'Chọn file .xlsx'}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 18 }}>🤖</span>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: '#0369a1' }}>
+                CÁCH 1: QUÉT ẢNH LỊCH TRỰC BẰNG AI (GEMINI VISION)
+              </div>
+              <div style={{ fontSize: 11, color: '#0284c7' }}>
+                Chụp ảnh bảng lịch trực hoặc tải ảnh scan từ máy tính / Zalo
+              </div>
+            </div>
+          </div>
+
+          <input
+            ref={imgInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={e => {
+              const f = e.target.files?.[0] || null
+              setImageFile(f)
+              setError('')
+              setSlots(null)
+              setApplied(false)
+              if (f) {
+                const url = URL.createObjectURL(f)
+                setImagePreview(url)
+              } else {
+                setImagePreview(null)
+              }
+            }}
+          />
+
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div
+              onClick={() => imgInputRef.current?.click()}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '7px 14px', borderRadius: 7,
+                border: '1.5px dashed #0284c7', background: '#fff',
+                color: '#0369a1', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                whiteSpace: 'nowrap', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis',
+              }}
+            >
+              📷 {imageFile ? imageFile.name : 'Chọn ảnh lịch trực'}
+            </div>
+
+            <button
+              type="button"
+              disabled={!imageFile || ocrBusy}
+              onClick={handleScanImage}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '7px 16px', borderRadius: 7, border: 0,
+                background: imageFile && !ocrBusy ? 'linear-gradient(135deg, #0284c7, #0369a1)' : '#cbd5e1',
+                color: imageFile && !ocrBusy ? '#fff' : '#64748b',
+                fontSize: 12, fontWeight: 800, cursor: imageFile && !ocrBusy ? 'pointer' : 'not-allowed',
+                whiteSpace: 'nowrap', transition: 'all 0.15s',
+                boxShadow: imageFile && !ocrBusy ? '0 4px 12px rgba(2, 132, 199, 0.25)' : 'none',
+              }}
+            >
+              {ocrBusy ? '⏳ AI đang quét và đọc ảnh...' : '✨ Quét ảnh bằng AI'}
+            </button>
+          </div>
+
+          {imagePreview && (
+            <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <img src={imagePreview} alt="Preview" style={{ height: 40, width: 60, objectFit: 'cover', borderRadius: 4, border: '1px solid #bae6fd' }} />
+              <span style={{ fontSize: 11, color: '#0369a1' }}>Đã tải ảnh lên. Nhấn nút <b>Quét ảnh bằng AI</b> để tự động nhận dạng.</span>
+            </div>
+          )}
         </div>
 
-        <button type="button" disabled={!file || busy} onClick={handleUpload}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 6,
-            padding: '7px 16px', borderRadius: 7, border: 0,
-            background: file && !busy ? 'linear-gradient(135deg, #b91c1c, #dc2626)' : '#e2e8f0',
-            color: file && !busy ? '#fff' : '#94a3b8',
-            fontSize: 12, fontWeight: 800, cursor: file && !busy ? 'pointer' : 'not-allowed',
-            whiteSpace: 'nowrap', transition: 'all 0.15s',
-          }}>
-          {busy ? '⏳ Đang đọc...' : '✓ Đọc và Import'}
-        </button>
+        {/* Phương thức 2: File Excel */}
+        <div style={{
+          padding: '14px 16px', border: '1.5px dashed #fca5a5', borderRadius: 10,
+          background: '#fffbfb', display: 'flex', flexDirection: 'column', gap: 10,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ fontSize: 18 }}>📊</span>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 800, color: '#b91c1c' }}>
+                CÁCH 2: IMPORT TỆP EXCEL (.XLSX)
+              </div>
+              <div style={{ fontSize: 11, color: '#64748b' }}>
+                Nạp trực tiếp từ file Excel ma trận 7 ngày
+              </div>
+            </div>
+          </div>
+
+          <input ref={inputRef} type="file" accept=".xlsx" style={{ display: 'none' }}
+            onChange={e => { setFile(e.target.files?.[0] || null); setError(''); setSlots(null); setApplied(false) }} />
+
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <div onClick={() => inputRef.current?.click()} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              padding: '7px 14px', borderRadius: 7,
+              border: '1.5px dashed #fca5a5', background: '#fff',
+              color: '#b91c1c', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+              whiteSpace: 'nowrap', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis',
+            }}>
+              📂 {file ? file.name : 'Chọn file .xlsx'}
+            </div>
+
+            <button type="button" disabled={!file || busy} onClick={handleUpload}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                padding: '7px 16px', borderRadius: 7, border: 0,
+                background: file && !busy ? 'linear-gradient(135deg, #b91c1c, #dc2626)' : '#e2e8f0',
+                color: file && !busy ? '#fff' : '#94a3b8',
+                fontSize: 12, fontWeight: 800, cursor: file && !busy ? 'pointer' : 'not-allowed',
+                whiteSpace: 'nowrap', transition: 'all 0.15s',
+              }}>
+              {busy ? '⏳ Đang đọc...' : '✓ Đọc file Excel'}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* ── Lỗi ── */}

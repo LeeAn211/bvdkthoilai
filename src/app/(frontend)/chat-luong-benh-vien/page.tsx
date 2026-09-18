@@ -4,10 +4,12 @@ import { PageHero } from '@/components/PageHero'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { PatientCareSubNav } from '@/components/PatientCareSubNav'
+import { RichText } from '@/components/RichText'
 import { getGlobal } from '@/lib/payload'
 import './chat-luong.css'
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Chất lượng Bệnh viện — Bệnh viện Đa khoa Khu vực Thới Lai',
@@ -46,6 +48,14 @@ export default async function HospitalQualityPage() {
   const showDimensions = qualitySettings.showDimensions !== false
   const showPrograms = qualitySettings.showPrograms !== false
   const showFeedbackBox = qualitySettings.showFeedbackBox !== false
+
+  // Khối bài viết chi tiết & Khối tùy biến
+  const contentBlock = qualitySettings.contentBlock || {}
+  const showContentBlock = contentBlock.enabled !== false && (contentBlock.title || contentBlock.content)
+  const cbAlign = contentBlock.textAlign || 'left'
+
+  const rawCustomBlocks = Array.isArray(qualitySettings.customBlocks) ? qualitySettings.customBlocks : []
+  const customBlocks = rawCustomBlocks.filter((b: any) => b?.enabled !== false)
 
   // 4 Thẻ chỉ số chất lượng mặc định
   const DEFAULT_STATS = [
@@ -309,6 +319,57 @@ export default async function HospitalQualityPage() {
                   </div>
                 ))}
               </div>
+            </section>
+          )}
+
+          {/* Bài viết chi tiết & Báo cáo chất lượng (RichText) */}
+          {showContentBlock && (
+            <article className="patientCareArticleCard" style={cbAlign !== 'left' ? { textAlign: cbAlign as any } : undefined}>
+              <div className="patientCareArticleHeader">
+                {contentBlock.title && <h2 className="patientCareArticleTitle">{contentBlock.title}</h2>}
+                {contentBlock.subtitle && <p className="patientCareArticleSubtitle">{contentBlock.subtitle}</p>}
+              </div>
+              {contentBlock.content ? (
+                <div className="patientCareArticleBody">
+                  <RichText data={contentBlock.content} />
+                </div>
+              ) : (
+                <div className="patientCareArticleBody">
+                  <p>
+                    Quản lý chất lượng bệnh viện và bảo đảm an toàn người bệnh là ưu tiên hàng đầu trong mọi hoạt động chuyên môn tại <strong>Bệnh viện Đa khoa Khu vực Thới Lai</strong>. Hội đồng Quản lý Chất lượng bệnh viện thường xuyên giám sát, đánh giá và tiến hành các đợt phúc tra nội bộ theo Bộ 83 Tiêu chí do Bộ Y tế ban hành.
+                  </p>
+                  <p>
+                    <strong>Mục tiêu cải tiến liên tục:</strong>
+                  </p>
+                  <ul>
+                    <li>Tối ưu hóa thời gian chờ đợi khám và làm các xét nghiệm cận lâm sàng.</li>
+                    <li>Nâng cao năng lực cấp cứu can thiệp tim mạch, hồi sức chống độc và ngoại sản.</li>
+                    <li>Đảm bảo môi trường bệnh viện xanh – sạch – đẹp, kiểm soát nhiễm khuẩn đạt chuẩn y tế.</li>
+                    <li>Lắng nghe và giải quyết nhanh chóng, thỏa đáng mọi phản ánh, khiếu nại của người dân.</li>
+                  </ul>
+                </div>
+              )}
+            </article>
+          )}
+
+          {/* Các khối nội dung tùy biến thêm mới (Custom Blocks) */}
+          {customBlocks.length > 0 && (
+            <section style={{ marginBottom: '40px' }}>
+              {customBlocks.map((block: any, bIdx: number) => {
+                const bAlign = block.textAlign || 'left'
+                return (
+                  <div key={block.id || bIdx} className="patientCareCustomBlockCard" style={bAlign !== 'left' ? { textAlign: bAlign } : undefined}>
+                    {block.kicker && <span className="patientCareCustomKicker">{block.kicker}</span>}
+                    <h3 className="patientCareCustomBlockTitle">{block.title}</h3>
+                    {block.subtitle && <p className="patientCareCustomBlockSub">{block.subtitle}</p>}
+                    {block.content && (
+                      <div className="patientCareArticleBody">
+                        <RichText data={block.content} />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </section>
           )}
 

@@ -1,5 +1,15 @@
 # DECISIONS
 
+## 2026-09-18 — Chuẩn hóa bắt buộc công tắc bật/tắt độc lập và hỗ trợ thêm mới khối nội dung tùy biến (Custom Blocks) cho toàn bộ trang Admin CMS
+- Quyết định:
+  1. **Công tắc Bật/Tắt độc lập (Granular Toggles)**: Mọi khối nội dung lớn và từng phần tử con (cards, items, links, banner) trên tất cả các trang khi đưa vào hoặc nâng cấp trong Admin CMS **bắt buộc phải có trường checkbox `enabled` riêng biệt** để người quản trị chủ động ẩn/hiện theo nhu cầu thực tế.
+  2. **Khối Bài viết Chi tiết (Detailed Article RichText)**: Các trang nội dung phải có khối bài viết chi tiết với trình soạn thảo RichText để biên soạn nội dung chuyên sâu trực tiếp từ CMS.
+  3. **Thêm mới khối tùy biến không giới hạn (`customBlocks`)**: Mọi trang nội dung/chức năng phải hỗ trợ mảng `customBlocks` cho phép quản trị viên tự do thêm không giới hạn các khối nội dung mới (tiêu đề, mô tả, RichText, canh lề) trực tiếp trong CMS.
+  4. **Cơ chế Fallback an toàn 2 lớp**: Luôn đảm bảo nếu CMS chưa nhập hoặc tắt bớt khối thì giao diện vẫn render đẹp mắt, không bao giờ lỗi runtime hoặc trắng trang.
+- Lý do: Đáp ứng nhu cầu quản trị linh hoạt của bệnh viện, không phải phụ thuộc vào lập trình viên mỗi khi muốn tạm ẩn một dịch vụ hoặc bổ sung thêm một thông báo/nội dung mới trên trang.
+- Không chọn: Hardcode thứ tự và số lượng khối cố định ngoài frontend khiến người quản trị không thể linh hoạt điều chỉnh nội dung hiển thị.
+- Tác động: Cập nhật thành điều khoản bắt buộc trong `AGENTS.md` (Mục 13.2). Mọi tính năng trang mới hoặc chỉnh sửa trang cũ bắt buộc phải áp dụng chuẩn này.
+
 ## 2026-09-17 — Tách độc lập các trang chức năng/nội dung ra khỏi SiteSettings sang Global/Collection chuyên trách
 - Quyết định: 
   1. Tất cả các trang nội dung, trang quy trình, hướng dẫn, tiện ích, dịch vụ y tế mới (hoặc nâng cấp) **TUYỆT ĐỐI KHÔNG NHỒI NHÉT VÀO SiteSettings** ("Cấu hình Website & Nhận diện").

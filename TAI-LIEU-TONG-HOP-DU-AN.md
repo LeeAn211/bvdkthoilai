@@ -58,6 +58,8 @@ npm run generate:types
 npm run typecheck
 npm run dev
 ```
+# chay lệnh này để cập nhật database
+npm run db:migrate:deploy 
 
 Không cần chạy seed nếu database hiện tại đã có dữ liệu. Không cần DROP
 database.

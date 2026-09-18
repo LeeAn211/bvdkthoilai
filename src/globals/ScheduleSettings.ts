@@ -218,5 +218,15 @@ export const ScheduleSettings: GlobalConfig = {
     { name: 'showWeeklyTab', label: 'Hiện tab Theo tuần', type: 'checkbox', defaultValue: true },
     { name: 'showAttachmentTab', label: 'Hiện tab Tệp đính kèm', type: 'checkbox', defaultValue: true },
     { name: 'cacheMinutes', label: 'Thời gian cache lịch (phút)', type: 'number', defaultValue: 5, min: 0, max: 1440 },
+    // ── 5. CẤU HÌNH AI QUÉT ẢNH LỊCH TRỰC (GEMINI VISION) ──
+    {
+      name: 'geminiApiKey',
+      label: 'Google Gemini API Key (Dùng cho tính năng Quét ảnh lịch trực AI)',
+      type: 'text',
+      admin: {
+        description: 'Khóa API Google AI Studio để tự động đọc và nhận diện bảng lịch trực từ ảnh chụp. Có thể bỏ trống nếu đã cài trong biến môi trường GEMINI_API_KEY.',
+        placeholder: 'AIzaSy...',
+      },
+    },
   ],
 }

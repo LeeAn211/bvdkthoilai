@@ -79,10 +79,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { sectionSlug, slug } = await params
-  const [{ section, item, related }, theme, siteSettings] = await Promise.all([
+  const [{ section, item, related }, theme, siteSettings, displaySettings, articleDetailSettings] = await Promise.all([
     getData(sectionSlug, slug),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
     getGlobal('site-settings').catch(() => null) as Promise<any>,
+    getGlobal('display-settings').catch(() => null) as Promise<any>,
+    getGlobal('article-detail-settings').catch(() => null) as Promise<any>,
   ])
 
   if (!section || !item) notFound()
@@ -91,10 +93,11 @@ export default async function Page({ params }: Props) {
 
   // Xác định áp dụng mẫu chuẩn hiện đại theo mức ưu tiên:
   // 1. Nếu bài viết hoặc mục nội dung chọn trực tiếp: 'modern' / 'bachmai' -> true, 'classic' -> false
-  // 2. Nếu nằm trong danh sách customSectionSlugs cấu hình trong Admin Theme
-  // 3. Nếu bật applyAllNewSections hoặc applyCustomPosts trong Admin Theme
+  // 2. Nếu nằm trong danh sách customSectionSlugs cấu hình trong Admin
+  // 3. Nếu bật applyAllNewSections hoặc applyCustomPosts trong Admin
   let isModernLayout = true
-  const customSlugsText = String(theme?.detailLayout?.customSlugsText || '')
+  const effectiveConfig = articleDetailSettings || theme?.detailLayout
+  const customSlugsText = String(effectiveConfig?.customSlugsText || '')
   const slugList = customSlugsText
     .split(',')
     .map((s: string) => s.trim().toLowerCase())
@@ -108,8 +111,8 @@ export default async function Page({ params }: Props) {
     isModernLayout = true
   } else {
     isModernLayout =
-      theme?.detailLayout?.applyAllNewSections !== false &&
-      theme?.detailLayout?.applyCustomPosts !== false
+      effectiveConfig?.applyAllNewSections !== false &&
+      effectiveConfig?.applyCustomPosts !== false
   }
 
   const publishedDate = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : ''
@@ -146,6 +149,8 @@ export default async function Page({ params }: Props) {
         hospitalName={hospitalName}
         showSource={item.showSource ?? undefined}
         adminConfig={theme?.detailLayout}
+        displaySettings={displaySettings}
+        articleDetailSettings={articleDetailSettings}
         sidebarTitle="Bài viết mới"
         latestItems={mappedRelated}
         relatedTitle={`Bài viết cùng mục ${section.title}`}

@@ -19,12 +19,33 @@ export const Specialties: CollectionConfig = {
   },
   versions: { drafts: true, maxPerDoc: 20 },
   hooks: {
-    beforeValidate: [({ data, req }) => {
+    beforeValidate: [async ({ data, req }) => {
       const record: any = data || {}
       const user: any = req.user
       const privileged = !user || ['super-admin', 'system-admin', 'admin', 'hr'].includes(user.role)
       const assigned = typeof user?.department === 'object' ? user.department?.id : user?.department
       if (!privileged && assigned) record.department = assigned
+
+      // Nếu không nhập Tên chuyên khoa nhưng có chọn Khoa / Phòng phụ trách,
+      // tự động lấy Tên của Khoa / Phòng đó làm Tên chuyên khoa mặc định
+      const hasCustomName = typeof record.name === 'string' && record.name.trim().length > 0
+      if (!hasCustomName && record.department) {
+        const deptId = typeof record.department === 'object' ? record.department?.id : record.department
+        if (deptId) {
+          try {
+            const dept = await req.payload.findByID({
+              collection: 'departments',
+              id: deptId,
+              depth: 0,
+            })
+            if (dept?.name) {
+              record.name = dept.name
+            }
+          } catch {
+            // Không tìm thấy khoa/phòng hoặc có lỗi truy vấn
+          }
+        }
+      }
       return record
     }],
   },
@@ -46,15 +67,25 @@ export const Specialties: CollectionConfig = {
       relationTo: 'departments',
       required: true,
       admin: {
-        description: 'Chọn đơn vị phụ trách chuyên khoa. Không tạo Chuyên khoa chỉ để lặp lại đúng tên Khoa/Phòng.',
+        description: 'Chọn đơn vị phụ trách chuyên khoa. Nếu để trống "Tên chuyên khoa" bên dưới, hệ thống sẽ tự động lấy tên Khoa/Phòng này làm tên hiển thị.',
       },
     },
     {
       name: 'name',
       label: 'Tên chuyên khoa',
       type: 'text',
-      required: true,
-      admin: { description: 'Ví dụ: Tim mạch, Nội tiết, Hô hấp… Tên phải thể hiện chuyên môn, không sao chép tên đơn vị tổ chức.' },
+      required: false,
+      validate: (value: unknown, { siblingData }: any) => {
+        const valStr = typeof value === 'string' ? value.trim() : ''
+        if (!valStr && !siblingData?.department) {
+          return 'Vui lòng nhập Tên chuyên khoa hoặc chọn Khoa / Phòng phụ trách để hệ thống tự động điền.'
+        }
+        return true
+      },
+      admin: {
+        placeholder: 'Để trống sẽ tự động lấy theo Tên Khoa / Phòng phụ trách ở trên...',
+        description: 'Nếu muốn đặt tên chuyên môn riêng biệt (VD: Tim mạch, Nội soi, Phục hồi chức năng...) thì nhập tại đây. Nếu để trống, hệ thống sẽ tự động lấy tên của Khoa/Phòng phụ trách làm mặc định hiển thị.',
+      },
     },
     slugField('name', 'specialties'),
     { name: 'summary', label: 'Giới thiệu ngắn', type: 'textarea' },

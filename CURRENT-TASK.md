@@ -2,19 +2,73 @@
 
 ## Trang thai: HOAN THANH
 
+## Nhiem vu vua thuc hien
+- Tích hợp tính năng **Quét ảnh lịch trực tự động bằng AI (Google Gemini Vision OCR)** trong Admin CMS tại trang Lịch trực cấp cứu (`schedules?mode=emergency`).
+- Cho phép quản trị viên chụp ảnh hoặc tải lên ảnh ma trận lịch trực tuần của bệnh viện; AI tự động nhận diện tuần trực, ngày trực, phân ca từng khoa phòng (Lãnh đạo, Bác sĩ, Điều dưỡng, Sản, Nội, Cận lâm sàng, Xe cấp cứu...) và danh bạ khẩn cấp.
+- Cung cấp giao diện xem trước kết quả trực quan và nút "✓ Điền vào bảng bên dưới" tự động điền vào form Payload CMS.
+- Bổ sung cấu hình `geminiApiKey` trong Global `schedule-settings` và hỗ trợ biến môi trường `GEMINI_API_KEY`.
+- Đóng gói và triển khai Database Migration 034 (`20260918_034_add_gemini_api_key_to_schedule_settings`), seal schema contract và deploy thành công (34 applied, 0 pending). Kiểm tra TypeScript đạt 0 lỗi.
+
 ## Muc tieu
-Phan khung logo + ten don vi tren Mobile Top Bar: nen trang phai noi bat, co vien, co bong.
+- Thực hiện yêu cầu của người dùng:
+  *"các bài viết hiển thị các tab tren danh-cho-nguoi-benh phải được vào admin để tôi điều chỉnh. bạn thiết kế mẫu sẵn nhưng phải đưa vào admin để tôi chỉnh lại cho phù hợp với đơn vị của tôi"*
+- Toàn bộ nội dung và bài viết hiển thị trên các tab của chuyên mục Dành cho người bệnh:
+  - Cổng tổng hợp (`/danh-cho-nguoi-benh` - `PatientPortalSettings.ts`)
+  - Quy trình khám bệnh (`/quy-trinh-kham-benh` - `ExaminationFlowSettings.ts`)
+  - Điều trị nội trú (`/dieu-tri-noi-tru` - `InpatientGuideSettings.ts`)
+  - Gói khám sức khỏe (`/goi-kham` - `CheckupPackagesSettings.ts`)
+  - Sơ đồ bệnh viện (`/so-do-benh-vien` - `HospitalMapSettings.ts`)
+  - Chất lượng bệnh viện (`/chat-luong-benh-vien` - `HospitalQualitySettings.ts`)
+  phải được đưa 100% vào Admin CMS để người quản trị tùy chỉnh, thay đổi, thêm bớt bài viết/nội dung phù hợp với Bệnh viện Đa khoa Khu vực Thới Lai.
+- Cài đặt sẵn văn bản mẫu chuẩn y tế bệnh viện vào CMS và cơ chế Fallback ở Frontend, không hardcode cố định.
 
 ## Da hoan thanh
-- Them prop logo, hospitalName vao MobileTopBar.tsx
-- Them element .mobileTopBrand (card trang, vien xanh, box-shadow) vao Mobile Top Bar
-- Truyen logo va hospitalName tu SiteHeader.tsx xuong
-- Them CSS day du trong mobile-medpro.css
+1. Cấu hình Schema Admin CMS (Mandate 13.2):
+   - Thêm nhóm `contentBlock` (gồm `enabled`, `title`, `subtitle`, `content` RichText, `textAlign`) với tiêu đề và mô tả mẫu chuẩn y tế Bệnh viện Đa khoa Khu vực Thới Lai.
+   - Thêm mảng `customBlocks` (`dbName` ngắn gọn < 60 ký tự: `pps_custom_blocks`, `efs_custom_blocks`, `igs_custom_blocks`, `cps_custom_blocks`, `hms_custom_blocks`, `hqs_custom_blocks`) cho phép thêm không giới hạn các khối bài viết bổ sung.
+2. Đóng gói Migration Database 031 (Mandate 6 & 15):
+   - Sinh schema mới: `npm run generate:db-schema` (tạo `src/payload-generated-schema.ts`).
+   - Tạo Migration `scripts/db-migrations/20260918_031_add_content_and_custom_blocks_to_patient_care_globals.mjs` tạo đầy đủ cột, bảng phụ mảng, enum và verify.
+   - Seal contract: `npm run db:schema:seal -- 20260918_031_add_content_and_custom_blocks_to_patient_care_globals`.
+   - Kiểm tra contract: `npm run db:schema:check` (hợp lệ 100%).
+   - Triển khai an toàn: `npm run db:migrate:deploy` (31 applied, 0 pending).
+3. Đóng gói Migration Database 032 - Sửa triệt để lỗi lưu Global (Mandate 6, 14 & 15):
+   - Thiết lập ràng buộc `ON DELETE CASCADE` cho tất cả các bảng mảng con lồng nhau (`pps_svc_items`, `examination_flow_settings_flow_tabs_steps`, `ef_steps`), ngăn chặn lỗi duplicate key `23505` (ValidationError: Lỗi - Field sau không hợp lệ: id).
+   - Gỡ bỏ `NOT NULL` (DROP NOT NULL) trên các cột cũ của `hospital_map_settings_floors` (`level`, `name`, `departments`) và `checkup_packages_settings_packages` (`name`, `target`, `price`, `features`).
+   - Bổ sung 4 cột toggle cho `hospital_quality_settings` (`show_quality_cards`, `show_dimensions`, `show_programs`, `show_feedback_box`) và đồng bộ các cột `val`, `unit`, `code`, `title`, `percent`, `highlights`.
+   - Tạo Migration `scripts/db-migrations/20260918_032_fix_patient_care_globals_cascade_fk_and_columns.mjs`.
+   - Seal contract: `npm run db:schema:seal -- 20260918_032_fix_patient_care_globals_cascade_fk_and_columns`.
+   - Kiểm tra contract: `npm run db:schema:check` (hợp lệ 100%).
+   - Triển khai: `npm run db:migrate:deploy` (32 applied, 0 pending).
+4. Giao diện Frontend & Styling:
+   - Thêm CSS chuẩn y tế trong `src/app/styles/patient-care.css`: `.patientCareArticleCard`, `.patientCareCustomBlockCard`, `.patientCareCustomKicker`,...
+   - Cập nhật 5 trang frontend (`/dieu-tri-noi-tru`, `/goi-kham`, `/so-do-benh-vien`, `/quy-trinh-kham-benh`, `/danh-cho-nguoi-benh`, `/chat-luong-benh-vien`) render bài viết RichText và danh sách customBlocks linh hoạt theo cấu hình CMS.
+5. Kiểm thử chất lượng toàn diện:
+   - Toàn bộ 6/6 Global cập nhật `updateGlobal` thành công 100% (0 lỗi).
+   - `npm run typecheck` đạt 0 lỗi.
+   - Toàn bộ 6 trang Admin CMS đều trả về HTTP 200 OK.
+   - Toàn bộ 6 trang Frontend đều trả về HTTP 200 OK và hiển thị bài viết chi tiết mượt mà.
 
 ## File lien quan
-- src/components/MobileTopBar.tsx
-- src/components/SiteHeader.tsx  
-- src/app/styles/mobile-medpro.css
+- `src/globals/PatientPortalSettings.ts` [MODIFY]
+- `src/globals/InpatientGuideSettings.ts` [MODIFY]
+- `src/globals/CheckupPackagesSettings.ts` [MODIFY]
+- `src/globals/HospitalMapSettings.ts` [MODIFY]
+- `src/globals/ExaminationFlowSettings.ts` [MODIFY]
+- `src/globals/HospitalQualitySettings.ts` [MODIFY]
+- `scripts/db-migrations/20260918_031_add_content_and_custom_blocks_to_patient_care_globals.mjs` [NEW]
+- `scripts/db-migrations/20260918_032_fix_patient_care_globals_cascade_fk_and_columns.mjs` [NEW]
+- `scripts/db-schema-contract.json` [MODIFY]
+- `src/payload-generated-schema.ts` [MODIFY]
+- `src/app/styles/patient-care.css` [MODIFY]
+- `src/app/(frontend)/dieu-tri-noi-tru/page.tsx` [MODIFY]
+- `src/app/(frontend)/goi-kham/page.tsx` [MODIFY]
+- `src/app/(frontend)/so-do-benh-vien/page.tsx` [MODIFY]
+- `src/app/(frontend)/quy-trinh-kham-benh/page.tsx` [MODIFY]
+- `src/app/(frontend)/danh-cho-nguoi-benh/page.tsx` [MODIFY]
+- `src/app/(frontend)/chat-luong-benh-vien/page.tsx` [MODIFY]
+- `CURRENT-TASK.md` [MODIFY]
+- `CHANGELOG.md` [MODIFY]
 
 ## Viec con lai
 Khong

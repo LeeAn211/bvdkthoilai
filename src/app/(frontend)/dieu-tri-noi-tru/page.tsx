@@ -4,9 +4,11 @@ import { PageHero } from '@/components/PageHero'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { PatientCareSubNav } from '@/components/PatientCareSubNav'
+import { RichText } from '@/components/RichText'
 import { getGlobal } from '@/lib/payload'
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Hướng dẫn Điều trị Nội trú — Bệnh viện Đa khoa Khu vực Thới Lai',
@@ -124,6 +126,14 @@ export default async function InpatientPage() {
   const rawItems = Array.isArray(ipPage.belongingsChecklist) && ipPage.belongingsChecklist.length > 0
     ? ipPage.belongingsChecklist.filter((i: any) => i?.enabled !== false)
     : DEFAULT_ITEMS
+
+  // Khối bài viết chi tiết & Khối tùy biến
+  const contentBlock = ipPage.contentBlock || {}
+  const showContentBlock = contentBlock.enabled !== false && (contentBlock.title || contentBlock.content)
+  const cbAlign = contentBlock.textAlign || 'left'
+
+  const rawCustomBlocks = Array.isArray(ipPage.customBlocks) ? ipPage.customBlocks : []
+  const customBlocks = rawCustomBlocks.filter((b: any) => b?.enabled !== false)
 
   return (
     <>
@@ -294,7 +304,58 @@ export default async function InpatientPage() {
             </div>
           </section>
 
-          {/* 5. CTA Banner */}
+          {/* 4. Bài viết chi tiết & Hướng dẫn chuyên sâu (RichText) */}
+          {showContentBlock && (
+            <article className="patientCareArticleCard" style={cbAlign !== 'left' ? { textAlign: cbAlign as any } : undefined}>
+              <div className="patientCareArticleHeader">
+                {contentBlock.title && <h2 className="patientCareArticleTitle">{contentBlock.title}</h2>}
+                {contentBlock.subtitle && <p className="patientCareArticleSubtitle">{contentBlock.subtitle}</p>}
+              </div>
+              {contentBlock.content ? (
+                <div className="patientCareArticleBody">
+                  <RichText data={contentBlock.content} />
+                </div>
+              ) : (
+                <div className="patientCareArticleBody">
+                  <p>
+                    Tại <strong>Bệnh viện Đa khoa Khu vực Thới Lai</strong>, người bệnh điều trị nội trú được hưởng chế độ chăm sóc y tế toàn diện, bảo đảm an toàn người bệnh theo đúng quy chuẩn của Bộ Y tế.
+                  </p>
+                  <p>
+                    <strong>Quyền lợi và trách nhiệm của người bệnh:</strong>
+                  </p>
+                  <ul>
+                    <li>Được Bác sĩ điều trị và Điều dưỡng viên theo dõi sát diễn biến sức khỏe 24/24.</li>
+                    <li>Được giải thích rõ ràng về tình trạng bệnh lý, phương pháp phác đồ điều trị và các dịch vụ kỹ thuật được chỉ định.</li>
+                    <li>Bảo đảm hưởng 100% quyền lợi chi trả của Bảo hiểm Y tế theo đúng quy định hiện hành.</li>
+                    <li>Tuân thủ nội quy buồng bệnh, giữ gìn vệ sinh chung và không hút thuốc lá trong khuôn viên bệnh viện.</li>
+                  </ul>
+                </div>
+              )}
+            </article>
+          )}
+
+          {/* 5. Các khối nội dung tùy biến thêm mới (Custom Blocks) */}
+          {customBlocks.length > 0 && (
+            <section style={{ marginBottom: '40px' }}>
+              {customBlocks.map((block: any, bIdx: number) => {
+                const bAlign = block.textAlign || 'left'
+                return (
+                  <div key={block.id || bIdx} className="patientCareCustomBlockCard" style={bAlign !== 'left' ? { textAlign: bAlign } : undefined}>
+                    {block.kicker && <span className="patientCareCustomKicker">{block.kicker}</span>}
+                    <h3 className="patientCareCustomBlockTitle">{block.title}</h3>
+                    {block.subtitle && <p className="patientCareCustomBlockSub">{block.subtitle}</p>}
+                    {block.content && (
+                      <div className="patientCareArticleBody">
+                        <RichText data={block.content} />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </section>
+          )}
+
+          {/* 6. CTA Banner */}
           <div className="patientCareCtaBanner">
             <div className="patientCareCtaContent">
               <h3>Bạn cần hỗ trợ thêm thông tin về thủ tục Nội trú?</h3>

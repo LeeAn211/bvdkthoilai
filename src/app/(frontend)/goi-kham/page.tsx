@@ -4,9 +4,11 @@ import { PageHero } from '@/components/PageHero'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { PatientCareSubNav } from '@/components/PatientCareSubNav'
+import { RichText } from '@/components/RichText'
 import { getGlobal } from '@/lib/payload'
 
-export const revalidate = 300
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Gói Khám Sức khỏe & Tầm soát Bệnh lý — Bệnh viện Đa khoa Khu vực Thới Lai',
@@ -109,6 +111,14 @@ export default async function CheckupPackagesPage() {
   const rawPackages = Array.isArray(pkgPage.packages) && pkgPage.packages.length > 0
     ? pkgPage.packages.filter((p: any) => p?.enabled !== false)
     : DEFAULT_PACKAGES
+
+  // Khối bài viết chi tiết & Khối tùy biến
+  const contentBlock = pkgPage.contentBlock || {}
+  const showContentBlock = contentBlock.enabled !== false && (contentBlock.title || contentBlock.content)
+  const cbAlign = contentBlock.textAlign || 'left'
+
+  const rawCustomBlocks = Array.isArray(pkgPage.customBlocks) ? pkgPage.customBlocks : []
+  const customBlocks = rawCustomBlocks.filter((b: any) => b?.enabled !== false)
 
   return (
     <>
@@ -216,17 +226,70 @@ export default async function CheckupPackagesPage() {
                     </ul>
                   </div>
 
-                  <Link
-                    href={pkg.buttonLink || '/dat-lich-kham'}
-                    className="btnCarePrimary"
-                    style={{ textAlign: 'center', justifyContent: 'center', width: '100%' }}
-                  >
-                    {pkg.buttonText || 'Đăng ký gói khám'} →
-                  </Link>
+                  {pkg.showButton !== false && (
+                    <Link
+                      href={pkg.buttonLink || '/dat-lich-kham'}
+                      className="btnCarePrimary"
+                      style={{ textAlign: 'center', justifyContent: 'center', width: '100%' }}
+                    >
+                      {pkg.buttonText || 'Đăng ký gói khám'} →
+                    </Link>
+                  )}
                 </div>
               )
             })}
           </div>
+
+          {/* Bài viết chi tiết & Hướng dẫn khám sức khỏe (RichText) */}
+          {showContentBlock && (
+            <article className="patientCareArticleCard" style={cbAlign !== 'left' ? { textAlign: cbAlign as any } : undefined}>
+              <div className="patientCareArticleHeader">
+                {contentBlock.title && <h2 className="patientCareArticleTitle">{contentBlock.title}</h2>}
+                {contentBlock.subtitle && <p className="patientCareArticleSubtitle">{contentBlock.subtitle}</p>}
+              </div>
+              {contentBlock.content ? (
+                <div className="patientCareArticleBody">
+                  <RichText data={contentBlock.content} />
+                </div>
+              ) : (
+                <div className="patientCareArticleBody">
+                  <p>
+                    <strong>Bệnh viện Đa khoa Khu vực Thới Lai</strong> cung cấp các dịch vụ khám sức khỏe định kỳ cho cá nhân, cơ quan, trường học và doanh nghiệp trên địa bàn với đội ngũ y bác sĩ giàu kinh nghiệm, hệ thống trang thiết bị chẩn đoán hình ảnh và xét nghiệm tự động chuẩn xác.
+                  </p>
+                  <p>
+                    <strong>Ưu điểm khi đăng ký gói khám tại bệnh viện:</strong>
+                  </p>
+                  <ul>
+                    <li>Quy trình khám khép kín, tiết kiệm thời gian, hỗ trợ lấy máu xét nghiệm sớm.</li>
+                    <li>Danh mục kỹ thuật linh hoạt, tối ưu chi phí theo từng nhóm tuổi và ngành nghề lao động.</li>
+                    <li>Bác sĩ chuyên khoa kết luận hồ sơ, tư vấn kỹ lưỡng phương pháp điều trị và chế độ dinh dưỡng, vận động.</li>
+                    <li>Hỗ trợ xuất hóa đơn tài chính và hợp đồng khám sức khỏe đoàn thể theo đúng quy định.</li>
+                  </ul>
+                </div>
+              )}
+            </article>
+          )}
+
+          {/* Các khối nội dung tùy biến thêm mới (Custom Blocks) */}
+          {customBlocks.length > 0 && (
+            <section style={{ marginBottom: '40px' }}>
+              {customBlocks.map((block: any, bIdx: number) => {
+                const bAlign = block.textAlign || 'left'
+                return (
+                  <div key={block.id || bIdx} className="patientCareCustomBlockCard" style={bAlign !== 'left' ? { textAlign: bAlign } : undefined}>
+                    {block.kicker && <span className="patientCareCustomKicker">{block.kicker}</span>}
+                    <h3 className="patientCareCustomBlockTitle">{block.title}</h3>
+                    {block.subtitle && <p className="patientCareCustomBlockSub">{block.subtitle}</p>}
+                    {block.content && (
+                      <div className="patientCareArticleBody">
+                        <RichText data={block.content} />
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </section>
+          )}
 
           {/* CTA Banner */}
           <div className="patientCareCtaBanner">

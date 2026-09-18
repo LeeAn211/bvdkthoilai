@@ -97,10 +97,12 @@ export default async function RedirectResolver({ params }: Props) {
   if (path.length === 2) {
     const section = await findSection(path[0]).catch(() => null)
     if (section) {
-      const [item, theme, siteSettings, relatedRes] = await Promise.all([
+      const [item, theme, siteSettings, displaySettings, articleDetailSettings, relatedRes] = await Promise.all([
         findPost(section.id, path[1]).catch(() => null),
         getGlobal('theme-settings').catch(() => null) as Promise<any>,
         getGlobal('site-settings').catch(() => null) as Promise<any>,
+        getGlobal('display-settings').catch(() => null) as Promise<any>,
+        getGlobal('article-detail-settings').catch(() => null) as Promise<any>,
         getCMS().then((p) =>
           p.find({
             collection: 'custom-posts',
@@ -120,8 +122,9 @@ export default async function RedirectResolver({ params }: Props) {
 
       if (item) {
         let isBạchMaiLayout = true
+        const effectiveConfig = articleDetailSettings || theme?.detailLayout
         const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
-        const customSlugsText = String(theme?.detailLayout?.customSlugsText || '')
+        const customSlugsText = String(effectiveConfig?.customSlugsText || '')
         const slugList = customSlugsText
           .split(',')
           .map((s: string) => s.trim().toLowerCase())
@@ -135,8 +138,8 @@ export default async function RedirectResolver({ params }: Props) {
           isBạchMaiLayout = true
         } else {
           isBạchMaiLayout =
-            theme?.detailLayout?.applyAllNewSections !== false &&
-            theme?.detailLayout?.applyCustomPosts !== false
+            effectiveConfig?.applyAllNewSections !== false &&
+            effectiveConfig?.applyCustomPosts !== false
         }
 
         const publishedDate = item.publishedAt ? new Date(item.publishedAt).toLocaleDateString('vi-VN') : ''
@@ -173,6 +176,8 @@ export default async function RedirectResolver({ params }: Props) {
               hospitalName={hospitalName}
               showSource={item.showSource ?? undefined}
               adminConfig={theme?.detailLayout}
+              displaySettings={displaySettings}
+              articleDetailSettings={articleDetailSettings}
               sidebarTitle="Bài viết mới"
               latestItems={mappedRelated}
               relatedTitle={`Bài viết cùng mục ${section.title}`}

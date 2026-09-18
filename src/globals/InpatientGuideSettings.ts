@@ -66,5 +66,52 @@ export const InpatientGuideSettings: GlobalConfig = {
         { name: 'desc', label: 'Chi tiết hướng dẫn', type: 'textarea', required: true },
       ],
     },
+    {
+      name: 'contentBlock',
+      label: 'Bài viết chi tiết & Hướng dẫn chuyên sâu (RichText)',
+      type: 'group',
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối bài viết này', type: 'checkbox', defaultValue: true },
+        { name: 'title', label: 'Tiêu đề bài viết', type: 'text', defaultValue: 'Quy chế Quản lý & Chế độ Chăm sóc Toàn diện Người bệnh Nội trú' },
+        { name: 'subtitle', label: 'Mô tả ngắn gọn / Phụ đề bài viết', type: 'textarea', defaultValue: 'Các quy định chi tiết về buồng bệnh vô trùng, an toàn dùng thuốc, quyền lợi khám chữa bệnh BHYT và nghĩa vụ của người bệnh khi nằm viện tại Bệnh viện Đa khoa Khu vực Thới Lai.' },
+        { name: 'content', label: 'Nội dung bài viết chi tiết (Hỗ trợ định dạng, hình ảnh, bảng biểu)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề nội dung',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'customBlocks',
+      label: 'Các khối nội dung tùy biến thêm mới (Không giới hạn)',
+      type: 'array',
+      dbName: 'igs_custom_blocks',
+      labels: { singular: 'Khối nội dung tùy biến', plural: 'Các khối nội dung tùy biến' },
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối này', type: 'checkbox', defaultValue: true },
+        { name: 'kicker', label: 'Nhãn nhỏ phía trên (Kicker)', type: 'text', admin: { placeholder: 'VÍ DỤ: LƯU Ý ĐẶC BIỆT HOẶC CHUYÊN ĐỀ' } },
+        { name: 'title', label: 'Tiêu đề khối', type: 'text', required: true },
+        { name: 'subtitle', label: 'Mô tả ngắn', type: 'textarea' },
+        { name: 'content', label: 'Nội dung chi tiết (RichText)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề khối',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
   ],
 }

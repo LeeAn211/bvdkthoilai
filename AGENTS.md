@@ -129,6 +129,8 @@ Một task chỉ được xem là hoàn thành khi:
   - **Phần Banner Hero đầu trang**: `eyebrow` (nhãn nhỏ), `title` (tiêu đề trang), `description` (đoạn mô tả, hỗ trợ Enter xuống dòng).
   - **Bảng Thông báo / Lưu ý quan trọng (Notice Banner)**: Checkbox bật/tắt (`showNoticeBanner`), `noticeTitle`, `noticeContent` (hỗ trợ xuống dòng tự do `white-space: pre-line`), `noticeAlign` (canh trái/giữa/đều).
   - **Công tắc bật/tắt độc lập từng khối (Granular Toggles)**: Tất cả các khối nội dung, danh mục, checklist, card dịch vụ, biểu mẫu, banner liên kết hoặc widget phụ trên trang đều phải có checkbox `enabled` / `show...` riêng biệt để người quản trị có thể chủ động ẩn/hiện theo nhu cầu thực tế.
+  - **Khối Bài viết Chi tiết & Trình soạn thảo chuyên sâu**: Các trang nội dung phải hỗ trợ khối bài viết chi tiết (văn bản RichText, hỗ trợ tiêu đề, căn lề, hình ảnh) để quản trị viên có thể tự đăng tải và cập nhật bài viết chi tiết trực tiếp từ CMS mà không cần sửa code.
+  - **Hỗ trợ thêm mới khối nội dung tùy biến (Custom Content Blocks)**: Mọi trang chức năng/nội dung khi đưa vào Admin CMS hoặc nâng cấp BẮT BUỘC phải hỗ trợ mảng các khối tùy biến (`customBlocks`), cho phép quản trị viên tự do thêm không giới hạn các khối nội dung mới (tiêu đề, mô tả, nội dung RichText, canh lề) trực tiếp trong CMS.
   - **Quản trị mảng nội dung động (Dynamic Content Arrays)**: Các danh sách bước hướng dẫn, gói khám, tầng sơ đồ, câu hỏi FAQ, biểu mẫu giấy tờ... phải quản lý dạng mảng (`array`) có đầy đủ các trường chi tiết, cho phép thêm mới không giới hạn, chỉnh sửa hoặc kéo thả đổi thứ tự trực tiếp trong CMS.
 - **13.3. Cơ chế tải dữ liệu Frontend 2 lớp an toàn (Safe Two-Layer Fallback)**:
   - Frontend luôn ưu tiên nạp dữ liệu từ Global độc lập mới tương ứng.

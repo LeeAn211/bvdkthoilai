@@ -53,5 +53,52 @@ export const HospitalMapSettings: GlobalConfig = {
         { name: 'desc', label: 'Mô tả ghi chú', type: 'textarea' },
       ],
     },
+    {
+      name: 'contentBlock',
+      label: 'Bài viết chi tiết & Hướng dẫn di chuyển (RichText)',
+      type: 'group',
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối bài viết này', type: 'checkbox', defaultValue: true },
+        { name: 'title', label: 'Tiêu đề bài viết', type: 'text', defaultValue: 'Chỉ dẫn Luồng Di chuyển & Tiện ích Hỗ trợ Người bệnh' },
+        { name: 'subtitle', label: 'Mô tả ngắn gọn / Phụ đề bài viết', type: 'textarea', defaultValue: 'Thông tin chi tiết về hệ thống thang máy ưu tiên, đường dốc xe lăn, quy định trật tự an ninh và hướng dẫn tiếp cận các khoa lâm sàng tại Bệnh viện Đa khoa Khu vực Thới Lai.' },
+        { name: 'content', label: 'Nội dung bài viết chi tiết (RichText)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề nội dung',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'customBlocks',
+      label: 'Các khối nội dung tùy biến thêm mới (Không giới hạn)',
+      type: 'array',
+      dbName: 'hms_custom_blocks',
+      labels: { singular: 'Khối nội dung tùy biến', plural: 'Các khối nội dung tùy biến' },
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị khối này', type: 'checkbox', defaultValue: true },
+        { name: 'kicker', label: 'Nhãn nhỏ phía trên (Kicker)', type: 'text', admin: { placeholder: 'VÍ DỤ: CHỈ DẪN TIỆN ÍCH HOẶC ĐỖ XE' } },
+        { name: 'title', label: 'Tiêu đề khối', type: 'text', required: true },
+        { name: 'subtitle', label: 'Mô tả ngắn', type: 'textarea' },
+        { name: 'content', label: 'Nội dung chi tiết (RichText)', type: 'richText' },
+        {
+          name: 'textAlign',
+          label: 'Canh lề khối',
+          type: 'select',
+          defaultValue: 'left',
+          options: [
+            { label: 'Canh trái (Mặc định)', value: 'left' },
+            { label: 'Canh giữa', value: 'center' },
+            { label: 'Canh đều 2 bên (Justify)', value: 'justify' },
+          ],
+        },
+      ],
+    },
   ],
 }

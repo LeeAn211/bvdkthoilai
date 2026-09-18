@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260917_023_create_display_settings_table",
-  "schemaSha256": "4eb0cb417a4bb873613dbc3629dc1c4b4234c76d4657df756bd1dfcaf181002f"
+  "migrationId": "20260918_034_add_gemini_api_key_to_schedule_settings",
+  "schemaSha256": "716e1f280b6266300e5220bec47f5e938705dd9b2fdea67451db30f692fe6088"
 }

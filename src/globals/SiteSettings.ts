@@ -1533,6 +1533,7 @@ export const SiteSettings: GlobalConfig = {
             { name: 'priceText', label: 'Giá niêm yết (Ví dụ: 850.000 đ hoặc Liên hệ)', type: 'text', required: true },
             { name: 'desc', label: 'Mô tả tóm tắt gói khám', type: 'textarea', required: true },
             { name: 'features', label: 'Danh mục kỹ thuật trong gói (Mỗi dòng 1 mục - Hỗ trợ Enter)', type: 'textarea', required: true },
+            { name: 'showButton', label: 'Bật hiển thị nút Đăng ký gói khám', type: 'checkbox', defaultValue: true },
             { name: 'buttonText', label: 'Chữ trên nút', type: 'text', defaultValue: 'Đăng ký gói khám' },
             { name: 'buttonLink', label: 'Đường dẫn nút (URL)', type: 'text', defaultValue: '/dat-lich-kham' },
           ],

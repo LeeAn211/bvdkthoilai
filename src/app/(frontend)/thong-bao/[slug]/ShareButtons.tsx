@@ -10,6 +10,15 @@ export interface CustomShareItem {
   iconUrl?: string
 }
 
+export interface CustomButtonItem {
+  id?: string
+  enabled?: boolean
+  title: string
+  customIcon?: any
+  shareUrlTemplate: string
+  openNewTab?: boolean
+}
+
 export interface ShareButtonsProps {
   title: string
   horizontal?: boolean
@@ -19,12 +28,15 @@ export interface ShareButtonsProps {
     platformsOrder?: string
     showFacebook?: boolean
     facebookCustomIcon?: any
+    facebookUrlTemplate?: string
     showZalo?: boolean
     zaloCustomIcon?: any
+    zaloUrlTemplate?: string
     showCopyLink?: boolean
     copyLinkCustomIcon?: any
     showPrint?: boolean
     printCustomIcon?: any
+    customButtons?: CustomButtonItem[]
     customShares?: CustomShareItem[]
     customSharesJson?: string
   }
@@ -58,11 +70,26 @@ export function ShareButtons({ title, horizontal = false, config }: ShareButtons
 
   const handleShareFb = () => {
     if (typeof window !== 'undefined') {
-      window.open(
-        `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`,
-        '_blank',
-        'noopener,noreferrer'
-      )
+      const url = window.location.href
+      const template = config?.facebookUrlTemplate || 'https://www.facebook.com/sharer/sharer.php?u={url}'
+      const finalUrl = template
+        .replace(/{url}/g, encodeURIComponent(url))
+        .replace(/{title}/g, encodeURIComponent(title))
+      window.open(finalUrl, '_blank', 'noopener,noreferrer')
+    }
+  }
+
+  const handleShareZalo = (e: React.MouseEvent) => {
+    if (typeof window !== 'undefined') {
+      const template = config?.zaloUrlTemplate?.trim()
+      if (template && template !== 'https://zalo.me') {
+        e.preventDefault()
+        const url = window.location.href
+        const finalUrl = template
+          .replace(/{url}/g, encodeURIComponent(url))
+          .replace(/{title}/g, encodeURIComponent(title))
+        window.open(finalUrl, '_blank', 'noopener,noreferrer')
+      }
     }
   }
 
@@ -80,13 +107,19 @@ export function ShareButtons({ title, horizontal = false, config }: ShareButtons
     }
   }
 
-  const handleCustomShare = (template: string) => {
+  const handleCustomShare = (template: string, openNewTab: boolean = true) => {
     if (typeof window !== 'undefined') {
       const url = window.location.href
       const finalUrl = template
         .replace(/{url}/g, encodeURIComponent(url))
         .replace(/{title}/g, encodeURIComponent(title))
-      window.open(finalUrl, '_blank', 'noopener,noreferrer')
+      if (finalUrl.startsWith('tel:') || finalUrl.startsWith('mailto:')) {
+        window.location.href = finalUrl
+      } else if (openNewTab) {
+        window.open(finalUrl, '_blank', 'noopener,noreferrer')
+      } else {
+        window.location.href = finalUrl
+      }
     }
   }
 
@@ -117,14 +150,16 @@ export function ShareButtons({ title, horizontal = false, config }: ShareButtons
 
   const renderZalo = () => {
     if (!showZalo) return null
+    const zaloHref = config?.zaloUrlTemplate?.trim() || 'https://zalo.me'
     return (
       <a
         key="zalo"
         className={styles.postDetailShareBtn}
         title="Chia sẻ qua Zalo"
-        href="https://zalo.me"
+        href={zaloHref}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={handleShareZalo}
       >
         {zaloIcon ? (
           <img src={zaloIcon} alt="Zalo" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
@@ -187,6 +222,33 @@ export function ShareButtons({ title, horizontal = false, config }: ShareButtons
     )
   }
 
+  // Render các nút thêm mới từ Admin CMS mảng customButtons
+  const renderCustomButtons = () => {
+    const buttons = config?.customButtons || []
+    return buttons
+      .filter((btn) => btn.enabled !== false && btn.shareUrlTemplate)
+      .map((btn, idx) => {
+        const iconSrc = btn.customIcon ? mediaUrl(btn.customIcon) : null
+        return (
+          <button
+            key={btn.id || `custom-btn-${idx}`}
+            type="button"
+            className={styles.postDetailShareBtn}
+            title={btn.title || 'Chia sẻ'}
+            onClick={() => handleCustomShare(btn.shareUrlTemplate, btn.openNewTab !== false)}
+          >
+            {iconSrc ? (
+              <img src={iconSrc} alt={btn.title} style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+            ) : (
+              <span style={{ fontSize: '11px', fontWeight: 800 }}>
+                {btn.title ? btn.title.slice(0, 3).toUpperCase() : '🔗'}
+              </span>
+            )}
+          </button>
+        )
+      })
+  }
+
   const renderCustom = () => {
     return customShares.map((custom, idx) => (
       <button
@@ -211,7 +273,12 @@ export function ShareButtons({ title, horizontal = false, config }: ShareButtons
     zalo: renderZalo(),
     copy: renderCopy(),
     print: renderPrint(),
-    custom: renderCustom(),
+    custom: (
+      <React.Fragment key="custom-all">
+        {renderCustomButtons()}
+        {renderCustom()}
+      </React.Fragment>
+    ),
   }
 
   const orderedItems: React.ReactNode[] = []
