@@ -478,60 +478,96 @@
   }
 }
 
-/* Mobile: layout dọc - 1 ô chính trên, 1 ô phụ dưới */
+/* Mobile: Thiết kế ngắn gọn, đồng nhất như desktop, hiển thị 1 thẻ duy nhất tại một thời điểm */
 @media (max-width: 600px) {
   .featuredLayoutWrapper {
     grid-template-columns: 1fr;
-    gap: 12px;
-    align-items: start;
+    gap: 0;
+    max-width: 360px;
+    margin: 0 auto;
+    width: 100%;
   }
 
-  /* Ô lãnh đạo full width, chiều cao cố định */
+  /* Ẩn lưới phụ bên dưới trên mobile để màn hình ngắn gọn, không bị quá nhiều ô */
+  .expertSubGrid {
+    display: none !important;
+  }
+
+  /* Thẻ chuyên gia chính hiển thị đồng nhất, thanh lịch như desktop */
   .leaderCard {
     max-width: 100%;
-    margin: 0;
-    height: 260px;
+    margin: 0 auto;
+    width: 100%;
+    height: auto;
+    border-radius: 16px;
+    border: 1px solid #dce8f1;
+    box-shadow: 0 8px 24px rgba(15, 63, 99, 0.08);
   }
 
-  /* Thu gọn thông tin dưới ô chính */
+  .leaderBadge {
+    top: 10px;
+    left: 10px;
+    font-size: 9.5px;
+    padding: 3px 8px;
+  }
+
+  .leaderImageFrame {
+    width: 100%;
+    height: 280px;
+    flex: none;
+  }
+
   .leaderInfo {
-    padding: 8px 12px 10px;
+    padding: 14px 16px 16px;
+    border-top: 1px solid #dce8f1;
+    text-align: center;
+    align-items: center;
+  }
+
+  .leaderRoleBadge {
+    font-size: 11px;
+    margin-bottom: 2px;
   }
 
   .leaderName {
-    font-size: 14px;
-    margin: 0 0 2px;
+    font-size: 16px;
+    margin: 0 0 3px;
   }
 
   .leaderDept {
-    font-size: 11.5px;
-    margin: 0 0 6px;
+    font-size: 12px;
+    margin: 0 0 10px;
   }
 
   .leaderActionBtn {
-    font-size: 11px;
-    padding: 6px 10px;
+    font-size: 12px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    width: auto;
+    min-width: 180px;
   }
 
-  /* Lưới phụ full width, chỉ hiển thị 1 ô đầu tiên */
-  .expertSubGrid {
-    grid-template-columns: 1fr;
-    gap: 0;
-    height: 200px;
-  }
-
-  /* Ẩn tất cả ô phụ từ thứ 2 trở đi */
-  .subExpertCard:nth-child(n+2) {
-    display: none;
-  }
-
-  /* Ô phụ duy nhất full width */
-  .subExpertCard:first-child {
-    height: 200px;
-  }
-
-  /* Ẩn nút điều hướng trên mobile - vuốt để chuyển */
+  /* Thanh điều hướng trang hiển thị rõ ràng, dễ bấm trên mobile */
   .paginationRow {
-    display: none;
+    display: flex;
+    justify-content: center;
+    padding-right: 0;
+    margin-top: 14px;
+  }
+
+  .gridPaginationControls {
+    gap: 16px;
+  }
+
+  .gridNavBtn {
+    width: 44px;
+    height: 44px;
+    border-width: 2px;
+    box-shadow: 0 4px 12px rgba(8, 120, 209, 0.2);
+  }
+
+  .gridNavBtn svg {
+    width: 20px;
+    height: 20px;
   }
 }

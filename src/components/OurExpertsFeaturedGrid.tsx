@@ -56,20 +56,27 @@ export function OurExpertsFeaturedGrid({
 
   // Chuyển tới 1 ô theo vòng tròn (roll forward by 1)
   const rollNext = (step = 1) => {
-    if (totalItems <= visibleCount) return
     setIsTransitioning(true)
     setTimeout(() => {
-      setStartIndex((prev) => (prev + step) % totalItems)
+      // Trên desktop chuyển danh sách sub-grid, trên mobile cập nhật cả bác sĩ chính
+      if (typeof window !== 'undefined' && window.innerWidth <= 600) {
+        setSelectedLeaderIndex((prev) => (prev + step) % safeItems.length)
+      } else if (totalItems > visibleCount) {
+        setStartIndex((prev) => (prev + step) % totalItems)
+      }
       setIsTransitioning(false)
     }, 180)
   }
 
   // Chuyển lui 1 ô theo vòng tròn (roll back by 1)
   const rollPrev = (step = 1) => {
-    if (totalItems <= visibleCount) return
     setIsTransitioning(true)
     setTimeout(() => {
-      setStartIndex((prev) => (prev - step + totalItems) % totalItems)
+      if (typeof window !== 'undefined' && window.innerWidth <= 600) {
+        setSelectedLeaderIndex((prev) => (prev - step + safeItems.length) % safeItems.length)
+      } else if (totalItems > visibleCount) {
+        setStartIndex((prev) => (prev - step + totalItems) % totalItems)
+      }
       setIsTransitioning(false)
     }, 180)
   }
@@ -91,14 +98,19 @@ export function OurExpertsFeaturedGrid({
 
   // Tự động chuyển động tới theo vòng tròn (Circular Autoplay) sau mỗi số giây nhất định
   React.useEffect(() => {
-    if (totalItems <= visibleCount || !autoplaySeconds || autoplaySeconds <= 0 || isPaused) return
+    if (!autoplaySeconds || autoplaySeconds <= 0 || isPaused) return
+    if (safeItems.length <= 1) return
 
     const timer = window.setInterval(() => {
-      setStartIndex((prev) => (prev + 1) % totalItems)
+      if (window.innerWidth <= 600) {
+        setSelectedLeaderIndex((prev) => (prev + 1) % safeItems.length)
+      } else if (totalItems > visibleCount) {
+        setStartIndex((prev) => (prev + 1) % totalItems)
+      }
     }, autoplaySeconds * 1000)
 
     return () => window.clearInterval(timer)
-  }, [totalItems, visibleCount, autoplaySeconds, isPaused])
+  }, [totalItems, visibleCount, autoplaySeconds, isPaused, safeItems.length])
 
   if (!safeItems.length) {
     return (
@@ -259,7 +271,7 @@ export function OurExpertsFeaturedGrid({
       </div>
 
       {/* THANH ĐIỀU HƯỚNG MŨI TÊN <> NẰM RIÊNG DƯỚI ĐÁY BÊN PHẢI (CHỈ LẤY < >) */}
-      {totalItems > visibleCount && (
+      {(totalItems > visibleCount || safeItems.length > 1) && (
         <div className={styles.paginationRow}>
           <div className={styles.gridPaginationControls}>
             <button

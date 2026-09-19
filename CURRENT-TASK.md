@@ -1,29 +1,24 @@
 # CURRENT TASK
 
 ## Trạng thái
-HOÀN THÀNH — TỐI ƯU CONTEXT AI / LOW-TOKEN
+HOÀN THÀNH — TỐI ƯU GIAO DIỆN CHUYÊN GIA TRÊN ĐIỆN THOẠI (MOBILE)
 
 ## Mục tiêu
-Giảm quota/context bị tiêu hao khi Antigravity, Gemini hoặc Codex làm việc với dự án nhưng vẫn giữ đủ quy tắc và khả năng bàn giao giữa các agent.
+Thiết kế lại khối "Chuyên gia của chúng tôi" trên giao diện điện thoại (mobile) đồng nhất, thanh lịch như desktop, hiển thị ngắn gọn 1 thẻ chuyên nghiệp tại một thời điểm, loại bỏ tình trạng chia quá nhiều ô chồng chéo.
 
 ## Đã thực hiện
-- Rút gọn `AGENTS.md` thành luật lõi + bộ định tuyến tài liệu.
-- Chuyển quy tắc chuyên sâu sang `docs/ai/` để chỉ nạp khi đúng loại task.
-- Rút gọn `CURRENT-TASK.md` về đúng vai trò bộ nhớ ngắn hạn.
-- Giữ `HANDOFF.md` chỉ cho trường hợp chuyển agent/phiên.
-- Rút gọn `CHANGELOG.md`; lịch sử cũ được lưu tại `docs/history/CHANGELOG-through-2026-09-19.md`.
-- Chuyển các báo cáo audit khỏi thư mục gốc sang `docs/audits/archive/`.
-- Bổ sung ignore cho TypeScript cache/temp và bỏ file cache/rác đang track.
-- Tối ưu `.agents/skills/bvdkweb/SKILL.md` để không bắt buộc đọc/ghi changelog cho mọi thay đổi nhỏ.
+- Tinh chỉnh `OurExpertsFeaturedGrid.module.css`:
+  - Ẩn lưới phụ (sub-grid) nhiều ô trên mobile (`<= 600px`).
+  - Thiết kế thẻ chuyên gia chính hiển thị thanh lịch, bo góc 16px, hình ảnh và tỷ lệ đồng nhất như desktop.
+  - Tối ưu kích thước chữ, huy hiệu và nút bấm hành động chuẩn màn hình cảm ứng di động.
+  - Cung cấp bộ nút chuyển tròn `< >` (44px) nổi bật, dễ thao tác dưới thẻ.
+- Cập nhật logic trong `OurExpertsFeaturedGrid.tsx`:
+  - Trên mobile, các nút chuyển trước/sau và thao tác vuốt chạm (swipe) trực tiếp chuyển đổi lần lượt qua từng chuyên gia trong danh sách.
+  - Cơ chế tự động chuyển vòng tròn (Autoplay) mượt mà qua từng chuyên gia.
 
-## Database
-Không thay đổi schema hoặc dữ liệu.
+## Files sửa đổi
+- `src/components/OurExpertsFeaturedGrid.module.css`
+- `src/components/OurExpertsFeaturedGrid.tsx`
 
-## Source website
-Không thay đổi logic, UI hoặc nội dung website.
-
-## Git
-Thay đổi chỉ liên quan cấu hình AI/tài liệu/cache repository.
-
-## Bước tiếp theo
-Task mới phải ghi đè nội dung file này thay vì append lịch sử.
+## Validation
+- `npx tsc --noEmit`: Đạt (0 errors).
