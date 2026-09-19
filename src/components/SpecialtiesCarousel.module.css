@@ -1,352 +1,359 @@
-/* CSS MODULE CHO SPECIALTIES CAROUSEL
-   Thiết kế thẻ Chuyên khoa đẳng cấp quốc tế:
-   - Header ảnh chuyên môn sắc nét + hiệu ứng Gradient sâu
-   - Huy hiệu biểu trưng y tế phát sáng
-   - Badge Khoa phụ trách sang trọng
-   - Typography tương phản cao, chống biến dạng
-   - Điều hướng mượt mà, hỗ trợ cảm ứng
+/* CSS MODULE CHO SPECIALTIES SHOWCASE SPLIT LAYOUT (MẪU 2)
+   Thiết kế chuẩn bệnh viện tuyến đầu:
+   - Cột trái: Danh bạ tra cứu chuyên khoa tinh gọn có mũi tên tương tác mượt mà
+   - Cột phải: Cụm ảnh nghệ thuật y tế nổi khối sang trọng, hiệu ứng chiều sâu 3D
 */
 
-.carouselContainer {
-  position: relative;
-  width: 100%;
-}
-
-.carouselTrack {
+.showcaseSplitLayout {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 36px;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
 }
 
-.carouselTrack[data-count="1"] {
-  grid-template-columns: 1fr;
-  max-width: 400px;
-  margin: 0 auto;
+/* ========================================================
+   CỘT TRÁI: DANH SÁCH TRA CỨU CHUYÊN KHOA
+   ======================================================== */
+.listColumn {
+  display: flex;
+  flex-direction: column;
 }
 
-.carouselTrack[data-count="2"] {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  max-width: 780px;
-  margin: 0 auto;
-}
-
-.carouselTrack[data-count="3"] {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.carouselTrack[data-count="4"] {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-/* Thẻ Chuyên Khoa Hiện Đại */
-.specialtyCard {
-  position: relative;
+.specialtyList {
   display: flex;
   flex-direction: column;
   background: #ffffff;
+  border-radius: 16px;
   border: 1px solid #dce8f3;
-  border-radius: 18px;
+  box-shadow: 0 4px 16px rgba(7, 43, 76, 0.04);
   overflow: hidden;
+}
+
+.specialtyRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
   text-decoration: none;
-  color: inherit;
-  box-shadow: 0 8px 24px rgba(10, 45, 80, 0.06);
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.25s ease;
-}
-
-.specialtyCard:hover {
-  transform: translateY(-6px);
-  border-color: #0878d1;
-  box-shadow: 0 16px 36px rgba(8, 120, 209, 0.16);
-}
-
-/* Phần Ảnh / Visual Header của thẻ */
-.cardVisualHeader {
+  color: #072b4c;
+  border-bottom: 1px solid #edf4f9;
+  transition: all 0.22s ease;
   position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  max-height: 200px;
-  background: linear-gradient(135deg, #073866 0%, #08589c 60%, #0284c7 100%);
-  overflow: hidden;
+  outline: none;
+}
+
+.specialtyRow:last-child {
+  border-bottom: none;
+}
+
+.specialtyRow:hover,
+.specialtyRow:focus,
+.specialtyRow.rowActive {
+  background: #f0f7fd;
+  color: #0878d1;
+  padding-left: 22px;
+}
+
+.specialtyRow::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #0878d1;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.specialtyRow:hover::before,
+.specialtyRow:focus::before,
+.specialtyRow.rowActive::before {
+  opacity: 1;
+}
+
+.rowLeft {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 12px;
+  min-width: 0;
 }
 
-.cardVisualHeader.headerContainMode {
-  background: linear-gradient(135deg, #f0f7fd 0%, #e2ecf5 100%);
-}
-
-.cardCoverImg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Các kiểu hiển thị ảnh linh hoạt (đồng bộ với Tin tức & Kỹ thuật chuyên sâu) */
-.cardCoverImg.fitContain {
-  object-fit: contain !important;
-  object-position: center center !important;
-}
-
-.cardCoverImg.fitCover,
-.cardCoverImg.fitCoverTop {
-  object-fit: cover !important;
-  object-position: top center !important;
-}
-
-.cardCoverImg.fitCoverCenter {
-  object-fit: cover !important;
-  object-position: center center !important;
-}
-
-.cardCoverImg.fitCoverBottom {
-  object-fit: cover !important;
-  object-position: bottom center !important;
-}
-
-.cardCoverImg.fitFill {
-  object-fit: fill !important;
-  object-position: center center !important;
-}
-
-.specialtyCard:hover .cardCoverImg {
-  transform: scale(1.05);
-}
-
-/* Visual mặc định khi chưa có ảnh bìa */
-.cardDefaultVisual {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 80% 20%, #0284c7 0%, #074b88 50%, #062b50 100%);
-}
-
-.medicalBgPattern {
-  position: absolute;
-  inset: 0;
-  opacity: 0.15;
-  background-image: radial-gradient(#ffffff 1px, transparent 1px);
-  background-size: 14px 14px;
-}
-
-.cardOverlayGradient {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(7, 40, 75, 0.05) 0%, rgba(7, 40, 75, 0.65) 100%);
-  pointer-events: none;
-}
-
-/* Badge Khoa phòng phụ trách góc phải */
-.departmentBadge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  color: #0754a8;
-  font-size: 11px;
-  font-weight: 750;
-  padding: 3.5px 9px;
-  border-radius: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Thân nội dung thẻ */
-.cardBody {
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.cardBodyHeader {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-/* Huy hiệu Icon Y tế thanh lịch */
-.specialtyIconBadge {
-  width: 34px;
-  height: 34px;
+.rowIcon {
+  width: 38px;
+  height: 38px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #e8f4fc 0%, #d2eaf8 100%);
-  color: #0754a8;
+  background: #eef6fc;
+  color: #0878d1;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(8, 120, 209, 0.12);
-  transition: all 0.25s ease;
+  transition: all 0.22s ease;
 }
 
-.specialtyCard:hover .specialtyIconBadge {
-  transform: scale(1.08) rotate(5deg);
-  background: linear-gradient(135deg, #0754a8 0%, #0878d1 100%);
+.specialtyRow:hover .rowIcon,
+.specialtyRow:focus .rowIcon,
+.specialtyRow.rowActive .rowIcon {
+  background: #0878d1;
   color: #ffffff;
-  box-shadow: 0 4px 10px rgba(7, 84, 168, 0.25);
+  transform: scale(1.05);
 }
 
-.specialtyTitle {
-  font-size: 16.5px;
-  font-weight: 850;
-  color: #0f2e4a;
-  margin: 0;
-  line-height: 1.35;
-  transition: color 0.2s ease;
-}
-
-.specialtyCard:hover .specialtyTitle {
-  color: #0878d1;
-}
-
-.specialtySummary {
-  font-size: 13px;
-  color: #526f84;
-  line-height: 1.55;
-  margin: 0 0 18px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  flex-grow: 1;
-}
-
-/* Footer hành động */
-.cardActionFooter {
+.rowTextGroup {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 12px;
-  border-top: 1px solid #edf4f8;
-  margin-top: auto;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
 }
 
-.actionText {
-  font-size: 12.5px;
-  font-weight: 750;
-  color: #0878d1;
+.rowTitle {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #072b4c;
   transition: color 0.2s ease;
 }
 
-.specialtyCard:hover .actionText {
-  color: #0754a8;
+.specialtyRow:hover .rowTitle,
+.specialtyRow:focus .rowTitle,
+.specialtyRow.rowActive .rowTitle {
+  color: #0878d1;
 }
 
-.actionArrowCircle {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #f0f7fd;
-  color: #0878d1;
+.rowSubtitle {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.specialtyRow:hover .rowSubtitle,
+.specialtyRow:focus .rowSubtitle,
+.specialtyRow.rowActive .rowSubtitle {
+  color: #0284c7;
+}
+
+.rowArrow {
+  color: #94a3b8;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.22s ease;
+  flex-shrink: 0;
+  margin-left: 10px;
 }
 
-.specialtyCard:hover .actionArrowCircle {
-  background: #0878d1;
-  color: #ffffff;
+.specialtyRow:hover .rowArrow,
+.specialtyRow:focus .rowArrow,
+.specialtyRow.rowActive .rowArrow {
+  color: #0878d1;
   transform: translateX(4px);
 }
 
-/* Điều khiển Carousel */
-.carouselControls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 24px;
+/* Nút Xem tất cả chuyên khoa bên dưới */
+.actionBtnWrapper {
+  margin-top: 20px;
 }
 
-.navButton {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 1.5px solid #0878d1;
-  background-color: #ffffff;
-  color: #0878d1;
+.seeAllPrimaryBtn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 3px 10px rgba(8, 120, 209, 0.15);
-  transition: all 0.2s ease;
-}
-
-.navButton:hover {
-  background-color: #0878d1;
-  border-color: #0754a8;
+  gap: 8px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #0754a8 0%, #0878d1 100%);
   color: #ffffff;
-  transform: scale(1.06);
-}
-
-.navButton:active {
-  transform: scale(0.96);
-}
-
-.carouselIndicators {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.indicatorDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  border: none;
-  background-color: #cbd5e1;
-  cursor: pointer;
-  padding: 0;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(8, 120, 209, 0.25);
   transition: all 0.25s ease;
 }
 
-.activeDot {
-  width: 24px;
-  background-color: #0878d1;
-  box-shadow: 0 2px 6px rgba(8, 120, 209, 0.3);
+.seeAllPrimaryBtn:hover {
+  background: linear-gradient(135deg, #074384 0%, #0754a8 100%);
+  box-shadow: 0 6px 20px rgba(8, 120, 209, 0.35);
+  transform: translateY(-2px);
 }
 
-/* Responsive */
-@media (max-width: 1100px) {
-  .carouselTrack,
-  .carouselTrack[data-count="4"] {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-  }
+.seeAllPrimaryBtn svg {
+  transition: transform 0.2s ease;
 }
 
-@media (max-width: 800px) {
-  .carouselTrack,
-  .carouselTrack[data-count="4"],
-  .carouselTrack[data-count="3"] {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-  }
-  .cardVisualHeader {
-    aspect-ratio: 16 / 9;
-  }
+.seeAllPrimaryBtn:hover svg {
+  transform: translateX(3px);
 }
 
-@media (max-width: 540px) {
-  .carouselTrack,
-  .carouselTrack[data-count="4"],
-  .carouselTrack[data-count="3"],
-  .carouselTrack[data-count="2"] {
+/* ========================================================
+   CỘT PHẢI: CỤM ẢNH NGHỆ THUẬT Y KHOA NỔI BẬT
+   ======================================================== */
+.visualColumn {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Thẻ ảnh chính lớn */
+.mainPhotoCard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 86%;
+  height: 340px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #dce8f3;
+  box-shadow: 0 16px 36px rgba(7, 43, 76, 0.12);
+  background: #f0f7fd;
+}
+
+.mainPhotoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.mainPhotoCard:hover .mainPhotoImg {
+  transform: scale(1.03);
+}
+
+.photoOverlayGradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(7, 43, 76, 0) 40%, rgba(7, 43, 76, 0.88) 100%);
+  pointer-events: none;
+}
+
+.photoBadgeInfo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 18px 20px;
+  color: #ffffff;
+  z-index: 2;
+}
+
+.badgeEyebrow {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #7dd3fc;
+  margin-bottom: 4px;
+}
+
+.badgeTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+
+.badgeDesc {
+  font-size: 12.5px;
+  color: #e0f2fe;
+  line-height: 1.45;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Thẻ ảnh phụ nổi lồng ghép ở góc dưới phải */
+.subFloatingPhoto {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 52%;
+  height: 190px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 3px solid #ffffff;
+  box-shadow: 0 16px 32px rgba(7, 43, 76, 0.18);
+  background: #eef6fc;
+  z-index: 3;
+}
+
+.subPhotoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+
+.floatingStatPill {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 5px 12px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(7, 43, 76, 0.15);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #0754a8;
+}
+
+/* ========================================================
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+   ======================================================== */
+@media (max-width: 992px) {
+  .showcaseSplitLayout {
     grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .visualColumn {
+    height: 380px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .visualColumn {
+    height: 320px;
+  }
+
+  .mainPhotoCard {
+    width: 90%;
+    height: 260px;
+  }
+
+  .subFloatingPhoto {
+    width: 60%;
+    height: 150px;
+  }
+
+  .specialtyRow {
+    padding: 11px 14px;
+  }
+
+  .rowTitle {
+    font-size: 14px;
   }
 }

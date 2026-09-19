@@ -608,3 +608,447 @@ html.hasSectionScrollSnap {
   }
 }
 
+/* ==========================================================================
+   HOMEPAGE NOTICE & PROCUREMENT DUAL-COLUMN SECTION (PHƯƠNG ÁN 1: GỘP 2 CỘT SONG SONG)
+   Bố cục song song: Cột trái Thông báo mới - Cột phải Đấu thầu mua sắm
+   ========================================================================== */
+.homePortalPage .homeNoticeProcurementPairSection {
+  position: relative;
+}
+
+.noticeProcurementPairGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+.noticeProcurementPairGrid.singleCol {
+  grid-template-columns: 1fr;
+}
+
+/* CỘT NỘI DUNG */
+.pairColumn {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #dce8f2;
+  box-shadow: 0 4px 18px rgba(10, 42, 74, 0.05);
+  padding: 24px 22px 20px;
+  transition: box-shadow .25s ease, border-color .25s ease;
+}
+
+.pairColumn:hover {
+  border-color: #b9d8f3;
+  box-shadow: 0 8px 26px rgba(8, 120, 209, 0.09);
+}
+
+/* HEADER CỦA TỪNG CỘT */
+.pairColHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #edf4f8;
+}
+
+.pairColHeadLeft {
+  min-width: 0;
+  flex: 1;
+}
+
+.pairColKicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 4px;
+}
+
+.noticeCol .pairColKicker {
+  color: #0878d1;
+}
+
+.procurementCol .pairColKicker {
+  color: #0284c7;
+}
+
+.pairColTitle {
+  font-size: 19px;
+  font-weight: 800;
+  color: #0f2e47;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.pairColDesc {
+  font-size: 12.5px;
+  color: #647f95;
+  margin: 4px 0 0;
+  line-height: 1.45;
+}
+
+.pairColSeeAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0878d1;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f0f7fd;
+  border: 1px solid #d4e7f7;
+  transition: all .2s ease;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pairColSeeAll:hover {
+  background: #0878d1;
+  color: #ffffff;
+  border-color: #0878d1;
+  transform: translateX(2px);
+}
+
+/* DANH SÁCH THẺ TRONG CỘT */
+.pairColList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+}
+
+/* 1. THẺ THÔNG BÁO (NOTICE CARD) */
+.noticeCardItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #f8fbfe;
+  border: 1px solid #e2ecf5;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background-color .22s ease;
+}
+
+.noticeCardItem:hover {
+  background: #ffffff;
+  border-color: #0878d1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(8, 120, 209, 0.1);
+}
+
+/* KHỐI NGÀY THÁNG LỊCH VUÔNG TINH GỌN (CALENDAR BLOCK) */
+.noticeDateBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  width: 46px;
+  height: 48px;
+  background: #ffffff;
+  border: 1px solid #cfe2f2;
+  border-radius: 9px;
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(10, 42, 74, 0.04);
+}
+
+.noticeDateDay {
+  font-size: 17px;
+  font-weight: 850;
+  color: #0754a8;
+  line-height: 1;
+}
+
+.noticeDateMonth {
+  font-size: 10px;
+  font-weight: 700;
+  color: #647f95;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.noticeCardBody {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.noticeCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.noticeCardBadge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 1px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.noticeCardBadge.urgent {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+.noticeCardBadge.important {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+
+.noticeCardBadge.normal {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.noticeCardCategory {
+  font-size: 11px;
+  font-weight: 600;
+  color: #647f95;
+}
+
+.noticeCardTitle {
+  font-size: 14px;
+  font-weight: 750;
+  color: #0f2e47;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  transition: color .2s ease;
+}
+
+.noticeCardItem:hover .noticeCardTitle {
+  color: #0878d1;
+}
+
+.noticeCardExcerpt {
+  font-size: 12px;
+  color: #647f95;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+/* 2. THẺ ĐẤU THẦU (PROCUREMENT CARD) */
+.procurementCardItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 13px 15px;
+  background: #f8fbfe;
+  border: 1px solid #e2ecf5;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background-color .22s ease;
+  position: relative;
+}
+
+.procurementCardItem:hover {
+  background: #ffffff;
+  border-color: #0284c7;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.1);
+}
+
+.procurementCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.procurementCardBadges {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.procurementTypeBadge {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #0369a1;
+  background: #e0f2fe;
+  border: 1px solid #bae6fd;
+  padding: 1.5px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.2px;
+}
+
+.procurementStatusBadge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1.5px 7px;
+  border-radius: 4px;
+}
+
+.procurementStatusBadge.open {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.procurementStatusBadge.closing {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.procurementStatusBadge.closed {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+.procurementRefCode {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0284c7;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.procurementCardTitle {
+  font-size: 14px;
+  font-weight: 750;
+  color: #0f2e47;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  transition: color .2s ease;
+}
+
+.procurementCardItem:hover .procurementCardTitle {
+  color: #0284c7;
+}
+
+.procurementCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 2px;
+  padding-top: 6px;
+  border-top: 1px dashed #e6eff7;
+}
+
+.procurementDeadline {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #b45309;
+}
+
+.procurementDeadline.noDeadline {
+  color: #647f95;
+}
+
+.procurementDeadline svg {
+  flex-shrink: 0;
+  color: #d97706;
+}
+
+.procurementActionLink {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #0284c7;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.procurementCardItem:hover .procurementActionLink {
+  text-decoration: underline;
+}
+
+.pairColEmpty {
+  padding: 28px 16px;
+  text-align: center;
+  color: #8397a7;
+  font-size: 13.5px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px dashed #dbe4ee;
+}
+
+/* RESPONSIVE TRÊN MOBILE & TABLET */
+@media (max-width: 992px) {
+  .noticeProcurementPairGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .pairColumn {
+    padding: 20px 18px 18px;
+  }
+
+  .pairColTitle {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .pairColHead {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .pairColSeeAll {
+    align-self: flex-start;
+  }
+
+  .noticeCardItem {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .noticeDateBlock {
+    min-width: 42px;
+    width: 42px;
+    height: 44px;
+  }
+
+  .noticeDateDay {
+    font-size: 15px;
+  }
+
+  .noticeCardTitle,
+  .procurementCardTitle {
+    font-size: 13.5px;
+  }
+}

@@ -1172,6 +1172,31 @@ export interface Specialty {
    * Tự động tạo từ Tên khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
    */
   slug: string;
+  /**
+   * Lựa chọn biểu tượng có sẵn theo chuyên môn.
+   */
+  icon?:
+    | (
+        | 'default'
+        | 'emergency'
+        | 'imaging'
+        | 'lab'
+        | 'pediatrics'
+        | 'surgery'
+        | 'internal'
+        | 'pharmacy'
+        | 'dental'
+        | 'rehab'
+      )
+    | null;
+  /**
+   * Tải ảnh icon riêng (SVG/PNG nền trong suốt). Ưu tiên cao hơn danh sách chọn.
+   */
+  iconCustomUpload?: (number | null) | Media;
+  /**
+   * Dòng mô tả ngắn gọn 2-5 từ xuất hiện ngay dưới tên chuyên khoa ở danh bạ trang chủ.
+   */
+  tagline?: string | null;
   summary?: string | null;
   content?: {
     root: {
@@ -1189,9 +1214,13 @@ export interface Specialty {
     [k: string]: unknown;
   } | null;
   /**
-   * 💡 Khuyên dùng ảnh nằm ngang tỷ lệ 16:9 hoặc 16:10 (khoảng 1200×675px hoặc 800×450px). Có thể tải ảnh chụp phòng khám, bác sĩ hoặc thiết bị chuyên khoa.
+   * 💡 Ảnh lớn 16:9 hoặc 16:10 (khoảng 1200×675px hoặc 800×450px). Khi hover/focus vào chuyên khoa, ảnh lớn bên phải sẽ đổi sang ảnh này.
    */
   cover?: (number | null) | Media;
+  /**
+   * 💡 Ảnh nhỏ nổi 3D lồng ghép nghệ thuật góc dưới phải (ảnh bác sĩ đang thao tác, thiết bị phụ trợ hoặc phòng bệnh). Để trống sẽ dùng ảnh chuyên ngành mặc định.
+   */
+  subCover?: (number | null) | Media;
   /**
    * Tùy chọn hiển thị riêng biệt cho Thẻ Chuyên khoa trên trang chủ.
    */
@@ -3766,9 +3795,13 @@ export interface SpecialtiesSelect<T extends boolean = true> {
   department?: T;
   name?: T;
   slug?: T;
+  icon?: T;
+  iconCustomUpload?: T;
+  tagline?: T;
   summary?: T;
   content?: T;
   cover?: T;
+  subCover?: T;
   coverFitHome?: T;
   coverFitDetail?: T;
   coverPosition?: T;
@@ -6372,11 +6405,15 @@ export interface Homepage {
             }[]
           | null;
         /**
+         * Chọn kiểu bố cục hiển thị trên trang chủ: Hàng ngang đồng nhất chuẩn mực cao cấp hoặc Bố cục phân cấp.
+         */
+        expertDisplayLayout?: ('carousel' | 'featured-grid') | null;
+        /**
          * Để 0 nếu muốn tắt tự động chuyển động.
          */
         expertAutoplaySeconds?: number | null;
         /**
-         * Khuyên dùng 4 thẻ để bố cục cân đối và đẹp mắt.
+         * Đối với Phương án A: quy định số ô bác sĩ hiển thị ở lưới bên phải (mặc định 3 ô dạng 1 hàng 3 cột rất gọn và thoáng, hoặc 6 ô dạng 2 hàng). Đối với Carousel: quy định số thẻ trên 1 lượt trượt (từ 1 đến 6).
          */
         expertItemsPerView?: number | null;
         expertCardBgColor?: string | null;
@@ -9770,6 +9807,7 @@ export interface HomepageSelect<T extends boolean = true> {
               visible?: T;
               id?: T;
             };
+        expertDisplayLayout?: T;
         expertAutoplaySeconds?: T;
         expertItemsPerView?: T;
         expertCardBgColor?: T;

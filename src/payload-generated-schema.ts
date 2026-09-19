@@ -362,6 +362,18 @@ export const enum_departments_unit_type = pgEnum("enum_departments_unit_type", [
   "office",
   "other",
 ]);
+export const enum_specialties_icon = pgEnum("enum_specialties_icon", [
+  "default",
+  "emergency",
+  "imaging",
+  "lab",
+  "pediatrics",
+  "surgery",
+  "internal",
+  "pharmacy",
+  "dental",
+  "rehab",
+]);
 export const enum_specialties_cover_fit_home = pgEnum(
   "enum_specialties_cover_fit_home",
   ["cover-top", "contain", "cover-center", "cover-bottom", "cover", "fill"],
@@ -378,6 +390,21 @@ export const enum_specialties_status = pgEnum("enum_specialties_status", [
   "draft",
   "published",
 ]);
+export const enum__specialties_v_version_icon = pgEnum(
+  "enum__specialties_v_version_icon",
+  [
+    "default",
+    "emergency",
+    "imaging",
+    "lab",
+    "pediatrics",
+    "surgery",
+    "internal",
+    "pharmacy",
+    "dental",
+    "rehab",
+  ],
+);
 export const enum__specialties_v_version_cover_fit_home = pgEnum(
   "enum__specialties_v_version_cover_fit_home",
   ["cover-top", "contain", "cover-center", "cover-bottom", "cover", "fill"],
@@ -1378,6 +1405,10 @@ export const enum_homepage_sections_type = pgEnum(
     "dynamic-module",
   ],
 );
+export const enum_homepage_sections_expert_display_layout = pgEnum(
+  "enum_homepage_sections_expert_display_layout",
+  ["carousel", "featured-grid"],
+);
 export const enum_homepage_sections_featured_filter_mode = pgEnum(
   "enum_homepage_sections_featured_filter_mode",
   ["all", "only-featured"],
@@ -1523,6 +1554,10 @@ export const enum__homepage_v_version_sections_type = pgEnum(
     "custom",
     "dynamic-module",
   ],
+);
+export const enum__homepage_v_version_sections_expert_display_layout = pgEnum(
+  "enum__homepage_v_version_sections_expert_display_layout",
+  ["carousel", "featured-grid"],
 );
 export const enum__homepage_v_version_sections_featured_filter_mode = pgEnum(
   "enum__homepage_v_version_sections_featured_filter_mode",
@@ -3702,9 +3737,20 @@ export const specialties = pgTable(
     }),
     name: varchar("name"),
     slug: varchar("slug"),
+    icon: enum_specialties_icon("icon").default("default"),
+    iconCustomUpload: integer("icon_custom_upload_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    tagline: varchar("tagline"),
     summary: varchar("summary"),
     content: jsonb("content"),
     cover: integer("cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    subCover: integer("sub_cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
     coverFitHome:
@@ -3760,7 +3806,9 @@ export const specialties = pgTable(
   (columns) => [
     index("specialties_department_idx").on(columns.department),
     uniqueIndex("specialties_slug_idx").on(columns.slug),
+    index("specialties_icon_custom_upload_idx").on(columns.iconCustomUpload),
     index("specialties_cover_idx").on(columns.cover),
+    index("specialties_sub_cover_idx").on(columns.subCover),
     index("specialties_seo_image_idx").on(columns.seoImage),
     index("specialties_updated_at_idx").on(columns.updatedAt),
     index("specialties_created_at_idx").on(columns.createdAt),
@@ -3818,11 +3866,25 @@ export const _specialties_v = pgTable(
     ),
     version_name: varchar("version_name"),
     version_slug: varchar("version_slug"),
+    version_icon:
+      enum__specialties_v_version_icon("version_icon").default("default"),
+    version_iconCustomUpload: integer(
+      "version_icon_custom_upload_id",
+    ).references(() => media.id, {
+      onDelete: "set null",
+    }),
+    version_tagline: varchar("version_tagline"),
     version_summary: varchar("version_summary"),
     version_content: jsonb("version_content"),
     version_cover: integer("version_cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
+    version_subCover: integer("version_sub_cover_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
     version_coverFitHome: enum__specialties_v_version_cover_fit_home(
       "version_cover_fit_home",
     ).default("cover-top"),
@@ -3915,7 +3977,13 @@ export const _specialties_v = pgTable(
       columns.version_department,
     ),
     index("_specialties_v_version_version_slug_idx").on(columns.version_slug),
+    index("_specialties_v_version_version_icon_custom_upload_idx").on(
+      columns.version_iconCustomUpload,
+    ),
     index("_specialties_v_version_version_cover_idx").on(columns.version_cover),
+    index("_specialties_v_version_version_sub_cover_idx").on(
+      columns.version_subCover,
+    ),
     index("_specialties_v_version_version_seo_image_idx").on(
       columns.version_seoImage,
     ),
@@ -13437,12 +13505,15 @@ export const homepage_sections = pgTable(
     }).default(4),
     cardBarBgColor: varchar("card_bar_bg_color"),
     cardBarTextColor: varchar("card_bar_text_color"),
+    expertDisplayLayout: enum_homepage_sections_expert_display_layout(
+      "expert_display_layout",
+    ).default("carousel"),
     expertAutoplaySeconds: numeric("expert_autoplay_seconds", {
       mode: "number",
     }).default(5),
     expertItemsPerView: numeric("expert_items_per_view", {
       mode: "number",
-    }).default(4),
+    }).default(3),
     expertCardBgColor: varchar("expert_card_bg_color"),
     expertCardTextColor: varchar("expert_card_text_color"),
     carouselSeconds: numeric("carousel_seconds", { mode: "number" }).default(
@@ -14284,12 +14355,16 @@ export const _homepage_v_version_sections = pgTable(
     }).default(4),
     cardBarBgColor: varchar("card_bar_bg_color"),
     cardBarTextColor: varchar("card_bar_text_color"),
+    expertDisplayLayout:
+      enum__homepage_v_version_sections_expert_display_layout(
+        "expert_display_layout",
+      ).default("carousel"),
     expertAutoplaySeconds: numeric("expert_autoplay_seconds", {
       mode: "number",
     }).default(5),
     expertItemsPerView: numeric("expert_items_per_view", {
       mode: "number",
-    }).default(4),
+    }).default(3),
     expertCardBgColor: varchar("expert_card_bg_color"),
     expertCardTextColor: varchar("expert_card_text_color"),
     carouselSeconds: numeric("carousel_seconds", { mode: "number" }).default(
@@ -19030,10 +19105,20 @@ export const relations_specialties = relations(
       references: [departments.id],
       relationName: "department",
     }),
+    iconCustomUpload: one(media, {
+      fields: [specialties.iconCustomUpload],
+      references: [media.id],
+      relationName: "iconCustomUpload",
+    }),
     cover: one(media, {
       fields: [specialties.cover],
       references: [media.id],
       relationName: "cover",
+    }),
+    subCover: one(media, {
+      fields: [specialties.subCover],
+      references: [media.id],
+      relationName: "subCover",
     }),
     sidebarBanners: many(specialties_sidebar_banners, {
       relationName: "sidebarBanners",
@@ -19073,10 +19158,20 @@ export const relations__specialties_v = relations(
       references: [departments.id],
       relationName: "version_department",
     }),
+    version_iconCustomUpload: one(media, {
+      fields: [_specialties_v.version_iconCustomUpload],
+      references: [media.id],
+      relationName: "version_iconCustomUpload",
+    }),
     version_cover: one(media, {
       fields: [_specialties_v.version_cover],
       references: [media.id],
       relationName: "version_cover",
+    }),
+    version_subCover: one(media, {
+      fields: [_specialties_v.version_subCover],
+      references: [media.id],
+      relationName: "version_subCover",
     }),
     version_sidebarBanners: many(_specialties_v_version_sidebar_banners, {
       relationName: "version_sidebarBanners",
@@ -23733,10 +23828,12 @@ type DatabaseSchema = {
   enum__clinical_protocols_v_version_summary_color: typeof enum__clinical_protocols_v_version_summary_color;
   enum__clinical_protocols_v_version_summary_size: typeof enum__clinical_protocols_v_version_summary_size;
   enum_departments_unit_type: typeof enum_departments_unit_type;
+  enum_specialties_icon: typeof enum_specialties_icon;
   enum_specialties_cover_fit_home: typeof enum_specialties_cover_fit_home;
   enum_specialties_cover_fit_detail: typeof enum_specialties_cover_fit_detail;
   enum_specialties_cover_position: typeof enum_specialties_cover_position;
   enum_specialties_status: typeof enum_specialties_status;
+  enum__specialties_v_version_icon: typeof enum__specialties_v_version_icon;
   enum__specialties_v_version_cover_fit_home: typeof enum__specialties_v_version_cover_fit_home;
   enum__specialties_v_version_cover_fit_detail: typeof enum__specialties_v_version_cover_fit_detail;
   enum__specialties_v_version_cover_position: typeof enum__specialties_v_version_cover_position;
@@ -23902,6 +23999,7 @@ type DatabaseSchema = {
   enum_hp_vax_tabs_cfg_source: typeof enum_hp_vax_tabs_cfg_source;
   enum_hp_custom_cards_status_type: typeof enum_hp_custom_cards_status_type;
   enum_homepage_sections_type: typeof enum_homepage_sections_type;
+  enum_homepage_sections_expert_display_layout: typeof enum_homepage_sections_expert_display_layout;
   enum_homepage_sections_featured_filter_mode: typeof enum_homepage_sections_featured_filter_mode;
   enum_homepage_sections_featured_card_fit: typeof enum_homepage_sections_featured_card_fit;
   enum_homepage_sections_image_position: typeof enum_homepage_sections_image_position;
@@ -23927,6 +24025,7 @@ type DatabaseSchema = {
   enum__hp_vax_tabs_cfg_v_source: typeof enum__hp_vax_tabs_cfg_v_source;
   enum__hp_custom_cards_v_status_type: typeof enum__hp_custom_cards_v_status_type;
   enum__homepage_v_version_sections_type: typeof enum__homepage_v_version_sections_type;
+  enum__homepage_v_version_sections_expert_display_layout: typeof enum__homepage_v_version_sections_expert_display_layout;
   enum__homepage_v_version_sections_featured_filter_mode: typeof enum__homepage_v_version_sections_featured_filter_mode;
   enum__homepage_v_version_sections_featured_card_fit: typeof enum__homepage_v_version_sections_featured_card_fit;
   enum__homepage_v_version_sections_image_position: typeof enum__homepage_v_version_sections_image_position;

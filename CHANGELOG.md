@@ -1,5 +1,459 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-19] - Nâng Cấp Toàn Diện Admin Chuyên Khoa: Quản Trị Cả 2 Ảnh (Lớn + Nhỏ 3D) & 2 Chế Độ Icon (Danh Mục + Tải Lên Icon Riêng)
+
+- **Thời gian thực hiện:** 12:58 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Chuyên khoa có 2 ảnh mà 1 lớn 1 nhỏ hiện tại mới thấy có 1 ảnh lớn còn 1 ảnh nhỏ.*
+  - *Phần icon cho phép thêm hoặc lựa chọn theo danh sách.*
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Đưa toàn bộ 2 ảnh (Ảnh chính lớn + Ảnh phụ nhỏ 3D) vào Admin CMS (`Specialties.ts`):**
+     - Thêm trường `cover`: 🖼️ **Ảnh đại diện chính (Ảnh lớn ở trên)** – tỷ lệ 16:9 hoặc 16:10.
+     - Thêm trường `subCover`: 🖼️ **Ảnh phụ nổi 3D (Ảnh nhỏ góc dưới phải)** – ảnh chi tiết chuyên môn, bác sĩ đang thao tác hoặc phòng điều trị.
+     - Khi người dùng rê chuột hoặc phím focus vào chuyên khoa nào ngoài trang chủ:
+       - Cụm ảnh lớn bên phải tự động chuyển sang `cover`.
+       - Cụm ảnh nhỏ 3D góc dưới tự động chuyển sang `subCover`.
+       - Cơ chế an toàn (Fallback): Nếu chưa tải ảnh lên CMS, hệ thống tự động nạp ảnh nghệ thuật chuyên khoa tương ứng cực kỳ sinh động.
+  2. **Quản trị Icon chuyên khoa 2 chế độ linh hoạt:**
+     - **Chế độ 1 - Lựa chọn danh mục (`icon`):** Lựa chọn biểu tượng vector y tế chuẩn mực theo chuyên ngành (Cấp cứu, CĐHA, KSNK/Xét nghiệm, Nhi khoa, Ngoại khoa, Nội khoa, Dược, Răng hàm mặt, YHCT & PHCN).
+     - **Chế độ 2 - Tải lên Icon riêng (`iconCustomUpload`):** Cho phép tải ảnh biểu tượng riêng (PNG hoặc SVG nền trong suốt). Hệ thống tự động ưu tiên icon tải lên này ngoài trang chủ.
+  3. **Đóng gói Database Migration 045 chuẩn mực (Mandates 6, 14, 15):**
+     - File migration: `scripts/db-migrations/20260919_045_add_sub_cover_and_custom_icon_to_specialties.mjs`.
+     - Thêm các cột `sub_cover_id`, `icon_custom_upload_id` vào bảng `specialties` và `version_sub_cover_id`, `version_icon_custom_upload_id` vào `_specialties_v`.
+     - Đã sinh lại schema (`npm run generate:db-schema`), seal contract (`npm run db:schema:seal`), check contract (`npm run db:schema:check`) và deploy an toàn tại local (45 applied, 0 pending), `PAYLOAD_DB_PUSH=false`.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/collections/Specialties.ts`
+  - `src/components/SpecialtiesCarousel.tsx`
+  - `src/app/(frontend)/page.tsx`
+  - `scripts/db-migrations/20260919_045_add_sub_cover_and_custom_icon_to_specialties.mjs`
+  - `scripts/db-schema-contract.json`
+  - `src/payload-generated-schema.ts`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Tối Ưu Bố Cục Trang Chủ: Gộp 2 Cột Song Song Thông Báo Mới & Đấu Thầu – Mua Sắm (Phương Án 1)
+
+- **Thời gian thực hiện:** 12:50 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Phương án 1 (Gộp 2 cột song song Thông báo - Đấu thầu).*
+  - Chuyển đổi 2 section dọc riêng biệt chiếm nhiều chiều dài trang thành 1 khối song song 2 cột cân đối, hiện đại, hiển thị trực quan thông tin hành chính y tế.
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Bố cục song song 2 cột cân xứng (Side-by-Side Split Grid):**
+     - Đặt trong khối chung `.homeNoticeProcurementPairSection` với container chuẩn y tế.
+     - **Cột trái - 📢 Thông báo mới (`noticeCol`):**
+       - Header chuyên đề riêng: Eyebrow + Tiêu đề + Dòng mô tả + Nút "Xem tất cả →".
+       - Thẻ thông báo (`noticeCardItem`): Khối ngày tháng hình lịch vuông vức tinh gọn (`noticeDateBlock` hiển thị ngày to, tháng nhỏ); Huy hiệu mức độ khẩn cấp (`Khẩn` đỏ, `Quan trọng` cam, `Thông báo` xanh y tế); Tiêu đề in đậm 2 dòng; Mô tả tóm tắt 1 dòng.
+     - **Cột phải - 📦 Đấu thầu – Mua sắm (`procurementCol`):**
+       - Header chuyên đề riêng: Eyebrow + Tiêu đề + Dòng mô tả + Nút "Xem tất cả →".
+       - Thẻ gói thầu (`procurementCardItem`): Huy hiệu loại thông tin (`Yêu cầu báo giá`, `Thông báo mời thầu`...); Huy hiệu trạng thái gói thầu (`Đang tiếp nhận` xanh lá, `Sắp hết hạn` cam, `Đã hết hạn` xám); Mã gói thầu `referenceCode`; Tiêu đề gói thầu to rõ; Dòng hạn chót nộp hồ sơ (`Hạn nộp: dd/MM/yyyy` kèm icon đồng hồ); Link "Hồ sơ chi tiết →".
+  2. **Cơ chế hiển thị an toàn & chống render đúp (Fault Tolerance):**
+     - Tự động nhận diện khi cả 2 mục `notices` và `procurement` đều được bật trong CMS: render khối ghép đôi và bỏ qua section thứ hai để không bị trùng lặp.
+     - Nếu người quản trị tắt 1 trong 2 mục trong CMS (`visible: false`), mục còn lại tự động chuyển sang layout 1 cột (`singleCol`) chiếm trọn 100% chiều rộng khung giao diện.
+     - Cập nhật sort truy vấn `notices` thành `['-publishedAt', '-createdAt']` để luôn hiển thị đúng các thông báo mới nhất.
+  3. **Responsive toàn diện:**
+     - Trên màn hình Desktop lớn: 2 cột song song cân đối.
+     - Trên màn hình Tablet và Mobile (< 992px): Tự động chuyển đổi sang xếp chồng (stack) mượt mà, dễ đọc, tiện chạm lướt.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/app/(frontend)/page.tsx`
+  - `src/app/styles/30-home-editorial.css`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Tối Ưu Tương Tác Focus/Hover Đổi Ảnh Chuyên Khoa & Đưa Biểu Tượng (Icon), Tagline Vào Admin CMS
+
+- **Thời gian thực hiện:** 12:38 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Tên chuyên khoa ngắn làm mất cân đối -> Áp dụng Cách 1: Thêm dòng mô tả dịch vụ / kỹ thuật ngắn ngay dưới tên chuyên khoa tạo bố cục 2 tầng chữ cân xứng, sang trọng.*
+  - *Đưa vào Admin CMS để có thể chỉnh sửa và thay đổi ảnh, biểu tượng (icon) của từng chuyên khoa.*
+  - *Khi focus/hover vào chuyên khoa nào thì ảnh bên phải thay đổi tương ứng theo chuyên khoa đó.*
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Hiển thị 2 tầng chữ cân xứng, đầy đặn:**
+     - Dòng 1: Tên chuyên khoa in đậm to rõ `15px`, `font-weight: 700`, màu xanh navy `#072b4c`.
+     - Dòng 2: Dòng kỹ thuật / dịch vụ tóm tắt mũi nhọn (`tagline`) cỡ chữ `12px`, màu xanh xám thanh nhã `#64748b` (ví dụ: *Cấp cứu 24/7 • Hồi sức tích cực ICU*, *X-Quang kỹ thuật số • Siêu âm Doppler màu*...).
+  2. **Tương tác Focus/Hover thời gian thực (Real-time Adaptive Visual):**
+     - Khi rê chuột (`onMouseEnter`) hoặc dùng phím chuyển tiêu điểm (`onFocus`), cụm ảnh bên phải chuyển đổi mượt mà ngay lập tức theo chuyên khoa đó.
+     - Tự động nạp bộ ảnh nghệ thuật y tế chất lượng cao đặc thù theo từng chuyên ngành (Cấp cứu, CĐHA, KSNK, Nhi khoa, Ngoại khoa, Nội khoa, YHCT...) ngay cả khi quản trị viên chưa kịp tải ảnh lên, đảm bảo khi rê chuột vào bất kỳ khoa nào thì ảnh bên phải đều thay đổi sinh động, trực quan.
+     - Khi Admin CMS đã tải ảnh bìa riêng (`cover`), hệ thống tự động ưu tiên hiển thị ảnh thực tế của khoa đó.
+  3. **Đưa Icon & Dòng mô tả kỹ thuật vào Admin CMS (`Specialties.ts`):**
+     - Thêm trường `icon`: Danh sách chọn biểu tượng y khoa chuẩn chuyên ngành (Cấp cứu, CĐHA, KSNK/Xét nghiệm, Nhi, Ngoại phẫu thuật, Nội khoa, Dược, Phục hồi chức năng...).
+     - Thêm trường `tagline`: Nhập dòng kỹ thuật tóm tắt 2-5 từ hiển thị ở danh bạ trang chủ.
+  4. **Đóng gói Database Migration 044 chuẩn mực (Mandates 6, 14, 15):**
+     - File migration: `scripts/db-migrations/20260919_044_add_icon_and_tagline_to_specialties.mjs`.
+     - Tạo kiểu ENUM: `enum_specialties_icon` và `enum__specialties_v_version_icon`.
+     - Thêm các cột: `icon`, `tagline` vào bảng `specialties` và `version_icon`, `version_tagline` vào `_specialties_v`.
+     - Đã seal DB schema contract và deploy an toàn tại local (44 applied, 0 pending), `PAYLOAD_DB_PUSH=false`.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/collections/Specialties.ts`
+  - `src/components/SpecialtiesCarousel.tsx`
+  - `src/components/SpecialtiesCarousel.module.css`
+  - `src/app/(frontend)/page.tsx`
+  - `scripts/db-migrations/20260919_044_add_icon_and_tagline_to_specialties.mjs`
+  - `scripts/db-schema-contract.json`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-19] - Triển Khai Thiết Kế Khối Chuyên Khoa Theo Mẫu 2: Danh Bạ Tra Cứu & Cụm Ảnh Nghệ Thuật
+
+- **Thời gian thực hiện:** 12:28 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *theo bạn kiểu nào sẽ chuyên nghiệp và hiện đại (kèm 2 ảnh mẫu thực tế) -> Thống nhất chọn Mẫu 2: Danh bạ tra cứu nhanh bên trái + Cụm ảnh nghệ thuật y tế nổi khối bên phải.*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Khắc phục triệt để nhược điểm của dạng lướt ngang Carousel:**
+     - Loại bỏ thao tác bấm lướt ngang từng trang bất tiện, người bệnh nhìn vào thấy ngay danh sách các chuyên khoa nổi bật để tra cứu tức thì chỉ trong 1 giây.
+  2. **Cột trái - Danh bạ tra cứu chuyên khoa tinh gọn:**
+     - Danh sách các khoa tiêu biểu dạng thanh ngang có Icon y tế đặc thù, tên khoa to rõ, sắc nét.
+     - Hiệu ứng tương tác hiện đại: Khi rê chuột vào từng khoa, đường viền xanh nổi bật, mũi tên `→` trượt nhẹ sang phải mượt mà.
+     - Nút bấm `Xem tất cả chuyên khoa →` nổi bật với gradient nhận diện thương hiệu Thới Lai.
+  3. **Cột phải - Cụm ảnh nghệ thuật y khoa đa lớp (Layered Depth):**
+     - Khối ảnh chính lớn hiển thị hoạt động y tế của khoa đang chọn (hoặc ảnh đại diện chất lượng cao), có dải gradient mờ và thẻ thông tin tiêu biểu `ĐƠN VỊ TIÊU BIỂU`.
+     - Khối ảnh phụ nhỏ lồng ghép nổi 3D ở góc dưới kèm huy hiệu phát sáng `Phục vụ 24/7`, tạo chiều sâu không gian đẳng cấp như các bệnh viện quốc tế.
+  4. **Tương thích hoàn hảo trên mọi thiết bị:**
+     - Trên Desktop chia 2 cột tỉ lệ vàng 1.15 : 1 cân xứng hoàn hảo.
+     - Trên Tablet và Mobile tự động chuyển sang xếp chồng thẳng hàng mượt mà.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/SpecialtiesCarousel.tsx`
+  - `src/components/SpecialtiesCarousel.module.css`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Thiết Kế Lại Khối Chuyên Khoa Theo Phương Án 1: Thẻ Icon Y Tế Hiện Đại & Tươi Sáng
+
+- **Thời gian thực hiện:** 12:20 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *phần các chuyên khoa này nên thiết kế lại như thế nào -> Thống nhất chọn Phương án 1 (Thẻ Icon Y tế Hiện đại & Tươi sáng).*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Khắc phục triệt để các nhược điểm cũ:**
+     - Loại bỏ hoàn toàn 4 khối màu xanh đen đặc quánh u tối ở nửa trên khi chưa có ảnh bìa.
+     - Loại bỏ huy hiệu góc trên bị cắt cụt ba chấm (`...`) gây trùng lặp tên khoa.
+  2. **Giao diện tươi sáng, nhận diện chuyên khoa trực quan:**
+     - Phần trên thẻ thiết kế dạng **Icon Showcase y tế** với nền màu pastel nhẹ nhàng chuyển sắc tinh tế.
+     - Tự động nhận diện biểu tượng chuyên khoa đặc thù:
+       - *Khoa Hồi sức cấp cứu*: Biểu tượng tim mạch & chữ thập đỏ cấp cứu kèm nhãn `Trực 24/7 • Cấp cứu`.
+       - *Khoa Chẩn đoán hình ảnh*: Biểu tượng máy chụp / phim X-Quang kèm nhãn `Kỹ thuật cao • CT / X-Quang`.
+       - *Khoa Kiểm soát nhiễm khuẩn*: Biểu tượng khiên bảo vệ vô trùng kèm nhãn `An toàn • Vô khuẩn`.
+       - *Khoa Nhi*: Biểu tượng nụ cười trẻ thơ kèm nhãn `Chăm sóc Nhi khoa`.
+       - *Khoa Ngoại*: Biểu tượng phẫu thuật kèm nhãn `Phẫu thuật • Thủ thuật`.
+       - *Khoa Nội*: Biểu tượng khám chữa bệnh nội trú.
+  3. **Tối ưu typography & Chiều cao thẻ:**
+     - Tên chuyên khoa in đậm to rõ `16px`, `font-weight: 800`, màu xanh navy `#072b4c`.
+     - Thẻ gọn gàng, thanh thoát, nút *"Khám phá chuyên khoa →"* tinh tế ở chân thẻ.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/SpecialtiesCarousel.tsx`
+  - `src/components/SpecialtiesCarousel.module.css`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Cắt Dải Gradient Sát Chân Chữ & Làm Mờ Nhẹ Nhàng Tự Nhiên
+
+- **Thời gian thực hiện:** 12:15 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *cắt sát xuống chữ và làm mờ hơn (kèm ảnh chụp dải gradient bị dâng cao lên ngực bác sĩ)*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Cắt sát xuống mép chữ:**
+     - Thu hẹp `padding` đỉnh của dải mờ từ `24px` xuống chỉ còn `8px`, hạ toàn bộ dải màu xuống sát khít ngay trên đầu dòng tên bác sĩ.
+     - Loại bỏ hoàn toàn khoảng xanh dâng cao lên ngực áo và ống nghe, trả lại sự quang đãng cho bức ảnh.
+  2. **Làm mờ nhẹ nhàng, không bị xanh gắt:**
+     - Giảm độ đậm của dải gradient (từ xanh navy đậm `0.98` xuống `0.82` nhẹ nhàng), kết hợp `backdrop-filter: blur(2px)` mờ sương nhẹ tự nhiên.
+     - Giúp màu nền êm ái, nhã nhặn và hòa vào ảnh một cách tự nhiên.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Triển Khai Hướng 2: Gradient Xanh Navy Mờ Siêu Mịn Tràn Viền Đáy (Seamless Vignette)
+
+- **Thời gian thực hiện:** 12:12 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *kiểu hộp trắng lơ lửng không được đẹp -> Thống nhất chọn Hướng 2: Gradient xanh Navy mờ siêu mịn tràn toàn bộ đáy thẻ.*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Tràn viền 100% đáy thẻ, bảo toàn trọn vẹn ảnh thấy nửa người:**
+     - Loại bỏ hoàn toàn hộp nhãn trắng lơ lửng chia cắt ảnh.
+     - Dải chuyển sắc xanh Navy trải dài từ chân đáy thẻ lên (`padding: 24px 10px 10px; bottom: 0; left: 0; right: 0`), chuyển sắc êm ái từ trong suốt `0%` -> phủ mờ `35%` -> phủ sâu `75%` -> phủ đậm `100%`.
+     - Toàn bộ chiều cao `240px` của thẻ nhường trọn vẹn cho ảnh chân dung thấy nửa người (áo blouse, ngực, tay áo, ống nghe).
+  2. **Chữ sắc nét, sang trọng chuẩn bệnh viện cao cấp:**
+     - Tên bác sĩ màu trắng `#ffffff` in đậm `800`, text-shadow kép sâu rõ nét.
+     - Chức danh và khoa phòng màu xanh ngọc `#bae6fd` và `#93c5fd`, tự do xuống dòng 2 dòng không bị che khuất.
+  3. **Hiệu ứng hover:**
+     - Khi rê chuột, dải gradient chuyển sắc sang tone xanh thương hiệu `#0878d1` và `#0754a8` sáng mờ hiện đại.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Triển Khai Thanh Nền Trắng Mờ Frosted White Sang Trọng (Chữ Rõ Nét 100%)
+
+- **Thời gian thực hiện:** 12:10 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *nên trong thì không thấy rõ được chữ -> Chọn phương án (Khuyên dùng) Thanh nền trắng mờ tinh tế (Frosted White).*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Thanh nền trắng mờ Frosted White cao cấp:**
+     - Thiết kế hộp thông tin `subInfo` dạng thẻ mờ lơ lửng sát đáy (`bottom: 6px; left: 6px; right: 6px`) với `background: rgba(255, 255, 255, 0.9)`, `backdrop-filter: blur(8px)`, viền bo góc `10px` nhẹ nhàng và đổ bóng nổi khối `box-shadow: 0 4px 12px rgba(7, 43, 76, 0.08)`.
+     - Nhờ đó, chữ không bị lẫn vào nếp gấp áo blouse trắng hay ống nghe của bác sĩ, hiển thị rõ nét 100%.
+  2. **Độ tương phản chữ màu xanh y tế tối ưu:**
+     - Tên bác sĩ: xanh navy đậm `#072b4c`, `font-weight: 800`, cực kỳ sang trọng và dễ đọc.
+     - Chức vụ & Khoa phòng: xanh dương y tế `#0878d1` và xám thép `#5a738e`, phân cấp thông tin rõ ràng, hỗ trợ xuống dòng tối đa 2 dòng khi tên/chức danh dài.
+  3. **Hiệu ứng khi rê chuột (Hover):**
+     - Khi rê chuột vào thẻ: Thanh nền trắng mờ chuyển sang màu xanh dương chủ đạo `#0754a8`, toàn bộ chữ chuyển sang màu trắng `#ffffff` và xanh sáng rực rỡ, tạo trải nghiệm tương tác hiện đại.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Nền Chân Thẻ Trong Suốt Hoàn Toàn, Chữ Xanh Dương Y Tế & Đổi Màu Khi Rê Chuột
+
+- **Thời gian thực hiện:** 12:07 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *cho nền trong xuống chữ màu xanh dương khi ghê chuột mới đổi màu / trong suôt*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Nền chân thẻ trong suốt 100% (`background: transparent`):**
+     - Loại bỏ hoàn toàn dải mờ/vệt xám ở trạng thái bình thường. Toàn bộ nền dưới chân chữ trong suốt 100%, nhìn thấu trọn vẹn bức ảnh bác sĩ (áo blouse, ngực, nền ảnh).
+  2. **Màu chữ xanh dương y tế nổi bật:**
+     - Tên bác sĩ: màu xanh dương thương hiệu bệnh viện `#0754a8` đậm nét (`font-weight: 800`).
+     - Chức vụ & khoa phòng: màu xanh navy `#0c4a6e` và `#0369a1`.
+     - Phủ bóng trắng nhẹ (`text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85)`) giúp chữ xanh nổi bật, sắc nét và tương phản cực tốt trên nền áo trắng.
+  3. **Hiệu ứng đổi màu khi rê chuột (Hover effect):**
+     - Khi rê chuột vào thẻ: Nền chân chữ chuyển êm sang gradient xanh navy sâu phủ mờ mềm mại.
+     - Đồng thời chữ tự động chuyển sang màu trắng `#ffffff` và xanh ngọc sáng với bóng đen nổi bật.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Cắt Dải Làm Mờ Ôm Sát Khít Chân Chữ (Không Che Lấp Ảnh)
+
+- **Thời gian thực hiện:** 12:05 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *cắt mờ sát vào (kèm ảnh chụp dải mờ bị thừa phía trên tên bác sĩ)*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Cắt mép làm mờ sát khít vào chữ:**
+     - Thu hẹp `padding` phía trên của `subInfo` từ `16px` xuống chỉ còn `6px` sát khít ngay trên đầu dòng tên bác sĩ.
+     - Điểm bắt đầu dải gradient chuyển sắc cực ngắn (chỉ 15%), toàn bộ vùng mờ được kéo sát xuống tận đáy thẻ.
+     - Nhờ đó, loại bỏ hoàn toàn khoảng mờ thừa ở phía trên, nhường lại 100% diện tích cho ảnh chính (áo blouse, ngực và khuôn mặt bác sĩ không còn bị vệt mờ che phủ).
+  2. **Bảo toàn tính rõ nét của chữ:**
+     - Tên bác sĩ và chức vụ vẫn giữ đổ bóng `text-shadow` sắc nét trên nền tối sát đáy.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Tinh Chỉnh Dải Mờ Nhỏ Gọn Sát Chân Chữ & Làm Nổi Bật Tên Bác Sĩ
+
+- **Thời gian thực hiện:** 12:03 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *phần đường làm mờ hơi cao lấy sát xuống gần chữ thôi làm che ảnh chính quá. cái màu làm mơ thấy chưa được thẩm mỹ lắm làm nỗi bật tên bác sĩ lên nữa*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Hạ thấp dải mờ sát chân chữ (không che khuất ảnh chính):**
+     - Giảm `padding` phía trên dải mờ từ `30px` xuống còn `16px`, chỉ vừa đủ ôm sát phần văn bản ở chân thẻ.
+     - Điểm bắt đầu của dải làm mờ chuyển xuống sát đáy thẻ, nhường lại trọn vẹn toàn bộ khoảng trên cho áo blouse, ống nghe và khuôn mặt bác sĩ sáng rõ.
+  2. **Tối ưu màu làm mờ thẩm mỹ, sâu màu và sang trọng:**
+     - Sử dụng tone màu bóng tối mờ tự nhiên (`rgba(3, 20, 38, ...)`), tạo độ sâu điện ảnh (cinematic vignette) thay vì một mảng màu đục nổi gắt.
+  3. **Làm nổi bật mạnh mẽ tên bác sĩ:**
+     - Tăng cỡ chữ tên bác sĩ lên `13.5px`, `font-weight: 800` (đậm nét).
+     - Áp dụng hiệu ứng đổ bóng đa lớp kép `text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9), 0 2px 8px rgba(0, 0, 0, 0.6)` giúp chữ màu trắng `#ffffff` nổi bật rực rỡ, sắc nét ngay cả trên nền áo trắng hay nền ảnh sáng.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Tinh Chỉnh Gradient Êm Dịu, Tăng Đúng 4px Chiều Cao & Cho Phép Chữ Xuống Dòng
+
+- **Thời gian thực hiện:** 12:00 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *màu hơi nỗi nên khó nhìn, phần chữ hiển thị khi quá nhiều chữ bị che mất có thể xuống dòng không tăng thêm 4px*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Tăng thêm đúng 4px chiều cao cho thẻ:**
+     - Nâng chiều cao mỗi thẻ ô nhỏ `subExpertCard` từ `236px` lên đúng `240px` (+4px).
+     - Đồng bộ chiều cao Thẻ Lãnh đạo chính `leaderCard` bên trái từ `486px` lên `494px` (`2 x 240px + 14px gap = 494px`), đảm bảo đường viền bo đáy của Ô Chính và 3 ô nhỏ dưới cùng phẳng tắp 100%.
+  2. **Gradient nền chân thẻ êm dịu, nhã nhặn, chống "nổi gắt":**
+     - Điều chỉnh dải gradient chuyển sắc của `.subInfo`: từ trong suốt `0%` -> phủ mờ dịu `rgba(7, 43, 76, 0.6)` ở `35%` -> phủ êm `rgba(7, 43, 76, 0.88)` ở chân đáy, kết hợp `backdrop-filter: blur(2px)`.
+     - Màu nền hòa quyện tự nhiên với áo blouse trắng, không còn cảm giác bị quá gắt hay chói màu, giúp mắt người dùng nhìn rất dễ chịu.
+  3. **Hỗ trợ tự do xuống dòng cho tên và chức vụ nhiều chữ:**
+     - Cho phép `.subName`, `.subPosition` và `.subDept` tự do xuống tối đa 2 dòng (`-webkit-line-clamp: 2; line-height: 1.25`) thay vì bị cắt chữ hay che khuất khi chức danh dài.
+     - Đổ bóng nhẹ chữ `text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7)` giúp văn bản luôn nổi bật rõ ràng, sắc nét trên mọi nền ảnh.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Triển Khai Cách 2: Dải Gradient Mờ Sang Trọng Cho Phép Ảnh Thấy Nửa Người
+
+- **Thời gian thực hiện:** 11:55 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Cách 2: Đưa thanh tên bác sĩ thành dạng chữ đè mờ sang trọng ở đáy để nhường toàn bộ 236px chiều cao cho ảnh thấy nửa người.*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Nhường toàn bộ 100% chiều cao thẻ cho ảnh chân dung:**
+     - Cho `subImageFrame` chiếm trọn vẹn `height: 100%` (236px) của thẻ con, tăng không gian dọc thêm gần 60px mà **tuyệt đối không làm tăng kích thước chiều cao của thẻ hay của khối chuyên gia**.
+     - Nhờ đó, hình ảnh chân dung hiển thị trọn vẹn nửa người (thấy rõ áo blouse, ống nghe, ngực và tay áo).
+  2. **Dải Gradient mờ sang trọng ở đáy thẻ:**
+     - Phần thông tin (`subInfo`: họ tên, chức danh, khoa phòng) chuyển sang dạng `position: absolute` ép ở chân thẻ với dải nền chuyển sắc `linear-gradient` từ trong suốt sang xanh navy đậm (`rgba(7, 43, 76, 0.94)`).
+     - Chữ màu trắng và xanh ngọc sáng (`#ffffff`, `#bae6fd`) có đổ bóng nhẹ (`text-shadow`), nổi bật rõ ràng, dễ đọc và mang phong cách bệnh viện cao cấp, hiện đại.
+  3. **Giữ nguyên vẹn toàn bộ tỷ lệ tổng thể:**
+     - Ô Chính bên trái và 6 ô nhỏ bên phải giữ nguyên chuẩn kích thước, viền bo đáy phẳng khít 100%.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CHANGELOG.md`
+
+- **Thời gian thực hiện:** 11:07 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *vẫn 1 ô chính và 6 ô nhỏ tằng chiều rộng và giảm chiều cao*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Mở rộng chiều ngang và hạ chiều cao tổng thể:**
+     - Cột Thẻ Lãnh đạo bên trái mở rộng từ `280px` lên `310px` rộng rãi, tỷ lệ khung ảnh chuyển sang dạng ngang nhẹ `1 / 0.95` (chiều cao tối đa 250px).
+     - Toàn bộ chiều cao của Thẻ Lãnh đạo giảm xuống chỉ còn khoảng ~360px (thay vì hơn 500px trước đó), tạo cảm giác rất gọn gàng, vừa vặn trên màn hình máy tính.
+  2. **Tối ưu 6 ô nhỏ bên phải (2 hàng x 3 cột):**
+     - Khung ảnh mỗi ô con giảm chiều cao (`max-height: 120px`, tỷ lệ `1 / 0.88`, `object-fit: cover; object-position: top center`).
+     - Tên bác sĩ và chức vụ hiển thị cô đọng 1 dòng (`-webkit-line-clamp: 1`), chân thẻ `min-height: 52px`.
+     - Toàn bộ khối 6 ô con khớp phẳng đều và ăn nhập hoàn hảo với Thẻ Lãnh đạo bên trái.
+  3. **Thanh điều hướng:**
+     - Giữ 2 nút tròn mũi tên `<` và `>` canh giữa, khoảng cách gọn 12px, không còn số thứ tự.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+- **Thời gian thực hiện:** 11:04 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *tôi thấy chưa được thẩm mỹ lắm (bố cục phân cấp 1 to + 6 nhỏ gây chênh lệch thị giác) -> Chuyển về bố cục hàng ngang đồng nhất cao cấp.*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Khắc phục triệt để tính thẩm mỹ:**
+     - Thay vì chia "bên to bên nhỏ" gây cảm giác chắp vá và mất cân xứng, chuyển mục Chuyên gia về **Bố cục Hàng ngang đồng nhất chuẩn y tế (4 thẻ/hàng)**.
+     - Tất cả các thẻ bác sĩ có cùng tỷ lệ đứng 3:4 chuẩn, cùng chiều cao, chân thẻ bo góc mềm mại và thẳng tắp 100%.
+  2. **Tôn vinh vị thế Ban Lãnh đạo:**
+     - Thẻ của Giám đốc / Phó Giám đốc bệnh viện tự động hiển thị huy hiệu nổi bật `GIÁM ĐỐC` hoặc `PHÓ GIÁM ĐỐC` ở góc trên ảnh.
+     - Tự động sắp xếp vị trí đầu tiên bên trái theo đúng Core Mandate 1.
+  3. **Thanh điều hướng tối giản:**
+     - Bộ điều hướng tròn `<` và `>` canh giữa, hiển thị bộ đếm trang sắc nét.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsCarousel.tsx`
+  - `src/globals/Homepage.ts`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+- **Thời gian thực hiện:** 11:02 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *vấn đề là ô chính có quá nhiều khoản trống nên thiết kế như thế nào để chuyên nghiệp -> chọn cách 1*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Khắc phục khoảng trống thừa ở Thẻ Lãnh đạo chính:**
+     - Trước đó, khung ảnh chỉ chiếm ~45% chiều cao của thẻ khiến phần thông tin chữ bên dưới bị thừa một khoảng trắng lớn ở giữa họ tên và nút bấm.
+     - Triển khai **Cách 1**: Tăng khung ảnh chân dung tự động co giãn lấp đầy thẻ (`flex: 1 1 auto; min-height: 290px; object-fit: cover; object-position: top center`).
+     - Khung ảnh áo blouse của Giám đốc hiển thị to rõ, khuôn mặt rạng rỡ và sắc nét, chiếm tỷ lệ vàng ~70% chiều cao thẻ.
+     - Phần thông tin chữ bên dưới (`leaderInfo`) ôm sát vừa khít vào 30% đáy thẻ, **xóa sạch 100% khoảng trống trắng thừa**.
+     - Tổng thể khối Chuyên gia đạt độ đầy đặn, uy nghiêm, trang trọng và chuyên nghiệp chuẩn bệnh viện tuyến đầu.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+- **Thời gian thực hiện:** 10:57 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *đồng ý và bỏ ẳn đi 2/3 ở giữa 2 muỗi tên di chuyển*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Thu gọn Thẻ Lãnh đạo VIP bên trái (chấm dứt cảm giác bị to quá khổ):**
+     - Giảm chiều rộng cột từ `360px` xuống `280px` gọn gàng, thanh thoát.
+     - Tinh chỉnh khung ảnh áo blouse và padding vừa vặn, không bị chiếm diện tích ngang quá nhiều.
+  2. **Tối ưu Lưới 6 ô bên phải (2 hàng x 3 cột) cân đối tuyệt hảo:**
+     - Giảm kích thước khung ảnh mỗi ô con về tỷ lệ `1 / 1.05`, padding thẻ `10px 12px` tinh tế.
+     - Chiều cao tổng thể của 6 ô bên phải khớp ngang bằng và ăn nhập 100% với chiều cao Thẻ Lãnh đạo bên trái.
+  3. **Thanh điều hướng chuyển trang tinh gọn:**
+     - Đã **loại bỏ hoàn toàn số thứ tự `2/3`** ở giữa 2 mũi tên di chuyển theo đúng yêu cầu người dùng.
+     - Giữ lại 2 nút tròn mũi tên `<` và `>` canh giữa gọn gàng (`gap: 12px`), bấm chuyển trang mượt mà.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.tsx`
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+- **Thời gian thực hiện:** 10:48 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *bên phải hiển thi 6 ô hơi to chỉ hiển thị 3 thôi đưa vào admin để điểu chỉnh phần này luôn*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Tối ưu Bố cục Phương án A gọn gàng & thanh thoát:**
+     - Trước đó lưới bên phải mặc định hiển thị 6 ô (2 hàng x 3 cột) khiến phần chuyên gia có chiều cao lớn.
+     - Đã tinh chỉnh lại mặc định thành **3 ô (1 hàng 3 cột)** rất cân đối, ngang hàng và ôm sát chiều cao của Thẻ Lãnh đạo bên trái.
+     - Bộ phân trang `< X / Y >` bên dưới cho phép xem mượt mà từng nhóm 3 bác sĩ tiếp theo mà không làm tăng chiều cao trang.
+  2. **Quản trị số ô hiển thị 100% từ Admin CMS:**
+     - Nâng cấp trường `expertItemsPerView` trong `src/globals/Homepage.ts` (mục Chuyên gia của chúng tôi):
+       - Nhãn: `Số thẻ bác sĩ hiển thị (Carousel hoặc Lưới bên phải)`.
+       - Mặc định: `3`.
+       - Mô tả chi tiết: Đối với Phương án A: quy định số ô bác sĩ hiển thị ở lưới bên phải (mặc định 3 ô dạng 1 hàng 3 cột rất gọn và thoáng, hoặc 6 ô dạng 2 hàng). Đối với Carousel: quy định số thẻ trên 1 lượt trượt (từ 1 đến 6).
+     - Kết nối trực tiếp giá trị này vào prop `subItemsPerPage` của `<OurExpertsFeaturedGrid>` trong `src/app/(frontend)/page.tsx`.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/globals/Homepage.ts`
+  - `src/app/(frontend)/page.tsx`
+  - `src/components/OurExpertsFeaturedGrid.tsx`
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+- **Thời gian thực hiện:** 10:43 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *chọn phương án A thay đổi những vẫn cho phép chỉnh sửa trong admin tránh phát sinh sửa lại phát sinh lỗi khi điều chỉnh nội dung*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Nâng cấp Bố cục Phương án A (Tránh lặp lại kiểu trượt ngang Carousel):**
+     - **Cột trái (360px):** Thẻ đứng trang trọng giới thiệu **Lãnh đạo bệnh viện / Giám đốc** (kèm huy hiệu "BAN LÃNH ĐẠO", ảnh chân dung chuẩn y tế không méo, chức vụ, học vị, nút xem hồ sơ chi tiết & lịch công tác).
+     - **Cột phải (Lưới linh hoạt):** Lưới 6 thẻ bác sĩ/trưởng khoa phòng tiêu biểu (2 hàng x 3 cột), hiển thị sắc nét họ tên, chức danh, khoa phòng.
+     - **Điều hướng phân trang:** Tích hợp bộ đếm `< X / Y >` canh giữa chuẩn y tế, cho phép xem toàn bộ các trang bác sĩ tiếp theo mà không làm vỡ bố cục hay chiếm diện tích.
+  2. **Quản trị 100% từ Admin CMS không lo lỗi validation:**
+     - Bổ sung tùy chọn `expertDisplayLayout` trong `src/globals/Homepage.ts` (mục Chuyên gia của chúng tôi):
+       - `⭐ Phương án A: Thẻ Lãnh đạo lớn bên trái + Lưới Bác sĩ bên phải (Khuyên dùng - featured-grid)`
+       - `Trượt ngang truyền thống (Carousel - carousel)`
+     - Quản trị viên có thể đổi qua lại giữa 2 kiểu hiển thị bất kỳ lúc nào trực tiếp từ CMS.
+     - Tự động lấy danh sách bác sĩ từ hệ thống `doctors` ("Đội ngũ Bác sĩ & Chuyên gia") hoặc cấu hình thủ công `expertItems`.
+  3. **Đóng gói Database Migration an toàn (Mandate 6 & 15):**
+     - Tạo migration: `scripts/db-migrations/20260919_043_add_expert_display_layout_to_homepage.mjs`.
+     - Tạo enum `enum_homepage_sections_expert_display_layout` và `enum__homepage_v_version_sections_expert_display_layout`.
+     - Thêm cột `expert_display_layout` vào `homepage_sections` và `_homepage_v_version_sections`.
+     - Đã seal DB schema và chạy deploy thành công tại local (43 migrations applied, 0 pending).
+- **Tệp tin đã chỉnh sửa / tạo mới:**
+  - `src/components/OurExpertsFeaturedGrid.tsx` (NEW)
+  - `src/components/OurExpertsFeaturedGrid.module.css` (NEW)
+  - `src/globals/Homepage.ts`
+  - `src/app/(frontend)/page.tsx`
+  - `scripts/db-migrations/20260919_043_add_expert_display_layout_to_homepage.mjs` (NEW)
+  - `src/payload-generated-schema.ts`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+- **Thời gian thực hiện:** 10:15 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *phần chuyên gia của chúng tôi khi tôi thêm trong admin Đội ngũ Bác sĩ & Chuyên gia thì không hiển thị ra trang chủ. các nút điều hướng thiết kế lại theo chuẩn như ảnh và canh giữa*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Nguyên nhân không hiển thị Bác sĩ mới thêm từ Admin ra Trang chủ:**
+     - Trong `src/app/(frontend)/page.tsx`, khối render chuyên gia ưu tiên lấy dữ liệu từ `ourExpertsCollectionSlides` (thuộc collection cũ `our-experts`) trước `collectionDoctorSlides` (thuộc collection chính `doctors` - "Đội ngũ Bác sĩ & Chuyên gia").
+     - Do database vẫn tồn tại các bản ghi mẫu trong bảng cũ `our_experts`, khi người dùng thêm/chỉnh sửa bác sĩ mới trong Admin mục "Đội ngũ Bác sĩ & Chuyên gia" (`doctors`), dữ liệu mới bị che khuất bởi dữ liệu cũ của `our_experts`.
+  2. **Giải pháp đồng bộ Bác sĩ & Chuyên gia ra Trang chủ:**
+     - Cập nhật logic trong `src/app/(frontend)/page.tsx`: Ưu tiên tuyệt đối `collectionDoctorSlides` (từ `doctors`) khi có dữ liệu bác sĩ.
+     - Tuân thủ nghiêm ngặt Core Mandate 1: Tự động sắp xếp ưu tiên Ban Giám đốc (Giám đốc -> Phó Giám đốc -> Trưởng/Phó Khoa Phòng -> Bác sĩ) theo đúng thứ tự phân hạng lãnh đạo `leadershipOrder`.
+  3. **Thiết kế lại các nút điều hướng Carousel theo chuẩn ảnh mẫu:**
+     - Thay thế dãy chấm tròn (`dots`) dài và chiếm diện tích bằng bộ đếm trang/thứ tự sắc nét: `<span className={styles.expertCarouselCounter}>{currentIndex + 1} / {total}</span>`.
+     - Cụm điều hướng gồm: Nút tròn trước `<` (tròn viền xanh, icon mũi tên chevron sắc nét) -> Bộ đếm vị trí `X / Y` (ví dụ `1 / 6`, canh giữa, màu xanh dịu) -> Nút tròn kế tiếp `>` (tròn viền xanh).
+     - Toàn bộ thanh điều hướng được canh giữa tuyệt đối (`justify-content: center; align-items: center; gap: 20px; margin-top: 24px`).
+     - Đồng bộ thiết kế chuẩn này trên cả 2 carousel trọng điểm: **Chuyên gia của chúng tôi** (`OurExpertsCarousel`) và **Kỹ thuật chuyên sâu** (`AdvancedTechniquesCarousel`).
+- **Tệp tin đã chỉnh sửa:**
+  - `src/app/(frontend)/page.tsx`
+  - `src/components/OurExpertsCarousel.tsx`
+  - `src/components/OurExpertsCarousel.module.css`
+  - `src/components/AdvancedTechniquesCarousel.tsx`
+  - `src/components/AdvancedTechniquesCarousel.module.css`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Khắc Phục Lỗi Validation Khi Lưu Section Kỹ Thuật Chuyên Sâu & Chuyên Gia Trang Chủ
+
+- **Thời gian thực hiện:** 10:05 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *lỗi khi chỉnh lưu lại ở mục chuyên gia của chúng tôi và kỹ thuật chuyên sâu ở section*
+- **Nguyên nhân & Giải pháp triển khai:**
+  1. **Nguyên nhân cốt lõi (Root Cause):**
+     - Khi chỉnh sửa và lưu Homepage trong Admin CMS (`localhost:3000/admin/globals/homepage`), hệ thống báo lỗi: `Lỗi - Field sau không hợp lệ: Bố cục & giao diện các mục trang chủ 2 → Số thẻ chuyên gia trên màn hình lớn`.
+     - Lý do: Payload CMS tự động chạy các rule validation mặc định (`min: 1, max: 4`, `min: 2, max: 20`) trên toàn bộ các row trong mảng `sections`, bất kể cấu hình `admin.condition` (vì `admin.condition` chỉ có hiệu lực ẩn trên giao diện frontend của Admin chứ không tự động bỏ qua validation của Payload khi lưu).
+     - Khi lưu, các section khác không phải `our-experts` hoặc `advanced-techniques` có thể mang giá trị mặc định, `null`, hoặc không thỏa mãn rule cứng của Payload dẫn đến kích hoạt lỗi validation chặn việc lưu cấu hình trang chủ.
+  2. **Giải pháp triển khai:**
+     - **Trong `src/globals/Homepage.ts`:**
+       - Thay thế validation mặc định bằng custom validator an toàn cho 4 trường: `techniqueAutoplaySeconds`, `techniqueItemsPerView`, `expertAutoplaySeconds`, `expertItemsPerView`.
+       - Hàm validator kiểm tra: nếu `siblingData?.type` khác với loại section tương ứng (`advanced-techniques` hoặc `our-experts`), hàm luôn trả về `true` (hợp lệ), chấm dứt hoàn toàn tình trạng lỗi chéo giữa các section.
+       - Khi đúng section, hỗ trợ kiểm tra giá trị số hợp lệ (1 - 6 thẻ, 0 - 60 giây) và cho phép để trống/mặc định an toàn.
+     - **Trong `src/app/(frontend)/page.tsx`:**
+       - Kết nối trực tiếp giá trị `techniqueItemsPerView` và `expertItemsPerView` từ cấu hình CMS vào prop `itemsPerView` của component `<AdvancedTechniquesCarousel>` và `<OurExpertsCarousel>`.
+  3. **Thay đổi Database/Collections/Schema:**
+     - Không thay đổi tên cột hoặc kiểu dữ liệu trong PostgreSQL; toàn bộ 13 section và cấu hình đã có trong database được bảo toàn 100%.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/globals/Homepage.ts`
+  - `src/app/(frontend)/page.tsx`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
 ## [2026-09-19] - Khắc Phục Hiển Thị Phân Chia Tab Khối Cổng Thông Tin Bệnh Viện & Thông Tin Khám Bệnh
 
 - **Thời gian thực hiện:** 00:25 (Asia/Saigon)

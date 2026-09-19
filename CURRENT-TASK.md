@@ -1,28 +1,85 @@
 # CURRENT TASK
 
-## Trang thai: HOÀN THÀNH - KHẮC PHỤC HIỂN THỊ PHÂN CHIA TAB KHỐI CỔNG THÔNG TIN BỆNH VIỆN & THÔNG TIN KHÁM BỆNH (LỊCH KHÁM BỆNH)
+## Trang thai: HOÀN THÀNH - NÂNG CẤP TOÀN DIỆN ADMIN CHUYÊN KHOA (2 ẢNH LỚN/NHỎ & ICON TÙY BIẾN/DANH SÁCH)
 
 ### Đã hoàn thành theo yêu cầu người dùng:
-1. **Khắc phục hiển thị phân chia theo từng Tab cho CỔNG THÔNG TIN BỆNH VIỆN (`src/app/(frontend)/page.tsx`):**
-   - Thay thế việc kết xuất danh sách phẳng `renderEditorialSection` bằng `<HomeNewsTabs>` hoàn chỉnh.
-   - Nhận diện chuyên mục chuẩn y tế bằng `categoryName(article)` (đồng bộ giữa `categoryRef` và `category`).
-   - Tự động hiển thị các Tab chuyên mục (Tin bệnh viện, Tin y tế, Kiến thức sức khỏe, Hoạt động đoàn thể, hoặc các chuyên mục cấu hình trong CMS), phân loại từng bài viết vào đúng Tab chuyên mục thay vì gộp chung một danh sách.
-   - Áp dụng đầy đủ chuẩn thiết kế **Phương án 3 (Tỷ lệ vàng gọn gàng)**: thẻ chính nổi bật bên trái (`editorialHeroCard`) và danh sách các tin kế tiếp bên phải (`editorialRowList`).
+1. **Quản trị 2 ảnh (Ảnh chính lớn + Ảnh phụ nhỏ 3D):**
+   - Đưa vào Admin CMS (`Specialties.ts`):
+     - `cover`: 🖼️ Ảnh đại diện chính (Ảnh lớn ở trên).
+     - `subCover`: 🖼️ Ảnh phụ nổi 3D (Ảnh nhỏ góc dưới phải).
+   - Khi hover/focus vào chuyên khoa nào trên trang chủ:
+     - Ảnh lớn bên phải tự động chuyển sang ảnh chính (`cover`).
+     - Ảnh nhỏ nổi 3D tự động chuyển sang ảnh phụ (`subCover`).
+     - Nếu chưa upload ảnh, hệ thống tự động nạp ảnh nghệ thuật chuyên ngành mặc định cực đẹp.
 
-2. **Khắc phục hiển thị phân chia theo từng Tab cho THÔNG TIN KHÁM BỆNH - Lịch khám bệnh (`src/components/ScheduleExplorer.tsx` & `src/app/(frontend)/page.tsx`):**
-   - Đảm bảo thanh chuyển Tab luôn hiển thị đầy đủ các tab chuẩn y tế:
-     + **Lịch trực cấp cứu**
-     + **Theo ngày** (kèm bộ lọc chọn ngày trực quan)
-     + **Theo tuần**
-     + **Lịch đính kèm** (ảnh/file bảng lịch)
-   - Loại bỏ đoạn code lọc triệt tiêu các tab rỗng khiến thanh tab bị ẩn đi khi một số loại lịch chưa có bài. Giờ đây tất cả các tab luôn hiển thị trực quan, tab đầu tiên có dữ liệu được chọn mặc định; nếu bấm vào tab chưa có dữ liệu sẽ hiển thị thông báo rỗng nhẹ nhàng (`Chưa có lịch...`).
-   - Đảm bảo các bài viết / lịch thuộc mode nào hiển thị đúng vào tab đó, không bị gộp lẫn vào nhau.
+2. **Quản trị Icon 2 chế độ linh hoạt:**
+   - **Chế độ 1 - Chọn từ danh mục có sẵn (`icon`):** Cấp cứu & Hồi sức, Chẩn đoán hình ảnh, Xét nghiệm, Nhi khoa, Ngoại khoa, Nội khoa, Dược, Răng hàm mặt, YHCT & Phục hồi chức năng.
+   - **Chế độ 2 - Tự tải ảnh Icon riêng (`iconCustomUpload`):** Cho phép tải lên file ảnh icon riêng (PNG/SVG nền trong suốt). Hệ thống tự động ưu tiên icon tải lên.
+
+3. **Đóng gói Database Migration 045 chuẩn mực (Mandates 6, 14, 15):**
+   - File migration: `scripts/db-migrations/20260919_045_add_sub_cover_and_custom_icon_to_specialties.mjs`.
+   - Bổ sung các cột `sub_cover_id`, `icon_custom_upload_id` vào `specialties` và `version_sub_cover_id`, `version_icon_custom_upload_id` vào `_specialties_v`.
+   - Đã seal DB schema contract (`npm run db:schema:seal`), check hợp lệ (`npm run db:schema:check`) và deploy an toàn tại local (45 applied, 0 pending), `PAYLOAD_DB_PUSH=false`.
+
+4. **Kiểm tra chất lượng & Tiêu chuẩn:**
+   - `npx tsc --noEmit`: 0 lỗi TypeScript.
+   - `npm run validate:homepage-seo-search`: 20/20 checks PASS.
+   - Kiểm tra HTTP live response: 200 OK.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
 
 3. **Kiểm tra chất lượng & Tiêu chuẩn:**
-   - `npx tsc --noEmit`: Đạt 0 lỗi biên dịch TypeScript.
-   - Tuân thủ nghiêm ngặt Quy tắc Bắt buộc Dự án (Mandates 1, 2, 4, 5, 8, 9).
-2. **Tài liệu - Văn bản & Đấu thầu - Mua sắm** (`documents` & `procurement` trong `page.tsx`):
-   - Đã đồng bộ qua hàm `renderEditorialSection` dùng layout `editorialVariant3`.
+   - `npx tsc --noEmit`: 0 lỗi TypeScript.
+   - `npm run validate:homepage-seo-search`: 20/20 checks PASS.
+   - Đã kiểm tra trực tiếp phản hồi HTTP localhost:3000: Render đầy đủ khối ghép đôi, 10 thẻ thông báo và 4 thẻ gói thầu mua sắm.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
+
+3. **Kiểm tra chất lượng & Tiêu chuẩn:**
+   - `npx tsc --noEmit`: 0 lỗi TypeScript.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
+
+4. **Kiểm tra chất lượng & Tiêu chuẩn:**
+   - `npx tsc --noEmit`: 0 lỗi TypeScript.
+   - `npm run validate:homepage-seo-search`: 20/20 checks PASS.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
+
+4. **Kiểm tra chất lượng & Tiêu chuẩn:**
+   - `npx tsc --noEmit`: 0 lỗi TypeScript.
+   - `npm run validate:homepage-seo-search`: 20/20 checks PASS.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
+
+3. **Điều hướng chuẩn y tế:**
+   - Thanh điều hướng gồm 2 nút tròn `<` và `>` canh giữa sắc nét, kết hợp bộ đếm vị trí trang.
+
+4. **Kiểm tra chất lượng & Tiêu chuẩn:**
+   - `npx tsc --noEmit`: 0 lỗi TypeScript.
+   - `npm run validate:homepage-seo-search`: 20/20 checks PASS.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
+
+3. **Kiểm tra chất lượng & Tiêu chuẩn:**
+   - `npx tsc --noEmit`: 0 lỗi TypeScript.
+   - `npm run validate:homepage-seo-search`: 20/20 checks PASS.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
+
+4. **Kiểm tra chất lượng & Tiêu chuẩn:**
+   - `npx tsc --noEmit`: 0 lỗi TypeScript.
+   - `npm run validate:homepage-seo-search`: 20/20 checks PASS.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
+
+3. **Kiểm tra chất lượng:**
+   - `npx tsc --noEmit`: 0 lỗi TypeScript.
+   - `npm run validate:homepage-seo-search`: 20/20 checks PASS.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
+
+3. **Đóng gói Database Migration 043 chuẩn mực (Mandates 6, 14, 15):**
+   - File migration: `scripts/db-migrations/20260919_043_add_expert_display_layout_to_homepage.mjs`.
+   - Tạo enum `enum_homepage_sections_expert_display_layout` và `enum__homepage_v_version_sections_expert_display_layout`.
+   - Thêm cột `expert_display_layout` vào bảng `homepage_sections` và `_homepage_v_version_sections`.
+   - Đã seal DB schema và migrate thành công (43 applied, 0 pending).
+
+4. **Kiểm tra chất lượng & Tiêu chuẩn:**
+   - `npx tsc --noEmit`: Đạt 0 lỗi TypeScript.
+   - `npm run validate:homepage-seo-search`: 20/20 checks PASS.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
 3. **Lịch trực - Lịch khám bệnh** (`ScheduleExplorer.tsx` & `schedules` trong `page.tsx`):
    - Áp dụng đầy đủ cho Lịch trực cấp cứu, Lịch đính kèm, Lịch theo ngày và theo tuần.
 4. **Thông tin tiêm ngừa** (`VaccinationTabs.tsx`):

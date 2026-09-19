@@ -10,6 +10,7 @@ import { HeroBannerCarousel } from '@/components/HeroBannerCarousel'
 import { FeaturedContentCarousel } from '@/components/FeaturedContentCarousel'
 import { AdvancedTechniquesCarousel } from '@/components/AdvancedTechniquesCarousel'
 import { OurExpertsCarousel } from '@/components/OurExpertsCarousel'
+import { OurExpertsFeaturedGrid } from '@/components/OurExpertsFeaturedGrid'
 import { SpecialtiesCarousel } from '@/components/SpecialtiesCarousel'
 import { CustomCardsCarousel } from '@/components/CustomCardsCarousel'
 import { HomeScrollSnapHandler } from '@/components/HomeScrollSnapHandler'
@@ -75,8 +76,8 @@ export default async function HomePage() {
 
     const [newsResult, noticeResult, procurementResult, documentResult, clinicalProtocolsResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult, scientificActivitiesResult, scientificActivityGroupsResult] = await Promise.all([
       payload.find({ collection: 'news', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 100, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
-      payload.find({ collection: 'notices', where: { and: [{ _status: { equals: 'published' } }, { showOnHome: { equals: true } }] }, sort: '-startAt', limit: 6, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
-      payload.find({ collection: 'procurement', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 6, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
+      payload.find({ collection: 'notices', where: { and: [{ _status: { equals: 'published' } }, { showOnHome: { equals: true } }] }, sort: ['-publishedAt', '-createdAt'], limit: 8, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
+      payload.find({ collection: 'procurement', where: { _status: { equals: 'published' } }, sort: ['-publishedAt', '-createdAt'], limit: 8, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
       payload.find({ collection: 'documents', sort: '-issuedAt', limit: 12, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
       payload.find({ collection: 'clinical-protocols' as any, sort: '-issuedAt', limit: 12, depth: 2 }).catch(() => ({ docs: [] })),
       payload.find({ collection: 'doctors', where: { active: { equals: true } }, limit: 50, sort: ['order', 'name'], depth: 2 }).catch(() => ({ docs: [], totalDocs: 0 })),
@@ -796,7 +797,11 @@ export default async function HomePage() {
               slug: item.slug,
               departmentName: typeof item.department === 'object' ? item.department?.name : undefined,
               summary: item.summary,
+              tagline: item.tagline || undefined,
+              icon: item.icon || 'default',
+              iconCustomUrl: mediaUrl(item.iconCustomUpload, 'icon') || undefined,
               coverUrl: mediaUrl(item.cover, 'article') || undefined,
+              subCoverUrl: mediaUrl(item.subCover, 'article') || undefined,
               coverFitHome: item.coverFitHome || item.coverFit || 'cover-top',
               coverFit: item.coverFitHome || item.coverFit || 'cover-top',
               coverPosition: item.coverPosition || 'top',
@@ -905,7 +910,7 @@ export default async function HomePage() {
                   <AdvancedTechniquesCarousel
                     items={techniqueSlides}
                     autoplaySeconds={Number(item.techniqueAutoplaySeconds ?? 5)}
-                    itemsPerView={4}
+                    itemsPerView={Math.min(6, Math.max(1, Number(item.techniqueItemsPerView || 4)))}
                     cardBarBgColor={finalCardBg}
                     cardBarTextColor={finalCardText}
                   />
@@ -1097,16 +1102,15 @@ export default async function HomePage() {
               }
             })
 
-            // Thứ tự ưu tiên:
-            // 1) Nếu có bài/dữ liệu trong Quản trị -> Nội dung -> Chuyên gia của chúng tôi -> ưu tiên hiển thị ngay
-            // 2) Nếu có danh sách cấu hình riêng trong Trang chủ -> dùng danh sách cấu hình
-            // 3) Nếu có danh sách Bác sĩ từ Quản trị -> Tổ chức -> Bác sĩ -> tự động lấy hiển thị
-            // 4) Fallback ban đầu
-            const expertSlides = ourExpertsCollectionSlides.length > 0
-              ? ourExpertsCollectionSlides
-              : (hasCustomExpertList
-                  ? configuredExpertSlides
-                  : (collectionDoctorSlides.length > 0 ? collectionDoctorSlides : []))
+            // Thứ tự ưu tiên nguồn dữ liệu:
+            // 1) Ưu tiên cao nhất: Danh sách Bác sĩ từ Quản trị -> Tổ chức -> Đội ngũ Bác sĩ & Chuyên gia (doctors collection có showOnHome !== false)
+            // 2) Nếu không có Bác sĩ nào được bật showOnHome: Lấy từ Quản trị -> Nội dung -> Chuyên gia của chúng tôi (our-experts collection)
+            // 3) Danh sách cấu hình thủ công trong Homepage (expertItems)
+            const expertSlides = collectionDoctorSlides.length > 0
+              ? collectionDoctorSlides
+              : (ourExpertsCollectionSlides.length > 0
+                  ? ourExpertsCollectionSlides
+                  : (hasCustomExpertList ? configuredExpertSlides : []))
 
             const isPinkish = (val?: string) => !val || val === '#fce4f0' || val === '#fce8f3' || val === '#d42d7d' || val === '#c92372' || val.toLowerCase().includes('fc')
             const finalCardBg = isPinkish(item.expertCardBgColor) ? '#f0f7fd' : item.expertCardBgColor
@@ -1127,6 +1131,8 @@ export default async function HomePage() {
               return getRank(a) - getRank(b)
             })
 
+            const displayLayout = item.expertDisplayLayout || 'featured-grid'
+
             return (
               <section className="sectionPro configurableHomeSection homeOurExpertsSection" style={style} key={key}>
                 <div className="container">
@@ -1138,13 +1144,22 @@ export default async function HomePage() {
                     </div>
                     <a href="/bac-si">Xem tất cả →</a>
                   </div>
-                  <OurExpertsCarousel
-                    items={rawSortedExperts}
-                    autoplaySeconds={Number(item.expertAutoplaySeconds ?? 5)}
-                    itemsPerView={4}
-                    cardBarBgColor={finalCardBg}
-                    cardBarTextColor={finalCardText}
-                  />
+                  {displayLayout === 'carousel' ? (
+                    <OurExpertsCarousel
+                      items={rawSortedExperts}
+                      autoplaySeconds={Number(item.expertAutoplaySeconds ?? 5)}
+                      itemsPerView={Math.min(6, Math.max(1, Number(item.expertItemsPerView || 4)))}
+                      cardBarBgColor={finalCardBg}
+                      cardBarTextColor={finalCardText}
+                    />
+                  ) : (
+                    <OurExpertsFeaturedGrid
+                      items={rawSortedExperts}
+                      cardBarBgColor={finalCardBg}
+                      cardBarTextColor={finalCardText}
+                      subItemsPerPage={Math.min(6, Math.max(1, Number(item.expertItemsPerView || 3)))}
+                    />
+                  )}
                 </div>
               </section>
             )
@@ -1335,49 +1350,172 @@ export default async function HomePage() {
             )
           }
 
-          if (type === 'notices') {
-            const noticeLayout = item.sectionLayout || 'editorial-grid'
-            const noticeLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
-            const noticeItems = notices.slice(0, noticeLimit).map((notice: any) => ({
-              id: notice.id,
-              href: `/thong-bao/${notice.slug}`,
-              cover: mediaUrl(notice.cover || notice.seoImage) || defaultMedia.notices,
-              title: notice.title,
-              excerpt: notice.excerpt || 'Thông tin mới được cập nhật từ Bệnh viện Đa khoa Khu vực Thới Lai.',
-              date: notice.publishedAt ? new Date(notice.publishedAt).toLocaleDateString('vi-VN') : (notice.startAt ? new Date(notice.startAt).toLocaleDateString('vi-VN') : 'Mới cập nhật'),
-              category: notice.category || '',
-              coverFit: notice.coverFit || 'cover',
-              coverPosition: notice.coverPosition || 'top',
-            }))
-            return (
-              <section className="sectionPro configurableHomeSection homeNoticeSection" style={style} key={key}>
-                <div className="container">
-                  <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/thong-bao">Xem tất cả →</a></div>
-                  {renderEditorialSection({ items: noticeItems, layout: noticeLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'THÔNG BÁO', emptyText: 'Chưa có thông báo được đăng.', actionText: 'Xem chi tiết thông báo →' })}
-                </div>
-              </section>
-            )
-          }
+          if (type === 'notices' || type === 'procurement') {
+            const hasBoth = configuredSections.some((s: any) => s?.type === 'notices' && s.visible !== false) &&
+                            configuredSections.some((s: any) => s?.type === 'procurement' && s.visible !== false)
+            
+            // Nếu cả 2 đều bật và đây là section thứ hai (procurement khi notices đứng trước, hoặc notices khi procurement đứng trước) -> bỏ qua để không bị render đúp
+            if (hasBoth) {
+              const firstPairType = configuredSections.find((s: any) => (s?.type === 'notices' || s?.type === 'procurement') && s.visible !== false)?.type
+              if (type !== firstPairType) {
+                return null
+              }
+            }
 
-          if (type === 'procurement') {
-            const procLayout = item.sectionLayout || 'editorial-grid'
-            const procLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
-            const procItems = procurement.slice(0, procLimit).map((entry: any) => ({
-              id: entry.id,
-              href: `/dau-thau-mua-sam/${entry.slug}`,
-              cover: mediaUrl(entry.cover || entry.seoImage) || defaultMedia.procurement,
-              title: entry.title,
-              excerpt: entry.excerpt || entry.summary || 'Thông tin công khai về đấu thầu và mua sắm của bệnh viện.',
-              date: entry.publishedAt ? new Date(entry.publishedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
-              category: entry.category || '',
-              coverFit: entry.coverFit || 'cover',
-              coverPosition: entry.coverPosition || 'top',
-            }))
+            const noticeItem = configuredSections.find((s: any) => s?.type === 'notices') || {}
+            const procItem = configuredSections.find((s: any) => s?.type === 'procurement') || {}
+            const noticeCfg = { ...(sectionDefaults['notices'] || {}), ...noticeItem }
+            const procCfg = { ...(sectionDefaults['procurement'] || {}), ...procItem }
+
+            const showNoticeCol = noticeItem.visible !== false
+            const showProcCol = procItem.visible !== false
+
+            const noticeLimit = Math.min(10, Math.max(1, Number(noticeItem.layoutItemLimit || 4)))
+            const procLimit = Math.min(10, Math.max(1, Number(procItem.layoutItemLimit || 4)))
+
+            const noticeList = notices.slice(0, noticeLimit)
+            const procList = procurement.slice(0, procLimit)
+
             return (
-              <section className="sectionPro configurableHomeSection homeProcurementSection" style={style} key={key}>
+              <section className="sectionPro configurableHomeSection homeNoticeProcurementPairSection" style={style} key={key}>
                 <div className="container">
-                  <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/dau-thau-mua-sam">Xem tất cả →</a></div>
-                  {renderEditorialSection({ items: procItems, layout: procLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'ĐẤU THẦU – MUA SẮM', emptyText: 'Chưa có hồ sơ đấu thầu – mua sắm.', actionText: 'Xem hồ sơ đấu thầu →' })}
+                  <div className={`noticeProcurementPairGrid ${!showNoticeCol || !showProcCol ? 'singleCol' : ''}`}>
+                    {/* CỘT 1: THÔNG BÁO MỚI */}
+                    {showNoticeCol && (
+                      <div className="pairColumn noticeCol">
+                        <div className="pairColHead">
+                          <div className="pairColHeadLeft">
+                            <span className="pairColKicker">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                              </svg>
+                              {noticeCfg.eyebrow || 'THÔNG BÁO'}
+                            </span>
+                            <h2 className="pairColTitle">{noticeCfg.title || 'Thông báo mới'}</h2>
+                            {noticeCfg.description && <p className="pairColDesc">{noticeCfg.description}</p>}
+                          </div>
+                          <a className="pairColSeeAll" href="/thong-bao">
+                            Xem tất cả <span>→</span>
+                          </a>
+                        </div>
+
+                        <div className="pairColList">
+                          {noticeList.length > 0 ? (
+                            noticeList.map((notice: any) => {
+                              const d = notice.publishedAt ? new Date(notice.publishedAt) : (notice.startAt ? new Date(notice.startAt) : null)
+                              const day = d ? String(d.getDate()).padStart(2, '0') : '--'
+                              const month = d ? `Th${d.getMonth() + 1}` : 'MỚI'
+                              const levelClass = notice.level === 'urgent' ? 'urgent' : (notice.level === 'important' ? 'important' : 'normal')
+                              const levelText = notice.level === 'urgent' ? 'Khẩn' : (notice.level === 'important' ? 'Quan trọng' : 'Thông báo')
+                              const categoryText = typeof notice.category === 'object' ? notice.category?.title || notice.category?.name : notice.category
+
+                              return (
+                                <a className="noticeCardItem" href={`/thong-bao/${notice.slug}`} key={notice.id}>
+                                  <div className="noticeDateBlock" aria-hidden="true">
+                                    <span className="noticeDateDay">{day}</span>
+                                    <span className="noticeDateMonth">{month}</span>
+                                  </div>
+                                  <div className="noticeCardBody">
+                                    <div className="noticeCardMeta">
+                                      <span className={`noticeCardBadge ${levelClass}`}>
+                                        {levelText}
+                                      </span>
+                                      {categoryText && (
+                                        <span className="noticeCardCategory">{categoryText}</span>
+                                      )}
+                                    </div>
+                                    <h3 className="noticeCardTitle">{notice.title}</h3>
+                                    {notice.excerpt && (
+                                      <p className="noticeCardExcerpt">{notice.excerpt}</p>
+                                    )}
+                                  </div>
+                                </a>
+                              )
+                            })
+                          ) : (
+                            <div className="pairColEmpty">Chưa có thông báo được đăng.</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* CỘT 2: ĐẤU THẦU – MUA SẮM */}
+                    {showProcCol && (
+                      <div className="pairColumn procurementCol">
+                        <div className="pairColHead">
+                          <div className="pairColHeadLeft">
+                            <span className="pairColKicker">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                              </svg>
+                              {procCfg.eyebrow || 'CÔNG KHAI MUA SẮM'}
+                            </span>
+                            <h2 className="pairColTitle">{procCfg.title || 'Đấu thầu – Mua sắm'}</h2>
+                            {procCfg.description && <p className="pairColDesc">{procCfg.description}</p>}
+                          </div>
+                          <a className="pairColSeeAll" href="/dau-thau-mua-sam">
+                            Xem tất cả <span>→</span>
+                          </a>
+                        </div>
+
+                        <div className="pairColList">
+                          {procList.length > 0 ? (
+                            procList.map((entry: any) => {
+                              const status = entry.procurementStatus || 'open'
+                              const statusClass = status === 'open' ? 'open' : (status === 'closing' ? 'closing' : 'closed')
+                              const statusText = status === 'open' ? 'Đang tiếp nhận' : (status === 'closing' ? 'Sắp hết hạn' : (status === 'closed' ? 'Đã hết hạn' : 'Đã kết thúc'))
+                              const deadline = entry.deadlineAt ? new Date(entry.deadlineAt).toLocaleDateString('vi-VN') : null
+                              const typeText = entry.type || 'Mời thầu'
+
+                              return (
+                                <a className="procurementCardItem" href={`/dau-thau-mua-sam/${entry.slug}`} key={entry.id}>
+                                  <div className="procurementCardTop">
+                                    <div className="procurementCardBadges">
+                                      <span className="procurementTypeBadge">{typeText}</span>
+                                      <span className={`procurementStatusBadge ${statusClass}`}>
+                                        {statusText}
+                                      </span>
+                                    </div>
+                                    {entry.referenceCode && (
+                                      <span className="procurementRefCode">
+                                        Mã: {entry.referenceCode}
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <h3 className="procurementCardTitle">{entry.title}</h3>
+
+                                  <div className="procurementCardFooter">
+                                    {deadline ? (
+                                      <span className="procurementDeadline">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                          <circle cx="12" cy="12" r="10" />
+                                          <polyline points="12 6 12 12 16 14" />
+                                        </svg>
+                                        Hạn nộp: {deadline}
+                                      </span>
+                                    ) : (
+                                      <span className="procurementDeadline noDeadline">
+                                        {entry.publishedAt ? `Đăng ngày ${new Date(entry.publishedAt).toLocaleDateString('vi-VN')}` : 'Xem hồ sơ'}
+                                      </span>
+                                    )}
+
+                                    <span className="procurementActionLink">
+                                      Hồ sơ chi tiết →
+                                    </span>
+                                  </div>
+                                </a>
+                              )
+                            })
+                          ) : (
+                            <div className="pairColEmpty">Chưa có hồ sơ đấu thầu – mua sắm.</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </section>
             )

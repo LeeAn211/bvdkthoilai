@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260918_042_add_custom_carousel_section_to_homepage",
-  "schemaSha256": "c6f5f6500fcad2bef846a3ba821330effd7f2d9e46b8eff9b6240b15fc342fc8"
+  "migrationId": "20260919_045_add_sub_cover_and_custom_icon_to_specialties",
+  "schemaSha256": "36d3def946451902c238aedceee029d2249fdf45089df1ccbbce7bb056cae616"
 }

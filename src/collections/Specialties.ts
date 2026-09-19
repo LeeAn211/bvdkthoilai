@@ -94,16 +94,79 @@ export const Specialties: CollectionConfig = {
       },
     },
     slugField('name', 'specialties'),
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'icon',
+          label: 'Biểu tượng chuyên khoa (Icon theo danh mục)',
+          type: 'select',
+          defaultValue: 'default',
+          options: [
+            { label: 'Tự động theo tên khoa (Khuyên dùng)', value: 'default' },
+            { label: 'Cấp cứu & Hồi sức (Trái tim / Chữ thập)', value: 'emergency' },
+            { label: 'Chẩn đoán hình ảnh (X-quang, Siêu âm, CT)', value: 'imaging' },
+            { label: 'Xét nghiệm & Kiểm soát nhiễm khuẩn (Khiên chắn, Kính hiển vi)', value: 'lab' },
+            { label: 'Khoa Nhi (Trẻ em & Mẹ)', value: 'pediatrics' },
+            { label: 'Khoa Ngoại & Phẫu thuật (Dao mổ, Dụng cụ)', value: 'surgery' },
+            { label: 'Khoa Nội tổng hợp (Ống nghe, Y tế chung)', value: 'internal' },
+            { label: 'Dược & Cấp phát thuốc (Viên thuốc, Hộp thuốc)', value: 'pharmacy' },
+            { label: 'Răng Hàm Mặt & Mắt (Nụ cười, Thị lực)', value: 'dental' },
+            { label: 'Y học cổ truyền & Phục hồi chức năng (Bàn tay, Lá cây)', value: 'rehab' },
+          ],
+          admin: {
+            width: '33.33%',
+            description: 'Lựa chọn biểu tượng có sẵn theo chuyên môn.',
+          },
+        },
+        {
+          name: 'iconCustomUpload',
+          label: 'Hoặc tải lên Icon riêng (Tùy chọn)',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            width: '33.33%',
+            description: 'Tải ảnh icon riêng (SVG/PNG nền trong suốt). Ưu tiên cao hơn danh sách chọn.',
+          },
+        },
+        {
+          name: 'tagline',
+          label: 'Dòng kỹ thuật / dịch vụ tóm tắt',
+          type: 'text',
+          admin: {
+            width: '33.33%',
+            placeholder: 'VD: Cấp cứu 24/7 • Đơn nguyên ICU',
+            description: 'Dòng mô tả ngắn gọn 2-5 từ xuất hiện ngay dưới tên chuyên khoa ở danh bạ trang chủ.',
+          },
+        },
+      ],
+    },
     { name: 'summary', label: 'Giới thiệu ngắn', type: 'textarea' },
     { name: 'content', label: 'Giới thiệu chi tiết', type: 'richText' },
     {
-      name: 'cover',
-      label: 'Ảnh đại diện chuyên khoa',
-      type: 'upload',
-      relationTo: 'media',
-      admin: {
-        description: '💡 Khuyên dùng ảnh nằm ngang tỷ lệ 16:9 hoặc 16:10 (khoảng 1200×675px hoặc 800×450px). Có thể tải ảnh chụp phòng khám, bác sĩ hoặc thiết bị chuyên khoa.',
-      },
+      type: 'row',
+      fields: [
+        {
+          name: 'cover',
+          label: '🖼️ Ảnh đại diện chính (Ảnh lớn ở trên)',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            width: '50%',
+            description: '💡 Ảnh lớn 16:9 hoặc 16:10 (khoảng 1200×675px hoặc 800×450px). Khi hover/focus vào chuyên khoa, ảnh lớn bên phải sẽ đổi sang ảnh này.',
+          },
+        },
+        {
+          name: 'subCover',
+          label: '🖼️ Ảnh phụ nổi 3D (Ảnh nhỏ góc dưới)',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            width: '50%',
+            description: '💡 Ảnh nhỏ nổi 3D lồng ghép nghệ thuật góc dưới phải (ảnh bác sĩ đang thao tác, thiết bị phụ trợ hoặc phòng bệnh). Để trống sẽ dùng ảnh chuyên ngành mặc định.',
+          },
+        },
+      ],
     },
     {
       type: 'row',

@@ -318,9 +318,14 @@ export const Homepage: GlobalConfig = {
           name: 'techniqueAutoplaySeconds',
           label: 'Thời gian tự chuyển slide kỹ thuật (giây)',
           type: 'number',
-          min: 2,
-          max: 20,
           defaultValue: 5,
+          validate: (value: unknown, { siblingData }: any) => {
+            if (siblingData?.type !== 'advanced-techniques') return true
+            if (value === null || value === undefined || value === '') return true
+            const num = Number(value)
+            if (isNaN(num) || num < 0 || num > 60) return 'Thời gian chuyển slide phải từ 0 đến 60 giây'
+            return true
+          },
           admin: {
             condition: (_data, siblingData) => siblingData?.type === 'advanced-techniques',
             description: 'Để 0 nếu muốn tắt tự động chuyển động.',
@@ -330,9 +335,14 @@ export const Homepage: GlobalConfig = {
           name: 'techniqueItemsPerView',
           label: 'Số thẻ hiển thị trên màn hình lớn',
           type: 'number',
-          min: 1,
-          max: 4,
           defaultValue: 4,
+          validate: (value: unknown, { siblingData }: any) => {
+            if (siblingData?.type !== 'advanced-techniques') return true
+            if (value === null || value === undefined || value === '') return true
+            const num = Number(value)
+            if (isNaN(num) || num < 1 || num > 6) return 'Số thẻ hiển thị phải từ 1 đến 6'
+            return true
+          },
           admin: {
             condition: (_data, siblingData) => siblingData?.type === 'advanced-techniques',
             description: 'Khuyên dùng 4 thẻ để bố cục cân đối và đẹp mắt.',
@@ -416,14 +426,33 @@ export const Homepage: GlobalConfig = {
           ],
         },
 
-        /* Chuyên gia của chúng tôi (Carousel/Slider) */
+        /* Chuyên gia của chúng tôi */
+        {
+          name: 'expertDisplayLayout',
+          label: 'Kiểu bố cục hiển thị chuyên gia',
+          type: 'select',
+          defaultValue: 'carousel',
+          options: [
+            { label: '⭐ Hàng ngang đồng nhất chuẩn y tế (Carousel 4 hoặc 5 thẻ - Khuyên dùng)', value: 'carousel' },
+            { label: 'Bố cục phân cấp: Thẻ Lãnh đạo lớn bên trái + Lưới bên phải', value: 'featured-grid' },
+          ],
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'our-experts',
+            description: 'Chọn kiểu bố cục hiển thị trên trang chủ: Hàng ngang đồng nhất chuẩn mực cao cấp hoặc Bố cục phân cấp.',
+          },
+        },
         {
           name: 'expertAutoplaySeconds',
           label: 'Thời gian tự chuyển slide chuyên gia (giây)',
           type: 'number',
-          min: 2,
-          max: 20,
           defaultValue: 5,
+          validate: (value: unknown, { siblingData }: any) => {
+            if (siblingData?.type !== 'our-experts') return true
+            if (value === null || value === undefined || value === '') return true
+            const num = Number(value)
+            if (isNaN(num) || num < 0 || num > 60) return 'Thời gian chuyển slide phải từ 0 đến 60 giây'
+            return true
+          },
           admin: {
             condition: (_data, siblingData) => siblingData?.type === 'our-experts',
             description: 'Để 0 nếu muốn tắt tự động chuyển động.',
@@ -431,14 +460,19 @@ export const Homepage: GlobalConfig = {
         },
         {
           name: 'expertItemsPerView',
-          label: 'Số thẻ chuyên gia trên màn hình lớn',
+          label: 'Số thẻ bác sĩ hiển thị (Carousel hoặc Lưới bên phải)',
           type: 'number',
-          min: 1,
-          max: 4,
-          defaultValue: 4,
+          defaultValue: 3,
+          validate: (value: unknown, { siblingData }: any) => {
+            if (siblingData?.type !== 'our-experts') return true
+            if (value === null || value === undefined || value === '') return true
+            const num = Number(value)
+            if (isNaN(num) || num < 1 || num > 6) return 'Số thẻ hiển thị phải từ 1 đến 6'
+            return true
+          },
           admin: {
             condition: (_data, siblingData) => siblingData?.type === 'our-experts',
-            description: 'Khuyên dùng 4 thẻ để bố cục cân đối và đẹp mắt.',
+            description: 'Đối với Phương án A: quy định số ô bác sĩ hiển thị ở lưới bên phải (mặc định 3 ô dạng 1 hàng 3 cột rất gọn và thoáng, hoặc 6 ô dạng 2 hàng). Đối với Carousel: quy định số thẻ trên 1 lượt trượt (từ 1 đến 6).',
           },
         },
         {

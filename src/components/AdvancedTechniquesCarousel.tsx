@@ -177,22 +177,14 @@ export function AdvancedTechniquesCarousel({
             aria-label="Kỹ thuật trước"
             title="Kỹ thuật trước"
           >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
 
-          <div className={styles.techCarouselDots}>
-            {safeItems.map((_, dotIdx) => (
-              <button
-                key={dotIdx}
-                type="button"
-                className={`${styles.techCarouselDot} ${currentIndex === dotIdx ? styles.activeDot : ''}`}
-                onClick={() => setCurrentIndex(dotIdx)}
-                aria-label={`Chuyển đến kỹ thuật ${dotIdx + 1}`}
-              />
-            ))}
-          </div>
+          <span className={styles.techCarouselCounter}>
+            {currentIndex + 1} / {total}
+          </span>
 
           <button
             type="button"
@@ -201,7 +193,7 @@ export function AdvancedTechniquesCarousel({
             aria-label="Kỹ thuật kế tiếp"
             title="Kỹ thuật kế tiếp"
           >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="9 18 15 12 9 6" />
             </svg>
           </button>

@@ -134,6 +134,11 @@ export function OurExpertsCarousel({
                     </svg>
                   </div>
                 )}
+                {(item.badge || item.position?.toLowerCase().includes('giám đốc') || item.position?.toLowerCase().includes('giam doc')) && (
+                  <div className={styles.expertCardBadge}>
+                    {item.position?.toLowerCase().includes('phó') || item.position?.toLowerCase().includes('pho') ? 'PHÓ GIÁM ĐỐC' : (item.position?.toLowerCase().includes('giám đốc') ? 'GIÁM ĐỐC' : (item.badge || 'BAN LÃNH ĐẠO'))}
+                  </div>
+                )}
               </div>
               <div className={styles.expertCardFooter} style={footerCustomStyle}>
                 <h3 className={styles.expertCardName} style={titleCustomStyle}>
@@ -185,22 +190,14 @@ export function OurExpertsCarousel({
             aria-label="Chuyên gia trước"
             title="Chuyên gia trước"
           >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
 
-          <div className={styles.expertCarouselDots}>
-            {safeItems.map((_, dotIdx) => (
-              <button
-                key={dotIdx}
-                type="button"
-                className={`${styles.expertCarouselDot} ${currentIndex === dotIdx ? styles.activeDot : ''}`}
-                onClick={() => setCurrentIndex(dotIdx)}
-                aria-label={`Chuyển đến chuyên gia ${dotIdx + 1}`}
-              />
-            ))}
-          </div>
+          <span className={styles.expertCarouselCounter}>
+            {currentIndex + 1} / {total}
+          </span>
 
           <button
             type="button"
@@ -209,7 +206,7 @@ export function OurExpertsCarousel({
             aria-label="Chuyên gia kế tiếp"
             title="Chuyên gia kế tiếp"
           >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="9 18 15 12 9 6" />
             </svg>
           </button>

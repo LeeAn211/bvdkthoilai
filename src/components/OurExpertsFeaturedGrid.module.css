@@ -1,0 +1,476 @@
+.featuredSectionContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.featuredLayoutWrapper {
+  display: grid;
+  grid-template-columns: 310px 1fr;
+  gap: 24px;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Thẻ Lãnh đạo VIP bên trái - Bằng khít đúng 494px với 2 hàng ô nhỏ (2 x 240px + 14px gap) */
+.leaderCard {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #dce8f1;
+  box-shadow: 0 4px 16px rgba(7, 43, 76, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  text-decoration: none;
+  color: inherit;
+  height: 494px;
+  box-sizing: border-box;
+}
+
+.leaderCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(8, 120, 209, 0.15);
+  border-color: #0878d1;
+}
+
+.leaderBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  background: linear-gradient(135deg, #072b4c 0%, #0878d1 100%);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(8, 120, 209, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.leaderImageFrame {
+  position: relative;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  background: linear-gradient(180deg, #f0f7fd 0%, #e6f3fa 100%);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leaderImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.leaderImg.fitCoverTop {
+  object-fit: cover !important;
+  object-position: top center !important;
+}
+
+.leaderImg.fitCoverCenter {
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+.leaderImg.fitCoverBottom {
+  object-fit: cover !important;
+  object-position: bottom center !important;
+}
+
+.leaderImg.fitFill {
+  object-fit: fill !important;
+}
+
+.leaderCard:hover .leaderImg {
+  transform: scale(1.03);
+}
+
+.leaderPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.leaderInfo {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-top: 1px solid #eef4f8;
+}
+
+.leaderRoleBadge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0878d1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+
+.leaderName {
+  font-size: 16px;
+  font-weight: 800;
+  color: #072b4c;
+  line-height: 1.35;
+  margin: 0 0 4px;
+  transition: color 0.2s ease;
+}
+
+.leaderCard:hover .leaderName {
+  color: #0878d1;
+}
+
+.leaderDept {
+  font-size: 12.5px;
+  color: #5a738e;
+  font-weight: 500;
+  margin: 0 0 10px;
+}
+
+.leaderActionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  background: #f0f7fd;
+  color: #0754a8;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #d0e4f7;
+  transition: all 0.2s ease;
+}
+
+.leaderCard:hover .leaderActionBtn {
+  background: #0878d1;
+  color: #ffffff;
+  border-color: #0878d1;
+}
+
+.rightGridWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.expertSubGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.expertSubGrid[data-count="1"] {
+  grid-template-columns: minmax(0, 240px);
+}
+
+.expertSubGrid[data-count="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.expertSubGrid[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.subExpertCard {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #dce8f1;
+  box-shadow: 0 3px 10px rgba(7, 43, 76, 0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+  height: 240px;
+  box-sizing: border-box;
+}
+
+.subExpertCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(8, 120, 209, 0.14);
+  border-color: #0878d1;
+}
+
+.subLeaderBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  background: linear-gradient(135deg, #072b4c 0%, #0878d1 100%);
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 2.5px 7px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(8, 120, 209, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.subImageFrame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #f8fbfe;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.subImg.fitCoverTop {
+  object-fit: cover !important;
+  object-position: top center !important;
+}
+
+.subImg.fitCoverCenter {
+  object-fit: cover !important;
+  object-position: center center !important;
+}
+
+.subImg.fitCoverBottom {
+  object-fit: cover !important;
+  object-position: bottom center !important;
+}
+
+.subImg.fitFill {
+  object-fit: fill !important;
+}
+
+.subExpertCard:hover .subImg {
+  transform: scale(1.04);
+}
+
+.subPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Hướng 2: Gradient mờ nhẹ nhàng, ôm sát khít ngay trên chữ - không che lấp ảnh */
+.subInfo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  padding: 8px 8px 6px;
+  background: linear-gradient(
+    180deg,
+    rgba(7, 43, 76, 0) 0%,
+    rgba(7, 43, 76, 0.3) 25%,
+    rgba(7, 43, 76, 0.68) 70%,
+    rgba(7, 43, 76, 0.82) 100%
+  );
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  transition: all 0.25s ease;
+}
+
+.subExpertCard:hover .subInfo {
+  background: linear-gradient(
+    180deg,
+    rgba(7, 43, 76, 0) 0%,
+    rgba(8, 120, 209, 0.35) 25%,
+    rgba(7, 84, 168, 0.75) 70%,
+    rgba(7, 43, 76, 0.9) 100%
+  );
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.subName {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 2px;
+  line-height: 1.25;
+  letter-spacing: 0.2px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 2px 6px rgba(0, 0, 0, 0.7);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.subExpertCard:hover .subName {
+  color: #ffffff;
+}
+
+.subPosition {
+  font-size: 11px;
+  color: #bae6fd;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.25;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.subExpertCard:hover .subPosition {
+  color: #e0f2fe;
+}
+
+.subDept {
+  font-size: 10px;
+  color: #93c5fd;
+  font-weight: 500;
+  margin: 1px 0 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.subExpertCard:hover .subDept {
+  color: #ffffff;
+}
+
+/* Hàng chứa thanh điều hướng nằm dưới cùng */
+.paginationRow {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: calc((100% - 310px - 24px) / 2 - 36px);
+  margin-top: 14px;
+}
+
+@media (max-width: 860px) {
+  .paginationRow {
+    justify-content: center;
+    padding-right: 0;
+  }
+}
+
+/* Thanh điều hướng trang của lưới bên phải */
+.gridPaginationControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.gridNavBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #0878d1;
+  background: #ffffff;
+  color: #0878d1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(8, 120, 209, 0.12);
+  transition: all 0.2s ease;
+  user-select: none;
+  padding: 0;
+}
+
+.gridNavBtn svg {
+  stroke: #0878d1;
+  transition: stroke 0.2s ease;
+}
+
+.gridNavBtn:hover {
+  background: #0878d1;
+  border-color: #0878d1;
+  color: #ffffff;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(8, 120, 209, 0.25);
+}
+
+.gridNavBtn:hover svg {
+  stroke: #ffffff;
+}
+
+.gridNavBtn:active {
+  transform: scale(0.95);
+}
+
+.gridCounter {
+  font-size: 14px;
+  font-weight: 500;
+  color: #5a738e;
+  min-width: 50px;
+  text-align: center;
+  user-select: none;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+  .featuredLayoutWrapper {
+    grid-template-columns: 310px 1fr;
+    gap: 20px;
+  }
+  .expertSubGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 860px) {
+  .featuredLayoutWrapper {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .leaderCard {
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .expertSubGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 520px) {
+  .expertSubGrid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
