@@ -879,8 +879,33 @@ export const SiteSettings: GlobalConfig = {
       admin: { description: 'Nên dùng 200 px để khớp banner chuẩn 1300 × 200 px.' },
     },
     { name: 'favicon', label: 'Biểu tượng trình duyệt', type: 'upload', relationTo: 'media', admin: { description: 'Tải mới hoặc chọn lại hình đã có trong Thư viện Tệp & Hình ảnh.' } },
-    { name: 'hotline', label: 'Hotline bệnh viện', type: 'text' },
-    { name: 'emergencyHotline', label: 'Hotline cấp cứu', type: 'text' },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'emergencyHotline',
+          label: '🚨 Số điện thoại CẤP CỨU 24/24 (Đường dây nóng khẩn cấp)',
+          type: 'text',
+          defaultValue: '0292 3861 115',
+          admin: {
+            width: '50%',
+            placeholder: 'VD: 0292 3861 115 hoặc 02923686115',
+            description: 'Dành riêng cho kíp trực Cấp cứu 24/24, các nút gọi khẩn cấp trên Header, Footer, Thanh điều hướng Mobile.',
+          },
+        },
+        {
+          name: 'hotline',
+          label: '📞 Số điện thoại HỖ TRỢ TƯ VẤN / Tổng đài tiếp đón',
+          type: 'text',
+          defaultValue: '0292 3861 234',
+          admin: {
+            width: '50%',
+            placeholder: 'VD: 0292 3861 234 hoặc 02923686115',
+            description: 'Dành cho hỗ trợ hướng dẫn người bệnh, tư vấn lịch khám, thủ tục BHYT và tổng đài chăm sóc khách hàng.',
+          },
+        },
+      ],
+    },
     { name: 'email', label: 'Email', type: 'email' },
     { name: 'address', label: 'Địa chỉ', type: 'textarea' },
     { name: 'workingHours', label: 'Thời gian làm việc', type: 'text' },

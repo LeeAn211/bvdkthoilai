@@ -1,19 +1,25 @@
 # CURRENT TASK
 
-## Trạng thái: HOÀN THÀNH — TỐI ƯU GIAO DIỆN MOBILE & KHỐI CHUYÊN GIA
+## Trạng thái: HOÀN THÀNH — TÁCH RIÊNG HOTLINE CẤP CỨU VÀ SỐ TƯ VẤN TRONG ADMIN CMS
 
 - Mục tiêu:
-  1. Cho phép click trực tiếp vào toàn bộ ô chuyên gia nhỏ trong khối "Chuyên gia của chúng tôi" để mở trang chi tiết bác sĩ, bỏ chữ "Xem chi tiết" để giữ ô gọn gàng, thoáng đãng.
-  2. Tối ưu hiển thị khối Chuyên gia trên mobile: hiển thị gọn gàng 1 thẻ chuyên gia tại một thời điểm (thay vì dồn nhiều ô cùng lúc), hỗ trợ thao tác vuốt cảm ứng (swipe).
-  3. Tự động ẩn các tab nội dung / danh mục không có dữ liệu trên thiết bị di động (<= 768px).
+  1. Tách riêng 2 số điện thoại: **Số điện thoại Cấp cứu 24/24** và **Số điện thoại Hỗ trợ tư vấn / Tổng đài tiếp đón** trong Admin CMS để quản trị viên dễ dàng cấu hình độc lập.
+  2. Đồng bộ hiển thị trên Header, Mobile Quick Drawer (`MobileTopBar`) và Thanh điều hướng chân trang di động (`MobileBottomNav`).
+  3. **Ràng buộc Git**: Giữ tại máy local, **chưa đưa lên GitHub** cho đến khi có yêu cầu cụ thể từ người dùng.
 - Đã hoàn thành:
-  - `src/components/OurExpertsFeaturedGrid.tsx`: Bỏ `e.preventDefault()`, bỏ nhãn text thừa, click toàn bộ card mở trang chi tiết bác sĩ, thêm touch event vuốt chuyển chuyên gia.
-  - `src/components/OurExpertsFeaturedGrid.module.css`: Thêm kiểu dáng badge `subViewDetail` nổi bật, tinh tế.
-  - `src/components/OurExpertsCarousel.tsx`: Thêm `viewportPerView` phát hiện kích thước màn hình linh hoạt. Trên mobile hiển thị đúng 1 card duy nhất, lướt mượt mà.
-  - `src/components/HomeDepartmentTabs.tsx`, `ScheduleExplorer.tsx`, `SearchFilter.tsx`: Đánh dấu `mobileEmptyTab` cho các tab có 0 mục dữ liệu.
-  - `src/app/globals.css`: Ẩn `.mobileEmptyTab` trên màn hình di động (<= 768px).
-- Kiểm tra: Không lỗi syntax, build/dev server Next.js chạy mượt mà.
-- Database/Schema: Không thay đổi DB/Schema.
+  - `src/globals/SiteSettings.ts`: Gom 2 trường `emergencyHotline` và `hotline` vào 1 hàng ngang (row 50/50), đặt label nhận diện trực quan:
+    - `emergencyHotline`: "🚨 Số điện thoại CẤP CỨU 24/24 (Đường dây nóng khẩn cấp)"
+    - `hotline`: "📞 Số điện thoại HỖ TRỢ TƯ VẤN / Tổng đài tiếp đón"
+  - `src/globals/ContactSettings.ts`: Gom 2 trường vào row 50/50 tương tự trong mục Thông tin liên hệ cơ bản.
+  - `src/components/MobileTopBar.tsx`: Thêm prop `emergencyHotline`, tách `cleanEmergency` cho nút Cấp cứu và `cleanPhone` cho số tư vấn.
+  - `src/components/SiteHeader.tsx`: Truyền độc lập `emergency` và `hotline` vào `MobileTopBar`.
+  - `src/components/MobileBottomNav.tsx`: Thêm prop `emergencyHotline`, nút Cấp cứu ưu tiên gọi đúng số Cấp cứu.
+  - `src/app/(frontend)/layout.tsx`: Truyền cả 2 số vào `MobileBottomNav`.
+- Kiểm tra:
+  - `npx tsc --noEmit` hoàn tất: mã thoát 0, không có bất kỳ lỗi TypeScript nào.
+  - Dev server hoạt động bình thường.
+- Database/Schema: Giữ nguyên cấu trúc cột database hiện có (`hotline`, `emergency_hotline`), không làm thay đổi schema DB.
+- Git: Chưa commit, chưa push lên GitHub theo đúng yêu cầu.
 
 ---
 

@@ -1,5 +1,21 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
+## [2026-09-19] - Tách riêng cấu hình Hotline Cấp cứu 24/24 và Số điện thoại Tư vấn trong Admin CMS
+
+- **Tách riêng cấu hình trong Admin CMS**:
+  - `src/globals/SiteSettings.ts`: Tách 2 trường `emergencyHotline` và `hotline` vào hàng ngang (row 50/50) với nhãn nhận diện trực quan:
+    - `emergencyHotline`: **"🚨 Số điện thoại CẤP CỨU 24/24 (Đường dây nóng khẩn cấp)"** - Dành riêng cho kíp trực cấp cứu, nút gọi cấp cứu khẩn cấp trên Header, Footer, Mobile bar.
+    - `hotline`: **"📞 Số điện thoại HỖ TRỢ TƯ VẤN / Tổng đài tiếp đón"** - Dành cho tư vấn khám bệnh, thủ tục BHYT, hướng dẫn người bệnh.
+  - `src/globals/ContactSettings.ts`: Đồng bộ hiển thị 2 trường trong nhóm Thông tin liên hệ cốt lõi dạng row 50/50, giúp quản trị viên quản lý độc lập, rõ ràng từng số.
+- **Đồng bộ hiển thị Frontend**:
+  - `src/components/MobileTopBar.tsx`: Bổ sung prop `emergencyHotline`, tách logic số cấp cứu (`cleanEmergency`) riêng biệt với hotline tư vấn (`cleanPhone`). Nút "Cấp cứu" trên menu di động gọi trực tiếp số cấp cứu 24/24.
+  - `src/components/SiteHeader.tsx`: Truyền độc lập `emergency` và `hotline` vào `MobileTopBar`.
+  - `src/components/MobileBottomNav.tsx`: Bổ sung prop `emergencyHotline`, nút Cấp cứu trên thanh điều hướng chân trang di động ưu tiên gọi đúng số Cấp cứu 24/24.
+  - `src/app/(frontend)/layout.tsx`: Truyền đồng thời `hotline` và `emergencyHotline` từ `SiteSettings` vào `MobileBottomNav`.
+- **Files Modified**: `src/globals/SiteSettings.ts`, `src/globals/ContactSettings.ts`, `src/components/MobileTopBar.tsx`, `src/components/SiteHeader.tsx`, `src/components/MobileBottomNav.tsx`, `src/app/(frontend)/layout.tsx`, `CHANGELOG.md`, `CURRENT-TASK.md`.
+- **Database/Schema**: Giữ nguyên tên trường `hotline` và `emergencyHotline` sẵn có trong DB PostgreSQL; không thay đổi schema, không cần tạo migration mới.
+- **Git status**: Lưu tại local, **chưa commit/push lên GitHub** theo đúng yêu cầu người dùng.
+
 ## [2026-09-19] - Tối ưu trải nghiệm mobile: Khối Chuyên gia & Tự động ẩn Tab không có dữ liệu
 
 - **Chuyên gia của chúng tôi (Our Experts) trên điện thoại**:

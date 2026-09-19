@@ -458,6 +458,7 @@ export async function SiteHeader() {
       {/* Mobile Top Bar — only visible on < 900px */}
       <MobileTopBar
         hotline={hotline}
+        emergencyHotline={emergency}
         items={items}
         medproUrl={medproUrl}
         socialLinks={socialLinks}

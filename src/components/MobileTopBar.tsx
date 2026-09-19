@@ -12,6 +12,7 @@ interface SocialLink {
 
 interface MobileTopBarProps {
   hotline?: string
+  emergencyHotline?: string
   items: any[]
   medproUrl?: string
   socialLinks?: SocialLink[]
@@ -62,6 +63,7 @@ function SocialIcon({ platform }: { platform: string }) {
 
 export function MobileTopBar({
   hotline = '02923686115',
+  emergencyHotline,
   items,
   medproUrl = 'https://medpro.vn/',
   socialLinks = [],
@@ -95,6 +97,7 @@ export function MobileTopBar({
   if (!shouldRender(topBarVisibility)) return null
 
   const visibleSocials = socialLinks.slice(0, 3)
+  const cleanEmergency = (emergencyHotline || hotline).replace(/[^\d+]/g, '') || '02923686115'
   const cleanPhone = hotline.replace(/[^\d+]/g, '') || '02923686115'
 
   return (
@@ -201,7 +204,7 @@ export function MobileTopBar({
             </svg>
             Đặt khám
           </a>
-          <a className="mqBtn mqBtnEmergency" href={`tel:${cleanPhone}`}>
+          <a className="mqBtn mqBtnEmergency" href={`tel:${cleanEmergency}`} title="Gọi cấp cứu 24/24">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M7.4 3.6 10 7.3 8.3 9.1c1.1 2.3 3.1 4.3 5.4 5.4l1.8-1.7 3.7 2.6-.6 3.4c-.2 1-1.1 1.7-2.1 1.6C9.3 19.5 4.5 14.7 3.6 7.5c-.1-1 .6-1.9 1.6-2.1l2.2-.4Z" />
             </svg>

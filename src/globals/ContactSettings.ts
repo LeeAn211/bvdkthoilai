@@ -64,8 +64,33 @@ export const ContactSettings: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'address', label: 'Địa chỉ bệnh viện', type: 'textarea', defaultValue: 'Ấp Thới Phong, Xã Thới Lai, Thành phố Cần Thơ' },
-        { name: 'hotline', label: 'Hotline tư vấn / Tổng đài', type: 'text', defaultValue: '0292 3861 234' },
-        { name: 'emergencyHotline', label: 'Hotline Cấp cứu 24/24', type: 'text', defaultValue: '0292 3861 115' },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'emergencyHotline',
+              label: '🚨 Số điện thoại CẤP CỨU 24/24 (Đường dây nóng khẩn cấp)',
+              type: 'text',
+              defaultValue: '0292 3861 115',
+              admin: {
+                width: '50%',
+                placeholder: 'VD: 0292 3861 115',
+                description: 'Đường dây nóng kíp trực Cấp cứu 24/24, hiển thị trên thẻ khẩn cấp và nút gọi ngay.',
+              },
+            },
+            {
+              name: 'hotline',
+              label: '📞 Số điện thoại HỖ TRỢ TƯ VẤN / Tổng đài tiếp đón',
+              type: 'text',
+              defaultValue: '0292 3861 234',
+              admin: {
+                width: '50%',
+                placeholder: 'VD: 0292 3861 234',
+                description: 'Tổng đài tư vấn khám bệnh, hướng dẫn BHYT, hỗ trợ đặt lịch khám.',
+              },
+            },
+          ],
+        },
         { name: 'email', label: 'Hòm thư điện tử (Email)', type: 'email', defaultValue: 'bvdkthoilai@cantho.gov.vn' },
         { name: 'workingHours', label: 'Thời gian khám bệnh ngoại trú', type: 'text', defaultValue: 'Thứ 2 – Thứ 7: Sáng 06:30 – 11:30 | Chiều 13:00 – 17:00 (Cấp cứu trực 24/24)' },
         { name: 'googleMapsUrl', label: 'Đường dẫn mở Google Maps trực tiếp (Nút Chỉ đường)', type: 'text', defaultValue: 'https://maps.google.com' },

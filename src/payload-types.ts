@@ -5171,8 +5171,14 @@ export interface SiteSetting {
    * Tải mới hoặc chọn lại hình đã có trong Thư viện Tệp & Hình ảnh.
    */
   favicon?: (number | null) | Media;
-  hotline?: string | null;
+  /**
+   * Dành riêng cho kíp trực Cấp cứu 24/24, các nút gọi khẩn cấp trên Header, Footer, Thanh điều hướng Mobile.
+   */
   emergencyHotline?: string | null;
+  /**
+   * Dành cho hỗ trợ hướng dẫn người bệnh, tư vấn lịch khám, thủ tục BHYT và tổng đài chăm sóc khách hàng.
+   */
+  hotline?: string | null;
   email?: string | null;
   address?: string | null;
   workingHours?: string | null;
@@ -6004,8 +6010,14 @@ export interface ContactSetting {
   };
   coreInfo?: {
     address?: string | null;
-    hotline?: string | null;
+    /**
+     * Đường dây nóng kíp trực Cấp cứu 24/24, hiển thị trên thẻ khẩn cấp và nút gọi ngay.
+     */
     emergencyHotline?: string | null;
+    /**
+     * Tổng đài tư vấn khám bệnh, hướng dẫn BHYT, hỗ trợ đặt lịch khám.
+     */
+    hotline?: string | null;
     email?: string | null;
     workingHours?: string | null;
     googleMapsUrl?: string | null;
@@ -8992,8 +9004,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   headerBannerWidth?: T;
   headerBannerHeight?: T;
   favicon?: T;
-  hotline?: T;
   emergencyHotline?: T;
+  hotline?: T;
   email?: T;
   address?: T;
   workingHours?: T;
@@ -9532,8 +9544,8 @@ export interface ContactSettingsSelect<T extends boolean = true> {
     | T
     | {
         address?: T;
-        hotline?: T;
         emergencyHotline?: T;
+        hotline?: T;
         email?: T;
         workingHours?: T;
         googleMapsUrl?: T;

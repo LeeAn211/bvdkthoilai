@@ -13,6 +13,7 @@ import { getVisibilityClass, shouldRender } from '@/lib/deviceVisibility'
 export function MobileBottomNav({
   enabled = true,
   hotline = '02923686115',
+  emergencyHotline,
   medproUrl = 'https://medpro.vn/',
   navVisibility = 'mobile_only',
   bookingBtnVisibility = 'mobile_only',
@@ -20,6 +21,7 @@ export function MobileBottomNav({
 }: {
   enabled?: boolean
   hotline?: string
+  emergencyHotline?: string
   medproUrl?: string
   navVisibility?: string
   bookingBtnVisibility?: string
@@ -27,6 +29,7 @@ export function MobileBottomNav({
 }) {
   const pathname = usePathname()
   if (enabled === false || !shouldRender(navVisibility)) return null
+  const cleanEmergency = (emergencyHotline || hotline).replace(/[^\d+]/g, '') || '02923686115'
   const cleanPhone = hotline.replace(/[^\d+]/g, '') || '02923686115'
 
   const isActive = (href: string) =>
@@ -85,9 +88,9 @@ export function MobileBottomNav({
       {/* Cấp cứu */}
       {shouldRender(emergencyBtnVisibility) && (
         <a
-          href={`tel:${cleanPhone}`}
+          href={`tel:${cleanEmergency}`}
           className={`mbnTab mbnEmergency ${getVisibilityClass(emergencyBtnVisibility)}`}
-          aria-label={`Gọi cấp cứu ${hotline}`}
+          aria-label={`Gọi cấp cứu ${emergencyHotline || hotline}`}
         >
           <span className="mbnIcon">
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

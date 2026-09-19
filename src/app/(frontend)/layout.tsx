@@ -112,7 +112,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
         <MobileBottomNav
           enabled={footer?.showMobileBar !== false}
-          hotline={settings?.hotline || settings?.emergencyHotline || process.env.NEXT_PUBLIC_HOTLINE || '02923686115'}
+          hotline={settings?.hotline || process.env.NEXT_PUBLIC_HOTLINE || '02923686115'}
+          emergencyHotline={settings?.emergencyHotline || '02923686115'}
           medproUrl={settings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'}
           navVisibility={displaySettings?.mobileBottomNav || 'mobile_only'}
           bookingBtnVisibility={displaySettings?.mobileBottomBookingBtn || 'mobile_only'}
