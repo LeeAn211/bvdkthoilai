@@ -67,7 +67,6 @@ export function FeaturedContentCarousel({ items, interval = 4500, cardFit = 'cov
     </div>
     {safeItems.length > visibleCount && <div className={styles.controls}>
       <button type="button" onClick={previous} aria-label="Nội dung trước">‹</button>
-      <span>{start + 1} / {safeItems.length}</span>
       <button type="button" onClick={next} aria-label="Nội dung tiếp theo">›</button>
     </div>}
   </div>

@@ -20,7 +20,7 @@ export interface DocumentDetailData {
   fileName?: string
   fileSize?: string | number
   fileFormat?: string
-  accessMode?: 'public' | 'pin' | 'internal' | 'locked'
+  accessMode?: 'public' | 'pin' | 'internal' | 'locked' | 'view_only'
   pinCode?: string
   defaultPin?: string
   allowDownload?: boolean
@@ -34,9 +34,16 @@ export interface DocumentDetailData {
   summarySize?: 'normal' | 'large' | 'small'
 }
 
-export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
+export function DocumentDetailView({
+  doc,
+  hideHeader = false,
+}: {
+  doc: DocumentDetailData
+  hideHeader?: boolean
+}) {
   const isPinProtected = doc.accessMode === 'pin'
   const isFullyLocked = doc.accessMode === 'locked'
+  const isViewOnly = doc.accessMode === 'view_only'
   const sessionKey = `doc_pin_unlocked_${doc.id}`
 
   // Trạng thái đã mở khóa mã PIN hay chưa
@@ -95,13 +102,13 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
   // Quyền thao tác thực tế: Nếu là PIN thì phải đã unlock, nếu là locked thì luôn cấm
   const canAccessDocument = (!isPinProtected || isUnlocked) && !isFullyLocked
 
-  // Đối với tài liệu có cài mật khẩu (isPinProtected): Tuyệt đối CHỈ CHO XEM TRỰC TIẾP TRÊN WEB,
-  // KHÔNG cho phép tải file về máy, không mở cửa sổ mới và cấm in ấn, sao chép.
-  const canDownload = !isPinProtected && canAccessDocument && doc.allowDownload !== false
+  // Đối với tài liệu có cài mật khẩu (isPinProtected) hoặc chế độ Chỉ xem trực tuyến (isViewOnly):
+  // Tuyệt đối CHỈ CHO XEM TRỰC TIẾP TRÊN WEB, KHÔNG cho phép tải file về máy, không mở cửa sổ mới và cấm in ấn, sao chép với mọi hình thức.
+  const canDownload = !isPinProtected && !isViewOnly && canAccessDocument && doc.allowDownload !== false
 
-  // Chặn sao chép và chặn in: Kích hoạt khi bật cờ riêng HOẶC khi tài liệu có mật khẩu bảo mật
-  const isCopyDisabled = Boolean(doc.preventCopy) || isPinProtected
-  const isPrintDisabled = Boolean(doc.preventPrint) || isPinProtected
+  // Chặn sao chép và chặn in: Kích hoạt khi bật cờ riêng HOẶC khi tài liệu có mật khẩu HOẶC khi ở chế độ view_only
+  const isCopyDisabled = Boolean(doc.preventCopy) || isPinProtected || isViewOnly
+  const isPrintDisabled = Boolean(doc.preventPrint) || isPinProtected || isViewOnly
 
   // Link viewer: nếu chưa unlock thì tuyệt đối không tải url file vào iframe
   // Khi là tài liệu khóa PIN hoặc cấm tải: cưỡng chế PDF toolbar=0 để ẩn nút In & Tải về của trình đọc PDF
@@ -143,7 +150,20 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
           </div>
         )}
 
-        {!isPinProtected && doc.preventCopy && (
+        {/* Banner thông báo chế độ chỉ xem trực tuyến (view_only) */}
+        {isViewOnly && (
+          <div className={styles.protectionNotice} style={{ background: '#fffbeb', borderColor: '#fde68a', color: '#92400e' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <span>
+              <strong>Chế độ chỉ xem trực tuyến:</strong> Văn bản được cấu hình bảo mật nghiêm ngặt – chỉ cho phép xem trực tiếp trên trang web, nghiêm cấm tải về, sao chép hoặc in ấn với mọi hình thức.
+            </span>
+          </div>
+        )}
+
+        {!isPinProtected && !isViewOnly && doc.preventCopy && (
           <div className={styles.protectionNotice}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -156,10 +176,52 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
         )}
 
         {/* Tiêu đề chính của văn bản / phác đồ điều trị */}
-        <header className={`${styles.header} ${styles[`align_${doc.textAlign || 'left'}`] || ''}`}>
-          <div className={`${styles.badgeGroup} ${doc.textAlign === 'center' ? styles.justifyCenter : doc.textAlign === 'right' ? styles.justifyEnd : ''}`}>
+        {!hideHeader ? (
+          <header className={`${styles.header} ${styles[`align_${doc.textAlign || 'left'}`] || ''}`}>
+            <div className={`${styles.badgeGroup} ${doc.textAlign === 'center' ? styles.justifyCenter : doc.textAlign === 'right' ? styles.justifyEnd : ''}`}>
+              <span className={styles.docBadge}>{doc.documentType || 'Văn bản – Tài liệu'}</span>
+              {doc.category && <span className={styles.categoryBadge}>{doc.category}</span>}
+              {isViewOnly && (
+                <span className={styles.lockBadge} style={{ background: '#fef3c7', color: '#92400e', borderColor: '#fcd34d' }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <span>Chỉ xem trực tuyến</span>
+                </span>
+              )}
+              {isPinProtected && (
+                <span className={styles.lockBadge}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <span>{isUnlocked ? 'Đã mở khóa nội bộ' : 'Yêu cầu mã xác thực'}</span>
+                </span>
+              )}
+              {isFullyLocked && (
+                <span className={styles.lockBadge} style={{ background: '#f5f5f5', color: '#595959', borderColor: '#d9d9d9' }}>
+                  <span>Chỉ xem trích yếu</span>
+                </span>
+              )}
+            </div>
+            <h1 className={`${styles.title} ${styles[`titleColor_${doc.titleColor || 'default'}`] || ''} ${styles[`titleSize_${doc.titleSize || 'normal'}`] || ''}`}>
+              {doc.title}
+            </h1>
+          </header>
+        ) : (
+          <div className={styles.badgeGroup} style={{ marginBottom: 16 }}>
             <span className={styles.docBadge}>{doc.documentType || 'Văn bản – Tài liệu'}</span>
             {doc.category && <span className={styles.categoryBadge}>{doc.category}</span>}
+            {isViewOnly && (
+              <span className={styles.lockBadge} style={{ background: '#fef3c7', color: '#92400e', borderColor: '#fcd34d' }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span>Chỉ xem trực tuyến</span>
+              </span>
+            )}
             {isPinProtected && (
               <span className={styles.lockBadge}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -175,10 +237,7 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
               </span>
             )}
           </div>
-          <h1 className={`${styles.title} ${styles[`titleColor_${doc.titleColor || 'default'}`] || ''} ${styles[`titleSize_${doc.titleSize || 'normal'}`] || ''}`}>
-            {doc.title}
-          </h1>
-        </header>
+        )}
 
         {/* Bảng thuộc tính chuẩn phong cách Cổng thông tin Sở Y tế Cần Thơ */}
         <div className={styles.tableWrapper}>
@@ -430,6 +489,16 @@ export function DocumentDetailView({ doc }: { doc: DocumentDetailData }) {
             </div>
 
             <div className={styles.frameContainer}>
+              {!canDownload && (
+                <div
+                  className={styles.viewerSecurityOverlay}
+                  onContextMenu={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}
+                  title="Tài liệu bảo mật lưu hành nội bộ – Vui lòng xem trực tiếp trên trang web (Chức năng sao chép, tải về và in ấn đã được vô hiệu hóa)"
+                />
+              )}
               <iframe
                 src={embedViewerUrl}
                 className={styles.iframe}

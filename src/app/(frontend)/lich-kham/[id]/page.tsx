@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
+import { PageHero } from '@/components/PageHero'
 import { RichText } from '@/components/RichText'
 import { AttachmentList } from '@/components/AttachmentList'
 import { BackToList } from '@/components/BackToList'
@@ -391,31 +392,26 @@ export default async function ScheduleDetailPage({ params }: Props) {
   return (
     <>
       <SiteHeader />
+      <PageHero
+        eyebrow={eyebrow}
+        title={item.title}
+        description={item.summary || undefined}
+        breadcrumbParent="Khám bệnh & Dịch vụ"
+        breadcrumbParentHref="/lich-kham"
+        breadcrumb="Lịch khám bệnh"
+        breadcrumbHref="/lich-kham"
+      />
       <main className="article-shell container scheduleDetail">
-        {mode !== 'daily' && mode !== 'emergency' && (
-          <>
-            <div className="article-meta">{eyebrow}</div>
-            <h1>{item.title}</h1>
-            {item.summary && <p className="article-lead">{item.summary}</p>}
-            {image && (
-              <div className="articleCoverFrame">
-                <img className="articleCover scheduleDetailCover" src={image} alt={item.title} />
-              </div>
-            )}
-          </>
+        {mode !== 'daily' && mode !== 'emergency' && image && (
+          <div className="articleCoverFrame">
+            <img className="articleCover scheduleDetailCover" src={image} alt={item.title} />
+          </div>
         )}
 
-        {mode === 'daily' && dailyAssignments.length === 0 && (
-          <>
-            <div className="article-meta">{eyebrow}</div>
-            <h1>{item.title}</h1>
-            {item.summary && <p className="article-lead">{item.summary}</p>}
-            {image && (
-              <div className="articleCoverFrame">
-                <img className="articleCover scheduleDetailCover" src={image} alt={item.title} />
-              </div>
-            )}
-          </>
+        {mode === 'daily' && dailyAssignments.length === 0 && image && (
+          <div className="articleCoverFrame">
+            <img className="articleCover scheduleDetailCover" src={image} alt={item.title} />
+          </div>
         )}
 
         {mode === 'daily' && dailyAssignments.length > 0 && (

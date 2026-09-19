@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260919_045_add_sub_cover_and_custom_icon_to_specialties",
-  "schemaSha256": "36d3def946451902c238aedceee029d2249fdf45089df1ccbbce7bb056cae616"
+  "migrationId": "20260919_048_add_document_columns_to_homepage_sections",
+  "schemaSha256": "0d47b39d31a197ca498c821594b83c22263706aa56e88e13ca539682f5e6f743"
 }

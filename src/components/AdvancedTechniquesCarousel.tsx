@@ -182,10 +182,6 @@ export function AdvancedTechniquesCarousel({
             </svg>
           </button>
 
-          <span className={styles.techCarouselCounter}>
-            {currentIndex + 1} / {total}
-          </span>
-
           <button
             type="button"
             className={styles.techNavBtn}

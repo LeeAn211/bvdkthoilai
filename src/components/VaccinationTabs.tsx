@@ -386,24 +386,14 @@ export function VaccinationTabs({
 
     return <div className="vaccinationPanel">
       {definition.kind === 'vaccines' && (
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '16px' }}>
-          <span style={{ fontSize: '12.5px', fontWeight: 700, color: '#64748b' }}>Lọc theo độ tuổi:</span>
+        <div className="vaccineAgeFilterBar">
+          <span className="vaccineAgeFilterLabel">Lọc theo độ tuổi:</span>
           {ageOptions.map(opt => (
             <button
               key={opt.value}
               type="button"
               onClick={() => { setSelectedAge(opt.value); setExpandedTab(null); setCarouselIndex(0) }}
-              style={{
-                padding: '4px 12px',
-                borderRadius: '99px',
-                fontSize: '12px',
-                fontWeight: selectedAge === opt.value ? 700 : 500,
-                border: selectedAge === opt.value ? '1.5px solid #0878d1' : '1px solid #cbd5e1',
-                background: selectedAge === opt.value ? '#e0f2fe' : '#ffffff',
-                color: selectedAge === opt.value ? '#0369a1' : '#475569',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
+              className={`vaccineAgeFilterBtn ${selectedAge === opt.value ? 'active' : ''}`}
             >
               {opt.label}
             </button>
@@ -434,7 +424,7 @@ export function VaccinationTabs({
                 ))}
               </div>
 
-              {/* Thanh điều hướng Trước/Sau & Dots */}
+              {/* Thanh điều hướng Trước/Sau tinh gọn (chỉ giữ 2 nút < và > đồng bộ) */}
               <div className="vaccineCarouselControls">
                 <button
                   type="button"
@@ -447,18 +437,6 @@ export function VaccinationTabs({
                     <polyline points="15 18 9 12 15 6" />
                   </svg>
                 </button>
-
-                <div className="vaccineCarouselDots">
-                  {items.map((_, dotIdx) => (
-                    <button
-                      key={dotIdx}
-                      type="button"
-                      className={`vaccineCarouselDot ${carouselIndex === dotIdx ? 'active' : ''}`}
-                      onClick={() => setCarouselIndex(dotIdx)}
-                      aria-label={`Chuyển đến vắc xin ${dotIdx + 1}`}
-                    />
-                  ))}
-                </div>
 
                 <button
                   type="button"

@@ -254,6 +254,7 @@ export const enum__procurement_v_version_status = pgEnum(
 );
 export const enum_documents_access_mode = pgEnum("enum_documents_access_mode", [
   "public",
+  "view_only",
   "pin",
   "internal",
   "locked",
@@ -286,7 +287,7 @@ export const enum_documents_summary_size = pgEnum(
 );
 export const enum__documents_v_version_access_mode = pgEnum(
   "enum__documents_v_version_access_mode",
-  ["public", "pin", "internal", "locked"],
+  ["public", "view_only", "pin", "internal", "locked"],
 );
 export const enum__documents_v_version_text_align = pgEnum(
   "enum__documents_v_version_text_align",
@@ -310,7 +311,7 @@ export const enum__documents_v_version_summary_size = pgEnum(
 );
 export const enum_clinical_protocols_access_mode = pgEnum(
   "enum_clinical_protocols_access_mode",
-  ["public", "pin", "internal", "locked"],
+  ["public", "view_only", "pin", "internal", "locked"],
 );
 export const enum_clinical_protocols_text_align = pgEnum(
   "enum_clinical_protocols_text_align",
@@ -334,7 +335,7 @@ export const enum_clinical_protocols_summary_size = pgEnum(
 );
 export const enum__clinical_protocols_v_version_access_mode = pgEnum(
   "enum__clinical_protocols_v_version_access_mode",
-  ["public", "pin", "internal", "locked"],
+  ["public", "view_only", "pin", "internal", "locked"],
 );
 export const enum__clinical_protocols_v_version_text_align = pgEnum(
   "enum__clinical_protocols_v_version_text_align",
@@ -1429,6 +1430,10 @@ export const enum_homepage_sections_section_layout = pgEnum(
   "enum_homepage_sections_section_layout",
   ["editorial-grid", "card-grid-4", "list-rows", "compact-list"],
 );
+export const enum_homepage_sections_document_columns = pgEnum(
+  "enum_homepage_sections_document_columns",
+  ["3", "4", "5"],
+);
 export const enum_homepage_sections_font_family = pgEnum(
   "enum_homepage_sections_font_family",
   [
@@ -1578,6 +1583,10 @@ export const enum__homepage_v_version_sections_button_link_mode = pgEnum(
 export const enum__homepage_v_version_sections_section_layout = pgEnum(
   "enum__homepage_v_version_sections_section_layout",
   ["editorial-grid", "card-grid-4", "list-rows", "compact-list"],
+);
+export const enum__homepage_v_version_sections_document_columns = pgEnum(
+  "enum__homepage_v_version_sections_document_columns",
+  ["3", "4", "5"],
 );
 export const enum__homepage_v_version_sections_font_family = pgEnum(
   "enum__homepage_v_version_sections_font_family",
@@ -3750,6 +3759,7 @@ export const specialties = pgTable(
     cover: integer("cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
+    showSubCover: boolean("show_sub_cover").default(true),
     subCover: integer("sub_cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
@@ -3879,6 +3889,7 @@ export const _specialties_v = pgTable(
     version_cover: integer("version_cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
+    version_showSubCover: boolean("version_show_sub_cover").default(true),
     version_subCover: integer("version_sub_cover_id").references(
       () => media.id,
       {
@@ -13625,6 +13636,8 @@ export const homepage_sections = pgTable(
       enum_homepage_sections_section_layout("section_layout").default(
         "editorial-grid",
       ),
+    documentColumns:
+      enum_homepage_sections_document_columns("document_columns").default("3"),
     layoutItemLimit: numeric("layout_item_limit", { mode: "number" }).default(
       5,
     ),
@@ -14478,6 +14491,10 @@ export const _homepage_v_version_sections = pgTable(
       enum__homepage_v_version_sections_section_layout(
         "section_layout",
       ).default("editorial-grid"),
+    documentColumns:
+      enum__homepage_v_version_sections_document_columns(
+        "document_columns",
+      ).default("3"),
     layoutItemLimit: numeric("layout_item_limit", { mode: "number" }).default(
       5,
     ),
@@ -24005,6 +24022,7 @@ type DatabaseSchema = {
   enum_homepage_sections_image_position: typeof enum_homepage_sections_image_position;
   enum_homepage_sections_button_link_mode: typeof enum_homepage_sections_button_link_mode;
   enum_homepage_sections_section_layout: typeof enum_homepage_sections_section_layout;
+  enum_homepage_sections_document_columns: typeof enum_homepage_sections_document_columns;
   enum_homepage_sections_font_family: typeof enum_homepage_sections_font_family;
   enum_homepage_status: typeof enum_homepage_status;
   enum__homepage_v_version_quick_links_visual_mode: typeof enum__homepage_v_version_quick_links_visual_mode;
@@ -24031,6 +24049,7 @@ type DatabaseSchema = {
   enum__homepage_v_version_sections_image_position: typeof enum__homepage_v_version_sections_image_position;
   enum__homepage_v_version_sections_button_link_mode: typeof enum__homepage_v_version_sections_button_link_mode;
   enum__homepage_v_version_sections_section_layout: typeof enum__homepage_v_version_sections_section_layout;
+  enum__homepage_v_version_sections_document_columns: typeof enum__homepage_v_version_sections_document_columns;
   enum__homepage_v_version_sections_font_family: typeof enum__homepage_v_version_sections_font_family;
   enum__homepage_v_version_status: typeof enum__homepage_v_version_status;
   hist_milestone_align: typeof hist_milestone_align;

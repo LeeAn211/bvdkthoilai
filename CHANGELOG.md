@@ -1,28 +1,341 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
+ 
++## [2026-09-19] - Sửa khối "Chuyên gia của chúng tôi" hiển thị quá nhiều ô trên điện thoại
++
++- **Thời gian:** 15:33 (Asia/Saigon)
++- **Tóm tắt:** Trên điện thoại/tablet, khối chuyên gia hiển thị 5 ô trong 1 lần — quá nhiều, thẻ bị thu nhỏ khó đọc.
++- **Nguyên nhân:** CSS module chưa có rule cho `data-count="5"` và breakpoint tablet không giới hạn số card hiển thị.
++- **Thay đổi (`src/components/OurExpertsCarousel.module.css`):**
++  - Thêm grid rule `data-count="5"` cho desktop (5 cột).
++  - `≤ 1024px` (tablet lớn): Grid 3 cột, ẩn card từ thứ 4 trở đi → chỉ hiện 3 chuyên gia.
++  - `≤ 800px` (tablet nhỏ / phone ngang): Grid 2 cột, ẩn card từ thứ 3 trở đi → chỉ hiện 2 chuyên gia.
++  - `≤ 600px` (điện thoại đứng): 1 cột, ẩn card từ thứ 2 → chỉ hiện 1 chuyên gia (đã có từ trước).
++- **File Modified:** `src/components/OurExpertsCarousel.module.css`
 
-## [2026-09-19] - Nâng Cấp Khối Chuyên Gia (Featured Grid): Cố Định Khung, Chuyển Ảnh & Tự Động Luân Phiên (Autoplay)
++## [2026-09-19] - Sửa lỗi giật trang khi lướt trên điện thoại (tắt scroll-snap trên mobile)
 
-- **Thời gian thực hiện:** 13:12 (Asia/Saigon)
++
++- **Thời gian:** 15:24 (Asia/Saigon)
++- **Tóm tắt:** Trên điện thoại, khi lướt quá một vị trí, trang bị giật (snap) ngược về phần trước.
++- **Nguyên nhân:** `scroll-snap-type: y proximity` trên thẻ `html` kích hoạt toàn bộ trang kể cả màn hình cảm ứng. Trên thiết bị touch, `proximity` snap tự động kéo trang về điểm snap gần nhất sau mỗi lần vuốt.
++- **Giải pháp (`src/app/styles/30-home-editorial.css`):**
++  - Bọc toàn bộ scroll-snap rules trong `@media (hover: hover) and (pointer: fine)` — chỉ áp dụng cho thiết bị có chuột (mouse pointer).
++  - Thêm `@media (max-width: 900px)` ghi đè buộc `scroll-snap-type: none !important` và `scroll-snap-align: none !important` cho mọi màn hình nhỏ, bất kể thiết bị nào.
++  - Kết quả: Desktop vẫn có hiệu ứng snap mượt mà, điện thoại/tablet lướt tự do hoàn toàn.
++- **File Modified:** `src/app/styles/30-home-editorial.css`
+
++## [2026-09-19] - Xóa tiêu đề lặp lại trong trang chi tiết Lịch khám bệnh
+
++
++- **Thời gian:** 15:21 (Asia/Saigon)
++- **Tóm tắt:** Sau khi thêm `PageHero`, trang `/lich-kham/[id]` bị lặp eyebrow + `<h1>` tiêu đề + mô tả ở cả Hero bar lẫn trong `<main>`.
++- **Nguyên nhân:** Code cũ render `<div class="article-meta">`, `<h1>`, `<p class="article-lead">` bên trong `<main>` — nay `PageHero` đã đảm nhận việc này.
++- **Thay đổi:** Xóa 3 phần tử trùng lặp (`article-meta`, `h1`, `article-lead`) khỏi 2 khối mode `weekly/attachment` và `daily (empty)`. Chỉ giữ lại ảnh bìa nếu có.
++- **File Modified:** `src/app/(frontend)/lich-kham/[id]/page.tsx`
++- **TypeScript:** 0 lỗi.
+
++## [2026-09-19] - Thêm Breadcrumb chuẩn cho trang chi tiết Lịch khám bệnh (/lich-kham/[id])
+
++
++- **Thời gian:** 15:19 (Asia/Saigon)
++- **Tóm tắt:** Trang `/lich-kham/[id]` (chi tiết lịch khám) thiếu hoàn toàn `PageHero` và breadcrumb điều hướng.
++- **Thay đổi `src/app/(frontend)/lich-kham/[id]/page.tsx`:**
++  - Import thêm `PageHero` component.
++  - Chèn `<PageHero>` giữa `<SiteHeader>` và `<main>` với:
++    - `eyebrow` = loại lịch (LỊCH KHÁM THEO TUẦN / LỊCH TRỰC CẤP CỨU / LỊCH KHÁM THEO NGÀY / LỊCH KHÁM ĐÍNH KÈM)
++    - `title` = tên lịch khám từ CMS (`item.title`)
++    - `description` = tóm tắt lịch nếu có (`item.summary`)
++    - Breadcrumb 3 cấp clickable: `Trang chủ / Khám bệnh & Dịch vụ / Lịch khám bệnh`
++    - `breadcrumbParentHref="/lich-kham"` và `breadcrumbHref="/lich-kham"` để người dùng điều hướng về danh sách.
++- **File Modified:** `src/app/(frontend)/lich-kham/[id]/page.tsx`
++- **TypeScript:** 0 lỗi.
+
++## [2026-09-19] - Thêm Breadcrumb chuẩn cho trang Lịch khám bệnh & Fix PageHero hiển thị eyebrow
+
++
++- **Thời gian:** 15:16 (Asia/Saigon)
++- **Tóm tắt:** Trang `/lich-kham` thiếu breadcrumb chuẩn; ngoài ra `PageHero` nhận prop `eyebrow` nhưng không render ra giao diện.
++- **Thay đổi `src/components/PageHero.tsx`:**
++  - Thêm render `eyebrow` (`<p className="eyebrow">{eyebrow}</p>`) đặt trước `<h1>` — theo Mandate 12.2.
++  - Thêm 2 prop mới `breadcrumbParent?: string` và `breadcrumbParentHref?: string` cho phép hiển thị breadcrumb 3 cấp (`Trang chủ / Cấp cha / Trang hiện tại`).
++  - `breadcrumbHref` mới: nếu truyền thì cấp cuối là link clickable, không truyền thì là span tĩnh.
++  - Tất cả props đều optional — không breaking change với các trang đang dùng `PageHero`.
++- **Thay đổi `src/app/(frontend)/lich-kham/page.tsx`:**
++  - Thêm `breadcrumbParent="Khám bệnh & Dịch vụ"` → breadcrumb hiển thị: `Trang chủ / Khám bệnh & Dịch vụ / Lịch khám bệnh`.
++  - Eyebrow từ Admin CMS (`schedule-settings.hero.eyebrow`) nay được hiển thị đúng.
++- **Files Modified:**
++  - `src/components/PageHero.tsx`
++  - `src/app/(frontend)/lich-kham/page.tsx`
++- **TypeScript:** 0 lỗi.
+
++## [2026-09-19] - Sửa nhãn mức độ thông báo từ tiếng Anh sang tiếng Việt
+
++
++- **Thời gian:** 15:11 (Asia/Saigon)
++- **Tóm tắt:** Trang chi tiết thông báo hiển thị `urgent` thay vì `Khẩn` trong breadcrumb và badge chuyên mục.
++- **Nguyên nhân:** Code dùng thẳng `item.level` (giá trị enum tiếng Anh: `urgent`/`important`/`normal`) làm nhãn hiển thị.
++- **Giải pháp:** Thêm bản đồ dịch `levelLabels` + hàm `levelLabel()` trong `src/app/(frontend)/thong-bao/[slug]/page.tsx`:
++  - `urgent` → `Khẩn`
++  - `important` → `Quan trọng`
++  - `normal` → `Thông báo`
++  - Áp dụng cho breadcrumb cuối, `categoryName` badge và nhãn trong danh sách Related/Sidebar.
++- **File Modified:** `src/app/(frontend)/thong-bao/[slug]/page.tsx`
++- **TypeScript:** 0 lỗi.
+
++## [2026-09-19] - Khóa chuột phải trình xem PDF & Thiết kế lại trang chi tiết Văn bản / Phác đồ giống tin tức
+
++
++- **Thời gian thực hiện:** 15:06 (Asia/Saigon)
++- **Tóm tắt yêu cầu người dùng:**
++  - *Hiện tại khoá xem và tải nhưng nhấp chuột phải vào phần trình xem thì vẫn còn được phép tải và in được.*
++  - *Trang tiết thiết lại giống trang chi tiết tin tức.*
++- **Giải pháp triển khai & Tính năng mới:**
++  1. **Security Overlay cho trình xem PDF (`src/components/DocumentDetailView.tsx` & `DocumentDetailView.module.css`):**
++     - Thêm prop `hideHeader?: boolean` vào `DocumentDetailView` để ẩn tiêu đề bên trong khi nhúng vào `ArticleDetailTemplate`.
++     - Thêm lớp phủ bảo mật trong suốt `viewerSecurityOverlay` bao phủ toàn bộ vùng iframe khi `!canDownload`.
++     - Overlay này chặn hoàn toàn sự kiện `contextmenu` (chuột phải) bên trong trình xem PDF: menu "Lưu dưới dạng / In" của trình duyệt Chrome/Edge không còn xuất hiện nữa.
++     - CSS `.viewerSecurityOverlay` sử dụng `position: absolute`, `z-index: 10`, `background: transparent` để không che khuất nội dung PDF nhưng chặn toàn bộ chuột phải.
++  2. **Tái thiết kế trang chi tiết Văn bản (`src/app/(frontend)/van-ban/[slug]/page.tsx`):**
++     - Thay thế layout cũ (header + container đơn giản) bằng `ArticleDetailTemplate` chuẩn y tế.
++     - Dải Hero xanh gradient thương hiệu (Mandate 12), breadcrumb chuẩn `Trang chủ / Văn bản – Tài liệu / Chuyên mục`.
++     - Bố cục 3 cột: cột chia sẻ trái, cột nội dung giữa (nhúng `DocumentDetailView` với `hideHeader`), Sidebar phải (văn bản mới nhất + banner CMS).
++     - Khối Văn bản liên quan dưới chân trang.
++     - Tải parallel globals: `theme-settings`, `site-settings`, `display-settings`, `article-detail-settings` với `.catch(() => null)` cô lập lỗi.
++  3. **Tái thiết kế trang chi tiết Phác đồ điều trị (`src/app/(frontend)/phac-do-dieu-tri/[slug]/page.tsx`):**
++     - Đồng bộ hoàn toàn với cấu trúc trang chi tiết tin tức qua `ArticleDetailTemplate`.
++     - Breadcrumb: `Trang chủ / Phác đồ điều trị / Chuyên khoa`.
++     - Sidebar: Phác đồ điều trị mới nhất + banner CMS quản lý.
++- **Files Modified:**
++  - `src/components/DocumentDetailView.tsx`
++  - `src/components/DocumentDetailView.module.css`
++  - `src/app/(frontend)/van-ban/[slug]/page.tsx`
++  - `src/app/(frontend)/phac-do-dieu-tri/[slug]/page.tsx`
++- **Database Changes:** Không có (không thêm schema mới).
++- **TypeScript:** 0 lỗi (`npx tsc --noEmit`).
+
++## [2026-09-19] - Thêm Tùy Chọn Trong Admin Hiển Thị 4 Hoặc 5 Thẻ Văn Bản / Hàng Ngoài Trang Chủ
+
++
++- **Thời gian thực hiện:** 14:38 (Asia/Saigon)
++- **Tóm tắt yêu cầu người dùng:**
++  - *Thêm thiết kế trong admin có thể hiển thị 4, 5 nội dung tùy ý trong admin trong 1 hàng.*
++- **Giải pháp triển khai & Tính năng mới:**
++  1. **Thêm trường cấu hình linh hoạt trong Admin CMS (`src/globals/Homepage.ts`):**
++     - Bổ sung trường select `documentColumns` trong cấu hình Section của Trang chủ khi `type === 'documents'`.
++     - Cho phép quản trị viên tự do lựa chọn mật độ hiển thị theo ý muốn:
++       + **3 nội dung / hàng (Mặc định)**: Bố cục 3 cột thẻ hồ sơ kinh điển, chữ to rộng rãi.
++       + **4 nội dung / hàng (Gọn gàng)**: Hiển thị 4 thẻ văn bản cân đối trên 1 hàng.
++       + **5 nội dung / hàng (Tối ưu mật độ)**: Hiển thị 5 thẻ văn bản trên 1 hàng, hiển thị tối đa nhiều văn bản mà không bị chiếm nhiều chiều dài trang.
++  2. **Render Frontend & Tối ưu CSS Responsive (`src/app/(frontend)/page.tsx` & `src/app/styles/30-home-editorial.css`):**
++     - Khối `.homeDocDossierGrid` tự động gán class tương ứng `cols-3`, `cols-4`, `cols-5`.
++     - Thiết kế hệ thống styling co giãn thông minh cho chế độ 4 và 5 cột:
++       + Header thẻ thu gọn padding `12px 14px`, kích thước icon đính kèm PDF co giãn `38px x 42px` tinh tế.
++       + Body thẻ thu gọn padding `10px 14px`, cỡ chữ tiêu đề `13.5px`, tóm tắt `11.5px`, không rớt từ mồ côi.
++       + Footer thẻ thu gọn padding `8px 14px`, nút `[Tải PDF]` và "Xem chi tiết →" nhỏ gọn, sắc sảo.
++       + Hệ thống Responsive linh hoạt: Màn hình lớn (>=1200px) hiển thị 5 cột; Màn hình laptop (<1200px) tự động co về 4 cột; Tablet (<=992px) hiển thị 2 cột; Mobile (<=640px) hiển thị 1 cột.
++  3. **Đóng gói Database Migration 048 chuẩn mực (Mandates 6, 14, 15):**
++     - File migration: `scripts/db-migrations/20260919_048_add_document_columns_to_homepage_sections.mjs`.
++     - Bổ sung kiểu enum `enum_homepage_sections_document_columns` (`'3'`, `'4'`, `'5'`) và bảng version `enum__homepage_v_version_sections_document_columns`.
++     - Thêm cột `document_columns` vào bảng `homepage_sections` và `_homepage_v_version_sections`.
++     - Sinh schema Payload (`npm run generate:db-schema`), seal DB contract (`npm run db:schema:seal`), check contract (`npm run db:schema:check`) và deploy migration hoàn tất (48 applied, 0 pending), `PAYLOAD_DB_PUSH=false`.
++  4. **Tuân thủ chỉ thị:**
++     - **Tuyệt đối không đưa lên GitHub** theo chỉ thị người dùng.
++- **Tệp tin đã chỉnh sửa / tạo mới:**
++  - `src/globals/Homepage.ts`
++  - `src/app/(frontend)/page.tsx`
++  - `src/app/styles/30-home-editorial.css`
++  - `scripts/db-migrations/20260919_048_add_document_columns_to_homepage_sections.mjs`
++  - `scripts/db-schema-contract.json`
++  - `src/payload-generated-schema.ts`
++  - `CURRENT-TASK.md`
++  - `CHANGELOG.md`
++
+ ## [2026-09-19] - Nâng Cấp Giao Diện Khối Văn Bản Mới: Hệ Thẻ Hồ Sơ Văn Bản & Pháp Chế Y Tế Chuyên Nghiệp (Phương Án 1)
+
+- **Thời gian thực hiện:** 14:23 (Asia/Saigon)
 - **Tóm tắt yêu cầu người dùng:**
-  - *Phần chuyên gia sẽ giữ cố định khung này khi bấm ảnh thì ảnh sẽ chuyển qua chứ không sau và tự động chuyển ô nội dung theo số giây nhất định.*
+  - *Phần văn bản này làm lại như thế nào cho chuyên nghiệp -> Chọn triển khai theo Phương án 1.*
 - **Giải pháp triển khai & Tính năng mới:**
-  1. **Cố định kích thước khung layout (Fixed Frame Layout Stability):**
-     - Khung Lãnh đạo bên trái cố định chuẩn mực (`height: 494px`, bằng chính xác 2 hàng thẻ nhỏ bên phải `2 x 240px + 14px gap`).
-     - Khi bấm chuyển ảnh hoặc luân phiên trang, toàn bộ layout được giữ cố định nguyên vẹn, tuyệt đối không bị giật hay co giãn chiều cao.
-  2. **Tương tác bấm ảnh chuyển mượt mà (Click to Preview / Smooth Crossfade):**
-     - Khi người dùng click vào bất kỳ thẻ bác sĩ nào ở lưới nhỏ bên phải, thẻ bác sĩ đó sẽ được chuyển sang vị trí nổi bật tại khung lớn bên trái kèm hiệu ứng mờ chuyển động (`cardFading` / `gridFading`) mượt mà, không giật cục.
-     - Tôn trọng triệt để **Mandate 1 & 2**: Mặc định ban đầu luôn là Giám đốc bệnh viện; Ảnh bác sĩ luôn fit vừa khung tỷ lệ chuẩn `object-fit: cover` không bao giờ bị méo.
-  3. **Tự động chuyển ô nội dung theo số giây nhất định (Autoplay & Pause on Hover):**
-     - Kết nối cấu hình `expertAutoplaySeconds` từ Admin CMS trong `Homepage.ts` (mặc định 5 giây) truyền trực tiếp vào `<OurExpertsFeaturedGrid autoplaySeconds={...} />`.
-     - Tự động luân chuyển trang bác sĩ bên phải theo chu kỳ giây đã cài đặt.
-     - Tích hợp tính năng thông minh: **Tự động tạm dừng (Pause on Hover)** khi người dùng rê chuột vào khối để thuận tiện đọc thông tin hoặc ngắm ảnh bác sĩ, tiếp tục chạy khi rời chuột ra ngoài.
-     - Bổ sung bộ đếm trang `currentPage / totalPages` ngay giữa 2 nút bấm `<` `>` điều hướng.
+  1. **Thiết kế lại toàn diện dạng Lưới thẻ Hồ sơ Văn bản (Dossier Cards Layout):**
+     - Thay thế hoàn toàn bố cục tin tức cũ (ảnh thumbnail lớn đơn điệu) bằng **Lưới thẻ Card hồ sơ pháp chế y tế 3 cột** hiện đại, thanh lịch và chuẩn phong cách cổng thông tin y tế bệnh viện.
+     - **Header thẻ hồ sơ:** Icon tệp đính kèm với nhãn định dạng nổi bật (`PDF`), Huy hiệu phân loại văn bản chuẩn (`Quyết định`, `Kế hoạch`, `Phác đồ điều trị`, `Hướng dẫn`), cùng hộp Số/Ký hiệu văn bản rõ nét (`homeDocNumberCode`).
+     - **Body thẻ hồ sơ:** Tiêu đề văn bản trang trọng, trích yếu nội dung súc tích (2 dòng gọn gàng), bảng thông số gồm Ngày ban hành và Cơ quan/Đơn vị ban hành với biểu tượng trực quan.
+     - **Footer thẻ hồ sơ:** Nút liên kết "Xem chi tiết →" và nút tải nhanh trực tiếp file đính kèm **`[Tải PDF]`** (mở trực tiếp tài liệu trong tab mới).
+  2. **Quy định số lượng ô hiển thị & Khóa tải khi có mật khẩu PIN:**
+     - **Số lượng ô tối đa:** Khung văn bản hồ sơ 3 cột được tối ưu hiển thị mặc định **6 ô (hoặc 3 ô)** để chia đều 1 - 2 hàng tăm tắp, cân bằng và đồng bộ giao diện. Người quản trị có thể tự do điều chỉnh từ 1 đến 20 ô trong Admin CMS (`layoutItemLimit`).
+     - **Cơ chế bảo mật tuyệt đối khi khóa mật khẩu:** Khi văn bản được đặt chế độ **Mã PIN bảo mật (`accessMode: 'pin'`)** hoặc tắt quyền tải (`allowDownload: false`):
+       + Thẻ tự động gắn nhãn cảnh báo **`🔒 Mã PIN`**.
+       + Nút **`[Tải PDF]`** ngoài trang chủ **BỊ CHẶN HOÀN TOÀN** và chuyển thành nhãn **`🔒 Khóa tải`**.
+       + Người dùng bắt buộc phải bấm "Xem chi tiết" và nhập đúng mã PIN xác thực thì hệ thống mới cấp quyền đọc và tải tài liệu.
+  3. **Chuẩn hóa dữ liệu mẫu mang thương hiệu BVĐK Khu Vực Thới Lai:**
+     - Xóa bỏ dữ liệu mẫu sơ sài `"02"` cũ, cập nhật và bổ sung các văn bản chỉ đạo điều hành thực tế: *Kế hoạch triển khai công tác khám chữa bệnh năm 2026 (Số: 45/KH-BVĐK)*, *Hướng dẫn chẩn đoán và điều trị bệnh Tay - Chân - Miệng (Số: PĐ-KCB-02)*, *Quy định xử lý phản ánh đường dây nóng (Số: 12/QĐ-BVĐK)*,...
+  4. **Tuân thủ chỉ thị:**
+     - **Không đưa lên GitHub** theo yêu cầu của người dùng.
 - **Tệp tin đã chỉnh sửa:**
-  - `src/components/OurExpertsFeaturedGrid.tsx`
-  - `src/components/OurExpertsFeaturedGrid.module.css`
   - `src/app/(frontend)/page.tsx`
+  - `src/app/styles/30-home-editorial.css`
   - `CURRENT-TASK.md`
   - `CHANGELOG.md`
+
+
+## [2026-09-19] - Đồng Bộ Cỡ Chữ Các Tab Mặc Định Bằng Cỡ Chữ Chuẩn Toàn Trang (14px)
+
+- **Thời gian thực hiện:** 14:12 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Cho chữ của tab mặc định bằng với chữ của toàn trang web.*
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Đồng bộ cỡ chữ tab chuẩn toàn trang (`14px`):**
+     - Đặt font-size của tất cả các nút Tab mặc định (*Lịch khám bệnh, Tiêm ngừa, Tin tức cổng thông tin, Đấu thầu – Mua sắm*) bằng đúng cỡ chữ chuẩn của toàn trang web (`14px`, `font-weight: 800`).
+     - Gỡ bỏ hoàn toàn các dòng override CSS cũ từng ép font-size tab xuống `10px - 11px`.
+  2. **Tỷ lệ khung tab hài hòa:**
+     - Chiều cao các nút tab đạt từ `38px` đến `44px`, đệm lề rộng rãi (`padding: 0 16px - 18px`), số lượng bài/vắc xin (`badge count`) giữ ở mức `11.5px` tinh gọn, tạo cảm giác chuyên nghiệp và đồng bộ xuyên suốt từ trên xuống dưới.
+  3. **Tuân thủ chỉ thị:**
+     - **Không đưa lên GitHub** theo yêu cầu của người dùng.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/app/globals.css`
+  - `src/app/styles/30-home-editorial.css`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Tối Ưu Các Tab Tiêm Ngừa: Phóng To Tên Tab, Nâng Cấp Nút Lọc Độ Tuổi & Đồng Bộ Carousel
+
+- **Thời gian thực hiện:** 14:04 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Theo gợi ý của bạn tên trong các tab hơi bị nhỏ điều chỉnh lại cho hợp lý.*
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Phóng to tên các Tab chính trong khối Tiêm ngừa:**
+     - Tăng kích cỡ chữ của các tab (*Các loại vắc xin*, *Tiêm ngừa theo đợt*, *Thông báo lịch tiêm*) từ mức nhỏ (10px–11.5px) lên **14px đậm nét (`font-weight: 800`)**, chiều cao nút tab chuẩn `46px` với padding `0 20px` rất vừa vặn, sang trọng và dễ đọc.
+     - Số lượng vắc xin (`badge count`) được tăng lên `11.5px` rõ nét.
+  2. **Nâng cấp hàng nút lọc theo độ tuổi:**
+     - Cỡ chữ các nút lọc (*Tất cả*, *Trẻ sơ sinh*, *Trẻ em*, *Phụ nữ mang thai*, *Người lớn*) được nâng từ 12px lên **13px (`font-weight: 700`)**, padding mở rộng `6px 15px` bấm cực kỳ êm tay.
+  3. **Đồng bộ hóa Carousel điều hướng:**
+     - Bỏ hoàn toàn dãy chấm tròn (`dots`) ở giữa, chỉ giữ lại **2 nút tròn `<` và `>`** đồng bộ với phong cách tinh giản của toàn bộ các Carousel khác trên trang chủ.
+  4. **Cân bằng chiều cao thẻ vắc xin (Equal Height):**
+     - Đặt thuộc tính chiều cao thẻ co giãn linh hoạt (`height: 100%`, `margin-top: auto` cho phần thông số và chân thẻ), đảm bảo phần Giá niêm yết và 2 nút bấm (*Chi tiết* & *Đăng ký tiêm*) luôn thẳng hàng ngang tăm tắp dù nội dung tóm tắt dài ngắn khác nhau.
+  5. **Tuân thủ chỉ thị:**
+     - **Không đưa lên GitHub** theo yêu cầu của người dùng.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/VaccinationTabs.tsx`
+  - `src/app/styles/patient-care.css`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Cân Đối Chiều Cao 2 Khung: 6 Thông Báo Mới Nhất & Xóa Nhãn Bị Trùng Trên Thẻ Đấu Thầu
+
+- **Thời gian thực hiện:** 13:58 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Để cân đối thì thông báo phải hiển thị 6 nội dung mới cân bằng được. Phần thông tin thì bị thừa có 2 nội dung thông báo mời thầu hiển thị.*
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Hiển thị 6 thông báo mới nhất:**
+     - Thiết lập số lượng thông báo trong cột `noticeCol` hiển thị tối đa **6 bài mới nhất**.
+     - Vì cột Đấu thầu có thanh Tab chuyên mục nằm trên đầu + 4 thẻ hồ sơ (mỗi thẻ có dòng hạn nộp và liên kết chi tiết), việc hiển thị 6 thẻ thông báo giúp 2 cột **cân xứng hoàn hảo về chiều cao**, thẳng hàng và vừa khít đáy khung.
+  2. **Loại bỏ badge bị trùng lặp trên thẻ Đấu thầu – Mua sắm:**
+     - Trong `HomeProcurementTabs.tsx`, loại bỏ badge `procurementCatBadge` bị lặp lại tên thể loại bên cạnh `procurementTypeBadge`.
+     - Giờ đây mỗi thẻ chỉ hiển thị đúng 1 badge Loại thông tin chính xác (*Thông báo mời thầu*, *Yêu cầu báo giá*, *Kế hoạch lựa chọn nhà thầu*...) cùng badge trạng thái (*Đang tiếp nhận* / *Sắp hết hạn*), giao diện sạch đẹp và không còn bị thừa thông tin.
+  3. **Tuân thủ chỉ thị:**
+     - **Không đưa lên GitHub** theo yêu cầu của người dùng.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/app/(frontend)/page.tsx`
+  - `src/components/HomeProcurementTabs.tsx`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
+## [2026-09-19] - Đấu Thầu – Mua Sắm Trang Chủ: Hiển Thị Các Tab Chuyên Mục Động Chỉ Khi Có Bài Đăng
+
+- **Thời gian thực hiện:** 13:42 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Phần đấu thầu mua sắm có nhiều chuyên mục những nội dung nào có bài đăng thì sẽ hiện ra 1 tab ngoài trang chủ.*
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Thanh Tab chuyên mục động theo bài đăng thực tế:**
+     - Hệ thống tự động phân tích tất cả các bài đăng thuộc `procurement` (Chuyên mục từ `categories` hoặc loại hồ sơ `type`).
+     - **Chỉ những chuyên mục nào có bài đăng (số lượng > 0) mới được hiển thị thành một Tab** ngoài trang chủ. Các chuyên mục trống/chưa có bài sẽ tự động không hiển thị để giao diện luôn đầy đủ và không gây hẫng khi bấm vào.
+     - Hiển thị tab "Tất cả" (kèm số lượng tổng) và các tab chuyên mục riêng biệt (kèm số lượng bài tương ứng).
+  2. **Tạo Component Client `HomeProcurementTabs.tsx`:**
+     - Lọc dữ liệu mượt mà ngay tại trình duyệt khi người dùng chuyển đổi qua lại giữa các tab chuyên mục mà không làm giật trang hay tải lại.
+     - Bảo toàn đầy đủ giao diện thẻ gói thầu: Badge loại hồ sơ, Badge chuyên mục phụ, Mã gói thầu, Trạng thái (Đang tiếp nhận, Sắp hết hạn, Đã hết hạn), Hạn nộp hồ sơ.
+  3. **Tối ưu CSS & Giao diện Responsive:**
+     - Thiết kế các Tab dạng pill bo tròn chuẩn y tế, hiệu ứng màu Gradient xanh dương khi được kích hoạt (`.homeProcTabBtn.active`).
+     - Hỗ trợ cuộn ngang thanh cuộn mỏng (`overflow-x: auto`) mượt mà trên điện thoại di động và máy tính bảng.
+  4. **Tuân thủ chỉ thị:**
+     - **Không đưa lên GitHub** theo chỉ đạo người dùng.
+- **Tệp tin đã chỉnh sửa / tạo mới:**
+  - `src/components/HomeProcurementTabs.tsx` (Mới)
+  - `src/app/(frontend)/page.tsx`
+  - `src/app/styles/30-home-editorial.css`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-19] - Tinh Gọn Tất Cả Các Khối Carousel: BỎ BỘ ĐẾM X/Y, CHỈ LẤY NÚT ‹ VÀ ›
+
+- **Thời gian thực hiện:** 13:34 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Tất cả các ô Carousel bỏ phần x/y chỉ lấy <>.*
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Loại bỏ hiển thị số `x / y` (Counter) trên toàn bộ các khối Carousel:**
+     - `OurExpertsFeaturedGrid.tsx`: Khối Chuyên gia (Featured Grid) gỡ bỏ `.gridCounter` (`{startIndex + 1} / {totalItems}`).
+     - `OurExpertsCarousel.tsx`: Khối Chuyên gia (Carousel ngang) gỡ bỏ `.expertCarouselCounter` (`{currentIndex + 1} / {total}`).
+     - `AdvancedTechniquesCarousel.tsx`: Khối Kỹ thuật chuyên sâu gỡ bỏ `.techCarouselCounter` (`{currentIndex + 1} / {total}`).
+     - `FeaturedContentCarousel.tsx`: Khối Điểm tin nổi bật gỡ bỏ thẻ `<span>{start + 1} / {safeItems.length}</span>`.
+  2. **Giao diện chuẩn mực, tối giản & sang trọng:**
+     - Thanh điều hướng chỉ giữ lại 2 nút tròn `<` và `>` tinh tế, ôm sát và cân đối.
+     - Giảm thiểu rối mắt, giữ bố cục thanh thoát, hiện đại chuẩn website y tế cao cấp.
+  3. **Tuân thủ chỉ thị:**
+     - **Không đưa lên GitHub** theo yêu cầu người dùng.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.tsx`
+  - `src/components/OurExpertsCarousel.tsx`
+  - `src/components/AdvancedTechniquesCarousel.tsx`
+  - `src/components/FeaturedContentCarousel.tsx`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-19] - Thêm Công Tắc Bật/Tắt Ảnh Nhỏ Phụ 3D Của Chuyên Khoa (Tránh Che Mất Chi Tiết Ảnh Chính)
+
+- **Thời gian thực hiện:** 13:23 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Phần ảnh nhỏ của chuyên khoa cho phép bật tắt vì nhiều tôi thấy thông bị che mất.*
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Đưa trường công tắc bật/tắt vào Admin CMS (`Specialties.ts`):**
+     - Thêm trường checkbox `showSubCover`: **"Bật ảnh phụ nhỏ 3D góc dưới"** (mặc định: `true`).
+     - Tùy chọn độc lập cho từng chuyên khoa: Nếu ảnh đại diện chính của khoa có nhiều chi tiết, bố cục rộng hoặc quản trị viên không muốn bị ô nhỏ che lấp, chỉ cần tắt checkbox này.
+     - Ô tải `subCover` sẽ tự động ẩn đi khi `showSubCover` bị tắt.
+  2. **Tự động thích ứng giao diện ngoài Frontend (`SpecialtiesCarousel.tsx` & CSS):**
+     - Khi `showSubCover = false`: Ẩn hoàn toàn khối ảnh phụ nhỏ `.subFloatingPhoto`.
+     - Đồng thời, khối ảnh chính lớn `.mainPhotoCard` tự động nở rộng trọn vẹn 100% khung hình (`.mainPhotoCardFull`), hiển thị trọn vẹn toàn cảnh và các thông tin văn bản mà không còn bị bất kỳ thành phần nào che khuất.
+  3. **Đóng gói Database Migration 046 chuẩn mực (Mandates 6, 14, 15):**
+     - File migration: `scripts/db-migrations/20260919_046_add_show_sub_cover_to_specialties.mjs`.
+     - Thêm cột `show_sub_cover boolean DEFAULT true` vào bảng `specialties` và `version_show_sub_cover boolean DEFAULT true` vào `_specialties_v`.
+     - Đã sinh schema Payload (`npm run generate:db-schema`), seal DB schema contract (`npm run db:schema:seal`), check contract (`npm run db:schema:check`) và deploy thành công tại local (46 applied, 0 pending), `PAYLOAD_DB_PUSH=false`.
+  4. **Không đưa lên GitHub** theo chỉ thị của người dùng.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/collections/Specialties.ts`
+  - `src/components/SpecialtiesCarousel.tsx`
+  - `src/components/SpecialtiesCarousel.module.css`
+  - `src/app/(frontend)/page.tsx`
+  - `scripts/db-migrations/20260919_046_add_show_sub_cover_to_specialties.mjs`
+  - `scripts/db-schema-contract.json`
+  - `src/payload-generated-schema.ts`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
+
+## [2026-09-19] - Cập Nhật Chuyển Động Xoay Vòng Tròn (Circular Roll) Cho Khối Chuyên Gia
+
+- **Thời gian thực hiện:** 13:17 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Các ảnh tự chuyển động tới theo vòng tròn chứ không phải là chuyển sang trang sau, không đưa lên github nữa.*
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Chuyển động tịnh tiến xoay vòng tròn (Circular / Round-Robin Roll):**
+     - Thay vì nhảy trang phân đoạn làm đổi toàn bộ 6 ô một lúc, chuyển sang cơ chế cuốn xoay vòng tròn từng vị trí (`(startIndex + offset) % totalItems`).
+     - Khi hết chu kỳ giây (Autoplay) hoặc bấm mũi tên `>` / `<`, các ô ảnh tịnh tiến cuốn nối tiếp liên tục như một băng chuyền không giới hạn điểm kết thúc.
+  2. **Trải nghiệm người dùng mượt mà:**
+     - Bộ đếm hiển thị vị trí bác sĩ đang bắt đầu cuốn `startIndex + 1 / totalItems`.
+     - Duy trì cố định khung `494px`, không giật layout.
+     - Tạm dừng chuyển động khi người dùng rê chuột vào khối (`Pause on Hover`).
+  3. **Không đẩy lên GitHub** theo yêu cầu người dùng.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.tsx`
+  - `CHANGELOG.md`
+  - `CURRENT-TASK.md`
 
 
 - **Thời gian thực hiện:** 12:58 (Asia/Saigon)

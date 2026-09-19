@@ -218,6 +218,13 @@
   border: 1px solid #dce8f3;
   box-shadow: 0 16px 36px rgba(7, 43, 76, 0.12);
   background: #f0f7fd;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+/* Khi tắt ảnh nhỏ phụ, ảnh chính nở rộng trọn vẹn 100% khung hình */
+.mainPhotoCardFull {
+  width: 100% !important;
+  height: 390px !important;
 }
 
 .mainPhotoImg {

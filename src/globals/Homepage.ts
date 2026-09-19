@@ -1279,6 +1279,21 @@ export const Homepage: GlobalConfig = {
           ],
         },
         {
+          name: 'documentColumns',
+          label: 'Số ô hiển thị trên 1 hàng (Áp dụng cho khối Văn bản mới)',
+          type: 'select',
+          defaultValue: '3',
+          options: [
+            { label: '3 ô / hàng (Chuẩn thoáng, hiển thị đầy đủ chi tiết)', value: '3' },
+            { label: '4 ô / hàng (Cân đối, gọn gàng, hiển thị nhiều nội dung)', value: '4' },
+            { label: '5 ô / hàng (Nhiều ô nhất, tinh gọn trên màn hình lớn)', value: '5' },
+          ],
+          admin: {
+            condition: (_data: unknown, siblingData: any) => siblingData?.type === 'documents',
+            description: 'Tùy chọn hiển thị 3, 4 hoặc 5 thẻ văn bản trên 1 hàng trên màn hình máy tính. Hệ thống tự động co giãn 2 ô trên tablet và 1 ô trên mobile.',
+          },
+        },
+        {
           type: 'row',
           fields: [
             {

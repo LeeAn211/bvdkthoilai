@@ -24,7 +24,7 @@ export function OurExpertsFeaturedGrid({
     [items]
   )
 
-  const [page, setPage] = useState(0)
+  const [startIndex, setStartIndex] = useState(0)
   const [selectedLeaderIndex, setSelectedLeaderIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -38,41 +38,50 @@ export function OurExpertsFeaturedGrid({
     : safeItems
 
   const subList = remainingExperts.length > 0 ? remainingExperts : safeItems
+  const totalItems = subList.length
 
-  const totalSubPages = Math.ceil(subList.length / subItemsPerPage) || 1
-  const currentPage = Math.min(page, totalSubPages - 1)
+  // Số lượng hiển thị cùng một lúc trên lưới bên phải (mặc định 6 ô: 2 hàng x 3 cột)
+  const visibleCount = Math.min(totalItems, subItemsPerPage)
 
-  const currentSubItems = subList.slice(
-    currentPage * subItemsPerPage,
-    (currentPage + 1) * subItemsPerPage
-  )
+  // Tạo danh sách xoay vòng tròn (Circular / Carousel roll)
+  const currentSubItems = useMemo(() => {
+    if (totalItems <= visibleCount) return subList
+    return Array.from({ length: visibleCount }).map((_, offset) => {
+      const idx = (startIndex + offset) % totalItems
+      return subList[idx]
+    })
+  }, [subList, startIndex, totalItems, visibleCount])
 
-  const changePage = (newPage: number) => {
+  // Chuyển tới 1 ô theo vòng tròn (roll forward by 1)
+  const rollNext = (step = 1) => {
+    if (totalItems <= visibleCount) return
     setIsTransitioning(true)
     setTimeout(() => {
-      setPage(newPage)
+      setStartIndex((prev) => (prev + step) % totalItems)
       setIsTransitioning(false)
-    }, 200)
+    }, 180)
   }
 
-  const prevPage = () => {
-    changePage((currentPage - 1 + totalSubPages) % totalSubPages)
+  // Chuyển lui 1 ô theo vòng tròn (roll back by 1)
+  const rollPrev = (step = 1) => {
+    if (totalItems <= visibleCount) return
+    setIsTransitioning(true)
+    setTimeout(() => {
+      setStartIndex((prev) => (prev - step + totalItems) % totalItems)
+      setIsTransitioning(false)
+    }, 180)
   }
 
-  const nextPage = () => {
-    changePage((currentPage + 1) % totalSubPages)
-  }
-
-  // Tự động chuyển ô nội dung theo số giây nhất định (Autoplay)
+  // Tự động chuyển động tới theo vòng tròn (Circular Autoplay) sau mỗi số giây nhất định
   React.useEffect(() => {
-    if (totalSubPages <= 1 || !autoplaySeconds || autoplaySeconds <= 0 || isPaused) return
+    if (totalItems <= visibleCount || !autoplaySeconds || autoplaySeconds <= 0 || isPaused) return
 
     const timer = window.setInterval(() => {
-      setPage((prev) => (prev + 1) % totalSubPages)
+      setStartIndex((prev) => (prev + 1) % totalItems)
     }, autoplaySeconds * 1000)
 
     return () => window.clearInterval(timer)
-  }, [totalSubPages, autoplaySeconds, isPaused])
+  }, [totalItems, visibleCount, autoplaySeconds, isPaused])
 
   const handleSelectLeader = (item: ExpertItem, e: React.MouseEvent) => {
     const originalIdx = safeItems.findIndex((x) => x === item || (x.id && x.id === item.id) || x.name === item.name)
@@ -174,13 +183,13 @@ export function OurExpertsFeaturedGrid({
           </a>
         )}
 
-        {/* CỘT PHẢI: LƯỚI BÁC SĨ & TRƯỞNG KHOA PHÒNG TIÊU BIỂU */}
+        {/* CỘT PHẢI: LƯỚI BÁC SĨ & TRƯỞNG KHOA PHÒNG TIÊU BIỂU (TỰ ĐỘNG CHUYỂN TIẾP VÒNG TRÒN) */}
         <div
           className={`${styles.expertSubGrid} ${isTransitioning ? styles.gridFading : ''}`}
           data-count={subItemsPerPage}
         >
           {currentSubItems.map((item, idx) => {
-            const cardKey = `${item.id || 'sub-expert'}-${idx}-${currentPage}`
+            const cardKey = `${item.id || item.name}-${idx}`
             const isLeadership =
               Boolean(
                 item.position?.toLowerCase().includes('giám đốc') ||
@@ -242,27 +251,24 @@ export function OurExpertsFeaturedGrid({
         </div>
       </div>
 
-      {/* THANH ĐIỀU HƯỚNG MŨI TÊN <> NẰM RIÊNG DƯỚI ĐÁY BÊN PHẢI (KHÔNG LÀM DÀI Ô CHÍNH) */}
-      {totalSubPages > 1 && (
+      {/* THANH ĐIỀU HƯỚNG MŨI TÊN <> NẰM RIÊNG DƯỚI ĐÁY BÊN PHẢI (CHỈ LẤY < >) */}
+      {totalItems > visibleCount && (
         <div className={styles.paginationRow}>
           <div className={styles.gridPaginationControls}>
             <button
               type="button"
               className={styles.gridNavBtn}
-              onClick={prevPage}
+              onClick={() => rollPrev(1)}
               aria-label="Xem bác sĩ trước"
             >
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="15 18 9 12 15 6" />
               </svg>
             </button>
-            <span className={styles.gridCounter}>
-              {currentPage + 1} / {totalSubPages}
-            </span>
             <button
               type="button"
               className={styles.gridNavBtn}
-              onClick={nextPage}
+              onClick={() => rollNext(1)}
               aria-label="Xem bác sĩ tiếp theo"
             >
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

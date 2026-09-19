@@ -575,38 +575,47 @@
 
 /* ==========================================================================
    CSS SECTION SCROLL SNAP (PHƯƠNG ÁN 1)
-   Tự động hít nhẹ và căn chỉnh chuẩn từng Section khi lăn chuột
+   Chỉ kích hoạt trên thiết bị con trỏ (desktop/chuột).
+   Tắt hoàn toàn trên màn hình cảm ứng (điện thoại, tablet) để tránh giật snap.
    ========================================================================== */
-html.hasSectionScrollSnap {
-  scroll-snap-type: y proximity;
-  scroll-behavior: smooth;
-}
 
-.hasSectionScrollSnap .homePortalPage {
-  scroll-snap-type: y proximity;
-}
+/* Chỉ bật scroll-snap khi thiết bị hỗ trợ con trỏ chính xác (chuột) */
+@media (hover: hover) and (pointer: fine) {
+  html.hasSectionScrollSnap {
+    scroll-snap-type: y proximity;
+    scroll-behavior: smooth;
+  }
 
-/* Các section tham gia Scroll Snap */
-.hasSectionScrollSnap .heroCarouselWrap,
-.hasSectionScrollSnap .homeQuickWrap,
-.hasSectionScrollSnap .noticeTicker,
-.hasSectionScrollSnap .homeSections > section,
-.hasSectionScrollSnap .configurableHomeSection {
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
-  /* Trừ khoảng cách menu header cố định phía trên để tiêu đề không bị che lấp */
-  scroll-margin-top: 76px;
-}
-
-@media (max-width: 900px) {
+  /* Các section tham gia Scroll Snap */
   .hasSectionScrollSnap .heroCarouselWrap,
   .hasSectionScrollSnap .homeQuickWrap,
   .hasSectionScrollSnap .noticeTicker,
   .hasSectionScrollSnap .homeSections > section,
   .hasSectionScrollSnap .configurableHomeSection {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+    /* Trừ khoảng cách menu header cố định phía trên để tiêu đề không bị che lấp */
+    scroll-margin-top: 76px;
+  }
+}
+
+/* Trên màn hình nhỏ (điện thoại) luôn tắt scroll-snap dù thiết bị nào */
+@media (max-width: 900px) {
+  html.hasSectionScrollSnap {
+    scroll-snap-type: none !important;
+  }
+
+  .hasSectionScrollSnap .heroCarouselWrap,
+  .hasSectionScrollSnap .homeQuickWrap,
+  .hasSectionScrollSnap .noticeTicker,
+  .hasSectionScrollSnap .homeSections > section,
+  .hasSectionScrollSnap .configurableHomeSection {
+    scroll-snap-align: none !important;
+    scroll-snap-stop: normal;
     scroll-margin-top: 64px;
   }
 }
+
 
 /* ==========================================================================
    HOMEPAGE NOTICE & PROCUREMENT DUAL-COLUMN SECTION (PHƯƠNG ÁN 1: GỘP 2 CỘT SONG SONG)
@@ -725,6 +734,94 @@ html.hasSectionScrollSnap {
   flex-direction: column;
   gap: 10px;
   flex: 1 1 auto;
+}
+
+/* THANH TAB CHUYÊN MỤC ĐẤU THẦU CÓ BÀI ĐĂNG */
+.homeProcurementTabsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 auto;
+}
+
+.homeProcurementTabBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.homeProcurementTabBar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.homeProcurementTabBar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.homeProcTabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #475569;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.homeProcTabBtn:hover {
+  color: #0284c7;
+  background: #e0f2fe;
+  border-color: #bae6fd;
+}
+
+.homeProcTabBtn.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border-color: #0284c7;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.28);
+}
+
+.homeProcTabCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.07);
+  color: inherit;
+  min-width: 18px;
+  line-height: 1.3;
+}
+
+.homeProcTabBtn.active .homeProcTabCount {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.procurementCatBadge {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #475569;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  padding: 1.5px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.1px;
 }
 
 /* 1. THẺ THÔNG BÁO (NOTICE CARD) */
@@ -1052,3 +1149,409 @@ html.hasSectionScrollSnap {
     font-size: 13.5px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   HỒ SƠ VĂN BẢN & PHÁP CHẾ Y TẾ CHUYÊN NGHIỆP (DOSSIER CARDS)
+   ══════════════════════════════════════════════════════════════════ */
+.homeDocDossierGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+.homeDocDossierGrid.cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.homeDocDossierGrid.cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.homeDocDossierGrid.cols-5 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* Tinh chỉnh thẻ khi hiển thị 4 hoặc 5 ô / hàng */
+.homeDocDossierGrid.cols-4 .homeDocCardHeader,
+.homeDocDossierGrid.cols-5 .homeDocCardHeader {
+  padding: 14px 14px 10px;
+  gap: 10px;
+}
+
+.homeDocDossierGrid.cols-5 .homeDocCardIconWrap {
+  width: 38px;
+  height: 42px;
+}
+
+.homeDocDossierGrid.cols-4 .homeDocCardBody,
+.homeDocDossierGrid.cols-5 .homeDocCardBody {
+  padding: 12px 14px 14px;
+}
+
+.homeDocDossierGrid.cols-4 .homeDocCardTitle,
+.homeDocDossierGrid.cols-5 .homeDocCardTitle {
+  font-size: 13.5px;
+  line-height: 1.42;
+  margin-bottom: 6px;
+}
+
+.homeDocDossierGrid.cols-4 .homeDocCardSummary,
+.homeDocDossierGrid.cols-5 .homeDocCardSummary {
+  font-size: 11.5px;
+  line-height: 1.46;
+  margin-bottom: 10px;
+}
+
+.homeDocDossierGrid.cols-4 .homeDocSpecRow,
+.homeDocDossierGrid.cols-5 .homeDocSpecRow {
+  font-size: 11px;
+}
+
+.homeDocDossierGrid.cols-4 .homeDocCardFooter,
+.homeDocDossierGrid.cols-5 .homeDocCardFooter {
+  padding: 9px 14px 11px;
+}
+
+.homeDocDossierGrid.cols-5 .homeDocActionView {
+  font-size: 11.5px;
+}
+
+.homeDocDossierGrid.cols-5 .homeDocActionDownload,
+.homeDocDossierGrid.cols-5 .homeDocActionLocked,
+.homeDocDossierGrid.cols-5 .homeDocActionViewOnly {
+  font-size: 11px;
+  padding: 3px 7px;
+}
+
+.homeDocDossierCard {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #dce7f1;
+  box-shadow: 0 4px 16px rgba(7, 43, 76, 0.05);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.homeDocDossierCard:hover {
+  transform: translateY(-4px);
+  border-color: #0878d1;
+  box-shadow: 0 12px 28px rgba(8, 120, 209, 0.14);
+}
+
+.homeDocDossierCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.5px;
+  background: linear-gradient(90deg, #0754a8, #0878d1);
+}
+
+.homeDocCardHeader {
+  padding: 18px 18px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #fbfdff;
+}
+
+.homeDocCardIconWrap {
+  width: 44px;
+  height: 48px;
+  border-radius: 9px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #0284c7;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.08);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.homeDocDossierCard:hover .homeDocCardIconWrap {
+  transform: scale(1.06);
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.homeDocCardIconWrap.pdfFormat {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.08);
+}
+
+.homeDocDossierCard:hover .homeDocCardIconWrap.pdfFormat {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.homeDocFileFormatText {
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 1px;
+}
+
+.homeDocCardMetaTop {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.homeDocTypeBadge {
+  align-self: flex-start;
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.homeDocTypeBadge.protocolBadge {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.homeDocNumberBox {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.homeDocNumberCode {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 12.5px;
+}
+
+.homeDocCardBody {
+  padding: 14px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.homeDocCardTitle {
+  font-size: 14.5px;
+  font-weight: 750;
+  line-height: 1.48;
+  color: #0f2744;
+  margin: 0 0 8px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  transition: color 0.2s ease;
+}
+
+.homeDocDossierCard:hover .homeDocCardTitle {
+  color: #0878d1;
+}
+
+.homeDocCardSummary {
+  font-size: 12.5px;
+  color: #475569;
+  line-height: 1.52;
+  margin: 0 0 14px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.homeDocCardSpecs {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.homeDocSpecRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.homeDocSpecRow svg {
+  flex-shrink: 0;
+  color: #94a3b8;
+}
+
+.homeDocSpecRow span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.homeDocCardFooter {
+  padding: 11px 18px 13px;
+  background: #f8fafc;
+  border-top: 1px solid #edf2f7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.homeDocActionView {
+  font-size: 12.5px;
+  font-weight: 750;
+  color: #0878d1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: gap 0.2s ease;
+}
+
+.homeDocDossierCard:hover .homeDocActionView {
+  gap: 8px;
+  color: #0284c7;
+}
+
+.homeDocActionDownload {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.homeDocActionDownload:hover {
+  background: #0878d1;
+  color: #ffffff;
+  border-color: #0878d1;
+}
+
+.homeDocLockBadge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #fff1f0;
+  color: #cf1322;
+  border: 1px solid #ffa39e;
+  white-space: nowrap;
+}
+
+.homeDocViewOnlyBadge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+  white-space: nowrap;
+}
+
+.homeDocActionLocked {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 4px 9px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: default;
+}
+
+.homeDocActionViewOnly {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  padding: 4px 9px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: default;
+}
+
+.homeDocDossierEmpty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 36px 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+  color: #64748b;
+}
+
+@media (max-width: 1200px) {
+  .homeDocDossierGrid.cols-5 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 992px) {
+  .homeDocDossierGrid,
+  .homeDocDossierGrid.cols-3,
+  .homeDocDossierGrid.cols-4,
+  .homeDocDossierGrid.cols-5 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .homeDocDossierGrid,
+  .homeDocDossierGrid.cols-3,
+  .homeDocDossierGrid.cols-4,
+  .homeDocDossierGrid.cols-5 {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}
+

@@ -1,23 +1,54 @@
 # CURRENT TASK
  
-## Trang thai: HOÀN THÀNH - NÂNG CẤP KHỐI CHUYÊN GIA (FEATURED GRID): CỐ ĐỊNH KHUNG, CHUYỂN ẢNH & TỰ ĐỘNG LUÂN PHIÊN (AUTOPLAY)
+## Trạng thái: HOÀN THÀNH - KHÓA CHUỘT PHẢI TRÌNH XEM PDF & THIẾT KẾ LẠI TRANG CHI TIẾT VĂN BẢN / PHÁC ĐỒ
 
 ### Đã hoàn thành theo yêu cầu người dùng:
-1. **Khung cố định chuẩn mực (Fixed Frame):**
-   - Khung thẻ Lãnh đạo lớn bên trái cố định chiều cao `494px` (bằng chính xác 2 hàng thẻ nhỏ `2 x 240px + 14px gap`).
-   - Giữ nguyên bố cục không co giãn, không giật màn hình khi chuyển đổi ảnh hoặc đổi trang.
-2. **Bấm ảnh chuyển mượt mà (Click to Preview):**
-   - Khi bấm vào thẻ bác sĩ bất kỳ ở lưới bên phải, ảnh và thông tin của bác sĩ đó được chuyển ngay sang khung lớn bên trái kèm hiệu ứng crossfade mượt mà (`cardFading` / `gridFading`).
-   - Mặc định khởi đầu luôn tuân thủ **Mandate 1**: Giám đốc / Ban Lãnh đạo bệnh viện hiển thị ở khung đầu tiên.
-   - Tuân thủ **Mandate 2**: Ảnh bác sĩ fix vừa khung, `object-fit: cover` không bị méo tỉ lệ.
-3. **Tự động chuyển ô nội dung theo số giây nhất định (Autoplay & Pause on Hover):**
-   - Tự động chạy theo số giây cài đặt từ CMS (`expertAutoplaySeconds`, mặc định 5s).
-   - Tạm dừng khi rê chuột vào (`pause on hover`) và chạy tiếp khi rê chuột ra ngoài.
-   - Bổ sung bộ đếm vị trí trang `X / Y` giữa 2 nút điều hướng `<` `>`.
+1. **Bảo mật Overlay Trình xem PDF (khoá chuột phải hoàn toàn):**
+   - Thêm `viewerSecurityOverlay` bao phủ toàn vùng iframe khi `!canDownload`.
+   - Overlay trong suốt (`background: transparent`, `z-index: 10`) chặn sự kiện `contextmenu` — menu "Lưu dưới dạng / In" của Chrome/Edge không còn xuất hiện dù click chuột phải trực tiếp vào PDF.
+   - Thêm prop `hideHeader?: boolean` vào `DocumentDetailView` để ẩn tiêu đề bên trong khi nhúng vào `ArticleDetailTemplate`.
+2. **Thiết kế lại trang chi tiết Văn bản (`/van-ban/[slug]`) giống trang chi tiết tin tức:**
+   - Dùng `ArticleDetailTemplate` chuẩn y tế: Hero xanh gradient thương hiệu + breadcrumb + layout 3 cột (share / content / sidebar).
+   - `DocumentDetailView doc={docData} hideHeader` nhúng vào `customBodyTop` – tiêu đề nằm trên dải Hero, nội dung bảo mật nằm trong cột chính.
+   - Sidebar: Văn bản mới nhất + Banner CMS.
+   - Khối Văn bản liên quan dưới chân trang.
+3. **Thiết kế lại trang chi tiết Phác đồ điều trị (`/phac-do-dieu-tri/[slug]`) giống trang chi tiết tin tức:**
+   - Cùng cấu trúc `ArticleDetailTemplate` — breadcrumb `Trang chủ / Phác đồ điều trị / Chuyên khoa`.
+   - Sidebar: Phác đồ mới nhất + Banner CMS.
 4. **Kiểm tra chất lượng:**
-   - `npx tsc --noEmit`: 0 lỗi TypeScript.
-   - `npm run validate:homepage-seo-search`: 20/20 PASS.o `specialties` và `version_sub_cover_id`, `version_icon_custom_upload_id` vào `_specialties_v`.
-   - Đã seal DB schema contract (`npm run db:schema:seal`), check hợp lệ (`npm run db:schema:check`) và deploy an toàn tại local (45 applied, 0 pending), `PAYLOAD_DB_PUSH=false`.
+   - `npx tsc --noEmit`: **0 lỗi TypeScript**.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md).
+
+---
+
+
+
+### Đã hoàn thành theo yêu cầu người dùng:
+1. **Bổ sung trường cấu hình số cột linh hoạt trong Admin CMS (`Homepage.ts`):**
+   - Thêm trường lựa chọn `documentColumns` vào các section văn bản (`type === 'documents'`) trong Trang chủ (`Homepage.ts`).
+   - Cung cấp 3 tùy chọn trực quan:
+     + **3 nội dung / hàng (Mặc định)**: Bố cục 3 cột hồ sơ truyền thống, chữ to rộng rãi.
+     + **4 nội dung / hàng (Gọn gàng)**: Hiển thị 4 thẻ văn bản cân đối trên 1 hàng.
+     + **5 nội dung / hàng (Tối ưu mật độ)**: Hiển thị 5 thẻ văn bản trên 1 hàng, hiển thị tối đa nhiều văn bản mà không bị tràn dọc.
+2. **Tối ưu CSS & Giao diện thích ứng (Responsive Layout):**
+   - Lưới thẻ `.homeDocDossierGrid` tự động nhận class `cols-3`, `cols-4`, `cols-5` tương ứng cấu hình trong Admin.
+   - Khi ở chế độ 4 hoặc 5 cột:
+     + Tự động tinh chỉnh tỉ lệ padding thẻ (`12px 14px` cho header, `10px 14px` cho body, `8px 14px` cho footer).
+     + Kích thước icon đính kèm PDF co giãn vừa vặn (`38px x 42px` cho 5 cột).
+     + Tiêu đề văn bản `13.5px`, tóm tắt nội dung `11.5px` tinh gọn, vừa khít khung thẻ, không rớt từ mồ côi.
+     + Responsive mượt mà: Màn hình lớn (>=1200px) đủ 5 cột; Màn hình laptop (<1200px) tự động co về 4 cột; Màn hình tablet (<=992px) co về 2 cột; Màn hình điện thoại (<=640px) hiển thị 1 cột.
+3. **Đóng gói Database Migration 048 chuẩn mực (Mandates 6, 14, 15):**
+   - File migration: `scripts/db-migrations/20260919_048_add_document_columns_to_homepage_sections.mjs`.
+   - Tạo enum `enum_homepage_sections_document_columns` (`'3'`, `'4'`, `'5'`) và enum bảng version.
+   - Thêm cột `document_columns` vào bảng `homepage_sections` và `_homepage_v_version_sections`.
+   - Đã sinh lại schema, seal DB schema contract và deploy an toàn (48 applied, 0 pending), `PAYLOAD_DB_PUSH=false`.
+4. **Tuân thủ chỉ thị cốt lõi:**
+   - **TUYỆT ĐỐI KHÔNG ĐƯA LÊN GITHUB** theo yêu cầu người dùng.
+5. **Kiểm tra chất lượng & Tiêu chuẩn:**
+   - `npx tsc --noEmit`: Đạt **0 lỗi TypeScript**.
+   - `npm run validate:homepage-seo-search`: **20/20 checks PASS**.
+   - HTTP localhost:3000: **200 OK**.
+   - Cập nhật đầy đủ vào [CHANGELOG.md](file:///j:/bvdkthoilai-main/CHANGELOG.md) và [CURRENT-TASK.md](file:///j:/bvdkthoilai-main/CURRENT-TASK.md).
 
 4. **Kiểm tra chất lượng & Tiêu chuẩn:**
    - `npx tsc --noEmit`: 0 lỗi TypeScript.

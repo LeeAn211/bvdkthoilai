@@ -3,6 +3,7 @@ import { SiteFooter } from '@/components/SiteFooter'
 import { HomeNewsTabs } from '@/components/HomeNewsTabs'
 import { HomeScienceTabs } from '@/components/HomeScienceTabs'
 import { HomePatientServiceTabs } from '@/components/HomePatientServiceTabs'
+import { HomeProcurementTabs } from '@/components/HomeProcurementTabs'
 import { RichText } from '@/components/RichText'
 import { ScheduleExplorer } from '@/components/ScheduleExplorer'
 import { VaccinationTabs } from '@/components/VaccinationTabs'
@@ -76,9 +77,9 @@ export default async function HomePage() {
 
     const [newsResult, noticeResult, procurementResult, documentResult, clinicalProtocolsResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult, scientificActivitiesResult, scientificActivityGroupsResult] = await Promise.all([
       payload.find({ collection: 'news', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 100, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
-      payload.find({ collection: 'notices', where: { and: [{ _status: { equals: 'published' } }, { showOnHome: { equals: true } }] }, sort: ['-publishedAt', '-createdAt'], limit: 8, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
-      payload.find({ collection: 'procurement', where: { _status: { equals: 'published' } }, sort: ['-publishedAt', '-createdAt'], limit: 8, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
-      payload.find({ collection: 'documents', sort: '-issuedAt', limit: 12, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
+      payload.find({ collection: 'notices', where: { and: [{ _status: { equals: 'published' } }, { showOnHome: { equals: true } }] }, sort: ['-publishedAt', '-createdAt'], limit: 50, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
+      payload.find({ collection: 'procurement', where: { _status: { equals: 'published' } }, sort: ['-publishedAt', '-createdAt'], limit: 100, depth: 2 }).catch(() => ({ docs: [], totalDocs: 0 })),
+      payload.find({ collection: 'documents', sort: '-issuedAt', limit: 12, depth: 2 }).catch(() => ({ docs: [], totalDocs: 0 })),
       payload.find({ collection: 'clinical-protocols' as any, sort: '-issuedAt', limit: 12, depth: 2 }).catch(() => ({ docs: [] })),
       payload.find({ collection: 'doctors', where: { active: { equals: true } }, limit: 50, sort: ['order', 'name'], depth: 2 }).catch(() => ({ docs: [], totalDocs: 0 })),
       payload.find({ collection: 'departments', limit: 100, sort: 'name', depth: 0 }).catch(() => ({ docs: [], totalDocs: 0 })),
@@ -802,6 +803,7 @@ export default async function HomePage() {
               iconCustomUrl: mediaUrl(item.iconCustomUpload, 'icon') || undefined,
               coverUrl: mediaUrl(item.cover, 'article') || undefined,
               subCoverUrl: mediaUrl(item.subCover, 'article') || undefined,
+              showSubCover: item.showSubCover !== false,
               coverFitHome: item.coverFitHome || item.coverFit || 'cover-top',
               coverFit: item.coverFitHome || item.coverFit || 'cover-top',
               coverPosition: item.coverPosition || 'top',
@@ -1371,11 +1373,11 @@ export default async function HomePage() {
             const showNoticeCol = noticeItem.visible !== false
             const showProcCol = procItem.visible !== false
 
-            const noticeLimit = Math.min(10, Math.max(1, Number(noticeItem.layoutItemLimit || 4)))
-            const procLimit = Math.min(10, Math.max(1, Number(procItem.layoutItemLimit || 4)))
+            // Cân đối hoàn hảo giữa 2 khung: Thông báo hiển thị tối đa 6 nội dung mới nhất; Đấu thầu hiển thị tối đa 4 nội dung (kết hợp thanh tab chuyên mục phía trên giúp 2 cột cân xứng tuyệt đối về chiều cao)
+            const noticeLimit = noticeItem.layoutItemLimit !== undefined && noticeItem.layoutItemLimit !== null && Number(noticeItem.layoutItemLimit) !== 5 ? Math.min(20, Math.max(1, Number(noticeItem.layoutItemLimit))) : 6
+            const procLimit = procItem.layoutItemLimit !== undefined && procItem.layoutItemLimit !== null && Number(procItem.layoutItemLimit) !== 5 ? Math.min(20, Math.max(1, Number(procItem.layoutItemLimit))) : 4
 
             const noticeList = notices.slice(0, noticeLimit)
-            const procList = procurement.slice(0, procLimit)
 
             return (
               <section className="sectionPro configurableHomeSection homeNoticeProcurementPairSection" style={style} key={key}>
@@ -1461,59 +1463,7 @@ export default async function HomePage() {
                           </a>
                         </div>
 
-                        <div className="pairColList">
-                          {procList.length > 0 ? (
-                            procList.map((entry: any) => {
-                              const status = entry.procurementStatus || 'open'
-                              const statusClass = status === 'open' ? 'open' : (status === 'closing' ? 'closing' : 'closed')
-                              const statusText = status === 'open' ? 'Đang tiếp nhận' : (status === 'closing' ? 'Sắp hết hạn' : (status === 'closed' ? 'Đã hết hạn' : 'Đã kết thúc'))
-                              const deadline = entry.deadlineAt ? new Date(entry.deadlineAt).toLocaleDateString('vi-VN') : null
-                              const typeText = entry.type || 'Mời thầu'
-
-                              return (
-                                <a className="procurementCardItem" href={`/dau-thau-mua-sam/${entry.slug}`} key={entry.id}>
-                                  <div className="procurementCardTop">
-                                    <div className="procurementCardBadges">
-                                      <span className="procurementTypeBadge">{typeText}</span>
-                                      <span className={`procurementStatusBadge ${statusClass}`}>
-                                        {statusText}
-                                      </span>
-                                    </div>
-                                    {entry.referenceCode && (
-                                      <span className="procurementRefCode">
-                                        Mã: {entry.referenceCode}
-                                      </span>
-                                    )}
-                                  </div>
-
-                                  <h3 className="procurementCardTitle">{entry.title}</h3>
-
-                                  <div className="procurementCardFooter">
-                                    {deadline ? (
-                                      <span className="procurementDeadline">
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                          <circle cx="12" cy="12" r="10" />
-                                          <polyline points="12 6 12 12 16 14" />
-                                        </svg>
-                                        Hạn nộp: {deadline}
-                                      </span>
-                                    ) : (
-                                      <span className="procurementDeadline noDeadline">
-                                        {entry.publishedAt ? `Đăng ngày ${new Date(entry.publishedAt).toLocaleDateString('vi-VN')}` : 'Xem hồ sơ'}
-                                      </span>
-                                    )}
-
-                                    <span className="procurementActionLink">
-                                      Hồ sơ chi tiết →
-                                    </span>
-                                  </div>
-                                </a>
-                              )
-                            })
-                          ) : (
-                            <div className="pairColEmpty">Chưa có hồ sơ đấu thầu – mua sắm.</div>
-                          )}
-                        </div>
+                        <HomeProcurementTabs items={procurement} limit={procLimit} />
                       </div>
                     )}
                   </div>
@@ -1650,36 +1600,51 @@ export default async function HomePage() {
           }
 
           if (type === 'documents') {
-            const docLayout = item.sectionLayout || 'editorial-grid'
-            const docLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
+            const docLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 6)))
 
-            const normalDocItems = documents.map((docItem: any) => ({
-              id: `doc-${docItem.id}`,
-              href: docItem.slug ? `/van-ban/${docItem.slug}` : (mediaUrl(docItem.file) || '/van-ban'),
-              cover: mediaUrl(docItem.cover || docItem.seoImage) || defaultMedia.documents,
-              title: docItem.title,
-              excerpt: docItem.summary || [docItem.number, docItem.issuer].filter(Boolean).join(' · ') || 'Văn bản, biểu mẫu và tài liệu được bệnh viện công khai.',
-              dateValue: docItem.issuedAt || docItem.updatedAt,
-              date: docItem.issuedAt ? new Date(docItem.issuedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
-              category: docItem.documentType || docItem.type || docItem.category || 'Văn bản – Tài liệu',
-              coverFit: docItem.coverFit || 'cover',
-              coverPosition: docItem.coverPosition || 'top',
-            }))
+            const normalDocItems = documents.map((docItem: any) => {
+              const fileLink = mediaUrl(docItem.file)
+              const isLocked = docItem.accessMode === 'pin' || docItem.accessMode === 'internal' || docItem.accessMode === 'locked' || docItem.accessMode === 'view_only' || docItem.allowDownload === false
+              return {
+                id: `doc-${docItem.id}`,
+                href: docItem.slug ? `/van-ban/${docItem.slug}` : (fileLink || '/van-ban'),
+                title: docItem.title,
+                number: docItem.number || 'Chưa số',
+                issuer: docItem.issuer || 'Bệnh viện Đa khoa Khu vực Thới Lai',
+                excerpt: docItem.summary || 'Văn bản, biểu mẫu và tài liệu chỉ đạo điều hành công khai của bệnh viện.',
+                dateValue: docItem.issuedAt || docItem.updatedAt,
+                date: docItem.issuedAt ? new Date(docItem.issuedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
+                category: docItem.documentType || docItem.type || docItem.category || 'Văn bản – Tài liệu',
+                fileUrl: fileLink,
+                isProtocol: false,
+                accessMode: docItem.accessMode || 'public',
+                isPinProtected: docItem.accessMode === 'pin',
+                isViewOnly: docItem.accessMode === 'view_only',
+                canDownload: !isLocked && Boolean(fileLink),
+              }
+            })
 
             const cpDocItems = clinicalProtocols.map((cpItem: any) => {
               const spec = typeof cpItem.specialty === 'object' && cpItem.specialty?.name ? cpItem.specialty.name : ''
               const cat = spec ? `Phác đồ (${spec})` : (cpItem.documentType || 'Phác đồ điều trị')
+              const fileLink = mediaUrl(cpItem.file)
+              const isLocked = cpItem.accessMode === 'pin' || cpItem.accessMode === 'internal' || cpItem.accessMode === 'locked' || cpItem.accessMode === 'view_only' || cpItem.allowDownload === false
               return {
                 id: `cp-${cpItem.id}`,
-                href: cpItem.slug ? `/phac-do-dieu-tri/${cpItem.slug}` : (mediaUrl(cpItem.file) || '/phac-do-dieu-tri'),
-                cover: mediaUrl(cpItem.cover || cpItem.seoImage) || defaultMedia.documents,
+                href: cpItem.slug ? `/phac-do-dieu-tri/${cpItem.slug}` : (fileLink || '/phac-do-dieu-tri'),
                 title: cpItem.title,
-                excerpt: cpItem.summary || [cpItem.code, cpItem.issuer || 'BVĐK Thới Lai'].filter(Boolean).join(' · ') || 'Phác đồ điều trị và hướng dẫn chẩn đoán chuyên môn.',
+                number: cpItem.code || 'Phác đồ KCB',
+                issuer: cpItem.issuer || 'Hội đồng Khoa học Kỹ thuật BVĐK Thới Lai',
+                excerpt: cpItem.summary || 'Phác đồ điều trị và hướng dẫn chẩn đoán chuyên môn chuẩn hóa.',
                 dateValue: cpItem.issuedAt || cpItem.updatedAt,
                 date: cpItem.issuedAt ? new Date(cpItem.issuedAt).toLocaleDateString('vi-VN') : 'Mới cập nhật',
                 category: cat,
-                coverFit: 'cover',
-                coverPosition: 'top',
+                fileUrl: fileLink,
+                isProtocol: true,
+                accessMode: cpItem.accessMode || 'public',
+                isPinProtected: cpItem.accessMode === 'pin',
+                isViewOnly: cpItem.accessMode === 'view_only',
+                canDownload: !isLocked && Boolean(fileLink),
               }
             })
 
@@ -1687,11 +1652,126 @@ export default async function HomePage() {
               .sort((a, b) => new Date(b.dateValue || 0).getTime() - new Date(a.dateValue || 0).getTime())
               .slice(0, docLimit)
 
+            const docCols = String(item.documentColumns || '3')
+            const gridColClass = docCols === '5' ? 'cols-5' : docCols === '4' ? 'cols-4' : 'cols-3'
+
             return (
               <section className="sectionPro configurableHomeSection homeDocumentsSection" style={style} key={key}>
                 <div className="container">
-                  <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/van-ban">Xem tất cả →</a></div>
-                  {renderEditorialSection({ items: allDocItems, layout: docLayout, showDate: item.layoutShowDate !== false, showCategory: item.layoutShowCategory !== false, showExcerpt: item.layoutShowExcerpt !== false, badgeOverride: item.layoutCardBadge || 'VĂN BẢN – TÀI LIỆU', emptyText: 'Chưa có văn bản được đăng.', actionText: 'Xem văn bản – tài liệu →' })}
+                  <div className="homeSectionHead">
+                    <div>
+                      <span className="sectionKicker">{cfg.eyebrow}</span>
+                      <h2>{cfg.title}</h2>
+                      {cfg.description && <p>{cfg.description}</p>}
+                    </div>
+                    <a href="/van-ban">Xem tất cả văn bản →</a>
+                  </div>
+
+                  {allDocItems.length > 0 ? (
+                    <div className={`homeDocDossierGrid ${gridColClass}`}>
+                      {allDocItems.map((doc) => (
+                        <div className="homeDocDossierCard" key={doc.id}>
+                          <div className="homeDocCardHeader">
+                            <div className={`homeDocCardIconWrap ${doc.fileUrl ? 'pdfFormat' : ''}`} aria-hidden="true">
+                              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <line x1="16" y1="13" x2="8" y2="13" />
+                                <line x1="16" y1="17" x2="8" y2="17" />
+                                <polyline points="10 9 9 9 8 9" />
+                              </svg>
+                              <span className="homeDocFileFormatText">PDF</span>
+                            </div>
+
+                            <div className="homeDocCardMetaTop">
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                                <span className={`homeDocTypeBadge ${doc.isProtocol ? 'protocolBadge' : ''}`}>
+                                  {doc.category}
+                                </span>
+                                {doc.isViewOnly && (
+                                  <span className="homeDocViewOnlyBadge" title="Chế độ chỉ xem trực tuyến, nghiêm cấm tải về, sao chép và in ấn">
+                                    👁️ Chỉ xem
+                                  </span>
+                                )}
+                                {doc.isPinProtected && (
+                                  <span className="homeDocLockBadge" title="Văn bản yêu cầu mã PIN xác thực để xem nội dung và tải về">
+                                    🔒 Mã PIN
+                                  </span>
+                                )}
+                              </div>
+                              <div className="homeDocNumberBox">
+                                <span>Số:</span>
+                                <span className="homeDocNumberCode">{doc.number}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="homeDocCardBody">
+                            <a href={doc.href} className="homeDocCardTitle" title={doc.title}>
+                              {doc.title}
+                            </a>
+                            <p className="homeDocCardSummary">{doc.excerpt}</p>
+
+                            <div className="homeDocCardSpecs">
+                              <div className="homeDocSpecRow">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                  <line x1="16" y1="2" x2="16" y2="6" />
+                                  <line x1="8" y1="2" x2="8" y2="6" />
+                                  <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
+                                <span>Ngày ban hành: <strong style={{ color: '#334155' }}>{doc.date}</strong></span>
+                              </div>
+                              <div className="homeDocSpecRow">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                  <circle cx="12" cy="10" r="3" />
+                                </svg>
+                                <span title={doc.issuer}>Cơ quan: {doc.issuer}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="homeDocCardFooter">
+                            <a href={doc.href} className="homeDocActionView">
+                              <span>Xem chi tiết</span>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                                <polyline points="12 5 19 12 12 19" />
+                              </svg>
+                            </a>
+
+                            {doc.canDownload ? (
+                              <a
+                                href={doc.fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="homeDocActionDownload"
+                                title="Mở hoặc tải về tệp PDF đính kèm"
+                              >
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                  <polyline points="7 10 12 15 17 10" />
+                                  <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                                <span>Tải PDF</span>
+                              </a>
+                            ) : doc.isViewOnly ? (
+                              <span className="homeDocActionViewOnly" title="Văn bản chỉ cho phép xem trực tuyến, không được phép tải về máy">
+                                👁️ Chỉ xem
+                              </span>
+                            ) : doc.isPinProtected ? (
+                              <span className="homeDocActionLocked" title="Nhập mã PIN trong trang chi tiết để mở khóa tải về">
+                                🔒 Khóa tải
+                              </span>
+                            ) : null}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="homeDocDossierEmpty">Chưa có văn bản nào được đăng tải.</div>
+                  )}
                 </div>
               </section>
             )

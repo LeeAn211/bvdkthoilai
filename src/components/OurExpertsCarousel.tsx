@@ -195,10 +195,6 @@ export function OurExpertsCarousel({
             </svg>
           </button>
 
-          <span className={styles.expertCarouselCounter}>
-            {currentIndex + 1} / {total}
-          </span>
-
           <button
             type="button"
             className={styles.expertNavBtn}

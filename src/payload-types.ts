@@ -1008,9 +1008,9 @@ export interface Document {
     [k: string]: unknown;
   } | null;
   /**
-   * Nếu chọn Mã PIN: Trình xem file, nút Tải về và lệnh In PDF sẽ bị chặn 100% cho đến khi người dùng nhập đúng mã PIN.
+   * Nếu chọn "Chỉ cho xem trực tuyến": Hệ thống mở khung đọc trực tiếp trên web nhưng chặn 100% nút tải về, chặn phím tắt copy, chặn chuột phải và chặn lệnh in ấn với mọi hình thức.
    */
-  accessMode?: ('public' | 'pin' | 'internal' | 'locked') | null;
+  accessMode?: ('public' | 'view_only' | 'pin' | 'internal' | 'locked') | null;
   /**
    * Đặt mã PIN riêng cho văn bản này. Nếu để trống, hệ thống tự động áp dụng Mã PIN mặc định trong Cài đặt Hệ thống.
    */
@@ -1100,9 +1100,9 @@ export interface ClinicalProtocol {
     [k: string]: unknown;
   } | null;
   /**
-   * Nếu chọn Mã PIN: Trình xem file, nút Tải về và lệnh In PDF sẽ bị chặn 100% cho đến khi người dùng nhập đúng mã PIN.
+   * Nếu chọn "Chỉ cho xem trực tuyến": Hệ thống mở khung đọc trực tiếp trên web nhưng chặn 100% nút tải về, chặn phím tắt copy, chặn chuột phải và chặn lệnh in ấn với mọi hình thức.
    */
-  accessMode?: ('public' | 'pin' | 'internal' | 'locked') | null;
+  accessMode?: ('public' | 'view_only' | 'pin' | 'internal' | 'locked') | null;
   /**
    * Đặt mã PIN riêng cho phác đồ này. Nếu để trống, hệ thống tự động áp dụng Mã PIN mặc định trong Cài đặt Hệ thống.
    */
@@ -1217,6 +1217,10 @@ export interface Specialty {
    * 💡 Ảnh lớn 16:9 hoặc 16:10 (khoảng 1200×675px hoặc 800×450px). Khi hover/focus vào chuyên khoa, ảnh lớn bên phải sẽ đổi sang ảnh này.
    */
   cover?: (number | null) | Media;
+  /**
+   * TẮT nếu không muốn ảnh nhỏ góc dưới che mất chi tiết của ảnh lớn chính.
+   */
+  showSubCover?: boolean | null;
   /**
    * 💡 Ảnh nhỏ nổi 3D lồng ghép nghệ thuật góc dưới phải (ảnh bác sĩ đang thao tác, thiết bị phụ trợ hoặc phòng bệnh). Để trống sẽ dùng ảnh chuyên ngành mặc định.
    */
@@ -3801,6 +3805,7 @@ export interface SpecialtiesSelect<T extends boolean = true> {
   summary?: T;
   content?: T;
   cover?: T;
+  showSubCover?: T;
   subCover?: T;
   coverFitHome?: T;
   coverFitDetail?: T;
@@ -6832,6 +6837,10 @@ export interface Homepage {
          * Chọn cách trình bày danh sách bài viết trong section này. Thay đổi ngay lập tức sau khi lưu, không cần code lại.
          */
         sectionLayout?: ('editorial-grid' | 'card-grid-4' | 'list-rows' | 'compact-list') | null;
+        /**
+         * Tùy chọn hiển thị 3, 4 hoặc 5 thẻ văn bản trên 1 hàng trên màn hình máy tính. Hệ thống tự động co giãn 2 ô trên tablet và 1 ô trên mobile.
+         */
+        documentColumns?: ('3' | '4' | '5') | null;
         /**
          * Áp dụng cho tất cả mẫu bố cục.
          */
@@ -10046,6 +10055,7 @@ export interface HomepageSelect<T extends boolean = true> {
         buttonNewPageSlug?: T;
         buttonUrl?: T;
         sectionLayout?: T;
+        documentColumns?: T;
         layoutItemLimit?: T;
         layoutShowDate?: T;
         layoutShowCategory?: T;

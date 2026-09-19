@@ -130,8 +130,10 @@ export default async function Page({ searchParams }: PageProps) {
         eyebrow={heroEyebrow}
         title={heroTitle}
         description={heroDesc}
+        breadcrumbParent="Khám bệnh & Dịch vụ"
         breadcrumb="Lịch khám bệnh"
       />
+
 
       <main className="section">
         <div className="container">

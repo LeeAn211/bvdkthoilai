@@ -14,6 +14,7 @@ export type SpecialtyCarouselItem = {
   iconCustomUrl?: string
   coverUrl?: string
   subCoverUrl?: string
+  showSubCover?: boolean
   coverFitHome?: 'contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill' | string
   coverFit?: 'contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill' | string
   coverPosition?: 'top' | 'center' | 'bottom' | string
@@ -211,6 +212,7 @@ export function SpecialtiesCarousel({
   const displayImage = activeSpecialty.coverUrl || defaultVisual.main
   const subDisplayImage = activeSpecialty.subCoverUrl || defaultVisual.sub
   const eyebrowText = defaultVisual.badge
+  const shouldShowSubCover = activeSpecialty.showSubCover !== false
 
   return (
     <div className={styles.showcaseSplitLayout}>
@@ -264,7 +266,7 @@ export function SpecialtiesCarousel({
       {/* CỘT PHẢI: CỤM ẢNH NGHỆ THUẬT Y KHOA NỔI KHỐI SANG TRỌNG - THAY ĐỔI THEO KHOA ĐƯỢC FOCUS/HOVER */}
       <div className={styles.visualColumn}>
         {/* Khối ảnh chính ở trên */}
-        <div className={styles.mainPhotoCard}>
+        <div className={`${styles.mainPhotoCard} ${!shouldShowSubCover ? styles.mainPhotoCardFull : ''}`}>
           <img
             key={activeSpecialty.slug || activeSpecialty.name}
             src={displayImage}
@@ -285,22 +287,24 @@ export function SpecialtiesCarousel({
           </div>
         </div>
 
-        {/* Khối ảnh phụ nhỏ lồng ghép nghệ thuật góc dưới */}
-        <div className={styles.subFloatingPhoto}>
-          <img
-            key={`sub-${activeSpecialty.slug || activeSpecialty.name}`}
-            src={subDisplayImage}
-            alt={activeSpecialty.name}
-            className={styles.subPhotoImg}
-            loading="lazy"
-          />
-          <div className={styles.floatingStatPill}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0878d1" strokeWidth="2.5">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-            </svg>
-            <span>Phục vụ 24/7</span>
+        {/* Khối ảnh phụ nhỏ lồng ghép nghệ thuật góc dưới (cho phép bật/tắt để không che ảnh chính) */}
+        {shouldShowSubCover && (
+          <div className={styles.subFloatingPhoto}>
+            <img
+              key={`sub-${activeSpecialty.slug || activeSpecialty.name}`}
+              src={subDisplayImage}
+              alt={activeSpecialty.name}
+              className={styles.subPhotoImg}
+              loading="lazy"
+            />
+            <div className={styles.floatingStatPill}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0878d1" strokeWidth="2.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+              </svg>
+              <span>Phục vụ 24/7</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

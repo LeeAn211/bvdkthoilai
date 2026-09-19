@@ -74,10 +74,18 @@ export default async function Page({ params }: Props) {
     ? new Date(item.expireAt).toLocaleDateString('vi-VN')
     : undefined
 
+  const levelLabels: Record<string, string> = {
+    urgent: 'Khẩn',
+    important: 'Quan trọng',
+    normal: 'Thông báo',
+  }
+  const levelLabel = (lvl: string | undefined | null) =>
+    lvl ? (levelLabels[lvl] ?? 'Thông báo') : 'Thông báo'
+
   const breadcrumbs = [
     { label: 'Trang chủ', href: '/' },
     { label: 'Thông báo', href: '/thong-bao' },
-    ...(item.level ? [{ label: item.level }] : []),
+    ...(item.level ? [{ label: levelLabel(item.level) }] : []),
   ]
 
   const mappedRelated = related.map((rel: any) => ({
@@ -85,7 +93,7 @@ export default async function Page({ params }: Props) {
     title: rel.title,
     slug: rel.slug,
     publishedAt: rel.publishedAt,
-    categoryName: rel.level || 'THÔNG BÁO',
+    categoryName: levelLabel(rel.level),
     excerpt: rel.excerpt,
   }))
 
@@ -95,7 +103,7 @@ export default async function Page({ params }: Props) {
       title={item.title}
       publishedDate={publishedDate}
       views={item.views || 128}
-      categoryName={item.level || 'Thông báo Bệnh viện'}
+      categoryName={levelLabel(item.level)}
       categoryHref="/thong-bao"
       expireDate={expireDate}
       excerpt={item.excerpt}

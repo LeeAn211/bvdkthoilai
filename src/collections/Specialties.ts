@@ -152,8 +152,18 @@ export const Specialties: CollectionConfig = {
           type: 'upload',
           relationTo: 'media',
           admin: {
-            width: '50%',
+            width: '40%',
             description: '💡 Ảnh lớn 16:9 hoặc 16:10 (khoảng 1200×675px hoặc 800×450px). Khi hover/focus vào chuyên khoa, ảnh lớn bên phải sẽ đổi sang ảnh này.',
+          },
+        },
+        {
+          name: 'showSubCover',
+          label: 'Bật ảnh phụ nhỏ 3D góc dưới',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            width: '20%',
+            description: 'TẮT nếu không muốn ảnh nhỏ góc dưới che mất chi tiết của ảnh lớn chính.',
           },
         },
         {
@@ -162,7 +172,8 @@ export const Specialties: CollectionConfig = {
           type: 'upload',
           relationTo: 'media',
           admin: {
-            width: '50%',
+            width: '40%',
+            condition: (_data, siblingData) => siblingData?.showSubCover !== false,
             description: '💡 Ảnh nhỏ nổi 3D lồng ghép nghệ thuật góc dưới phải (ảnh bác sĩ đang thao tác, thiết bị phụ trợ hoặc phòng bệnh). Để trống sẽ dùng ảnh chuyên ngành mặc định.',
           },
         },

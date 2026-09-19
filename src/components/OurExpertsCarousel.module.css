@@ -30,6 +30,10 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.expertCarouselTrack[data-count="5"] {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .expertCardLink {
   display: block;
   text-decoration: none;
@@ -254,18 +258,29 @@
 
 @media (max-width: 1024px) {
   .expertCarouselTrack,
-  .expertCarouselTrack[data-count="4"] {
+  .expertCarouselTrack[data-count="4"],
+  .expertCarouselTrack[data-count="5"] {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
+  }
+  /* Chỉ hiện tối đa 3 thẻ trên màn hình tablet lớn */
+  .expertCarouselTrack[data-count="4"] .expertCardLink:nth-child(n+4),
+  .expertCarouselTrack[data-count="5"] .expertCardLink:nth-child(n+4) {
+    display: none;
   }
 }
 
 @media (max-width: 800px) {
   .expertCarouselTrack,
   .expertCarouselTrack[data-count="3"],
-  .expertCarouselTrack[data-count="4"] {
+  .expertCarouselTrack[data-count="4"],
+  .expertCarouselTrack[data-count="5"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    gap: 12px;
+  }
+  /* Chỉ hiện tối đa 2 thẻ trên điện thoại ngang / tablet nhỏ */
+  .expertCarouselTrack .expertCardLink:nth-child(n+3) {
+    display: none;
   }
 }
 

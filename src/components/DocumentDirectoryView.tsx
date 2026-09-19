@@ -23,7 +23,7 @@ export interface DocumentDirectoryItem {
   fileFormat?: string
   coverUrl?: string
   href: string
-  accessMode?: 'public' | 'pin' | 'internal' | 'locked'
+  accessMode?: 'public' | 'pin' | 'internal' | 'locked' | 'view_only'
   allowDownload?: boolean
   preventCopy?: boolean
   showViewer?: boolean
@@ -262,7 +262,12 @@ export function DocumentDirectoryView({
                           🔒 Mã PIN
                         </span>
                       )}
-                      {doc.allowDownload === false && (
+                      {doc.accessMode === 'view_only' && (
+                        <span className={styles.tableCategoryBadge} style={{ background: '#fef3c7', color: '#92400e', borderColor: '#fcd34d' }} title="Chỉ cho xem trực tuyến, cấm tải về, sao chép và in ấn">
+                          👁️ Chỉ xem
+                        </span>
+                      )}
+                      {doc.allowDownload === false && doc.accessMode !== 'view_only' && (
                         <span className={styles.tableCategoryBadge} style={{ background: '#f5f5f5', color: '#8c8c8c', borderColor: '#d9d9d9' }}>
                           Chỉ xem
                         </span>

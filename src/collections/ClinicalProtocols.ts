@@ -62,13 +62,14 @@ export const ClinicalProtocols: CollectionConfig = {
           defaultValue: 'public',
           options: [
             { label: 'Công khai (Mọi người đều được xem và tải)', value: 'public' },
+            { label: '👁️ Chỉ cho xem trực tuyến (Cấm tải, cấm sao chép, cấm in ấn mọi hình thức)', value: 'view_only' },
             { label: 'Mã PIN bảo mật (Khóa xem, khóa tải, khóa in khi chưa có mã)', value: 'pin' },
             { label: 'Lưu hành nội bộ (Chỉ nhân viên y tế / Bác sĩ)', value: 'internal' },
             { label: 'Khóa hoàn toàn (Chỉ xem trích yếu, cấm tải)', value: 'locked' },
           ],
           admin: {
             width: '50%',
-            description: 'Nếu chọn Mã PIN: Trình xem file, nút Tải về và lệnh In PDF sẽ bị chặn 100% cho đến khi người dùng nhập đúng mã PIN.',
+            description: 'Nếu chọn "Chỉ cho xem trực tuyến": Hệ thống mở khung đọc trực tiếp trên web nhưng chặn 100% nút tải về, chặn phím tắt copy, chặn chuột phải và chặn lệnh in ấn với mọi hình thức.',
           },
         },
         {
