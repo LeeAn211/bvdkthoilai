@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260919_048_add_document_columns_to_homepage_sections",
-  "schemaSha256": "0d47b39d31a197ca498c821594b83c22263706aa56e88e13ca539682f5e6f743"
+  "migrationId": "20260919_050_protect_document_media_and_pin",
+  "schemaSha256": "3f48efd0b9a961764b637ded453424db7e2b4eb3cc242656da502d6272815d39"
 }

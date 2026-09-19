@@ -10,7 +10,8 @@ export const SurveyResponses: CollectionConfig = {
   },
   access: {
     read: moduleAccess('surveys', 'view'),
-    create: () => true,
+    // Chỉ route /api/surveys/submit đã qua validation/Turnstile được tạo bằng overrideAccess.
+    create: () => false,
     update: () => false,
     delete: moduleAccess('surveys', 'delete'),
   },
@@ -26,4 +27,3 @@ export const SurveyResponses: CollectionConfig = {
     { name: 'locked', type: 'checkbox', defaultValue: true, label: 'Khóa dữ liệu' },
   ],
 }
-

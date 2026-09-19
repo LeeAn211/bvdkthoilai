@@ -187,7 +187,15 @@ export function ScheduleExplorer({ daily, weekly, attachments, emergency = [], t
   return <div className={`scheduleExplorer ${compact ? 'compactScheduleExplorer' : ''}`}>
     {tabDefinitions.length > 1 && (
       <div className="scheduleTabs" role="tablist">
-        {tabDefinitions.map((item) => <button key={item.key} className={tab === item.key ? 'active' : ''} onClick={() => { setTab(item.key); setExpandedTab(null) }}>{item.label} <span>{item.items.length}</span></button>)}
+        {tabDefinitions.map((item) => (
+          <button
+            key={item.key}
+            className={`${tab === item.key ? 'active' : ''} ${item.items.length === 0 ? 'mobileEmptyTab' : ''}`}
+            onClick={() => { setTab(item.key); setExpandedTab(null) }}
+          >
+            {item.label} <span>{item.items.length}</span>
+          </button>
+        ))}
       </div>
     )}
 

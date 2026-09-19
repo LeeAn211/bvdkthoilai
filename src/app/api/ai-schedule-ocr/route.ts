@@ -1,39 +1,76 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { hasModulePermission } from '@/access'
+import { getCMS } from '@/lib/payload'
+import { bodyIsTooLarge, rateLimit } from '@/lib/request-security'
+
+const MAX_FILE_BYTES = 8 * 1024 * 1024
+const MAX_BODY_BYTES = MAX_FILE_BYTES + 1024 * 1024
+const ALLOWED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp'])
+const GEMINI_TIMEOUT_MS = 20_000
+
+const matchesImageSignature = (buffer: Buffer, mimeType: string) => {
+  if (mimeType === 'image/jpeg') return buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff
+  if (mimeType === 'image/png') return buffer.length >= 8 && buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+  if (mimeType === 'image/webp') return buffer.length >= 12 && buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP'
+  return false
+}
+
+const json = (body: Record<string, unknown>, status = 200, extraHeaders?: Record<string, string>) =>
+  NextResponse.json(body, {
+    status,
+    headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...extraHeaders },
+  })
 
 export async function POST(req: NextRequest) {
   try {
+    const payload = await getCMS()
+    const auth = await payload.auth({ headers: req.headers })
+    const user = auth.user as any
+    if (!user) return json({ error: 'Bạn cần đăng nhập để sử dụng chức năng AI OCR.' }, 401)
+    if (!hasModulePermission(user, 'schedules', 'import')) {
+      return json({ error: 'Bạn không có quyền nhập lịch trực.' }, 403)
+    }
+
+    const contentLength = Number(req.headers.get('content-length') || 0)
+    if (!Number.isFinite(contentLength) || contentLength <= 0 || bodyIsTooLarge(req, MAX_BODY_BYTES)) {
+      return json({ error: 'Ảnh tải lên vượt giới hạn 8 MB hoặc request không hợp lệ.' }, 413)
+    }
+
+    const throttle = rateLimit(req, `schedule-ocr:${user.id}`, 5, 15 * 60_000)
+    if (!throttle.allowed) {
+      return json(
+        { error: 'Bạn đã dùng AI OCR quá nhiều lần. Vui lòng thử lại sau.' },
+        429,
+        { 'Retry-After': String(throttle.retryAfter) },
+      )
+    }
+
     const formData = await req.formData()
     const imageFile = formData.get('image') as File | null
-    const customApiKey = (formData.get('apiKey') as string || '').trim()
 
-    if (!imageFile) {
-      return NextResponse.json({ error: 'Vui lòng chọn hoặc tải lên ảnh chụp lịch trực.' }, { status: 400 })
+    if (!imageFile || typeof imageFile.arrayBuffer !== 'function') {
+      return json({ error: 'Vui lòng chọn hoặc tải lên ảnh chụp lịch trực.' }, 400)
+    }
+    if (!ALLOWED_IMAGE_TYPES.has(imageFile.type) || imageFile.size <= 0 || imageFile.size > MAX_FILE_BYTES) {
+      return json({ error: 'Chỉ chấp nhận ảnh JPEG, PNG hoặc WebP có dung lượng tối đa 8 MB.' }, 415)
     }
 
-    // Lấy API key từ request, hoặc .env, hoặc từ Cấu hình lịch trong Payload
-    let apiKey = customApiKey || process.env.GEMINI_API_KEY || ''
-    if (!apiKey) {
-      try {
-        const payload = await getPayload({ config })
-        const schedSettings: any = await payload.findGlobal({ slug: 'schedule-settings' }).catch(() => null)
-        apiKey = schedSettings?.geminiApiKey || ''
-      } catch (err) {
-        console.warn('Không thể đọc geminiApiKey từ schedule-settings:', err)
-      }
-    }
+    // API key chỉ được đọc từ secret phía server; không nhận từ client hoặc Payload CMS.
+    const apiKey = process.env.GEMINI_API_KEY || ''
 
     if (!apiKey) {
-      return NextResponse.json({
-        error: 'Chưa cấu hình Google Gemini API Key. Bạn có thể nhập trực tiếp API Key vào ô cấu hình hoặc liên hệ quản trị hệ thống.'
-      }, { status: 400 })
+      return json({
+        error: 'Chưa cấu hình Google Gemini API Key trên máy chủ. Vui lòng liên hệ quản trị hệ thống.'
+      }, 503)
     }
 
     // Chuyển file sang Base64
     const buffer = Buffer.from(await imageFile.arrayBuffer())
-    const base64Image = buffer.toString('base64')
     const mimeType = imageFile.type || 'image/jpeg'
+    if (!matchesImageSignature(buffer, mimeType)) {
+      return json({ error: 'Nội dung tệp không khớp với định dạng ảnh đã khai báo.' }, 415)
+    }
+    const base64Image = buffer.toString('base64')
 
     // System prompt chuyên dụng cho ma trận lịch trực bệnh viện Việt Nam
     const prompt = `
@@ -119,6 +156,7 @@ QUY TẮC PHÂN TÍCH:
       generationConfig: {
         response_mime_type: 'application/json',
         temperature: 0.1,
+        maxOutputTokens: 8192,
       },
     }
 
@@ -132,6 +170,8 @@ QUY TẮC PHÂN TÍCH:
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payloadBody),
+          cache: 'no-store',
+          signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
         })
 
         if (res.ok) {
@@ -149,31 +189,49 @@ QUY TẮC PHÂN TÍCH:
 
     if (!geminiRes) {
       console.error('Tất cả models Gemini đều không phản hồi thành công:', lastErrorText)
-      return NextResponse.json({
-        error: `Lỗi kết nối Gemini API: ${lastErrorText.slice(0, 250)}...`
-      }, { status: 502 })
+      return json({ error: 'Dịch vụ AI OCR tạm thời không phản hồi. Vui lòng thử lại sau.' }, 502)
     }
 
     const resJson = await geminiRes.json()
     const rawText = resJson?.candidates?.[0]?.content?.parts?.[0]?.text || ''
 
     if (!rawText) {
-      return NextResponse.json({ error: 'AI không trả về kết quả nhận diện nào.' }, { status: 500 })
+      return json({ error: 'AI không trả về kết quả nhận diện nào.' }, 502)
     }
 
     // Làm sạch markdown nếu có ```json ... ```
     const cleanJson = rawText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim()
+    if (cleanJson.length > 1_000_000) {
+      return json({ error: 'Kết quả AI vượt giới hạn xử lý an toàn.' }, 502)
+    }
     const parsedData = JSON.parse(cleanJson)
+    if (!parsedData || typeof parsedData !== 'object' || !Array.isArray(parsedData.slots)) {
+      return json({ error: 'Kết quả AI không đúng định dạng lịch trực.' }, 502)
+    }
+    if (parsedData.slots.length > 250 || (Array.isArray(parsedData.contacts) && parsedData.contacts.length > 100)) {
+      return json({ error: 'Kết quả AI vượt giới hạn số dòng cho phép.' }, 502)
+    }
 
-    return NextResponse.json({
+    await payload.create({
+      collection: 'audit-logs' as any,
+      data: {
+        actor: user.id,
+        actorEmail: user.email,
+        action: 'other',
+        resource: 'schedules',
+        summary: 'Quét ảnh lịch trực bằng AI OCR',
+        metadata: { mimeType, fileSize: imageFile.size, slots: parsedData.slots.length },
+      },
+      overrideAccess: true,
+    }).catch(() => null)
+
+    return json({
       success: true,
       data: parsedData,
     })
 
   } catch (error: any) {
     console.error('OCR Error:', error)
-    return NextResponse.json({
-      error: error?.message || 'Có lỗi xảy ra trong quá trình quét ảnh lịch trực.'
-    }, { status: 500 })
+    return json({ error: 'Có lỗi xảy ra trong quá trình quét ảnh lịch trực.' }, 500)
   }
 }

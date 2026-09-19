@@ -21,8 +21,7 @@ export interface DocumentDetailData {
   fileSize?: string | number
   fileFormat?: string
   accessMode?: 'public' | 'pin' | 'internal' | 'locked' | 'view_only'
-  pinCode?: string
-  defaultPin?: string
+  accessCollection?: 'documents' | 'clinical-protocols'
   allowDownload?: boolean
   preventCopy?: boolean
   preventPrint?: boolean
@@ -42,65 +41,93 @@ export function DocumentDetailView({
   hideHeader?: boolean
 }) {
   const isPinProtected = doc.accessMode === 'pin'
+  const isInternal = doc.accessMode === 'internal'
   const isFullyLocked = doc.accessMode === 'locked'
   const isViewOnly = doc.accessMode === 'view_only'
-  const sessionKey = `doc_pin_unlocked_${doc.id}`
 
   // Trạng thái đã mở khóa mã PIN hay chưa
-  const [isUnlocked, setIsUnlocked] = useState<boolean>(false)
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(!isPinProtected && !isInternal && !isFullyLocked)
+  const [authorizedFileUrl, setAuthorizedFileUrl] = useState<string>(
+    !isPinProtected && !isInternal && !isFullyLocked ? (doc.fileUrl || '') : '',
+  )
   const [pinInput, setPinInput] = useState<string>('')
   const [pinError, setPinError] = useState<string>('')
   const [showPinModal, setShowPinModal] = useState<boolean>(false)
+  const [isAuthorizing, setIsAuthorizing] = useState<boolean>(false)
 
   // Đọc trạng thái đã mở khóa từ sessionStorage khi vào trang
   useEffect(() => {
-    if (!isPinProtected) {
-      setIsUnlocked(true)
-      return
-    }
-    try {
-      const saved = sessionStorage.getItem(sessionKey)
-      if (saved === 'true') {
-        setIsUnlocked(true)
-      }
-    } catch {}
-  }, [isPinProtected, sessionKey])
+    if (!isInternal || !doc.fileUrl || !doc.accessCollection) return
+
+    let cancelled = false
+    setIsAuthorizing(true)
+    fetch('/api/document-access', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ collection: doc.accessCollection, documentId: doc.id }),
+    })
+      .then(async response => {
+        const data = await response.json().catch(() => ({})) as { fileUrl?: string; error?: string }
+        if (!response.ok || !data.fileUrl) throw new Error(data.error || 'Không thể xác minh quyền truy cập.')
+        if (!cancelled) {
+          setAuthorizedFileUrl(data.fileUrl)
+          setIsUnlocked(true)
+          setPinError('')
+        }
+      })
+      .catch(error => {
+        if (!cancelled) setPinError(error instanceof Error ? error.message : 'Không thể xác minh quyền truy cập.')
+      })
+      .finally(() => {
+        if (!cancelled) setIsAuthorizing(false)
+      })
+
+    return () => { cancelled = true }
+  }, [doc.accessCollection, doc.fileUrl, doc.id, isInternal])
 
   const [activeViewer, setActiveViewer] = useState<boolean>(doc.showViewer !== false && Boolean(doc.fileUrl))
   const [fullscreen, setFullscreen] = useState<boolean>(false)
 
-  const isPdf = (doc.fileFormat || '').toLowerCase().includes('pdf') || (doc.fileUrl || '').toLowerCase().endsWith('.pdf')
+  const isPdf = (doc.fileFormat || '').toLowerCase().includes('pdf') || (doc.fileName || '').toLowerCase().endsWith('.pdf')
   const isOfficeDoc = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].some(ext =>
-    (doc.fileFormat || '').toLowerCase().includes(ext) || (doc.fileUrl || '').toLowerCase().includes(`.${ext}`)
+    (doc.fileFormat || '').toLowerCase().includes(ext) || (doc.fileName || '').toLowerCase().includes(`.${ext}`)
   )
 
-  // Mã PIN hợp lệ: lấy mã riêng nếu có, nếu không lấy mã chung của viện (mặc định BVTL2026)
-  const requiredPin = (doc.pinCode || doc.defaultPin || 'BVTL2026').trim().toLowerCase()
-
-  // Hàm xử lý kiểm tra mã PIN
-  const handleVerifyPin = (e?: React.FormEvent) => {
+  // PIN chỉ được gửi tới API để xác minh; giá trị thật không bao giờ được serialize xuống client.
+  const handleVerifyPin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault()
     setPinError('')
-    const inputClean = pinInput.trim().toLowerCase()
-    if (!inputClean) {
+    if (!pinInput.trim()) {
       setPinError('Vui lòng nhập mã bảo mật.')
       return
     }
+    if (!doc.accessCollection) {
+      setPinError('Cấu hình truy cập tài liệu không hợp lệ.')
+      return
+    }
 
-    if (inputClean === requiredPin) {
+    setIsAuthorizing(true)
+    try {
+      const response = await fetch('/api/document-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ collection: doc.accessCollection, documentId: doc.id, pin: pinInput }),
+      })
+      const data = await response.json().catch(() => ({})) as { fileUrl?: string; error?: string }
+      if (!response.ok || !data.fileUrl) throw new Error(data.error || 'Mã xác thực không chính xác.')
+      setAuthorizedFileUrl(data.fileUrl)
       setIsUnlocked(true)
       setShowPinModal(false)
+      setPinInput('')
       setPinError('')
-      try {
-        sessionStorage.setItem(sessionKey, 'true')
-      } catch {}
-    } else {
-      setPinError('Mã xác thực không chính xác. Vui lòng kiểm tra lại.')
+    } catch (error) {
+      setPinError(error instanceof Error ? error.message : 'Không thể xác minh mã bảo mật.')
+    } finally {
+      setIsAuthorizing(false)
     }
   }
 
-  // Quyền thao tác thực tế: Nếu là PIN thì phải đã unlock, nếu là locked thì luôn cấm
-  const canAccessDocument = (!isPinProtected || isUnlocked) && !isFullyLocked
+  const canAccessDocument = isUnlocked && !isFullyLocked && Boolean(authorizedFileUrl)
 
   // Đối với tài liệu có cài mật khẩu (isPinProtected) hoặc chế độ Chỉ xem trực tuyến (isViewOnly):
   // Tuyệt đối CHỈ CHO XEM TRỰC TIẾP TRÊN WEB, KHÔNG cho phép tải file về máy, không mở cửa sổ mới và cấm in ấn, sao chép với mọi hình thức.
@@ -112,10 +139,15 @@ export function DocumentDetailView({
 
   // Link viewer: nếu chưa unlock thì tuyệt đối không tải url file vào iframe
   // Khi là tài liệu khóa PIN hoặc cấm tải: cưỡng chế PDF toolbar=0 để ẩn nút In & Tải về của trình đọc PDF
-  const embedViewerUrl = (canAccessDocument && doc.fileUrl)
+  const embedViewerUrl = (canAccessDocument && authorizedFileUrl)
     ? isPdf
-      ? `${doc.fileUrl}#toolbar=${canDownload ? '1' : '0'}&navpanes=0`
-      : `https://docs.google.com/viewer?embedded=true&url=${encodeURIComponent(doc.fileUrl)}`
+      ? `${authorizedFileUrl}#toolbar=${canDownload ? '1' : '0'}&navpanes=0`
+      : (isPinProtected || isInternal)
+        ? ''
+        : `https://docs.google.com/viewer?embedded=true&url=${encodeURIComponent(authorizedFileUrl)}`
+    : ''
+  const downloadUrl = authorizedFileUrl
+    ? `${authorizedFileUrl}${authorizedFileUrl.includes('?') ? '&' : '?'}download=1`
     : ''
 
   return (
@@ -297,7 +329,7 @@ export function DocumentDetailView({
                   <td className={styles.colValue}>{doc.signer}</td>
                 </tr>
               )}
-              <tr className={`${styles.docAttachmentRow} ${isPinProtected && !isUnlocked ? styles.securityLockedRow : ''}`}>
+              <tr className={`${styles.docAttachmentRow} ${(isPinProtected || isInternal) && !isUnlocked ? styles.securityLockedRow : ''}`}>
                 <td className={styles.colLabel}>Tài liệu đính kèm</td>
                 <td className={styles.colValue}>
                   {doc.fileUrl ? (
@@ -329,6 +361,10 @@ export function DocumentDetailView({
                               🔒 Đã khóa xem trực tuyến
                             </span>
                           </>
+                        ) : isInternal && !isUnlocked ? (
+                          <span className={styles.downloadLocked}>
+                            <span>{isAuthorizing ? 'Đang xác minh quyền truy cập…' : (pinError || 'Cần đăng nhập và có quyền xem tài liệu nội bộ')}</span>
+                          </span>
                         ) : isFullyLocked ? (
                           <span className={styles.downloadLocked} title="Chỉ cho phép đọc trích yếu theo quy định">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -355,7 +391,7 @@ export function DocumentDetailView({
                             {/* Nút tải về: chỉ hiển thị khi canDownload === true (tuyệt đối không hiển thị khi có mã PIN) */}
                             {canDownload ? (
                               <a
-                                href={doc.fileUrl}
+                                href={downloadUrl}
                                 download={doc.fileName || true}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -418,8 +454,8 @@ export function DocumentDetailView({
                     className={`${styles.pinInput} ${pinError ? styles.pinInputError : ''}`}
                     aria-label="Mã PIN bảo mật tài liệu"
                   />
-                  <button type="submit" className={styles.btnSubmitPin}>
-                    <span>Mở khóa xem tài liệu</span>
+                    <button type="submit" className={styles.btnSubmitPin} disabled={isAuthorizing}>
+                      <span>{isAuthorizing ? 'Đang xác minh…' : 'Mở khóa xem tài liệu'}</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                       <polyline points="12 5 19 12 12 19"></polyline>
@@ -436,7 +472,7 @@ export function DocumentDetailView({
         )}
 
         {/* Khung nhúng xem tài liệu trực tiếp khi ĐÃ MỞ KHÓA */}
-        {canAccessDocument && activeViewer && doc.fileUrl && (
+        {canAccessDocument && activeViewer && authorizedFileUrl && (
           <section className={`${styles.viewerSection} ${fullscreen ? styles.viewerFullscreen : ''}`}>
             <div className={styles.viewerToolbar}>
               <div className={styles.viewerTitle}>
@@ -451,7 +487,7 @@ export function DocumentDetailView({
               </div>
               <div className={styles.toolbarActions}>
                 {canDownload && (
-                  <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className={styles.toolbarBtn} title="Mở trong tab mới">
+                  <a href={downloadUrl} target="_blank" rel="noopener noreferrer" className={styles.toolbarBtn} title="Mở trong tab mới">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                       <polyline points="15 3 21 3 21 9"></polyline>
@@ -499,12 +535,20 @@ export function DocumentDetailView({
                   title="Tài liệu bảo mật lưu hành nội bộ – Vui lòng xem trực tiếp trên trang web (Chức năng sao chép, tải về và in ấn đã được vô hiệu hóa)"
                 />
               )}
-              <iframe
-                src={embedViewerUrl}
-                className={styles.iframe}
-                loading="lazy"
-                title={`Nội dung ${doc.title}`}
-              />
+              {embedViewerUrl ? (
+                <iframe
+                  src={embedViewerUrl}
+                  className={styles.iframe}
+                  loading="lazy"
+                  title={`Nội dung ${doc.title}`}
+                />
+              ) : (
+                <div className={styles.lockedViewerInner}>
+                  <p className={styles.lockedDesc}>
+                    Định dạng này không thể xem an toàn trực tiếp trên trình duyệt. Quản trị viên có quyền tải xuống có thể dùng nút tải tài liệu.
+                  </p>
+                </div>
+              )}
             </div>
           </section>
         )}
@@ -549,8 +593,8 @@ export function DocumentDetailView({
                   className={`${styles.pinInput} ${pinError ? styles.pinInputError : ''}`}
                 />
                 {pinError && <p className={styles.pinErrorMsg} style={{ margin: 0 }}>{pinError}</p>}
-                <button type="submit" className={styles.btnSubmitPin} style={{ width: '100%', marginTop: 6 }}>
-                  <span>Xác nhận & Mở khóa xem</span>
+                <button type="submit" className={styles.btnSubmitPin} style={{ width: '100%', marginTop: 6 }} disabled={isAuthorizing}>
+                  <span>{isAuthorizing ? 'Đang xác minh…' : 'Xác nhận & Mở khóa xem'}</span>
                 </button>
               </form>
             </div>
@@ -560,4 +604,3 @@ export function DocumentDetailView({
     </DocumentProtection>
   )
 }
-

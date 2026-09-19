@@ -1,5 +1,125 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
- 
+
+## [2026-09-19] - Tối ưu trải nghiệm mobile: Khối Chuyên gia & Tự động ẩn Tab không có dữ liệu
+
+- **Chuyên gia của chúng tôi (Our Experts) trên điện thoại**:
+  - `OurExpertsFeaturedGrid.tsx`: Cho phép người dùng bấm trực tiếp vào bất kỳ vị trí nào trên ô chuyên gia nhỏ để chuyển thẳng đến trang chi tiết bác sĩ (`/bac-si/[slug]`) mà không cần nút phụ, giữ khung ảnh và thông tin sạch sẽ, thoáng đãng. Hỗ trợ thao tác vuốt cảm ứng (touch swipe) sang trái/phải mượt mà.
+  - `OurExpertsCarousel.tsx`: Bổ sung cơ chế responsive nhận diện màn hình theo thời gian thực (`viewportPerView`). Trên điện thoại (màn hình <= 600px), carousel chuyển sang hiển thị đúng 1 ô chuyên gia duy nhất tại 1 thời điểm; vuốt màn hình cảm ứng hoặc bấm nút chuyển tiếp chuyển từng chuyên gia một gọn gàng, tránh cảm giác quá tải thông tin trên mobile.
+- **Tự động ẩn các Tab không có dữ liệu trên thiết bị di động**:
+  - `ScheduleExplorer.tsx`: Đánh dấu class `mobileEmptyTab` cho các tab lịch khám có 0 nội dung.
+  - `HomeDepartmentTabs.tsx`: Tính toán số lượng đơn vị theo từng tab; tự động gắn `mobileEmptyTab` và tự động chọn tab đầu tiên có dữ liệu.
+  - `SearchFilter.tsx`: Gắn `mobileEmptyTab` cho các nút danh mục có `count === 0`.
+  - `globals.css`: Khai báo quy tắc `@media (max-width: 768px)` ẩn toàn bộ `.mobileEmptyTab`, giúp giao diện di động gọn nhẹ, chỉ tập trung vào các nội dung đang có dữ liệu thực tế.
+- **Files Modified**: `src/components/OurExpertsFeaturedGrid.tsx`, `src/components/OurExpertsFeaturedGrid.module.css`, `src/components/OurExpertsCarousel.tsx`, `src/components/HomeDepartmentTabs.tsx`, `src/components/ScheduleExplorer.tsx`, `src/components/SearchFilter.tsx`, `src/app/globals.css`, `CHANGELOG.md`, `CURRENT-TASK.md`.
+- **Database/Schema**: Không thay đổi schema, không tạo migration mới.
+
+
+- **Preflight:** Xác nhận local `PAYLOAD_DB_PUSH=false` trước khi build; không chạy migration hoặc schema push.
+- **Build:** `npm run build` hoàn tất với Next.js 16.3.5; compile, TypeScript, page-data collection và 42/42 static pages đều thành công. Hai route bảo vệ tài liệu mới được nhận diện là dynamic server routes.
+- **Schema:** Prebuild sinh lại import map/types/generated schema và xác nhận contract hợp lệ tới migration `20260919_050_protect_document_media_and_pin`.
+- **Environment:** Local chưa cấu hình `SMTP_PASS` nên Payload thông báo dùng console email adapter trong build; production vẫn bắt buộc cấu hình SMTP secret thật đã rotate.
+- **Files Modified:** Generated Payload schema/types và `next-env.d.ts` do production generator, `SECURITY_RELEASE_GATE.md`, `CURRENT-TASK.md`, `CHANGELOG.md`.
+- **Database/Production:** `PAYLOAD_DB_PUSH=false`; không chạy migration, không thay đổi database, không deploy production.
+- **Kiểm tra:** Production build đạt; `git diff --check` đạt.
+
+## [2026-09-19] - Tái kiểm chứng P0/P1 và lập Security Release Gate
+
+- **Kết quả code:** Đối chiếu lại 1 P0 và 8 nhóm P1 của audit vòng 2; không phát hiện đường P1 cũ còn mở trong source hiện tại. P0 đã được giảm thiểu ở code nhưng chưa đóng vận hành do credential cũ chưa được xác nhận revoke/rotate và migration 049/050 chưa deploy.
+- **Release gate:** Tạo `SECURITY_RELEASE_GATE.md` với trạng thái **HOLD**, checklist secret rotation, rà artifact/history, backup có verify, migration/status/verify, ma trận HTTP/role và smoke test tài liệu protected.
+- **Migration validation:** Sửa false positive của validator: cho phép `DROP NOT NULL` và `DROP CONSTRAINT` vốn không xóa dữ liệu; vẫn chặn `TRUNCATE` và `DROP TABLE/SCHEMA/DATABASE/TYPE/COLUMN`. Kết quả migration tăng từ 227/229 lên 229/229.
+- **Static validator:** Đồng bộ hai check site-shell lỗi thời với label SiteSettings và component `MobileNavHeader` đang là source of truth.
+- **Files Added:** `SECURITY_RELEASE_GATE.md`.
+- **Files Modified:** `scripts/validate-db-migrations.mjs`, `scripts/validate-site-shell.mjs`, `CURRENT-TASK.md`, `CHANGELOG.md`.
+- **Database/Production:** Không truy cập production, không backup, không rotate credential, không chạy migration và không thay đổi database.
+- **Kiểm tra:** `npm run validate:all` đạt; `npm run typecheck` đạt; `npm run db:schema:check` đạt; `git diff --check` đạt. Chưa chạy production build/browser/runtime smoke test.
+
+## [2026-09-19] - Security hardening PR-08: least privilege cho Global toàn website
+
+- **Site Settings:** Bỏ toàn bộ quyền `edit` mặc định của role nghiệp vụ; chỉ `super-admin`, `system-admin`, `admin` có quyền mặc định. Role khác chỉ được sửa khi tài khoản có explicit custom permission.
+- **Homepage/Navigation:** Thu hẹp default edit về `editor` và `reviewer`; `board` chỉ xem. HR, tài chính, đấu thầu, khoa/phòng, lịch khám, tiêm chủng và quản lý chất lượng không còn quyền sửa mặc định.
+- **Khả năng vận hành:** Giữ nguyên ma trận quyền tùy chỉnh để quản trị viên cấp ngoại lệ theo từng tài khoản; không thay đổi access công khai dùng để render frontend.
+- **Regression:** Bổ sung ba policy checks xác nhận chính xác ma trận least privilege cho các Global có blast radius toàn website.
+- **Files Modified:** `src/access/index.ts`, `scripts/validate-system-hardening.mjs`, `DECISIONS.md`, `CURRENT-TASK.md`, `CHANGELOG.md`.
+- **Database/Schema:** Không thay đổi schema, không tạo hoặc chạy migration, không thay đổi database.
+- **Kiểm tra:** `npm run typecheck` đạt; foundation validation đạt; system-hardening 28/28; `git diff --check` đạt.
+
+## [2026-09-19] - Security hardening PR-07: bảo vệ AI lịch trực OCR
+
+- **Authorization:** `/api/ai-schedule-ocr` bắt buộc session hợp lệ và quyền `schedules.import`; anonymous nhận 401, tài khoản thiếu quyền nhận 403 trước khi hệ thống parse multipart hoặc gọi Gemini.
+- **Resource controls:** Bắt buộc `Content-Length`, giới hạn file 8 MB/body 9 MB, chỉ nhận JPEG/PNG/WebP, kiểm tra magic bytes chống giả MIME, giới hạn 5 lượt/15 phút theo user + IP, timeout 20 giây cho mỗi request Gemini và giới hạn 8.192 output tokens.
+- **Response safety:** Không còn trả nội dung lỗi từ Gemini hoặc exception nội bộ cho client; mọi response dùng `no-store` và `nosniff`; giới hạn kích thước JSON, tối đa 250 dòng lịch và 100 liên hệ.
+- **Audit/UI:** Ghi audit log không chứa ảnh/nội dung OCR sau lần xử lý thành công; file picker Admin chỉ cho chọn định dạng được hỗ trợ và cảnh báo ngay nếu quá 8 MB.
+- **Files Modified:** `src/app/api/ai-schedule-ocr/route.ts`, `src/components/admin/EmergencyTemplateDownload.tsx`, `scripts/validate-system-hardening.mjs`, `CURRENT-TASK.md`, `CHANGELOG.md`.
+- **Database/Schema:** Không thay đổi schema, không tạo hoặc chạy migration, không thay đổi database.
+- **Kiểm tra:** `npm run typecheck` đạt; `npm run validate:system-hardening` đạt 25/25; `git diff --check` đạt.
+
+## [2026-09-19] - Security hardening PR-06: khóa đường ghi khảo sát trực tiếp
+
+- **Tóm tắt:** Tắt hoàn toàn quyền `create` ở collection `survey-responses` và `survey-answers`, loại đường POST trực tiếp qua Payload REST từng có thể bỏ qua validation, rate limit và Turnstile.
+- **Luồng hợp lệ:** Public submission tiếp tục đi qua `/api/surveys/submit`; route này xác minh request trước rồi dùng Local API `overrideAccess: true` để ghi response/answer.
+- **Regression:** Bổ sung kiểm tra tĩnh bắt buộc hai collection phải chặn direct create và route kiểm soát phải giữ privileged local writes.
+- **Files Modified:** `src/collections/SurveyResponses.ts`, `src/collections/SurveyAnswers.ts`, `scripts/validate-quality-surveys.mjs`, `CURRENT-TASK.md`, `CHANGELOG.md`.
+- **Database/Schema:** Không thay đổi schema, không tạo hoặc chạy migration, không thay đổi database.
+- **Kiểm tra:** `npm run typecheck` đạt; `npm run validate:quality-surveys` đạt; `git diff --check` đạt.
+
+## [2026-09-19] - Security hardening PR-05: bảo vệ tài liệu hoàn toàn phía server
+
+- **Thời gian:** 16:42 (Asia/Saigon).
+- **Server-side access:** Thêm API xác minh PIN/quyền nội bộ và cấp HMAC token sống 5 phút; file được stream qua proxy cùng origin, hỗ trợ Range, R2/local, `nosniff`, CSP, `no-referrer` và chính sách tải xuống theo access mode.
+- **Không lộ bí mật:** Trang chi tiết không còn serialize `pinCode`, PIN mặc định hoặc URL media gốc; client gửi PIN lên server để so sánh timing-safe. Tài liệu `internal` nay bắt buộc session và quyền module tương ứng.
+- **CMS/media:** Field PIN chỉ admin được tạo/cập nhật và không bao giờ được đọc qua API; hook tự chuyển media của mọi tài liệu không công khai sang `restricted`, không tự hạ quyền media dùng chung.
+- **Viewer:** PDF bảo vệ chỉ nhận URL token sau xác minh. File Office có PIN/nội bộ không được gửi token sang Google Viewer; quản trị viên nội bộ có quyền tải vẫn có thể tải qua proxy.
+- **Cấu hình:** Thêm `DOCUMENT_ACCESS_SECRET`, `DOCUMENT_DEFAULT_PIN`; thêm dependency trực tiếp `@aws-sdk/client-s3` để stream R2.
+- **Files Added:** `src/lib/documentAccess.ts`, `src/hooks/protectDocumentMedia.ts`, `src/app/(frontend)/api/document-access/route.ts`, `src/app/(frontend)/api/document-file/route.ts`, `scripts/db-migrations/20260919_050_protect_document_media_and_pin.mjs`.
+- **Files Modified:** `.env.example`, `package.json`, `package-lock.json`, `src/collections/Documents.ts`, `src/collections/ClinicalProtocols.ts`, `src/globals/SiteSettings.ts`, hai trang chi tiết văn bản/phác đồ, `src/components/DocumentDetailView.tsx`, generated schema/types, DB schema contract, `CURRENT-TASK.md`, `CHANGELOG.md`.
+- **Database/Schema:** Migration 050 đặt media đính kèm của tài liệu không công khai thành `restricted`, xóa PIN mặc định legacy khỏi bảng live/version và bỏ default dự đoán được. Đã generate/seal/check nhưng **chưa deploy, không thay đổi database**.
+- **Kiểm tra:** `npm run typecheck` đạt; `npm run db:schema:check` đạt; migration 050 đạt toàn bộ kiểm tra riêng. Bộ `validate:migrations` đạt 227/229, chỉ còn 2 lỗi tồn tại từ migration 020/032 do validator bắt từ khóa `DROP`; `git diff --check` đạt.
+
+## [2026-09-19] - Security hardening PR-04: loại bỏ tra cứu phản ánh theo số điện thoại
+
+- **Thời gian:** 16:28 (Asia/Saigon).
+- **API:** Xóa toàn bộ nhánh phone-only từng trả tối đa 20 hồ sơ cùng nội dung phản ánh; chỉ query khi có đủ mã tiếp nhận và số điện thoại cùng khớp.
+- **Chống enumeration:** Giảm giới hạn chung còn 10 lượt/15 phút/IP, thêm giới hạn 5 lượt/15 phút cho từng cặp mã + số điện thoại bằng fingerprint SHA-256; response không khớp dùng thông báo đồng nhất và không lặp lại số điện thoại.
+- **HTTP privacy:** Thêm `Cache-Control: no-store`, `Retry-After` cho 429 và `X-Content-Type-Options: nosniff` cho response thành công.
+- **Frontend:** Xóa tab “quên mã/tìm theo số điện thoại”, danh sách hồ sơ phone-only và toàn bộ state/call chain liên quan; form luôn yêu cầu cả mã và số điện thoại. Người quên mã được hướng tới các kênh hỗ trợ chính thức sẵn có trên trang.
+- **Files Modified:** `src/app/(frontend)/api/feedback/route.ts`, `src/components/FeedbackLookup.tsx`, `CURRENT-TASK.md`, `CHANGELOG.md`.
+- **Database/Schema:** Không thay đổi schema, không có migration mới và không chạy database migration.
+- **Kiểm tra:** `npx tsc --noEmit --incremental false` đạt; `git diff --check` đạt; không còn call `/api/feedback?phone=...` trong frontend.
+
+## [2026-09-19] - Security hardening PR-03: tách dữ liệu khảo sát public và admin
+
+- **Thời gian:** 16:20 (Asia/Saigon).
+- **Public statistics:** Chỉ trả aggregate; không trả mã phiếu, recent comments hoặc free-text. Mẫu dưới 5 lượt bị suppress; category/rating distribution cũng bị ẩn toàn bộ nếu có cell từ 1–4 để tránh suy ngược nhóm nhỏ.
+- **Admin statistics:** Chỉ trả `recentResponses` khi request `details=admin` có session và quyền `surveys.view`.
+- **Export:** Bắt buộc session và `surveys.export`, whitelist campaign/period, giới hạn 5.000 dòng, ghi audit log và thêm `nosniff`.
+- **Templates:** GET public chỉ trả campaign đang hoạt động; chi tiết template/campaign và saved templates yêu cầu `surveys.view`; POST yêu cầu `surveys.create/edit`; DELETE yêu cầu `surveys.delete`.
+- **Frontend:** Gỡ nút export chi tiết khỏi trang thống kê công khai; Admin toolbar yêu cầu chế độ chi tiết đã xác thực.
+- **Files Modified:** `src/app/(frontend)/api/surveys/statistics/route.ts`, `src/app/(frontend)/api/surveys/export/route.ts`, `src/app/(frontend)/api/surveys/templates/route.ts`, `src/components/PublicSurveyStatistics.tsx`, `src/components/admin/SurveyQuickToolbar.tsx`, `CURRENT-TASK.md`, `CHANGELOG.md`.
+- **Database/Schema:** Không thay đổi schema, không có migration mới và không chạy database migration.
+- **Kiểm tra:** `npx tsc --noEmit --incremental false` đạt; `git diff --check` đạt.
+
+## [2026-09-19] - Security hardening PR-02: bảo vệ export dữ liệu lịch hẹn
+
+- **Thời gian:** 16:12 (Asia/Saigon).
+- **Tóm tắt:** Endpoint Excel lịch hẹn không còn truy cập công khai; bắt buộc session hợp lệ và quyền `appointments.export` trước khi đọc dữ liệu bệnh nhân.
+- **Kiểm soát mới:** Anonymous nhận 401, user thiếu quyền nhận 403; whitelist trạng thái; kiểm tra ngày ISO hợp lệ; mặc định xuất 90 ngày, tối đa 366 ngày và 5.000 bản ghi; vượt giới hạn trả 413.
+- **Audit:** Mỗi export thành công ghi `audit-logs` với người thực hiện, IP, user-agent, khoảng ngày, trạng thái và số bản ghi; không ghi PII bệnh nhân vào metadata.
+- **Giao diện Admin:** Nút export ghi rõ phạm vi mặc định 90 ngày.
+- **Files Modified:** `src/app/(frontend)/api/appointments-export/route.ts`, `src/components/admin/AppointmentsDashboard.tsx`, `CURRENT-TASK.md`, `CHANGELOG.md`.
+- **Database/Schema:** Không thay đổi schema, không có migration mới và không chạy database migration.
+- **Kiểm tra:** `npx tsc --noEmit --incremental false` đạt; `git diff --check` đạt.
+
+## [2026-09-19] - Security hardening đợt 0/PR-01: chuyển SMTP và Gemini credential sang environment-only
+
+- **Thời gian:** 16:05 (Asia/Saigon).
+- **Tóm tắt:** Loại credential thật khỏi `.env.example`, vô hiệu hóa hoàn toàn việc đọc/tạo/cập nhật các field credential legacy trong Payload CMS và buộc AI OCR chỉ đọc `GEMINI_API_KEY` từ secret phía server.
+- **Payload/schema:** Giữ lại cột legacy để tránh thay đổi phá dữ liệu, nhưng ẩn field và đặt `create/read/update` thành `false`; generated schema bỏ database default của SMTP password.
+- **Database:** Tạo migration `20260919_049_scrub_legacy_cms_credentials` để đặt NULL cho SMTP password ở `site_settings`, `_site_settings_v`, Gemini key ở `schedule_settings`, đồng thời thay default password bằng NULL. Migration đã seal/check nhưng **chưa deploy, chưa thay đổi database**.
+- **Vận hành bắt buộc:** Credential cũ vẫn phải được revoke/rotate trên nhà cung cấp và cấu hình lại qua secret environment. Migration 008 là immutable do checksum nên không sửa; giá trị legacy trong migration cũ chỉ an toàn sau khi credential đã bị revoke.
+- **Files Modified:** `.env.example`, `src/globals/SiteSettings.ts`, `src/globals/ScheduleSettings.ts`, `src/app/api/ai-schedule-ocr/route.ts`, `src/payload-generated-schema.ts`, `src/payload-types.ts`, `scripts/db-schema-contract.json`, `CURRENT-TASK.md`, `CHANGELOG.md`.
+- **Files Added:** `scripts/db-migrations/20260919_049_scrub_legacy_cms_credentials.mjs`.
+- **Kiểm tra:** `npx tsc --noEmit --incremental false` đạt; `npm run db:schema:check` đạt; migration 049 đạt toàn bộ rule của validator. Toàn suite migration còn 2 failure có sẵn tại migration 020 và 032.
+
 +## [2026-09-19] - Sửa khối "Chuyên gia của chúng tôi" hiển thị quá nhiều ô trên điện thoại
 +
 +- **Thời gian:** 15:33 (Asia/Saigon)

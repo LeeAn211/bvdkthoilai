@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
-import { contentDeleteAccess, moduleAccess } from '@/access'
+import { adminField, contentDeleteAccess, moduleAccess } from '@/access'
 import { seoFields, slugField } from '@/fields/common'
+import { protectDocumentMedia } from '@/hooks/protectDocumentMedia'
 
 export const ClinicalProtocols: CollectionConfig = {
   slug: 'clinical-protocols',
@@ -17,6 +18,7 @@ export const ClinicalProtocols: CollectionConfig = {
     update: moduleAccess('clinical-protocols', 'edit'),
     delete: contentDeleteAccess('clinical-protocols'),
   },
+  hooks: { afterChange: [protectDocumentMedia] },
   trash: true,
   versions: { maxPerDoc: 30 },
   fields: [
@@ -76,6 +78,7 @@ export const ClinicalProtocols: CollectionConfig = {
           name: 'pinCode',
           label: 'Mã PIN xác thực riêng (nếu dùng mã PIN)',
           type: 'text',
+          access: { create: adminField, read: () => false, update: adminField },
           admin: {
             width: '50%',
             placeholder: 'VD: TL2026 (để trống sẽ dùng mã PIN chung của viện)',

@@ -75,7 +75,12 @@ for (const fileName of migrationFiles) {
   check(`${fileName}: id khớp tên file`, migration.id === expectedID)
   check(`${fileName}: có description`, typeof migration.description === 'string' && migration.description.length > 0)
   check(`${fileName}: có up + verify`, typeof migration.up === 'function' && typeof migration.verify === 'function')
-  check(`${fileName}: không có SQL phá dữ liệu`, !/\b(DROP|TRUNCATE)\b/i.test(source))
+  // Cho phép các thao tác bảo toàn dữ liệu như DROP NOT NULL / DROP CONSTRAINT.
+  // Chỉ chặn thao tác xóa đối tượng/cột hoặc truncate dữ liệu.
+  check(
+    `${fileName}: không có SQL phá dữ liệu`,
+    !/\b(?:TRUNCATE|DROP\s+(?:TABLE|SCHEMA|DATABASE|TYPE|COLUMN))\b/i.test(source),
+  )
 }
 
 check('Migration IDs are unique', new Set(ids).size === ids.length)

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useRef } from 'react'
 import styles from './OurExpertsFeaturedGrid.module.css'
 import type { ExpertItem } from './OurExpertsCarousel'
 
@@ -52,6 +52,8 @@ export function OurExpertsFeaturedGrid({
     })
   }, [subList, startIndex, totalItems, visibleCount])
 
+  const touchStartX = useRef<number | null>(null)
+
   // Chuyển tới 1 ô theo vòng tròn (roll forward by 1)
   const rollNext = (step = 1) => {
     if (totalItems <= visibleCount) return
@@ -72,6 +74,21 @@ export function OurExpertsFeaturedGrid({
     }, 180)
   }
 
+  // Vuốt chạm chuyển bác sĩ trên điện thoại
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current
+    if (deltaX > 40) {
+      rollPrev(1)
+    } else if (deltaX < -40) {
+      rollNext(1)
+    }
+    touchStartX.current = null
+  }
+
   // Tự động chuyển động tới theo vòng tròn (Circular Autoplay) sau mỗi số giây nhất định
   React.useEffect(() => {
     if (totalItems <= visibleCount || !autoplaySeconds || autoplaySeconds <= 0 || isPaused) return
@@ -82,18 +99,6 @@ export function OurExpertsFeaturedGrid({
 
     return () => window.clearInterval(timer)
   }, [totalItems, visibleCount, autoplaySeconds, isPaused])
-
-  const handleSelectLeader = (item: ExpertItem, e: React.MouseEvent) => {
-    const originalIdx = safeItems.findIndex((x) => x === item || (x.id && x.id === item.id) || x.name === item.name)
-    if (originalIdx >= 0 && originalIdx !== selectedLeaderIndex) {
-      e.preventDefault()
-      setIsTransitioning(true)
-      setTimeout(() => {
-        setSelectedLeaderIndex(originalIdx)
-        setIsTransitioning(false)
-      }, 180)
-    }
-  }
 
   if (!safeItems.length) {
     return (
@@ -124,6 +129,8 @@ export function OurExpertsFeaturedGrid({
       className={styles.featuredSectionContainer}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       aria-label="Chuyên gia của chúng tôi"
     >
       <div className={styles.featuredLayoutWrapper}>
@@ -196,14 +203,14 @@ export function OurExpertsFeaturedGrid({
                 item.subPosition?.toLowerCase().includes('ban giám đốc') ||
                 item.position?.toLowerCase().includes('ban giám đốc')
               )
+            const targetUrl = item.url || '/bac-si'
 
             return (
               <a
                 key={cardKey}
-                href={item.url || '/bac-si'}
+                href={targetUrl}
                 className={styles.subExpertCard}
-                onClick={(e) => handleSelectLeader(item, e)}
-                title="Bấm để xem nổi bật trên khung lớn"
+                title={`Xem chi tiết hồ sơ: ${item.name}`}
                 target={item.openNewTab ? '_blank' : undefined}
                 rel={item.openNewTab ? 'noopener noreferrer' : undefined}
               >

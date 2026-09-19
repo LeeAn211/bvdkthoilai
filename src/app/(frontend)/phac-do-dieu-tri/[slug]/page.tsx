@@ -68,11 +68,12 @@ export default async function Page({ params }: Props) {
 
   const specName = typeof item.specialty === 'object' && item.specialty?.name ? item.specialty.name : ''
   const cat = specName || item.documentType || 'Phác đồ điều trị'
-  const fileUrl = mediaUrl(item.file)
+  const fileUrl = item.file
+    ? `/api/document-file?collection=clinical-protocols&id=${encodeURIComponent(String(item.id))}`
+    : ''
   const fileName = mediaLabel(item.file)
   const fileFormat = mediaFormat(item.file)
   const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
-  const defaultPin = siteSettings?.defaultDocumentPin || 'BVTL2026'
 
   const docData = {
     id: item.id,
@@ -90,8 +91,7 @@ export default async function Page({ params }: Props) {
     fileName,
     fileFormat,
     accessMode: item.accessMode || 'public',
-    pinCode: item.pinCode,
-    defaultPin,
+    accessCollection: 'clinical-protocols' as const,
     allowDownload: item.allowDownload !== false,
     preventCopy: Boolean(item.preventCopy),
     preventPrint: Boolean(item.preventPrint),

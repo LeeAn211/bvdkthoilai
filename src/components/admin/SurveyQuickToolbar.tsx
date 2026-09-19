@@ -109,7 +109,7 @@ export default function SurveyQuickToolbar() {
     async function loadStats() {
       try {
         const res = await fetch(
-          `/api/surveys/statistics?campaign=${selectedCampaignId}&period=${selectedPeriod}`
+          `/api/surveys/statistics?campaign=${selectedCampaignId}&period=${selectedPeriod}&details=admin`
         )
         if (res.ok) {
           const data = await res.json()

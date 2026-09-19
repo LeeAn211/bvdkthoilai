@@ -29,7 +29,7 @@ interface CampaignStats {
     neutral: number
     unsatisfied: number
   }
-  recentResponses: Array<{
+  recentResponses?: Array<{
     code: string
     date: string
     score: string | number
@@ -168,7 +168,7 @@ export default function PublicSurveyStatistics() {
           </div>
         </div>
 
-        {/* Dropdown chọn đợt khảo sát & Nút xuất file Excel */}
+        {/* Dropdown chọn đợt khảo sát công khai */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: '#334155' }}>Chọn đợt xem:</span>
@@ -202,36 +202,6 @@ export default function PublicSurveyStatistics() {
             </select>
           </div>
 
-          {selectedCampaignId && (
-            <button
-              type="button"
-              onClick={() => {
-                window.open(`/api/surveys/export?campaign=${selectedCampaignId}`, '_blank')
-              }}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '9px 18px',
-                borderRadius: 9,
-                border: 0,
-                background: 'linear-gradient(135deg, #107c41, #059669)',
-                color: '#ffffff',
-                fontSize: 13,
-                fontWeight: 800,
-                cursor: 'pointer',
-                boxShadow: '0 3px 8px rgba(16, 124, 65, 0.25)',
-              }}
-              title="Bấm để tải về file Excel danh sách chi tiết các lượt khảo sát của đợt này"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              <span>Xuất Excel (.xlsx)</span>
-            </button>
-          )}
         </div>
       </div>
 

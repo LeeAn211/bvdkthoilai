@@ -1,4 +1,134 @@
 # CURRENT TASK
+
+## Trạng thái: HOÀN THÀNH — TỐI ƯU GIAO DIỆN MOBILE & KHỐI CHUYÊN GIA
+
+- Mục tiêu:
+  1. Cho phép click trực tiếp vào toàn bộ ô chuyên gia nhỏ trong khối "Chuyên gia của chúng tôi" để mở trang chi tiết bác sĩ, bỏ chữ "Xem chi tiết" để giữ ô gọn gàng, thoáng đãng.
+  2. Tối ưu hiển thị khối Chuyên gia trên mobile: hiển thị gọn gàng 1 thẻ chuyên gia tại một thời điểm (thay vì dồn nhiều ô cùng lúc), hỗ trợ thao tác vuốt cảm ứng (swipe).
+  3. Tự động ẩn các tab nội dung / danh mục không có dữ liệu trên thiết bị di động (<= 768px).
+- Đã hoàn thành:
+  - `src/components/OurExpertsFeaturedGrid.tsx`: Bỏ `e.preventDefault()`, bỏ nhãn text thừa, click toàn bộ card mở trang chi tiết bác sĩ, thêm touch event vuốt chuyển chuyên gia.
+  - `src/components/OurExpertsFeaturedGrid.module.css`: Thêm kiểu dáng badge `subViewDetail` nổi bật, tinh tế.
+  - `src/components/OurExpertsCarousel.tsx`: Thêm `viewportPerView` phát hiện kích thước màn hình linh hoạt. Trên mobile hiển thị đúng 1 card duy nhất, lướt mượt mà.
+  - `src/components/HomeDepartmentTabs.tsx`, `ScheduleExplorer.tsx`, `SearchFilter.tsx`: Đánh dấu `mobileEmptyTab` cho các tab có 0 mục dữ liệu.
+  - `src/app/globals.css`: Ẩn `.mobileEmptyTab` trên màn hình di động (<= 768px).
+- Kiểm tra: Không lỗi syntax, build/dev server Next.js chạy mượt mà.
+- Database/Schema: Không thay đổi DB/Schema.
+
+---
+
+- Mục tiêu: xác nhận production build với remediation PR-01–PR-08 và schema contract migration 050.
+- An toàn: đã xác nhận local `PAYLOAD_DB_PUSH=false`; không chạy migration, seed hoặc thao tác ghi database.
+- Giới hạn: build local không thay thế staging runtime, secret rotation, backup và migration verification.
+- Kết quả: `npm run build` đạt; Next.js compile/TypeScript thành công và generate đủ 42/42 static pages; schema contract migration 050 hợp lệ.
+- Ghi chú: local không có `SMTP_PASS`, nên build dùng console email adapter; môi trường production phải cấu hình SMTP secret đã rotate.
+- Database: `PAYLOAD_DB_PUSH=false`; không chạy migration hoặc thay đổi database.
+- Bước tiếp theo: thực hiện các blocker vận hành còn lại trong `SECURITY_RELEASE_GATE.md` trên staging/production (rotation, backup, migration 049/050, HTTP/role smoke tests).
+
+---
+
+## Trạng thái: HOÀN THÀNH STATIC RE-AUDIT — SECURITY RELEASE VẪN HOLD
+
+- Mục tiêu: kiểm chứng độc lập lại toàn bộ 1 P0/8 P1 sau PR-01–PR-08 và lập checklist phát hành có điều kiện.
+- Phạm vi: source/field access/custom API/Payload REST, migration contract, static quality gates và tài liệu vận hành.
+- Không thực hiện: không truy cập production, không rotate credential thay người dùng, không backup hay chạy migration/database.
+- Kết quả: 8 nhóm P1 đã có code control và không thấy đường cũ còn mở; P0 chỉ đóng phần code, vẫn chờ rotate/revoke credential và deploy migration 049/050.
+- Artifact: `SECURITY_RELEASE_GATE.md` ghi đầy đủ blocker, smoke test và điều kiện GO.
+- Kiểm tra: `validate:all`, TypeScript, schema contract và diff check đạt; migration validation 229/229.
+- Database/production: chưa truy cập, chưa backup, chưa chạy migration, chưa rotate credential.
+- Bước tiếp theo: người vận hành hoàn tất mục 2–4 trong `SECURITY_RELEASE_GATE.md` trên staging/production; chỉ sau đó mới đánh giá GO.
+
+---
+
+## Trạng thái: HOÀN THÀNH CODE — SECURITY HARDENING PR-08: LEAST-PRIVILEGE GLOBALS
+
+- Mục tiêu: thu hẹp quyền mặc định với Site Settings, Navigation và Homepage; role nghiệp vụ chỉ được truy cập khi có explicit custom permission.
+- Chính sách: Site Settings không có default edit ngoài elevated admin; Homepage/Navigation chỉ editor/reviewer mặc định được edit; board chỉ view.
+- Database/schema: không thay đổi schema, không chạy migration.
+- Đã hoàn thành: Site Settings không còn default edit cho role nghiệp vụ; Homepage/Navigation edit mặc định chỉ editor/reviewer, board chỉ view; explicit custom permission vẫn hoạt động.
+- Kiểm tra: TypeScript và foundation đạt; system-hardening 28/28; `git diff --check` đạt.
+- Quyết định dài hạn: đã ghi vào `DECISIONS.md`.
+- Bước tiếp theo: rà lại toàn bộ P0/P1 sau PR-01 đến PR-08, đối chiếu endpoint/field access còn sót và lập release gate vận hành cho secret rotation + migration 049/050.
+
+---
+
+## Trạng thái: HOÀN THÀNH CODE — SECURITY HARDENING PR-07: AI OCR ACCESS & RESOURCE CONTROLS
+
+- Mục tiêu: khóa AI lịch trực OCR bằng session/quyền `schedules.import`; giới hạn request, MIME, file size, tần suất và timeout Gemini.
+- Phạm vi: route `ai-schedule-ocr`, UI chọn ảnh Admin và regression check system hardening.
+- Database/schema: không thay đổi schema, không chạy migration.
+- Đã hoàn thành: auth + `schedules.import`, body/file/MIME/signature limits, rate limit theo user/IP, Gemini timeout/output limit, response redaction, output bounds và audit log.
+- Kiểm tra: TypeScript đạt; system-hardening 25/25; `git diff --check` đạt.
+- Bước tiếp theo: PR-08 thu hẹp quyền mặc định của role nghiệp vụ đối với Site Settings, Navigation và Homepage theo least privilege.
+
+---
+
+## Trạng thái: HOÀN THÀNH CODE — SECURITY HARDENING PR-06: SURVEY INGESTION BOUNDARY
+
+- Mục tiêu: chặn tạo trực tiếp phiếu/câu trả lời khảo sát qua Payload REST; chỉ custom submit route đã kiểm tra body, rate limit và Turnstile được ghi dữ liệu bằng server-side privileged operation.
+- Phạm vi: `SurveyResponses`, `SurveyAnswers`, route submit và kiểm tra hồi quy API/TypeScript.
+- Database/schema: không thay đổi schema, không chạy migration.
+- Đã hoàn thành: hai collection response/answer từ chối mọi direct create; public submission chỉ ghi qua custom route đã kiểm tra bằng privileged Local API.
+- Kiểm tra: TypeScript, quality-surveys và `git diff --check` đạt; bổ sung regression check riêng cho ingestion boundary.
+- Bước tiếp theo: PR-07 bảo vệ AI OCR bằng authentication, permission, MIME/size/rate limit và timeout/quota controls.
+
+---
+
+## Trạng thái: HOÀN THÀNH CODE — SECURITY HARDENING PR-05: DOCUMENT ACCESS SERVER-SIDE
+
+- Mục tiêu: không serialize PIN/direct protected media URL; xác minh PIN/internal access ở server và cấp token ngắn hạn để stream file.
+- Phạm vi: Documents, ClinicalProtocols, SiteSettings PIN field access, detail pages/component, document access/file API, media restriction hook và migration 050.
+- Database: chỉ tạo/seal migration; không deploy migration trong lượt này.
+- Đã hoàn thành: HMAC token 5 phút, server-side PIN/internal authorization, file proxy R2/local, khóa field PIN, loại PIN/direct media URL khỏi client, hook media restricted và migration 050.
+- Kiểm tra: TypeScript và DB schema contract đạt; migration 050 hợp lệ. `validate:migrations` còn 2 lỗi legacy ở migration 020/032, không phát sinh từ PR-05.
+- Chưa thực hiện: chưa cấu hình secret production, chưa deploy migration 049/050, chưa thay đổi database.
+- Bước tiếp theo: cấu hình `DOCUMENT_ACCESS_SECRET`/`DOCUMENT_DEFAULT_PIN` trên môi trường đích, backup DB, rồi chạy migration 049/050 theo quy trình vận hành được phê duyệt.
+
+---
+
+## Trạng thái: HOÀN THÀNH CODE — SECURITY HARDENING PR-04: TRA CỨU PHẢN ÁNH
+
+- Mục tiêu: xóa tra cứu phone-only; bắt buộc mã tiếp nhận + số điện thoại và dùng response đồng nhất chống enumeration.
+- File chính: `src/app/(frontend)/api/feedback/route.ts`, `src/components/FeedbackLookup.tsx`.
+- Database/schema: không thay đổi schema, không chạy migration.
+- Đã hoàn thành: xóa phone-only API/UI, bắt buộc code + phone, response không khớp đồng nhất, rate limit theo IP và fingerprint cặp tra cứu.
+- Kiểm tra: TypeScript và `git diff --check` đạt; không còn frontend caller phone-only.
+- Bước tiếp theo: PR-05 chuyển bảo vệ tài liệu/PIN hoàn toàn sang server-side.
+
+---
+
+## Trạng thái: HOÀN THÀNH CODE — SECURITY HARDENING PR-03: SURVEY PUBLIC/ADMIN SEPARATION
+
+- Mục tiêu: public chỉ nhận thống kê tổng hợp đã giảm nguy cơ tái nhận dạng; export, recent comments và template management yêu cầu quyền `surveys`.
+- File chính: survey statistics/export/templates routes, `PublicSurveyStatistics`, `SurveyQuickToolbar`.
+- Database/schema: không thay đổi schema, không chạy migration.
+- Đã hoàn thành: public aggregate có suppression nhóm nhỏ; recent comments/export/template details và mutations được khóa bằng quyền `surveys`; gỡ public export UI; thêm export limit/audit.
+- Kiểm tra: TypeScript và `git diff --check` đạt.
+- Bước tiếp theo: PR-04 sửa tra cứu phản ánh phone-only bằng cơ chế xác minh an toàn.
+
+---
+
+## Trạng thái: HOÀN THÀNH CODE — SECURITY HARDENING PR-02: EXPORT LỊCH HẸN
+
+- Mục tiêu: bắt buộc xác thực và quyền `appointments.export`, giới hạn khoảng ngày/số bản ghi và ghi audit log cho export chứa dữ liệu cá nhân.
+- File chính: `src/app/(frontend)/api/appointments-export/route.ts`, `src/components/admin/AppointmentsDashboard.tsx`.
+- Database/schema: không thay đổi schema, không chạy migration.
+- Đã hoàn thành: authorization theo `appointments.export`, validation status/ngày, giới hạn 366 ngày và 5.000 bản ghi, audit log, nhãn UI 90 ngày.
+- Kiểm tra: TypeScript và `git diff --check` đạt.
+- Bước tiếp theo: PR-03 tách API khảo sát public aggregate khỏi export/PII dành cho admin.
+
+---
+
+## Trạng thái: HOÀN THÀNH CODE — SECURITY HARDENING ĐỢT 0 + PR-01; CHỜ VẬN HÀNH
+
+- Mục tiêu: khóa đường lộ credential SMTP/Gemini, chuyển runtime sang environment-only và đóng gói migration làm sạch dữ liệu legacy.
+- Phạm vi hiện tại: `.env.example`, `SiteSettings`, `ScheduleSettings`, API OCR, generated Payload schema/types, migration 049 và kiểm thử liên quan.
+- Không thực hiện: rotate credential trên dịch vụ bên ngoài, deploy production hoặc chạy migration vào database.
+- Đã hoàn thành: khóa field credential legacy, chuyển OCR sang environment-only, tạo/seal migration 049 và kiểm tra tĩnh.
+- Chưa thực hiện: migration chưa deploy; credential cũ chưa được revoke/rotate trên nhà cung cấp.
+- Bước tiếp theo: backup database, rotate credential, cấu hình secret mới trên staging/production, sau đó chạy migration 049 và verify trước khi sang PR-02.
+
+---
  
 ## Trạng thái: HOÀN THÀNH - KHÓA CHUỘT PHẢI TRÌNH XEM PDF & THIẾT KẾ LẠI TRANG CHI TIẾT VĂN BẢN / PHÁC ĐỒ
 

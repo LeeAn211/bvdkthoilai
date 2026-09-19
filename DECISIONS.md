@@ -1,5 +1,12 @@
 # DECISIONS
 
+## 2026-09-19 — Least privilege cho các Global điều khiển toàn website
+
+- Quyết định: Ba vai trò quản trị cấp cao (`super-admin`, `system-admin`, `admin`) tiếp tục có toàn quyền. `site-settings` không cấp quyền sửa mặc định cho bất kỳ role nghiệp vụ nào; `homepage` và `navigation` chỉ cấp quyền sửa mặc định cho `editor`/`reviewer`; `board` chỉ có quyền xem. Mọi ngoại lệ cho role nghiệp vụ phải được cấp rõ ràng qua ma trận permission của tài khoản.
+- Lý do: Các Global này có blast radius toàn website; quyền sửa mặc định theo mọi role làm một tài khoản nghiệp vụ bị chiếm quyền có thể thay đổi nhận diện, menu hoặc toàn bộ trang chủ.
+- Không chọn: Giữ default edit cho HR, tài chính, đấu thầu, lịch khám, tiêm chủng, quản lý chất lượng hoặc khoa/phòng chỉ để tương thích hành vi cũ.
+- Tác động: Thu hẹp quyền mặc định nhưng không xóa cơ chế explicit permission và không thay đổi schema/database. Đây là điều chỉnh bảo mật cho quyết định ma trận quyền ngày 2026-09-14.
+
 ## 2026-09-18 — Chuẩn hóa bắt buộc công tắc bật/tắt độc lập và hỗ trợ thêm mới khối nội dung tùy biến (Custom Blocks) cho toàn bộ trang Admin CMS
 - Quyết định:
   1. **Công tắc Bật/Tắt độc lập (Granular Toggles)**: Mọi khối nội dung lớn và từng phần tử con (cards, items, links, banner) trên tất cả các trang khi đưa vào hoặc nâng cấp trong Admin CMS **bắt buộc phải có trường checkbox `enabled` riêng biệt** để người quản trị chủ động ẩn/hiện theo nhu cầu thực tế.

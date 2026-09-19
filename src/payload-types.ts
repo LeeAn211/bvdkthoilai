@@ -5657,7 +5657,7 @@ export interface SiteSetting {
     port?: number | null;
     user?: string | null;
     /**
-     * Mã 16 chữ cái tạo từ bảo mật Google.
+     * Trường cũ đã vô hiệu hóa. Cấu hình SMTP_PASS trong biến môi trường của máy chủ.
      */
     pass?: string | null;
     fromAddress?: string | null;
@@ -8336,7 +8336,7 @@ export interface ScheduleSetting {
   showAttachmentTab?: boolean | null;
   cacheMinutes?: number | null;
   /**
-   * Khóa API Google AI Studio để tự động đọc và nhận diện bảng lịch trực từ ảnh chụp. Có thể bỏ trống nếu đã cài trong biến môi trường GEMINI_API_KEY.
+   * Trường cũ đã vô hiệu hóa. Cấu hình GEMINI_API_KEY trong biến môi trường của máy chủ.
    */
   geminiApiKey?: string | null;
   updatedAt?: string | null;

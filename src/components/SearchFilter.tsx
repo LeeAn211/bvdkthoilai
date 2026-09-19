@@ -44,7 +44,7 @@ export function SearchFilter({ items, kind = 'news', initialCategory = 'all' }: 
               <button
                 type="button"
                 key={String(c)}
-                className={`${category === c ? 'active' : ''} ${isEmerg ? 'isEmergencyCategory' : ''}`}
+                className={`${category === c ? 'active' : ''} ${isEmerg ? 'isEmergencyCategory' : ''} ${count === 0 ? 'mobileEmptyTab' : ''}`}
                 onClick={() => setCategory(String(c))}
               >
                 <span>{String(c)}</span>

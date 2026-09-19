@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server'
 import ExcelJS from 'exceljs'
 import { getCMS } from '@/lib/payload'
+import { hasModulePermission } from '@/access'
 
 export const dynamic = 'force-dynamic'
+
+const MAX_EXPORT_ROWS = 5_000
+const MAX_RANGE_DAYS = 366
+const DEFAULT_RANGE_DAYS = 90
+const ALLOWED_STATUSES = new Set(['new', 'confirmed', 'examining', 'completed', 'cancelled'])
 
 const STATUS_LABELS: Record<string, string> = {
   new: 'Mới tiếp nhận',
@@ -38,28 +44,86 @@ const formatDateTimeVN = (dateVal?: string | Date) => {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')} ${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`
 }
 
+const parseDateParam = (value: string | null, endOfDay = false) => {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null
+  const date = new Date(`${value}T${endOfDay ? '23:59:59.999' : '00:00:00.000'}Z`)
+  return Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value ? null : date
+}
+
+const dateOnly = (date: Date) => date.toISOString().slice(0, 10)
+
+const requestIP = (request: Request) =>
+  request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+  request.headers.get('x-real-ip') ||
+  undefined
+
 export async function GET(req: Request) {
   try {
     const payload = await getCMS()
+    const auth = await payload.auth({ headers: req.headers })
+    const user = auth.user as any
+
+    if (!user) {
+      return NextResponse.json({ error: 'Bạn cần đăng nhập để xuất dữ liệu lịch hẹn.' }, { status: 401 })
+    }
+    if (!hasModulePermission(user, 'appointments', 'export')) {
+      return NextResponse.json({ error: 'Bạn không có quyền xuất dữ liệu lịch hẹn.' }, { status: 403 })
+    }
+
     const url = new URL(req.url)
     const statusFilter = url.searchParams.get('status')
 
-    const where: any = {}
-    if (statusFilter && statusFilter !== 'all') {
-      where.status = { equals: statusFilter }
+    if (statusFilter && statusFilter !== 'all' && !ALLOWED_STATUSES.has(statusFilter)) {
+      return NextResponse.json({ error: 'Trạng thái lọc không hợp lệ.' }, { status: 400 })
     }
+
+    const now = new Date()
+    const requestedTo = url.searchParams.get('to')
+    const requestedFrom = url.searchParams.get('from')
+    const toDate = requestedTo ? parseDateParam(requestedTo, true) : now
+    const defaultFrom = new Date((toDate || now).getTime() - (DEFAULT_RANGE_DAYS - 1) * 86_400_000)
+    const fromDate = requestedFrom ? parseDateParam(requestedFrom) : defaultFrom
+
+    if (!fromDate || !toDate) {
+      return NextResponse.json({ error: 'Khoảng ngày phải có định dạng YYYY-MM-DD.' }, { status: 400 })
+    }
+    const rangeDays = Math.floor((toDate.getTime() - fromDate.getTime()) / 86_400_000) + 1
+    if (rangeDays < 1 || rangeDays > MAX_RANGE_DAYS) {
+      return NextResponse.json(
+        { error: `Khoảng xuất phải từ 1 đến ${MAX_RANGE_DAYS} ngày.` },
+        { status: 400 },
+      )
+    }
+
+    const filters: any[] = [
+      { createdAt: { greater_than_equal: fromDate.toISOString() } },
+      { createdAt: { less_than_equal: toDate.toISOString() } },
+    ]
+    if (statusFilter && statusFilter !== 'all') {
+      filters.push({ status: { equals: statusFilter } })
+    }
+
+    const where = { and: filters }
 
     const [result, settings] = await Promise.all([
       payload.find({
         collection: 'appointments' as any,
         where,
-        limit: 10000,
+        limit: MAX_EXPORT_ROWS + 1,
         sort: '-createdAt',
         depth: 1,
+        // Authorization đã được cưỡng chế ngay phía trên bằng appointments.export.
         overrideAccess: true,
       }),
       payload.findGlobal({ slug: 'appointment-settings' as any, overrideAccess: true }).catch(() => ({})),
     ])
+
+    if (result.totalDocs > MAX_EXPORT_ROWS || result.docs.length > MAX_EXPORT_ROWS) {
+      return NextResponse.json(
+        { error: `Có hơn ${MAX_EXPORT_ROWS.toLocaleString('vi-VN')} bản ghi. Vui lòng thu hẹp khoảng ngày hoặc trạng thái trước khi xuất.` },
+        { status: 413 },
+      )
+    }
 
     const dynamicTimeSlotMap: Record<string, string> = { ...TIME_SLOT_LABELS }
     if (Array.isArray((settings as any)?.timeSlots)) {
@@ -107,7 +171,7 @@ export async function GET(req: Request) {
 
     sheet.mergeCells('A3:O3')
     const timeExportCell = sheet.getCell('A3')
-    timeExportCell.value = `Thời điểm xuất dữ liệu: ${formatDateTimeVN(new Date())} | Tổng số bản ghi: ${docs.length}`
+    timeExportCell.value = `Thời điểm xuất dữ liệu: ${formatDateTimeVN(new Date())} | Khoảng dữ liệu: ${formatDateVN(fromDate)} - ${formatDateVN(toDate)} | Tổng số bản ghi: ${docs.length}`
     timeExportCell.font = { name: 'Arial', size: 9.5, italic: true, color: { argb: 'FF475569' } }
     timeExportCell.alignment = { vertical: 'middle', horizontal: 'center' }
     sheet.getRow(3).height = 20
@@ -254,11 +318,36 @@ export async function GET(req: Request) {
     const buffer = await workbook.xlsx.writeBuffer()
     const fileName = `lich-dat-kham-thoi-lai-${new Date().toISOString().slice(0, 10)}.xlsx`
 
+    await payload.create({
+      collection: 'audit-logs' as any,
+      overrideAccess: true,
+      data: {
+        summary: `EXPORT appointments (${docs.length} records)`,
+        action: 'other',
+        resource: 'appointments',
+        actor: user.id,
+        actorEmail: user.email,
+        actorRole: user.role,
+        ip: requestIP(req),
+        userAgent: req.headers.get('user-agent') || undefined,
+        metadata: {
+          operation: 'export',
+          recordCount: docs.length,
+          status: statusFilter || 'all',
+          from: dateOnly(fromDate),
+          to: dateOnly(toDate),
+        },
+      } as any,
+    }).catch((error) => {
+      payload.logger.error({ err: error, msg: 'Không ghi được audit log cho export lịch hẹn' })
+    })
+
     return new Response(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`,
         'Cache-Control': 'no-store',
+        'X-Content-Type-Options': 'nosniff',
       },
     })
   } catch (error: any) {

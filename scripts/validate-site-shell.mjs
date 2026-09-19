@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 const checks = [
- ['Global SiteSettings quản lý Header & Nhận diện', 'src/globals/SiteSettings.ts', "label: 'Header & Nhận diện'"],
+ ['Global SiteSettings quản lý Header & Nhận diện', 'src/globals/SiteSettings.ts', "label: 'Cấu hình Website & Nhận diện'"],
  ['Global Navigation', 'src/globals/Navigation.ts', "slug: 'navigation'"],
  ['Global Footer', 'src/globals/Footer.ts', "slug: 'footer'"],
  ['Global Contact', 'src/globals/ContactSettings.ts', "slug: 'contact-settings'"],
@@ -13,7 +13,7 @@ const checks = [
  ['Footer frontend reads Footer global', 'src/components/SiteFooter.tsx', "getGlobal('footer')"],
  ['Footer supports CURRENT_YEAR', 'src/components/SiteFooter.tsx', "{CURRENT_YEAR}"],
  ['Menu parent without link', 'src/globals/Navigation.ts', "value: 'parent'"],
- ['Menu hover preserved', 'src/components/SiteHeader.tsx', 'className="navDropdown"'],
+ ['Menu hover preserved', 'src/components/MobileNavHeader.tsx', 'navDropdown'],
 ]
 let failed=0
 for (const [name,file,text] of checks) {

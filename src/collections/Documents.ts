@@ -1,12 +1,14 @@
 import type { CollectionConfig } from 'payload'
-import { contentDeleteAccess, moduleAccess } from '@/access'
+import { adminField, contentDeleteAccess, moduleAccess } from '@/access'
 import { categoryRelationshipField, slugField } from '@/fields/common'
+import { protectDocumentMedia } from '@/hooks/protectDocumentMedia'
 
 export const Documents: CollectionConfig = {
   slug: 'documents',
   labels: { singular: 'Văn bản / Tài liệu', plural: 'Văn bản / Tài liệu' },
   admin: { useAsTitle: 'title', group: '📰 Truyền thông & Văn bản', defaultColumns: ['title', 'number', 'categoryRef', 'issuedAt', 'year', 'updatedAt'] },
   access: { read: () => true, create: moduleAccess('documents', 'create'), update: moduleAccess('documents', 'edit'), delete: contentDeleteAccess('documents') },
+  hooks: { afterChange: [protectDocumentMedia] },
   trash: true,
   versions: { maxPerDoc: 30 },
   fields: [
@@ -198,6 +200,7 @@ export const Documents: CollectionConfig = {
                   name: 'pinCode',
                   label: 'Mã PIN xác thực riêng (nếu dùng mã PIN)',
                   type: 'text',
+                  access: { create: adminField, read: () => false, update: adminField },
                   admin: {
                     width: '50%',
                     placeholder: 'VD: TL2026 (để trống sẽ dùng mã PIN chung của viện)',

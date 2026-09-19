@@ -99,9 +99,11 @@ export const procurementTeam: Access = ({ req }) => isActiveUser(req.user) && ['
 export const adminField: FieldAccess = ({ req }) => isActiveUser(req.user) && isElevatedRole(roleOf(req.user))
 
 const moduleRoleDefaults: Record<string, Partial<Record<PermissionAction, Role[]>>> = {
-  homepage: { view: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'], edit: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'] },
-  'site-settings': { view: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'], edit: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'] },
-  navigation: { view: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'], edit: ['board', 'editor', 'reviewer', 'department', 'department-manager', 'hr', 'finance', 'procurement', 'clinic-schedule', 'vaccination', 'quality-management'] },
+  homepage: { view: ['board', 'editor', 'reviewer'], edit: ['editor', 'reviewer'] },
+  // Cấu hình nhận diện/hệ thống chỉ elevated admin được sửa mặc định.
+  // Role khác phải được cấp explicit permission trong ma trận người dùng.
+  'site-settings': { view: ['board'], edit: [] },
+  navigation: { view: ['board', 'editor', 'reviewer'], edit: ['editor', 'reviewer'] },
   news: { view: ['editor', 'reviewer', 'department', 'department-manager'], create: ['editor', 'reviewer', 'department', 'department-manager'], edit: ['editor', 'reviewer', 'department', 'department-manager'], delete: ['reviewer'], submit: ['editor', 'department', 'department-manager'], approve: ['reviewer'], publish: ['reviewer'], hide: ['reviewer'], restore: ['reviewer'] },
   notices: { view: ['editor', 'reviewer', 'department', 'department-manager'], create: ['editor', 'reviewer', 'department', 'department-manager'], edit: ['editor', 'reviewer', 'department', 'department-manager'], delete: ['reviewer'], submit: ['editor', 'department', 'department-manager'], approve: ['reviewer'], publish: ['reviewer'], hide: ['reviewer'], restore: ['reviewer'] },
   documents: { view: ['editor', 'reviewer', 'department', 'department-manager'], create: ['editor', 'reviewer', 'department', 'department-manager'], edit: ['editor', 'reviewer', 'department', 'department-manager'], delete: ['reviewer'], publish: ['reviewer'], restore: ['reviewer'] },

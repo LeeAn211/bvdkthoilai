@@ -9882,15 +9882,14 @@ export const site_settings = pgTable(
     smtpSettings_user: varchar("smtp_settings_user").default(
       "leean170792@gmail.com",
     ),
-    smtpSettings_pass:
-      varchar("smtp_settings_pass").default("mvdbzvsojuorpwgv"),
+    smtpSettings_pass: varchar("smtp_settings_pass"),
     smtpSettings_fromAddress: varchar("smtp_settings_from_address").default(
       "leean170792@gmail.com",
     ),
     smtpSettings_fromName: varchar("smtp_settings_from_name").default(
       "Bệnh viện Đa khoa Khu vực Thới Lai",
     ),
-    defaultDocumentPin: varchar("default_document_pin").default("BVTL2026"),
+    defaultDocumentPin: varchar("default_document_pin"),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -11203,18 +11202,14 @@ export const _site_settings_v = pgTable(
     version_smtpSettings_user: varchar("version_smtp_settings_user").default(
       "leean170792@gmail.com",
     ),
-    version_smtpSettings_pass: varchar("version_smtp_settings_pass").default(
-      "mvdbzvsojuorpwgv",
-    ),
+    version_smtpSettings_pass: varchar("version_smtp_settings_pass"),
     version_smtpSettings_fromAddress: varchar(
       "version_smtp_settings_from_address",
     ).default("leean170792@gmail.com"),
     version_smtpSettings_fromName: varchar(
       "version_smtp_settings_from_name",
     ).default("Bệnh viện Đa khoa Khu vực Thới Lai"),
-    version_defaultDocumentPin: varchar("version_default_document_pin").default(
-      "BVTL2026",
-    ),
+    version_defaultDocumentPin: varchar("version_default_document_pin"),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,

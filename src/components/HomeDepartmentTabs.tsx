@@ -23,12 +23,24 @@ const defaultTabs: DepartmentTab[] = [
 export function HomeDepartmentTabs({ items, tabs: configuredTabs, compact = false }: { items: DepartmentItem[]; tabs?: DepartmentTab[]; compact?: boolean }) {
   const tabs = useMemo(() => {
     const valid = (configuredTabs || []).filter((tab) => tab.label?.trim() || tab.kinds?.some(Boolean) || tab.manualItems?.some((item) => item.name?.trim()))
-    return (valid.length ? valid : defaultTabs).map((tab, index) => ({ ...tab, label: tab.label?.trim() || `Nhóm đơn vị ${index + 1}`, kinds: (tab.kinds || []).filter(Boolean), manualItems: (tab.manualItems || []).filter((item) => item.name?.trim()) }))
-  }, [configuredTabs])
-  const [activeTab, setActiveTab] = useState(tabs[0]?.label || '')
+    const baseTabs = (valid.length ? valid : defaultTabs).map((tab, index) => ({
+      ...tab,
+      label: tab.label?.trim() || `Nhóm đơn vị ${index + 1}`,
+      kinds: (tab.kinds || []).filter(Boolean),
+      manualItems: (tab.manualItems || []).filter((item) => item.name?.trim()),
+    }))
+
+    return baseTabs.map((tab) => {
+      const count = items.filter((item) => (tab.kinds || []).includes(item.kind || 'department')).length + (tab.manualItems || []).length
+      return { ...tab, count }
+    })
+  }, [configuredTabs, items])
+  const [activeTab, setActiveTab] = useState(tabs.find((t) => t.count > 0)?.label || tabs[0]?.label || '')
 
   useEffect(() => {
-    if (!tabs.some((tab) => tab.label === activeTab)) setActiveTab(tabs[0]?.label || '')
+    if (!tabs.some((tab) => tab.label === activeTab)) {
+      setActiveTab(tabs.find((t) => t.count > 0)?.label || tabs[0]?.label || '')
+    }
   }, [activeTab, tabs])
 
   const filteredItems = useMemo(() => {
@@ -41,7 +53,18 @@ export function HomeDepartmentTabs({ items, tabs: configuredTabs, compact = fals
   if (compact) {
     return <>
       <div className="portalTabs newsTabButtons compactDepartmentButtons" role="tablist" aria-label="Nhóm đơn vị trực thuộc">
-        {tabs.map((tab) => <button type="button" role="tab" aria-selected={activeTab === tab.label} className={activeTab === tab.label ? 'active' : ''} onClick={() => setActiveTab(tab.label)} key={tab.label}>{tab.label}</button>)}
+        {tabs.map((tab) => (
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab.label}
+            className={`${activeTab === tab.label ? 'active' : ''} ${tab.count === 0 ? 'mobileEmptyTab' : ''}`}
+            onClick={() => setActiveTab(tab.label)}
+            key={tab.label}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
       <div className="homeDepartmentList">
         {filteredItems.slice(0, 7).map((item) => <a href={item.href || `/don-vi/${item.slug}`} key={item.id}><span>✚</span><strong>{item.name}</strong><i>›</i></a>)}
@@ -54,7 +77,14 @@ export function HomeDepartmentTabs({ items, tabs: configuredTabs, compact = fals
     <>
       <div className="portalTabs newsTabButtons" role="tablist" aria-label="Nhóm đơn vị trực thuộc">
         {tabs.map((tab) => (
-          <button type="button" role="tab" aria-selected={activeTab === tab.label} className={activeTab === tab.label ? 'active' : ''} onClick={() => setActiveTab(tab.label)} key={tab.label}>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab.label}
+            className={`${activeTab === tab.label ? 'active' : ''} ${tab.count === 0 ? 'mobileEmptyTab' : ''}`}
+            onClick={() => setActiveTab(tab.label)}
+            key={tab.label}
+          >
             {tab.label}
           </button>
         ))}

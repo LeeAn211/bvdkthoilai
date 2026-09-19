@@ -236,10 +236,16 @@ export default function EmergencyTemplateDownload() {
           <input
             ref={imgInputRef}
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp"
             style={{ display: 'none' }}
             onChange={e => {
               const f = e.target.files?.[0] || null
+              if (f && (!['image/jpeg', 'image/png', 'image/webp'].includes(f.type) || f.size > 8 * 1024 * 1024)) {
+                setImageFile(null)
+                setImagePreview(null)
+                setError('Chỉ chấp nhận ảnh JPEG, PNG hoặc WebP có dung lượng tối đa 8 MB.')
+                return
+              }
               setImageFile(f)
               setError('')
               setSlots(null)

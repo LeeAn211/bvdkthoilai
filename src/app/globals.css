@@ -2826,6 +2826,8 @@ body { background: #fff; color: var(--ink); overflow-x: hidden; }
   .portalTabs { gap: 6px; }
   .portalTabs a { min-height: 31px; padding: 0 10px; font-size: 10px; }
   .newsTabButtons button { min-height: 31px; padding: 0 10px; font-size: 10px; }
+  /* Ẩn các tab không có dữ liệu trên thiết bị di động */
+  .mobileEmptyTab { display: none !important; }
 }
 
 
@@ -3607,6 +3609,7 @@ html body .mainHeader .bookingButton {
 .contentDirectoryEmpty { min-height:200px; display:grid; place-content:center; gap:8px; border:2px dashed #cbdde9; border-radius:14px; color:#64748b; background:#f8fbfd; text-align:center; padding:24px 16px; }
 .contentDirectoryEmpty strong { color:#1e3a5f; font-size:15px; }
 @media(max-width:900px){ .contentCardGrid, .contentCardGridFourColumns{grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:14px !important;} }
+@media(max-width:768px){ .mobileEmptyTab { display: none !important; } }
 @media(max-width:540px){ .contentDirectoryTools{align-items:stretch;flex-direction:column}.contentResultCount{justify-content:center}.contentDirectoryHeading{align-items:flex-start;flex-direction:column}.contentCardGrid, .contentCardGridFourColumns{grid-template-columns:1fr !important; gap:14px !important;}.mastheadBrandText small{font-size:10px!important;} }
 
 /* v3.4.0 Site Shell: theme globals, scoped to public shell */

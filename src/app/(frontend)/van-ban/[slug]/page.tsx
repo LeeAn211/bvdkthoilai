@@ -67,11 +67,12 @@ export default async function Page({ params }: Props) {
   if (!item) notFound()
 
   const cat = categoryName(item) || item.category || 'Văn bản – Tài liệu'
-  const fileUrl = mediaUrl(item.file)
+  const fileUrl = item.file
+    ? `/api/document-file?collection=documents&id=${encodeURIComponent(String(item.id))}`
+    : ''
   const fileName = mediaLabel(item.file)
   const fileFormat = mediaFormat(item.file)
   const hospitalName = siteSettings?.hospitalName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
-  const defaultPin = siteSettings?.defaultDocumentPin || 'BVTL2026'
 
   const docData = {
     id: item.id,
@@ -89,8 +90,7 @@ export default async function Page({ params }: Props) {
     fileName,
     fileFormat,
     accessMode: item.accessMode || 'public',
-    pinCode: item.pinCode,
-    defaultPin,
+    accessCollection: 'documents' as const,
     allowDownload: item.allowDownload !== false,
     preventCopy: Boolean(item.preventCopy),
     preventPrint: Boolean(item.preventPrint),

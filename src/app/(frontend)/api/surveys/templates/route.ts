@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getCMS } from '@/lib/payload'
+import { hasModulePermission } from '@/access'
 import { SYSTEM_SURVEY_PRESETS } from '@/lib/surveyTemplatePresets'
 import {
   getSavedSurveyTemplates,
@@ -7,12 +8,26 @@ import {
   deleteSavedSurveyTemplate,
 } from '@/lib/savedSurveyTemplatesStore'
 
+const authorize = async (request: Request, action: 'view' | 'create' | 'edit' | 'delete') => {
+  const payload = await getCMS()
+  const auth = await payload.auth({ headers: request.headers })
+  const user = auth.user as any
+  return { payload, user, allowed: Boolean(user && hasModulePermission(user, 'surveys', action)) }
+}
+
 export async function GET(request: Request) {
   try {
-    const payload = await getCMS()
+    const { payload, user, allowed: canViewAdminTemplates } = await authorize(request, 'view')
     const { searchParams } = new URL(request.url)
     const campaignId = searchParams.get('campaignId')
     const templateId = searchParams.get('templateId')
+
+    if ((templateId || campaignId) && !user) {
+      return NextResponse.json({ error: 'Bạn cần đăng nhập để đọc chi tiết mẫu khảo sát.' }, { status: 401 })
+    }
+    if ((templateId || campaignId) && !canViewAdminTemplates) {
+      return NextResponse.json({ error: 'Bạn không có quyền đọc chi tiết mẫu khảo sát.' }, { status: 403 })
+    }
 
     // 1. Lấy chi tiết mẫu do người dùng tự lưu
     if (templateId) {
@@ -84,14 +99,20 @@ export async function GET(request: Request) {
       overrideAccess: true,
     })
 
-    const campaigns = campaignsResult.docs.map((c: any) => ({
+    const campaigns = campaignsResult.docs
+      .filter((c: any) => canViewAdminTemplates || c.active === true)
+      .map((c: any) => ({
       id: c.id,
       title: c.title,
       slug: c.slug,
       active: c.active,
       questionsCount: Array.isArray(c.customQuestions) ? c.customQuestions.length : 0,
       createdAt: c.createdAt,
-    }))
+      }))
+
+    if (!canViewAdminTemplates) {
+      return NextResponse.json({ ok: true, campaigns })
+    }
 
     // 4. Lấy danh sách các mẫu tự lưu của người quản trị
     const savedTemplates = getSavedSurveyTemplates()
@@ -124,6 +145,14 @@ export async function GET(request: Request) {
 // POST: Lưu mẫu khảo sát tái sử dụng mới
 export async function POST(request: Request) {
   try {
+    const { user, allowed } = await authorize(request, 'create')
+    if (!user) {
+      return NextResponse.json({ error: 'Bạn cần đăng nhập để lưu mẫu khảo sát.' }, { status: 401 })
+    }
+    if (!allowed && !hasModulePermission(user, 'surveys', 'edit')) {
+      return NextResponse.json({ error: 'Bạn không có quyền lưu mẫu khảo sát.' }, { status: 403 })
+    }
+
     const body = await request.json()
     const { title, description, questions } = body
 
@@ -155,6 +184,14 @@ export async function POST(request: Request) {
 // DELETE: Xóa mẫu khảo sát đã lỗi thời
 export async function DELETE(request: Request) {
   try {
+    const { user, allowed } = await authorize(request, 'delete')
+    if (!user) {
+      return NextResponse.json({ error: 'Bạn cần đăng nhập để xóa mẫu khảo sát.' }, { status: 401 })
+    }
+    if (!allowed) {
+      return NextResponse.json({ error: 'Bạn không có quyền xóa mẫu khảo sát.' }, { status: 403 })
+    }
+
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')
 

@@ -221,11 +221,16 @@ export const ScheduleSettings: GlobalConfig = {
     // ── 5. CẤU HÌNH AI QUÉT ẢNH LỊCH TRỰC (GEMINI VISION) ──
     {
       name: 'geminiApiKey',
-      label: 'Google Gemini API Key (Dùng cho tính năng Quét ảnh lịch trực AI)',
+      label: 'Google Gemini API Key (đã chuyển sang biến môi trường)',
       type: 'text',
+      access: {
+        create: () => false,
+        read: () => false,
+        update: () => false,
+      },
       admin: {
-        description: 'Khóa API Google AI Studio để tự động đọc và nhận diện bảng lịch trực từ ảnh chụp. Có thể bỏ trống nếu đã cài trong biến môi trường GEMINI_API_KEY.',
-        placeholder: 'AIzaSy...',
+        hidden: true,
+        description: 'Trường cũ đã vô hiệu hóa. Cấu hình GEMINI_API_KEY trong biến môi trường của máy chủ.',
       },
     },
   ],

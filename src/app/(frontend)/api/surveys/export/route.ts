@@ -1,19 +1,42 @@
 import { NextResponse } from 'next/server'
 import { Workbook } from 'exceljs'
 import { getCMS } from '@/lib/payload'
+import { hasModulePermission } from '@/access'
 import {
   RAW_OUTPATIENT_SURVEY_SECTIONS as OUTPATIENT_SURVEY_SECTIONS,
   RAW_INPATIENT_SURVEY_SECTIONS as INPATIENT_SURVEY_SECTIONS,
   RAW_STAFF_SURVEY_SECTIONS as STAFF_SURVEY_SECTIONS,
 } from '@/data/surveyQuestionsData'
 
+const MAX_EXPORT_ROWS = 5_000
+const ALLOWED_PERIODS = new Set(['all', 'day', 'week', 'month', 'quarter', '6months', '9months', 'year'])
+
+const requestIP = (request: Request) =>
+  request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+  request.headers.get('x-real-ip') ||
+  undefined
+
 export async function GET(request: Request) {
   try {
     const payload = await getCMS()
+    const auth = await payload.auth({ headers: request.headers })
+    const user = auth.user as any
+
+    if (!user) {
+      return NextResponse.json({ error: 'Bạn cần đăng nhập để xuất dữ liệu khảo sát.' }, { status: 401 })
+    }
+    if (!hasModulePermission(user, 'surveys', 'export')) {
+      return NextResponse.json({ error: 'Bạn không có quyền xuất dữ liệu khảo sát.' }, { status: 403 })
+    }
+
     const { searchParams } = new URL(request.url)
 
     const campaignParam = searchParams.get('campaign') || 'all'
     const period = searchParams.get('period') || 'all'
+
+    if (!ALLOWED_PERIODS.has(period)) {
+      return NextResponse.json({ error: 'Khoảng thời gian xuất không hợp lệ.' }, { status: 400 })
+    }
 
     // 1. Tính toán mốc thời gian lọc (startDate)
     const now = new Date()
@@ -49,6 +72,9 @@ export async function GET(request: Request) {
 
     const isAll = campaignParam === 'all'
     const campaignId = !isAll ? Number(campaignParam) : null
+    if (!isAll && (!Number.isInteger(campaignId) || Number(campaignId) <= 0)) {
+      return NextResponse.json({ error: 'Mã đợt khảo sát không hợp lệ.' }, { status: 400 })
+    }
 
     // 2. Lấy thông tin đợt khảo sát
     let campaignTitle = 'TẤT CẢ CÁC LOẠI KHẢO SÁT'
@@ -144,7 +170,7 @@ export async function GET(request: Request) {
 
     const surveyResponsesQuery: any = {
       collection: 'survey-responses',
-      limit: 10000,
+      limit: MAX_EXPORT_ROWS + 1,
       sort: '-submittedAt',
       overrideAccess: true,
     }
@@ -188,7 +214,7 @@ export async function GET(request: Request) {
 
       const fbQuery: any = {
         collection: 'feedbackCases',
-        limit: 10000,
+        limit: MAX_EXPORT_ROWS + 1,
         sort: '-createdAt',
         overrideAccess: true,
       }
@@ -331,6 +357,13 @@ export async function GET(request: Request) {
     }
 
     const dataRows = Array.from(rowsMap.values())
+
+    if (dataRows.length > MAX_EXPORT_ROWS) {
+      return NextResponse.json(
+        { error: `Có hơn ${MAX_EXPORT_ROWS.toLocaleString('vi-VN')} lượt khảo sát. Vui lòng thu hẹp đợt hoặc khoảng thời gian trước khi xuất.` },
+        { status: 413 },
+      )
+    }
 
     // 7. Tạo workbook Excel chuyên nghiệp với exceljs
     const workbook = new Workbook()
@@ -495,12 +528,36 @@ export async function GET(request: Request) {
     const buffer = await workbook.xlsx.writeBuffer()
     const fileName = `Danh-sach-khao-sat-${isAll ? 'tat-ca' : campaignId}-${period}-${Date.now()}.xlsx`
 
+    await payload.create({
+      collection: 'audit-logs' as any,
+      overrideAccess: true,
+      data: {
+        summary: `EXPORT survey responses (${dataRows.length} records)`,
+        action: 'other',
+        resource: 'survey-responses',
+        actor: user.id,
+        actorEmail: user.email,
+        actorRole: user.role,
+        ip: requestIP(request),
+        userAgent: request.headers.get('user-agent') || undefined,
+        metadata: {
+          operation: 'export',
+          recordCount: dataRows.length,
+          campaign: isAll ? 'all' : campaignId,
+          period,
+        },
+      } as any,
+    }).catch((error) => {
+      payload.logger.error({ err: error, msg: 'Không ghi được audit log cho export khảo sát' })
+    })
+
     return new NextResponse(buffer as any, {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': `attachment; filename="${encodeURIComponent(fileName)}"`,
         'Cache-Control': 'no-store, max-age=0',
+        'X-Content-Type-Options': 'nosniff',
       },
     })
   } catch (error: any) {

@@ -38,11 +38,38 @@ export function OurExpertsCarousel({
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const [viewportPerView, setViewportPerView] = useState<number | null>(null)
   const touchStartX = useRef<number | null>(null)
 
   const total = safeItems.length
-  const targetPerView = itemsPerView && itemsPerView >= 4 ? itemsPerView : 4
-  const maxPerView = total >= targetPerView ? targetPerView : (total >= 1 ? targetPerView : 1)
+  const targetPerView = itemsPerView && itemsPerView >= 1 ? itemsPerView : 4
+
+  // Lắng nghe kích thước màn hình để xác định số lượng thẻ phù hợp:
+  // Mobile (<=600px): 1 thẻ
+  // Tablet nhỏ (<=800px): tối đa 2 thẻ
+  // Tablet lớn (<=1024px): tối đa 3 thẻ
+  // Desktop (>1024px): theo cấu hình itemsPerView
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth
+      if (width <= 600) {
+        setViewportPerView(1)
+      } else if (width <= 800) {
+        setViewportPerView(Math.min(2, targetPerView))
+      } else if (width <= 1024) {
+        setViewportPerView(Math.min(3, targetPerView))
+      } else {
+        setViewportPerView(targetPerView)
+      }
+    }
+
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [targetPerView])
+
+  const activePerView = viewportPerView !== null ? viewportPerView : targetPerView
+  const maxPerView = total >= activePerView ? activePerView : (total >= 1 ? total : 1)
 
   useEffect(() => {
     if (total <= 1 || !autoplaySeconds || autoplaySeconds <= 0 || isPaused) return

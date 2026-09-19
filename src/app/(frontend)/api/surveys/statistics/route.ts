@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getCMS } from '@/lib/payload'
+import { hasModulePermission } from '@/access'
+
+const PUBLIC_MIN_SAMPLE_SIZE = 5
+const ALLOWED_PERIODS = new Set(['all', 'day', 'week', 'month', 'quarter', '6months', '9months', 'year'])
 
 export async function GET(request: Request) {
   try {
@@ -8,6 +12,21 @@ export async function GET(request: Request) {
 
     const campaign = searchParams.get('campaign') || 'all'
     const period = searchParams.get('period') || 'all' // all | day | week | month | quarter | 6months | 9months | year
+    const wantsAdminDetails = searchParams.get('details') === 'admin'
+    const auth = await payload.auth({ headers: request.headers })
+    const user = auth.user as any
+    const canViewDetails = Boolean(user && hasModulePermission(user, 'surveys', 'view'))
+
+    if (!ALLOWED_PERIODS.has(period)) {
+      return NextResponse.json({ error: 'Khoảng thời gian thống kê không hợp lệ.' }, { status: 400 })
+    }
+    if (wantsAdminDetails && !user) {
+      return NextResponse.json({ error: 'Bạn cần đăng nhập để xem chi tiết khảo sát.' }, { status: 401 })
+    }
+    if (wantsAdminDetails && !canViewDetails) {
+      return NextResponse.json({ error: 'Bạn không có quyền xem chi tiết khảo sát.' }, { status: 403 })
+    }
+    const includeDetails = wantsAdminDetails && canViewDetails
 
     // 1. Tính toán mốc thời gian bắt đầu (startDate) dựa theo period
     const now = new Date()
@@ -50,6 +69,9 @@ export async function GET(request: Request) {
     const allCampaigns = allCampaignsRes.docs || []
     const isAll = campaign === 'all'
     const campaignId = !isAll ? Number(campaign) : null
+    if (!isAll && (!Number.isInteger(campaignId) || Number(campaignId) <= 0)) {
+      return NextResponse.json({ error: 'Mã đợt khảo sát không hợp lệ.' }, { status: 400 })
+    }
 
     // 3. Truy vấn survey-responses
     const surveyResponsesQuery: any = {
@@ -247,7 +269,7 @@ export async function GET(request: Request) {
       : 0
 
     // Danh sách phản hồi gần đây nhất
-    const recentResponses = [
+    const recentResponses = includeDetails ? [
       ...surveyResponses.docs.map((r: any) => ({
         code: r.responseCode || `SR-${r.id}`,
         date: r.submittedAt,
@@ -264,10 +286,10 @@ export async function GET(request: Request) {
       })),
     ]
       .sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())
-      .slice(0, 15)
+      .slice(0, 15) : []
 
     // Danh sách breakdown theo từng loại khảo sát
-    const categoryBreakdown = Array.from(campaignStatsMap.values()).map((c) => {
+    const rawCategoryBreakdown = Array.from(campaignStatsMap.values()).map((c) => {
       const cAvg = c.scores.length
         ? Number((c.scores.reduce((a, b) => a + b, 0) / c.scores.length).toFixed(2))
         : 0
@@ -281,6 +303,14 @@ export async function GET(request: Request) {
         averageScore: cAvg,
       }
     })
+    const hasSmallPublicCategory = rawCategoryBreakdown.some(
+      (item) => item.count > 0 && item.count < PUBLIC_MIN_SAMPLE_SIZE,
+    )
+    const categoryBreakdown = includeDetails
+      ? rawCategoryBreakdown
+      : hasSmallPublicCategory
+        ? []
+        : rawCategoryBreakdown.filter((item) => item.count >= PUBLIC_MIN_SAMPLE_SIZE)
 
     // Thông tin campaign hiện tại
     let currentCampaignInfo: any = {
@@ -304,21 +334,34 @@ export async function GET(request: Request) {
       }
     }
 
+    const publicSampleSuppressed = !includeDetails && totalResponses < PUBLIC_MIN_SAMPLE_SIZE
+    const distributionValues = [verySatisfied, satisfied, neutral, unsatisfied]
+    const publicDistributionSuppressed = !includeDetails && distributionValues.some(
+      (count) => count > 0 && count < PUBLIC_MIN_SAMPLE_SIZE,
+    )
+    const suppressDistribution = publicSampleSuppressed || publicDistributionSuppressed
+
     return NextResponse.json({
       ok: true,
       period,
       campaign: currentCampaignInfo,
-      responses: totalResponses,
-      averageScore: Number(averageScore.toFixed(2)),
-      satisfactionRate,
+      responses: publicSampleSuppressed ? 0 : totalResponses,
+      averageScore: publicSampleSuppressed ? 0 : Number(averageScore.toFixed(2)),
+      satisfactionRate: publicSampleSuppressed ? 0 : satisfactionRate,
       ratingDistribution: {
-        verySatisfied,
-        satisfied,
-        neutral,
-        unsatisfied,
+        verySatisfied: suppressDistribution ? 0 : verySatisfied,
+        satisfied: suppressDistribution ? 0 : satisfied,
+        neutral: suppressDistribution ? 0 : neutral,
+        unsatisfied: suppressDistribution ? 0 : unsatisfied,
       },
       categoryBreakdown,
-      recentResponses,
+      ...(includeDetails ? { recentResponses } : {}),
+      privacy: {
+        minimumPublicSampleSize: PUBLIC_MIN_SAMPLE_SIZE,
+        suppressed: publicSampleSuppressed,
+        distributionSuppressed: publicDistributionSuppressed,
+        categoryBreakdownSuppressed: !includeDetails && hasSmallPublicCategory,
+      },
     })
   } catch (err: any) {
     console.error('API SURVEY STATISTICS ERROR:', err)

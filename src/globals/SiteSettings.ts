@@ -1,5 +1,5 @@
 import type { GlobalConfig, Field } from 'payload'
-import { moduleAccess } from '@/access'
+import { adminField, moduleAccess } from '@/access'
 
 // Helper: field màu với ColorPickerField custom component
 const colorField = (name: string, label: string, defaultValue?: string, opts?: Record<string, unknown>): Field => ({
@@ -1843,10 +1843,18 @@ export const SiteSettings: GlobalConfig = {
             },
             {
               name: 'pass',
-              label: 'Mật khẩu ứng dụng (App Password)',
+              label: 'Mật khẩu ứng dụng (đã chuyển sang biến môi trường)',
               type: 'text',
-              defaultValue: 'mvdbzvsojuorpwgv',
-              admin: { width: '50%', description: 'Mã 16 chữ cái tạo từ bảo mật Google.' },
+              access: {
+                create: () => false,
+                read: () => false,
+                update: () => false,
+              },
+              admin: {
+                hidden: true,
+                width: '50%',
+                description: 'Trường cũ đã vô hiệu hóa. Cấu hình SMTP_PASS trong biến môi trường của máy chủ.',
+              },
             },
           ],
         },
@@ -1883,7 +1891,7 @@ export const SiteSettings: GlobalConfig = {
           name: 'defaultDocumentPin',
           label: 'Mã PIN bảo mật mặc định toàn viện',
           type: 'text',
-          defaultValue: 'BVTL2026',
+          access: { create: adminField, read: () => false, update: adminField },
           admin: {
             description: 'Mã PIN này được dùng khi tài liệu chọn chế độ "Mã PIN bảo mật" nhưng không đặt mã PIN riêng. Cung cấp mã này cho Bác sĩ / Cán bộ nhân viên viện khi cần tải phác đồ.',
           },

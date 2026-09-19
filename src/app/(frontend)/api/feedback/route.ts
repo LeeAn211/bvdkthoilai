@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { randomBytes } from 'crypto'
+import { createHash, randomBytes } from 'crypto'
 import { getCMS } from '@/lib/payload'
 import { bodyIsTooLarge, rateLimit, validEmail, validPhone, verifyTurnstile } from '@/lib/request-security'
 
@@ -100,99 +100,36 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   try {
-    const throttle = rateLimit(req, 'feedback-lookup', 40, 15 * 60_000)
-    if (!throttle.allowed) return NextResponse.json({ error: 'Vui lòng thử lại sau.' }, { status: 429 })
+    const throttle = rateLimit(req, 'feedback-lookup', 10, 15 * 60_000)
+    if (!throttle.allowed) {
+      return NextResponse.json(
+        { error: 'Không thể tra cứu lúc này. Vui lòng thử lại sau.' },
+        { status: 429, headers: { 'Retry-After': String(throttle.retryAfter), 'Cache-Control': 'no-store' } },
+      )
+    }
     const url = new URL(req.url)
     const code = String(url.searchParams.get('code') || '').trim().toUpperCase().slice(0, 40)
     const phone = String(url.searchParams.get('phone') || '').trim().slice(0, 30)
 
-    if (!validPhone(phone)) {
-      return NextResponse.json({ error: 'Số điện thoại không hợp lệ. Vui lòng nhập đúng 10 số.' }, { status: 400 })
+    if (!code || !validPhone(phone)) {
+      return NextResponse.json(
+        { error: 'Vui lòng nhập đầy đủ mã tra cứu và số điện thoại đã dùng khi gửi phản ánh.' },
+        { status: 400, headers: { 'Cache-Control': 'no-store' } },
+      )
     }
-    
+
+    const pairFingerprint = createHash('sha256').update(`${code}:${phone}`).digest('hex').slice(0, 16)
+    const pairThrottle = rateLimit(req, `feedback-lookup-pair:${pairFingerprint}`, 5, 15 * 60_000)
+    if (!pairThrottle.allowed) {
+      return NextResponse.json(
+        { error: 'Không thể tra cứu lúc này. Vui lòng thử lại sau.' },
+        { status: 429, headers: { 'Retry-After': String(pairThrottle.retryAfter), 'Cache-Control': 'no-store' } },
+      )
+    }
+
     const payload = await getCMS()
 
-    // TRƯỜNG HỢP 1: NGƯỜI DÙNG KHÔNG NHẬP HOẶC QUÊN MÃ TRA CỨU -> TÌM TẤT CẢ PHẢN ÁNH THEO SỐ ĐIỆN THOẠI
-    if (!code) {
-      // Tìm trong feedback
-      const fbList = await payload.find({
-        collection: 'feedback',
-        where: { phone: { equals: phone } },
-        sort: '-createdAt',
-        limit: 20,
-        depth: 0,
-        overrideAccess: true,
-      })
-
-      // Tìm trong feedbackCases
-      const caseList = await payload.find({
-        collection: 'feedbackCases',
-        where: { phone: { equals: phone } },
-        sort: '-createdAt',
-        limit: 20,
-        depth: 0,
-        overrideAccess: true,
-      })
-
-      const codeMap = new Map<string, any>()
-
-      for (const item of (fbList.docs as any[])) {
-        const itemCode = item.code || `FB-${item.id}`
-        const mappedStatus = item.status === 'done' ? 'resolved' : item.status === 'processing' ? 'processing' : 'new'
-        codeMap.set(itemCode, {
-          code: itemCode,
-          name: item.name || 'Người bệnh',
-          subject: item.type || 'Phản ánh – Góp ý',
-          message: item.message || '',
-          status: mappedStatus,
-          publicResponse: item.response || '',
-          resolvedAt: item.resolvedAt || null,
-          createdAt: item.createdAt,
-          updatedAt: item.updatedAt,
-        })
-      }
-
-      for (const item of (caseList.docs as any[])) {
-        if (!item.code) continue
-        const existing = codeMap.get(item.code)
-        if (existing) {
-          existing.subject = item.subject || existing.subject
-          if (!existing.publicResponse && item.publicResponse) existing.publicResponse = item.publicResponse
-          if (item.status === 'resolved' || item.status === 'closed') existing.status = 'resolved'
-          else if (item.status === 'processing') existing.status = 'processing'
-        } else {
-          codeMap.set(item.code, {
-            code: item.code,
-            name: item.name || 'Người bệnh',
-            subject: item.subject || 'Phản ánh – Góp ý',
-            message: item.message || '',
-            status: item.status,
-            publicResponse: item.publicResponse || '',
-            resolvedAt: item.closedAt || null,
-            createdAt: item.createdAt,
-            updatedAt: item.updatedAt,
-          })
-        }
-      }
-
-      const items = Array.from(codeMap.values()).sort(
-        (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
-      )
-
-      if (items.length === 0) {
-        return NextResponse.json({
-          error: `Không tìm thấy phản ánh hoặc góp ý nào được gửi từ số điện thoại ${phone}.`,
-        }, { status: 404 })
-      }
-
-      return NextResponse.json({
-        phone,
-        total: items.length,
-        items,
-      })
-    }
-
-    // TRƯỜNG HỢP 2: CÓ ĐẦY ĐỦ CẢ MÃ TRA CỨU VÀ SỐ ĐIỆN THOẠI -> TRẢ VỀ CHI TIẾT TỪNG MỤC
+    // Chỉ tra cứu khi có đủ mã tiếp nhận và số điện thoại khớp cùng hồ sơ.
     // 1. Tìm trong feedbackCases trước
     const result = await payload.find({
       collection: 'feedbackCases',
@@ -220,7 +157,10 @@ export async function GET(req: Request) {
     } catch {}
 
     if (!caseItem && !feedbackItem) {
-      return NextResponse.json({ error: 'Không tìm thấy hồ sơ phản ánh phù hợp với Mã tra cứu và Số điện thoại này.' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Thông tin tra cứu không chính xác hoặc hồ sơ chưa sẵn sàng.' },
+        { status: 404, headers: { 'Cache-Control': 'no-store' } },
+      )
     }
 
     // Lấy câu trả lời chính thức ưu tiên từ feedback (nếu admin vừa nhập vào feedback) hoặc feedbackCases
@@ -271,8 +211,11 @@ export async function GET(req: Request) {
       createdAt: caseItem?.createdAt || feedbackItem?.createdAt,
       updatedAt: feedbackItem?.updatedAt || caseItem?.updatedAt,
       timeline,
-    })
+    }, { headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } })
   } catch {
-    return NextResponse.json({ error: 'Chưa thể tra cứu lúc này.' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Chưa thể tra cứu lúc này.' },
+      { status: 500, headers: { 'Cache-Control': 'no-store' } },
+    )
   }
 }
