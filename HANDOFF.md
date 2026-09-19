@@ -1,22 +1,22 @@
 # HANDOFF
 
-## Mục đích
-Bàn giao ngữ cảnh ngắn gọn giữa Antigravity, Codex và các AI/agent khác khi đổi phiên hoặc đổi công cụ.
+## Trạng thái
+Không có task đang bàn giao.
 
-## Trạng thái hiện tại
-- Chưa có nội dung bàn giao cụ thể.
+## Cách sử dụng
+Chỉ ghi file này khi dừng giữa task hoặc chuyển sang agent/IDE khác.
 
-## Khi cần bàn giao
-Ghi ngắn gọn:
-- Mục tiêu đang thực hiện
-- Những gì đã hoàn thành
-- Quyết định đã chốt
-- File đã sửa
-- Lỗi/vướng mắc còn lại
-- Bước tiếp theo
-- Điều không được thay đổi nếu đã được chốt
+Khi cần bàn giao, giữ ngắn gọn:
+- mục tiêu;
+- phần đã làm;
+- file đã sửa;
+- quyết định đã chốt;
+- lỗi/vướng mắc;
+- bước tiếp theo;
+- điều không được thay đổi.
 
 ## Quy tắc
-- Không sao chép toàn bộ CHANGELOG.md vào đây.
-- Chỉ giữ thông tin cần thiết để agent tiếp theo có thể tiếp tục ngay.
-- Ưu tiên trạng thái mới nhất; xóa hoặc thay nội dung bàn giao cũ khi không còn giá trị.
+- Không sao chép CHANGELOG vào đây.
+- Không lưu lịch sử nhiều task.
+- Task mới cần bàn giao phải ghi đè nội dung cũ.
+- Mục tiêu: khoảng 10–30 dòng.

@@ -1,11 +1,29 @@
 node_modules/
 .next/
+out/
+
 .env
 .env.local
 .env.*.local
 !.env.example
+
 media/
+
+# TypeScript/build cache
+*.tsbuildinfo
+
+# logs
 *.log
+
+# temporary
+*.tmp
+*.temp
+*.bak
+-s
+
+# archives
 *.zip
+
+# OS
 .DS_Store
 Thumbs.db

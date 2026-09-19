@@ -1,39 +1,49 @@
 ---
 name: bvdkweb
-description: Workflow for developing, debugging, and maintaining the BVDK Thoi Lai website with low-token context loading. Shared project rules live in AGENTS.md and docs/ai/.
+description: Low-token workflow for developing, debugging, and maintaining the BVDK Thoi Lai website.
 ---
 
 # bvdkweb
 
-## Use shared rules
-Before substantial work, follow `AGENTS.md`.
+## Start
+Read only:
+1. `AGENTS.md`
+2. `CURRENT-TASK.md`
+3. target file
 
-Load only the relevant shared reference:
-- Detail page UI → `docs/ai/detail-page-ui.md`
+Do not scan the repository by default.
+
+## Load references only when needed
 - Payload/Admin/schema → `docs/ai/payload-rules.md`
-- Admin form UX/layout → `docs/ai/admin-form-ui.md`
-- Database/schema → `docs/ai/database.md`
+- Admin form UX → `docs/ai/admin-form-ui.md`
+- Database/migration → `docs/ai/database.md`
+- Detail page/Hero UI → `docs/ai/detail-page-ui.md`
 - Debugging → `docs/ai/debugging.md`
-- Regression checks → `docs/ai/regression-checklist.md`
-- Production/VPS/deploy → `docs/ai/production-safety.md`
-- Source conflicts → `docs/ai/source-of-truth.md`
-- Changelog policy → `docs/ai/changelog-policy.md`
+- Regression → `docs/ai/regression-checklist.md`
+- Production/deploy → `docs/ai/production-safety.md`
+- Source conflict → `docs/ai/source-of-truth.md`
 
-Do not read all references by default.
+Never load all references by default.
 
 ## Workflow
-1. Read the target file and direct dependencies.
-2. Reuse existing components/schema/utilities before creating new ones.
-3. Make the smallest safe change.
-4. Run the narrowest useful validation.
-5. Update `CHANGELOG.md`.
-6. Avoid unrelated refactors.
+1. Identify exact scope.
+2. Read target + direct dependency only when required.
+3. Reuse existing component/schema/utilities.
+4. Make the smallest safe change.
+5. Run the narrowest useful validation.
+6. Update `CURRENT-TASK.md`.
+7. Update `CHANGELOG.md` only for meaningful completed work.
+8. Avoid unrelated refactors.
 
-## Change levels
-- Small: CSS/text/simple bug → target files + typecheck if needed.
-- Feature: multiple components → related components/types + targeted validation.
-- Schema: Payload/database → schema rules + generate types/importmap + typecheck.
-- Production: VPS/deploy/real DB → production safety + preflight/build.
+## Validation level
+- Small CSS/text/UI: targeted check; typecheck only when useful.
+- Feature: related components/types + targeted validation.
+- Schema/database: load DB/Payload rules, generate/check what the schema change requires.
+- Release/production: preflight/full build only when appropriate.
 
-## Completion
-A task is complete when requested behavior works, validation is appropriate, no unrelated behavior is intentionally changed, and `CHANGELOG.md` is updated.
+## Never
+- read full CHANGELOG by default;
+- append old tasks into CURRENT-TASK;
+- run full-project audit for a local UI bug;
+- run production build after every small change;
+- modify database or production outside the explicit task.
