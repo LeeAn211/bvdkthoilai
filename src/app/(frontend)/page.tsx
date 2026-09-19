@@ -1155,6 +1155,7 @@ export default async function HomePage() {
                   ) : (
                     <OurExpertsFeaturedGrid
                       items={rawSortedExperts}
+                      autoplaySeconds={Number(item.expertAutoplaySeconds ?? 5)}
                       cardBarBgColor={finalCardBg}
                       cardBarTextColor={finalCardText}
                       subItemsPerPage={Math.min(6, Math.max(1, Number(item.expertItemsPerView || 3)))}

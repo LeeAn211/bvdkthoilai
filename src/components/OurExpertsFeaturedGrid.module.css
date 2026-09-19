@@ -22,11 +22,16 @@
   flex-direction: column;
   overflow: hidden;
   position: relative;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, opacity 0.2s ease;
   text-decoration: none;
   color: inherit;
   height: 494px;
   box-sizing: border-box;
+}
+
+.cardFading {
+  opacity: 0.35;
+  transform: scale(0.985);
 }
 
 .leaderCard:hover {
@@ -174,6 +179,12 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.gridFading {
+  opacity: 0.35;
+  transform: translateY(3px);
 }
 
 .expertSubGrid[data-count="1"] {

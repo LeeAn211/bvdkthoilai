@@ -6,6 +6,7 @@ import type { ExpertItem } from './OurExpertsCarousel'
 
 type Props = {
   items: ExpertItem[]
+  autoplaySeconds?: number
   cardBarBgColor?: string
   cardBarTextColor?: string
   subItemsPerPage?: number
@@ -13,6 +14,7 @@ type Props = {
 
 export function OurExpertsFeaturedGrid({
   items = [],
+  autoplaySeconds = 5,
   cardBarBgColor,
   cardBarTextColor,
   subItemsPerPage = 6,
@@ -23,22 +25,18 @@ export function OurExpertsFeaturedGrid({
   )
 
   const [page, setPage] = useState(0)
+  const [selectedLeaderIndex, setSelectedLeaderIndex] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
-  if (!safeItems.length) {
-    return (
-      <div className="professionalEmpty">
-        Chưa có chuyên gia nào được kích hoạt. Hãy thêm chuyên gia trong phần Cấu hình Trang chủ hoặc mục Bác sĩ.
-      </div>
-    )
-  }
+  // Thẻ Lãnh đạo VIP bên trái: Mặc định là người đầu tiên (Giám đốc), nhưng khi người dùng bấm vào ảnh bác sĩ bất kỳ, ảnh và thông tin của bác sĩ đó sẽ chuyển sang khung lớn bên trái mượt mà
+  const leader = safeItems[selectedLeaderIndex] || safeItems[0]
 
-  // Thẻ Lãnh đạo VIP bên trái: Là người đầu tiên trong danh sách (đã được sort Giám đốc -> Phó Giám đốc theo Mandate 1)
-  const leader = safeItems[0]
+  // Danh sách các bác sĩ hiển thị ở lưới bên phải (nếu có nhiều hơn 1 người, hiển thị toàn bộ hoặc danh sách còn lại)
+  const remainingExperts = safeItems.length > 1
+    ? safeItems.filter((_, i) => i !== selectedLeaderIndex)
+    : safeItems
 
-  // Danh sách các bác sĩ còn lại hiển thị ở lưới bên phải
-  const remainingExperts = safeItems.slice(1)
-
-  // Nếu không còn bác sĩ nào ngoài leader, dùng chính leader cho cả lưới phụ
   const subList = remainingExperts.length > 0 ? remainingExperts : safeItems
 
   const totalSubPages = Math.ceil(subList.length / subItemsPerPage) || 1
@@ -49,8 +47,52 @@ export function OurExpertsFeaturedGrid({
     (currentPage + 1) * subItemsPerPage
   )
 
-  const prevPage = () => setPage((p) => (p - 1 + totalSubPages) % totalSubPages)
-  const nextPage = () => setPage((p) => (p + 1) % totalSubPages)
+  const changePage = (newPage: number) => {
+    setIsTransitioning(true)
+    setTimeout(() => {
+      setPage(newPage)
+      setIsTransitioning(false)
+    }, 200)
+  }
+
+  const prevPage = () => {
+    changePage((currentPage - 1 + totalSubPages) % totalSubPages)
+  }
+
+  const nextPage = () => {
+    changePage((currentPage + 1) % totalSubPages)
+  }
+
+  // Tự động chuyển ô nội dung theo số giây nhất định (Autoplay)
+  React.useEffect(() => {
+    if (totalSubPages <= 1 || !autoplaySeconds || autoplaySeconds <= 0 || isPaused) return
+
+    const timer = window.setInterval(() => {
+      setPage((prev) => (prev + 1) % totalSubPages)
+    }, autoplaySeconds * 1000)
+
+    return () => window.clearInterval(timer)
+  }, [totalSubPages, autoplaySeconds, isPaused])
+
+  const handleSelectLeader = (item: ExpertItem, e: React.MouseEvent) => {
+    const originalIdx = safeItems.findIndex((x) => x === item || (x.id && x.id === item.id) || x.name === item.name)
+    if (originalIdx >= 0 && originalIdx !== selectedLeaderIndex) {
+      e.preventDefault()
+      setIsTransitioning(true)
+      setTimeout(() => {
+        setSelectedLeaderIndex(originalIdx)
+        setIsTransitioning(false)
+      }, 180)
+    }
+  }
+
+  if (!safeItems.length) {
+    return (
+      <div className="professionalEmpty">
+        Chưa có chuyên gia nào được kích hoạt. Hãy thêm chuyên gia trong phần Cấu hình Trang chủ hoặc mục Bác sĩ.
+      </div>
+    )
+  }
 
   const subFooterStyle = cardBarBgColor && cardBarBgColor !== '#f0f7fd'
     ? { backgroundColor: cardBarBgColor, color: cardBarTextColor || undefined }
@@ -69,13 +111,18 @@ export function OurExpertsFeaturedGrid({
   }
 
   return (
-    <div className={styles.featuredSectionContainer}>
+    <div
+      className={styles.featuredSectionContainer}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      aria-label="Chuyên gia của chúng tôi"
+    >
       <div className={styles.featuredLayoutWrapper}>
-        {/* CỘT TRÁI: THẺ LÃNH ĐẠO TIÊU BIỂU / GIÁM ĐỐC */}
+        {/* CỘT TRÁI: THẺ LÃNH ĐẠO TIÊU BIỂU / GIÁM ĐỐC (CỐ ĐỊNH KÍCH THƯỚC, CHUYỂN ẢNH VÀ THÔNG TIN MƯỢT MÀ) */}
         {leader && (
           <a
             href={leader.url || '/bac-si'}
-            className={styles.leaderCard}
+            className={`${styles.leaderCard} ${isTransitioning ? styles.cardFading : ''}`}
             target={leader.openNewTab ? '_blank' : undefined}
             rel={leader.openNewTab ? 'noopener noreferrer' : undefined}
           >
@@ -89,6 +136,7 @@ export function OurExpertsFeaturedGrid({
             <div className={styles.leaderImageFrame}>
               {leader.image ? (
                 <img
+                  key={`leader-${leader.id || leader.name}`}
                   src={leader.image}
                   alt={leader.name}
                   className={`${styles.leaderImg} ${renderImageFitClass(leader.imageFit)}`}
@@ -127,9 +175,12 @@ export function OurExpertsFeaturedGrid({
         )}
 
         {/* CỘT PHẢI: LƯỚI BÁC SĨ & TRƯỞNG KHOA PHÒNG TIÊU BIỂU */}
-        <div className={styles.expertSubGrid} data-count={subItemsPerPage}>
+        <div
+          className={`${styles.expertSubGrid} ${isTransitioning ? styles.gridFading : ''}`}
+          data-count={subItemsPerPage}
+        >
           {currentSubItems.map((item, idx) => {
-            const cardKey = `${item.id || 'sub-expert'}-${idx}`
+            const cardKey = `${item.id || 'sub-expert'}-${idx}-${currentPage}`
             const isLeadership =
               Boolean(
                 item.position?.toLowerCase().includes('giám đốc') ||
@@ -142,6 +193,8 @@ export function OurExpertsFeaturedGrid({
                 key={cardKey}
                 href={item.url || '/bac-si'}
                 className={styles.subExpertCard}
+                onClick={(e) => handleSelectLeader(item, e)}
+                title="Bấm để xem nổi bật trên khung lớn"
                 target={item.openNewTab ? '_blank' : undefined}
                 rel={item.openNewTab ? 'noopener noreferrer' : undefined}
               >
@@ -203,6 +256,9 @@ export function OurExpertsFeaturedGrid({
                 <polyline points="15 18 9 12 15 6" />
               </svg>
             </button>
+            <span className={styles.gridCounter}>
+              {currentPage + 1} / {totalSubPages}
+            </span>
             <button
               type="button"
               className={styles.gridNavBtn}

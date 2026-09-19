@@ -1,6 +1,29 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-19] - Nâng Cấp Toàn Diện Admin Chuyên Khoa: Quản Trị Cả 2 Ảnh (Lớn + Nhỏ 3D) & 2 Chế Độ Icon (Danh Mục + Tải Lên Icon Riêng)
+## [2026-09-19] - Nâng Cấp Khối Chuyên Gia (Featured Grid): Cố Định Khung, Chuyển Ảnh & Tự Động Luân Phiên (Autoplay)
+
+- **Thời gian thực hiện:** 13:12 (Asia/Saigon)
+- **Tóm tắt yêu cầu người dùng:**
+  - *Phần chuyên gia sẽ giữ cố định khung này khi bấm ảnh thì ảnh sẽ chuyển qua chứ không sau và tự động chuyển ô nội dung theo số giây nhất định.*
+- **Giải pháp triển khai & Tính năng mới:**
+  1. **Cố định kích thước khung layout (Fixed Frame Layout Stability):**
+     - Khung Lãnh đạo bên trái cố định chuẩn mực (`height: 494px`, bằng chính xác 2 hàng thẻ nhỏ bên phải `2 x 240px + 14px gap`).
+     - Khi bấm chuyển ảnh hoặc luân phiên trang, toàn bộ layout được giữ cố định nguyên vẹn, tuyệt đối không bị giật hay co giãn chiều cao.
+  2. **Tương tác bấm ảnh chuyển mượt mà (Click to Preview / Smooth Crossfade):**
+     - Khi người dùng click vào bất kỳ thẻ bác sĩ nào ở lưới nhỏ bên phải, thẻ bác sĩ đó sẽ được chuyển sang vị trí nổi bật tại khung lớn bên trái kèm hiệu ứng mờ chuyển động (`cardFading` / `gridFading`) mượt mà, không giật cục.
+     - Tôn trọng triệt để **Mandate 1 & 2**: Mặc định ban đầu luôn là Giám đốc bệnh viện; Ảnh bác sĩ luôn fit vừa khung tỷ lệ chuẩn `object-fit: cover` không bao giờ bị méo.
+  3. **Tự động chuyển ô nội dung theo số giây nhất định (Autoplay & Pause on Hover):**
+     - Kết nối cấu hình `expertAutoplaySeconds` từ Admin CMS trong `Homepage.ts` (mặc định 5 giây) truyền trực tiếp vào `<OurExpertsFeaturedGrid autoplaySeconds={...} />`.
+     - Tự động luân chuyển trang bác sĩ bên phải theo chu kỳ giây đã cài đặt.
+     - Tích hợp tính năng thông minh: **Tự động tạm dừng (Pause on Hover)** khi người dùng rê chuột vào khối để thuận tiện đọc thông tin hoặc ngắm ảnh bác sĩ, tiếp tục chạy khi rời chuột ra ngoài.
+     - Bổ sung bộ đếm trang `currentPage / totalPages` ngay giữa 2 nút bấm `<` `>` điều hướng.
+- **Tệp tin đã chỉnh sửa:**
+  - `src/components/OurExpertsFeaturedGrid.tsx`
+  - `src/components/OurExpertsFeaturedGrid.module.css`
+  - `src/app/(frontend)/page.tsx`
+  - `CURRENT-TASK.md`
+  - `CHANGELOG.md`
+
 
 - **Thời gian thực hiện:** 12:58 (Asia/Saigon)
 - **Tóm tắt yêu cầu người dùng:**

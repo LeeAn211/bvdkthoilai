@@ -1,24 +1,22 @@
 # CURRENT TASK
-
-## Trang thai: HOÀN THÀNH - NÂNG CẤP TOÀN DIỆN ADMIN CHUYÊN KHOA (2 ẢNH LỚN/NHỎ & ICON TÙY BIẾN/DANH SÁCH)
+ 
+## Trang thai: HOÀN THÀNH - NÂNG CẤP KHỐI CHUYÊN GIA (FEATURED GRID): CỐ ĐỊNH KHUNG, CHUYỂN ẢNH & TỰ ĐỘNG LUÂN PHIÊN (AUTOPLAY)
 
 ### Đã hoàn thành theo yêu cầu người dùng:
-1. **Quản trị 2 ảnh (Ảnh chính lớn + Ảnh phụ nhỏ 3D):**
-   - Đưa vào Admin CMS (`Specialties.ts`):
-     - `cover`: 🖼️ Ảnh đại diện chính (Ảnh lớn ở trên).
-     - `subCover`: 🖼️ Ảnh phụ nổi 3D (Ảnh nhỏ góc dưới phải).
-   - Khi hover/focus vào chuyên khoa nào trên trang chủ:
-     - Ảnh lớn bên phải tự động chuyển sang ảnh chính (`cover`).
-     - Ảnh nhỏ nổi 3D tự động chuyển sang ảnh phụ (`subCover`).
-     - Nếu chưa upload ảnh, hệ thống tự động nạp ảnh nghệ thuật chuyên ngành mặc định cực đẹp.
-
-2. **Quản trị Icon 2 chế độ linh hoạt:**
-   - **Chế độ 1 - Chọn từ danh mục có sẵn (`icon`):** Cấp cứu & Hồi sức, Chẩn đoán hình ảnh, Xét nghiệm, Nhi khoa, Ngoại khoa, Nội khoa, Dược, Răng hàm mặt, YHCT & Phục hồi chức năng.
-   - **Chế độ 2 - Tự tải ảnh Icon riêng (`iconCustomUpload`):** Cho phép tải lên file ảnh icon riêng (PNG/SVG nền trong suốt). Hệ thống tự động ưu tiên icon tải lên.
-
-3. **Đóng gói Database Migration 045 chuẩn mực (Mandates 6, 14, 15):**
-   - File migration: `scripts/db-migrations/20260919_045_add_sub_cover_and_custom_icon_to_specialties.mjs`.
-   - Bổ sung các cột `sub_cover_id`, `icon_custom_upload_id` vào `specialties` và `version_sub_cover_id`, `version_icon_custom_upload_id` vào `_specialties_v`.
+1. **Khung cố định chuẩn mực (Fixed Frame):**
+   - Khung thẻ Lãnh đạo lớn bên trái cố định chiều cao `494px` (bằng chính xác 2 hàng thẻ nhỏ `2 x 240px + 14px gap`).
+   - Giữ nguyên bố cục không co giãn, không giật màn hình khi chuyển đổi ảnh hoặc đổi trang.
+2. **Bấm ảnh chuyển mượt mà (Click to Preview):**
+   - Khi bấm vào thẻ bác sĩ bất kỳ ở lưới bên phải, ảnh và thông tin của bác sĩ đó được chuyển ngay sang khung lớn bên trái kèm hiệu ứng crossfade mượt mà (`cardFading` / `gridFading`).
+   - Mặc định khởi đầu luôn tuân thủ **Mandate 1**: Giám đốc / Ban Lãnh đạo bệnh viện hiển thị ở khung đầu tiên.
+   - Tuân thủ **Mandate 2**: Ảnh bác sĩ fix vừa khung, `object-fit: cover` không bị méo tỉ lệ.
+3. **Tự động chuyển ô nội dung theo số giây nhất định (Autoplay & Pause on Hover):**
+   - Tự động chạy theo số giây cài đặt từ CMS (`expertAutoplaySeconds`, mặc định 5s).
+   - Tạm dừng khi rê chuột vào (`pause on hover`) và chạy tiếp khi rê chuột ra ngoài.
+   - Bổ sung bộ đếm vị trí trang `X / Y` giữa 2 nút điều hướng `<` `>`.
+4. **Kiểm tra chất lượng:**
+   - `npx tsc --noEmit`: 0 lỗi TypeScript.
+   - `npm run validate:homepage-seo-search`: 20/20 PASS.o `specialties` và `version_sub_cover_id`, `version_icon_custom_upload_id` vào `_specialties_v`.
    - Đã seal DB schema contract (`npm run db:schema:seal`), check hợp lệ (`npm run db:schema:check`) và deploy an toàn tại local (45 applied, 0 pending), `PAYLOAD_DB_PUSH=false`.
 
 4. **Kiểm tra chất lượng & Tiêu chuẩn:**
