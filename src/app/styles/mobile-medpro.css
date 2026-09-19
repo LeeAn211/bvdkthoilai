@@ -485,45 +485,54 @@
     color: #b91c1c !important;
   }
 
-  /* Nút Đặt khám — nổi bật kiểu medpro FAB */
+  /* Nút Đặt khám — thiết kế phẳng ngang bằng với menu, không nhô cao lên */
   .mbnBooking {
     position: relative !important;
     flex: 1 1 0 !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    justify-content: flex-end !important;
-    padding-bottom: 4px !important;
+    justify-content: center !important;
+    gap: 3px !important;
     color: #0754a8 !important;
     text-decoration: none !important;
     -webkit-tap-highlight-color: transparent !important;
+    padding: 6px 0 4px !important;
   }
 
   .mbnBookingCircle {
-    position: absolute !important;
-    top: -14px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 50px !important;
-    height: 50px !important;
+    position: relative !important;
+    top: 0 !important;
+    left: auto !important;
+    transform: none !important;
+    width: 28px !important;
+    height: 28px !important;
     border-radius: 50% !important;
     background: linear-gradient(135deg, #0754a8 0%, #0878d1 100%) !important;
     color: #ffffff !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    box-shadow: 0 4px 16px rgba(8, 120, 209, 0.4), 0 0 0 3px #ffffff !important;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    box-shadow: 0 2px 8px rgba(8, 120, 209, 0.3) !important;
+    transition: transform 0.18s ease !important;
+  }
+
+  .mbnBookingCircle svg {
+    width: 17px !important;
+    height: 17px !important;
+    stroke-width: 2.4 !important;
   }
 
   .mbnBooking:active .mbnBookingCircle {
-    transform: translateX(-50%) scale(0.92) !important;
+    transform: scale(0.92) !important;
   }
 
   .mbnBooking .mbnLabel {
-    margin-top: 28px !important;
+    margin-top: 0 !important;
     color: #0754a8 !important;
-    font-size: 10px !important;
-    font-weight: 800 !important;
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.2px !important;
+    line-height: 1 !important;
   }
 }

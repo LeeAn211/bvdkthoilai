@@ -1,11 +1,19 @@
 # CURRENT TASK
 
-## Trạng thái: HOÀN THÀNH — TÁCH RIÊNG HOTLINE CẤP CỨU VÀ SỐ TƯ VẤN TRONG ADMIN CMS
+## Trạng thái: HOÀN THÀNH — TỐI ƯU GIAO DIỆN ĐIỆN THOẠI (CHUYÊN KHOA, TỈ LỆ ẢNH, NÚT ĐẶT KHÁM)
 
 - Mục tiêu:
-  1. Tách riêng 2 số điện thoại: **Số điện thoại Cấp cứu 24/24** và **Số điện thoại Hỗ trợ tư vấn / Tổng đài tiếp đón** trong Admin CMS để quản trị viên dễ dàng cấu hình độc lập.
-  2. Đồng bộ hiển thị trên Header, Mobile Quick Drawer (`MobileTopBar`) và Thanh điều hướng chân trang di động (`MobileBottomNav`).
-  3. **Ràng buộc Git**: Giữ tại máy local, **chưa đưa lên GitHub** cho đến khi có yêu cầu cụ thể từ người dùng.
+  1. Sửa lỗi ô các chuyên khoa bị mất phần nội dung bên phải màn hình điện thoại.
+  2. Tự động lấy đúng và đủ tỉ lệ ảnh cho chuyên khoa (không bị méo, không bị zoom cắt xén mất chữ, tôn trọng cấu hình coverFitHome/coverFit trong CMS).
+  3. Thiết kế lại nút "Đặt khám" trên thanh điều hướng dưới mobile nằm bằng phẳng với các tab menu khác, không nhô cao lên.
+  4. Ràng buộc Git: Giữ tại máy local, chỉ push khi có yêu cầu cụ thể từ người dùng.
+- Đã hoàn thành:
+  - `src/components/SpecialtiesCarousel.module.css`: Thêm `box-sizing: border-box`, `width: 100%`, `max-width: 100%`, cho phép ngắt dòng khéo léo cho `.rowTitle` và `.rowSubtitle` để không bị cắt xén mép phải.
+  - `src/components/SpecialtiesCarousel.tsx`: Thêm hàm `getCoverImageStyle` áp dụng trực tiếp cấu hình `coverFitHome`, `coverFit` (`contain`, `cover`, `fill`) và `coverPosition` (`top`, `center`, `bottom`) vào `<img>`.
+  - `src/app/styles/30-home-editorial.css`: Thêm padding an toàn và `overflow: hidden` cho section chuyên khoa trên mobile.
+  - `src/app/styles/mobile-medpro.css`: Thiết kế lại `.mbnBooking` và `.mbnBookingCircle` phẳng ngang hàng với các tab khác trong thanh điều hướng di động.
+- Kiểm tra:
+  - `npx tsc --noEmit` hoàn tất: mã thoát 0, không có lỗi TypeScript.
 - Đã hoàn thành:
   - `src/globals/SiteSettings.ts`: Gom 2 trường `emergencyHotline` và `hotline` vào 1 hàng ngang (row 50/50), đặt label nhận diện trực quan:
     - `emergencyHotline`: "🚨 Số điện thoại CẤP CỨU 24/24 (Đường dây nóng khẩn cấp)"

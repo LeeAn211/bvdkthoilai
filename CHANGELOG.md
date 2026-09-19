@@ -1,6 +1,32 @@
 # NHẬT KÝ THAY ĐỔI DỰ ÁN (PROJECT CHANGELOG & DATABASE UPDATES)
 
-## [2026-09-19] - Tách riêng cấu hình Hotline Cấp cứu 24/24 và Số điện thoại Tư vấn trong Admin CMS
+## [2026-09-19] - Sửa lỗi Migration 051: Checksum mismatch và tách query ADD COLUMN / ALTER COLUMN
+
+- **Vấn đề**: Migration `20260919_051_site_settings_hotline_defaults` gây lỗi `column "core_info_emergency_hotline" of relation "contact_settings" does not exist` khi khởi động server. Lỗi xảy ra do:
+  1. Script dồn `ADD COLUMN IF NOT EXISTS` và `ALTER COLUMN SET DEFAULT` vào **cùng một `client.query()`**, PostgreSQL xử lý như 1 batch → khi cột đã tồn tại, `ADD COLUMN IF NOT EXISTS` là no-op nhưng `ALTER COLUMN` vẫn trong cùng transaction buffer gây lỗi.
+  2. Checksum trong `bvdk_schema_migrations` không khớp với file đã sửa.
+- **Giải pháp**:
+  - `scripts/db-migrations/20260919_051_site_settings_hotline_defaults.mjs`: Tách mỗi bước thành `await client.query()` riêng biệt — `ADD COLUMN IF NOT EXISTS` chạy trước, `ALTER COLUMN SET DEFAULT` chạy sau khi cột đã chắc chắn tồn tại.
+  - Cập nhật checksum trong `bvdk_schema_migrations` để khớp với nội dung file mới.
+- **Files Modified**: `scripts/db-migrations/20260919_051_site_settings_hotline_defaults.mjs`.
+- **Database/Schema**: Cập nhật checksum migration 051 trong bảng `bvdk_schema_migrations`.
+- **Kết quả**: `node scripts/db-migrate.mjs` → 51/51 APPLIED + 51/51 VERIFIED ✓
+
+
+
+- **Khắc phục lỗi ô chuyên khoa bị mất nội dung mép phải trên điện thoại**:
+  - `SpecialtiesCarousel.module.css`: Khắc phục lỗi tràn viền và mất mép phải (`overflow` / méo lưới) trên mobile. Thêm `box-sizing: border-box`, `width: 100%`, `max-width: 100%` cho `.showcaseSplitLayout`, `.listColumn`, `.specialtyList` và `.specialtyRow`.
+  - Thiết lập `.rowTitle` và `.rowSubtitle` hỗ trợ xuống dòng thông minh (`white-space: normal; line-height: 1.35; word-break: break-word; -webkit-line-clamp: 2`), giúp hiển thị trọn vẹn 100% tên khoa và mô tả trên mọi màn hình điện thoại mà không bị cắt góc phải hay mất mũi tên điều hướng.
+  - `30-home-editorial.css`: Bổ sung padding an toàn và `box-sizing: border-box` cho `.homeSpecialtiesShowcaseSection` trên mobile (< 768px).
+- **Tự động áp dụng tỉ lệ ảnh chuyên khoa chuẩn theo cấu hình**:
+  - `SpecialtiesCarousel.tsx`: Bổ sung hàm tính toán `getCoverImageStyle`, kết nối trực tiếp với cấu hình `coverFitHome`, `coverFit` (`contain` / `fill` / `cover`) và `coverPosition` (`top` / `center` / `bottom`) từ Payload CMS để truyền vào `style` của thẻ ảnh `<img>`.
+  - Đảm bảo ảnh poster chuyên khoa có chữ (như "CẤP CỨU") hoặc ảnh bác sĩ giữ nguyên vẹn tỉ lệ hình ảnh, không bị méo, không bị phóng to cắt cụt chữ.
+  - Khung ảnh chính trên điện thoại mở rộng 100% chiều rộng (`width: 100%`) với góc bo tròn mềm mại.
+- **Thiết kế nút Đặt khám phẳng ngang bằng với thanh Menu di động**:
+  - `mobile-medpro.css`: Bỏ hiệu ứng nút tròn nhô cao `top: -14px` FAB nổi lên trên; thiết kế lại `.mbnBooking` và `.mbnBookingCircle` nằm phẳng hoàn toàn, đồng đều cùng hàng với các tab menu khác (`Trang chủ`, `Lịch khám`, `Cấp cứu`). Icon và nhãn "Đặt khám" được căn giữa cân đối, thanh lịch.
+- **Files Modified**: `src/components/SpecialtiesCarousel.module.css`, `src/components/SpecialtiesCarousel.tsx`, `src/app/styles/30-home-editorial.css`, `src/app/styles/mobile-medpro.css`, `CHANGELOG.md`, `CURRENT-TASK.md`.
+- **Database/Schema**: Không thay đổi database/schema.
+- **Kiểm tra**: `npx tsc --noEmit` hoàn tất: mã thoát 0, không có lỗi TypeScript.
 
 - **Tách riêng cấu hình trong Admin CMS**:
   - `src/globals/SiteSettings.ts`: Tách 2 trường `emergencyHotline` và `hotline` vào hàng ngang (row 50/50) với nhãn nhận diện trực quan:

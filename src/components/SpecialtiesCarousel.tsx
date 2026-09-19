@@ -214,6 +214,38 @@ export function SpecialtiesCarousel({
   const eyebrowText = defaultVisual.badge
   const shouldShowSubCover = activeSpecialty.showSubCover !== false
 
+  // Tính toán cách hiển thị ảnh: ưu tiên coverFitHome/coverFit và coverPosition đã cấu hình trong CMS
+  const getCoverImageStyle = (item: SpecialtyCarouselItem): React.CSSProperties => {
+    const rawFit = item.coverFitHome || item.coverFit || 'cover-top'
+    const rawPos = item.coverPosition || 'top'
+
+    let objectFit: React.CSSProperties['objectFit'] = 'cover'
+    let objectPosition: React.CSSProperties['objectPosition'] = 'center center'
+
+    if (rawFit === 'contain') {
+      objectFit = 'contain'
+    } else if (rawFit === 'fill') {
+      objectFit = 'fill'
+    } else {
+      objectFit = 'cover'
+    }
+
+    if (rawFit === 'cover-top' || rawPos === 'top') {
+      objectPosition = 'top center'
+    } else if (rawFit === 'cover-bottom' || rawPos === 'bottom') {
+      objectPosition = 'bottom center'
+    } else if (rawFit === 'cover-center' || rawPos === 'center') {
+      objectPosition = 'center center'
+    }
+
+    return {
+      objectFit,
+      objectPosition,
+    }
+  }
+
+  const activeImageStyle = getCoverImageStyle(activeSpecialty)
+
   return (
     <div className={styles.showcaseSplitLayout}>
       {/* CỘT TRÁI: DANH BẠ TRA CỨU NHANH CÁC CHUYÊN KHOA */}
@@ -272,6 +304,7 @@ export function SpecialtiesCarousel({
             src={displayImage}
             alt={activeSpecialty.name}
             className={styles.mainPhotoImg}
+            style={activeImageStyle}
             loading="lazy"
           />
           <div className={styles.photoOverlayGradient} />

@@ -3,23 +3,54 @@ export const description = 'Thêm giá trị mặc định chuẩn cho hotline c
 export const transactional = true
 
 export async function up({ client }) {
+  // Bước 1: ADD COLUMN IF NOT EXISTS cho site_settings
   await client.query(`
-    -- 1. Cập nhật default cho site_settings
+    ALTER TABLE public.site_settings
+      ADD COLUMN IF NOT EXISTS emergency_hotline varchar DEFAULT '0292 3861 115',
+      ADD COLUMN IF NOT EXISTS hotline varchar DEFAULT '0292 3861 234';
+  `)
+  // SET DEFAULT sau khi đã chắc chắn cột tồn tại
+  await client.query(`
     ALTER TABLE public.site_settings
       ALTER COLUMN emergency_hotline SET DEFAULT '0292 3861 115',
       ALTER COLUMN hotline SET DEFAULT '0292 3861 234';
+  `)
 
-    -- 2. Cập nhật default cho bảng versions _site_settings_v
+  // Bước 2: ADD COLUMN IF NOT EXISTS cho _site_settings_v
+  await client.query(`
+    ALTER TABLE public._site_settings_v
+      ADD COLUMN IF NOT EXISTS version_emergency_hotline varchar DEFAULT '0292 3861 115',
+      ADD COLUMN IF NOT EXISTS version_hotline varchar DEFAULT '0292 3861 234';
+  `)
+  await client.query(`
     ALTER TABLE public._site_settings_v
       ALTER COLUMN version_emergency_hotline SET DEFAULT '0292 3861 115',
       ALTER COLUMN version_hotline SET DEFAULT '0292 3861 234';
+  `)
 
-    -- 3. Cập nhật default cho contact_settings
+  // Bước 3: ADD COLUMN IF NOT EXISTS cho contact_settings
+  await client.query(`
+    ALTER TABLE public.contact_settings
+      ADD COLUMN IF NOT EXISTS core_info_emergency_hotline varchar DEFAULT '0292 3861 115',
+      ADD COLUMN IF NOT EXISTS core_info_hotline varchar DEFAULT '0292 3861 234',
+      ADD COLUMN IF NOT EXISTS emergency_hotline varchar DEFAULT '0292 3861 115',
+      ADD COLUMN IF NOT EXISTS hotline varchar DEFAULT '0292 3861 234';
+  `)
+  await client.query(`
     ALTER TABLE public.contact_settings
       ALTER COLUMN core_info_emergency_hotline SET DEFAULT '0292 3861 115',
       ALTER COLUMN core_info_hotline SET DEFAULT '0292 3861 234';
+  `)
 
-    -- 4. Cập nhật default cho bảng versions _contact_settings_v
+  // Bước 4: ADD COLUMN IF NOT EXISTS cho _contact_settings_v
+  await client.query(`
+    ALTER TABLE public._contact_settings_v
+      ADD COLUMN IF NOT EXISTS version_core_info_emergency_hotline varchar DEFAULT '0292 3861 115',
+      ADD COLUMN IF NOT EXISTS version_core_info_hotline varchar DEFAULT '0292 3861 234',
+      ADD COLUMN IF NOT EXISTS version_emergency_hotline varchar DEFAULT '0292 3861 115',
+      ADD COLUMN IF NOT EXISTS version_hotline varchar DEFAULT '0292 3861 234';
+  `)
+  await client.query(`
     ALTER TABLE public._contact_settings_v
       ALTER COLUMN version_core_info_emergency_hotline SET DEFAULT '0292 3861 115',
       ALTER COLUMN version_core_info_hotline SET DEFAULT '0292 3861 234';
