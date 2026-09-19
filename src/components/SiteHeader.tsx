@@ -296,22 +296,6 @@ export async function SiteHeader() {
       textFontSize: 17,
       fontWeight: '800'
     },
-    {
-      title: 'ĐẶT LỊCH KHÁM',
-      text: 'ĐẶT LỊCH NGAY',
-      href: '/dat-lich-kham',
-      iconType: 'calendar',
-      hasArrow: true,
-      background: '#ffffff',
-      borderColor: '#e1e7ec',
-      titleColor: '#273b4c',
-      textColor: '#0878d1',
-      iconColor: '#0284c7',
-      iconBackground: '#e0f2fe',
-      titleFontSize: 10,
-      textFontSize: 16,
-      fontWeight: '800'
-    },
   ]
 
   // Menu appearance settings

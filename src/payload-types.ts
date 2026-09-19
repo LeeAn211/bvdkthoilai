@@ -1492,6 +1492,10 @@ export interface Schedule {
   id: number;
   title: string;
   /**
+   * Chọn đúng loại lịch để nhập liệu nhanh và hiển thị chuyên nghiệp nhất.
+   */
+  mode: 'daily' | 'nurse' | 'emergency' | 'attachment';
+  /**
    * Hiển thị ở thẻ danh sách trước khi người xem bấm Xem chi tiết.
    */
   summary?: string | null;
@@ -1517,8 +1521,16 @@ export interface Schedule {
     };
     [k: string]: unknown;
   } | null;
-  mode: 'daily' | 'emergency' | 'weekly' | 'attachment';
+  note?: string | null;
+  active?: boolean | null;
+  /**
+   * Chọn ngày áp dụng lịch phân công.
+   */
   date?: string | null;
+  /**
+   * Mặc định là phân công bác sĩ theo 4 ca.
+   */
+  dailyScheduleType?: ('doctor' | 'nurse') | null;
   /**
    * Nhập nhanh theo từng Khoa/Phòng. Mỗi ca có thể nhập danh sách bác sĩ ngăn cách bằng dấu phẩy (VD: "BS. Năm, BS. Dương, BS. Linh, BS. Tân..."). Giao diện website sẽ tự động dựng bảng banner y tế chuẩn mẫu.
    */
@@ -1552,23 +1564,49 @@ export interface Schedule {
   startTime?: string | null;
   endTime?: string | null;
   room?: string | null;
-  weekStart?: string | null;
-  weekEnd?: string | null;
+  nurseCol1Title?: string | null;
+  nurseCol1Sub?: string | null;
+  nurseCol2Title?: string | null;
+  nurseCol2Sub?: string | null;
+  nurseCol3Title?: string | null;
+  nurseCol3Sub?: string | null;
   /**
-   * Thêm ca khám của từng bác sĩ. Bạn có thể thêm nhiều bác sĩ vào cùng 1 ngày (ví dụ: nhiều dòng cùng chọn Thứ Hai) một cách nhanh chóng. Phía ngoài website hệ thống sẽ tự động gộp tất cả bác sĩ cùng thứ vào một hàng ngang chuyên nghiệp duy nhất.
+   * Tích chọn để hiển thị thêm một cột phân công mới trên cả bảng Admin và bảng ngoài website.
    */
-  weeklySlots?:
+  nurseEnableCol4?: boolean | null;
+  nurseCol4Title?: string | null;
+  nurseCol4Sub?: string | null;
+  /**
+   * Bảng phân công theo Khoa/Phòng. Hỗ trợ đầy đủ Import Excel và Quét ảnh AI OCR.
+   */
+  nurseAssignments?:
     | {
-        dayOfWeek: '2' | '3' | '4' | '5' | '6' | '7' | '8';
-        doctor: number | Doctor;
-        department: number | Department;
-        startTime: string;
-        endTime: string;
-        room?: string | null;
+        departmentName: string;
+        departmentIcon?:
+          | (
+              | 'stethoscope'
+              | 'ambulance'
+              | 'bed'
+              | 'mortar'
+              | 'scalpel'
+              | 'baby'
+              | 'virus'
+              | 'clinic'
+              | 'tooth'
+              | 'ultrasound'
+            )
+          | null;
+        administrativeStaff?: string | null;
+        reinforcementStaff?: string | null;
+        extraStaff?: string | null;
         note?: string | null;
         id?: string | null;
       }[]
     | null;
+  /**
+   * Hiển thị ở chân bảng lịch điều dưỡng.
+   */
+  nurseGeneralNote?: string | null;
   emergencyWeekStart?: string | null;
   emergencyWeekEnd?: string | null;
   /**
@@ -1629,8 +1667,23 @@ export interface Schedule {
     | null;
   validFrom?: string | null;
   validTo?: string | null;
-  note?: string | null;
-  active?: boolean | null;
+  weekStart?: string | null;
+  weekEnd?: string | null;
+  /**
+   * Tương thích ngược dữ liệu tuần cũ.
+   */
+  weeklySlots?:
+    | {
+        dayOfWeek: '2' | '3' | '4' | '5' | '6' | '7' | '8';
+        doctor: number | Doctor;
+        department: number | Department;
+        startTime: string;
+        endTime: string;
+        room?: string | null;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -3899,11 +3952,14 @@ export interface DoctorsSelect<T extends boolean = true> {
  */
 export interface SchedulesSelect<T extends boolean = true> {
   title?: T;
+  mode?: T;
   summary?: T;
   coverImage?: T;
   detailContent?: T;
-  mode?: T;
+  note?: T;
+  active?: T;
   date?: T;
+  dailyScheduleType?: T;
   dailyAssignments?:
     | T
     | {
@@ -3921,20 +3977,27 @@ export interface SchedulesSelect<T extends boolean = true> {
   startTime?: T;
   endTime?: T;
   room?: T;
-  weekStart?: T;
-  weekEnd?: T;
-  weeklySlots?:
+  nurseCol1Title?: T;
+  nurseCol1Sub?: T;
+  nurseCol2Title?: T;
+  nurseCol2Sub?: T;
+  nurseCol3Title?: T;
+  nurseCol3Sub?: T;
+  nurseEnableCol4?: T;
+  nurseCol4Title?: T;
+  nurseCol4Sub?: T;
+  nurseAssignments?:
     | T
     | {
-        dayOfWeek?: T;
-        doctor?: T;
-        department?: T;
-        startTime?: T;
-        endTime?: T;
-        room?: T;
+        departmentName?: T;
+        departmentIcon?: T;
+        administrativeStaff?: T;
+        reinforcementStaff?: T;
+        extraStaff?: T;
         note?: T;
         id?: T;
       };
+  nurseGeneralNote?: T;
   emergencyWeekStart?: T;
   emergencyWeekEnd?: T;
   weeklyDeptSlots?:
@@ -3977,8 +4040,20 @@ export interface SchedulesSelect<T extends boolean = true> {
       };
   validFrom?: T;
   validTo?: T;
-  note?: T;
-  active?: T;
+  weekStart?: T;
+  weekEnd?: T;
+  weeklySlots?:
+    | T
+    | {
+        dayOfWeek?: T;
+        doctor?: T;
+        department?: T;
+        startTime?: T;
+        endTime?: T;
+        room?: T;
+        note?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

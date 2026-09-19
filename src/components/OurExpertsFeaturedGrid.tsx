@@ -23,6 +23,7 @@ export function OurExpertsFeaturedGrid({
     () => items.filter((item) => item?.visible !== false && item?.name),
     [items]
   )
+  const safeItemsCount = safeItems.length
 
   const [startIndex, setStartIndex] = useState(0)
   const [selectedLeaderIndex, setSelectedLeaderIndex] = useState(0)
@@ -99,18 +100,19 @@ export function OurExpertsFeaturedGrid({
   // Tự động chuyển động tới theo vòng tròn (Circular Autoplay) sau mỗi số giây nhất định
   React.useEffect(() => {
     if (!autoplaySeconds || autoplaySeconds <= 0 || isPaused) return
-    if (safeItems.length <= 1) return
+    if (safeItemsCount <= 1) return
 
     const timer = window.setInterval(() => {
       if (window.innerWidth <= 600) {
-        setSelectedLeaderIndex((prev) => (prev + 1) % safeItems.length)
+        setSelectedLeaderIndex((prev) => (prev + 1) % safeItemsCount)
       } else if (totalItems > visibleCount) {
         setStartIndex((prev) => (prev + 1) % totalItems)
       }
     }, autoplaySeconds * 1000)
 
     return () => window.clearInterval(timer)
-  }, [totalItems, visibleCount, autoplaySeconds, isPaused, safeItems.length])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalItems, visibleCount, autoplaySeconds, isPaused, safeItemsCount])
 
   if (!safeItems.length) {
     return (

@@ -342,9 +342,10 @@
   line-height: 1.3 !important;
 }
 
-/* Cột ô ca trực chứa thẻ chip bác sĩ */
+/* Cột ô ca trực chứa thông tin bác sĩ */
 .dailyCellShift {
-  padding: 6px 6px !important;
+  padding: 8px 10px !important;
+  vertical-align: top !important;
 }
 
 .dailyDoctorEmpty {
@@ -353,38 +354,80 @@
   color: #94a3b8 !important;
   font-size: 15px !important;
   font-weight: 700 !important;
+  padding: 6px 0 !important;
 }
 
-/* Danh sách thẻ bác sĩ căn giữa đồng đều */
-.dailyDoctorChipList {
+/* Kiểu hiển thị danh sách bác sĩ bo mềm có viền trái như điều dưỡng */
+.dailyDoctorStaffContent {
   display: flex !important;
   flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
   gap: 5px !important;
   width: 100% !important;
 }
 
-/* Thẻ bác sĩ con (Doctor Chip) kích thước bằng nhau, căn giữa */
+.dailyDoctorStaffLine {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  background: #f1f5f9 !important;
+  padding: 6px 10px !important;
+  border-radius: 6px !important;
+  border-left: 3px solid #059669 !important;
+  line-height: 1.45 !important;
+  text-align: left !important;
+  word-break: break-word !important;
+}
+
+/* Màu viền trái riêng cho từng ca tạo sự sinh động, trực quan */
+.dailyDoctorStaffContent.shift-morning .dailyDoctorStaffLine {
+  border-left-color: #059669 !important; /* Xanh ngọc chuẩn như điều dưỡng */
+}
+
+.dailyDoctorStaffContent.shift-noon .dailyDoctorStaffLine {
+  border-left-color: #0284c7 !important; /* Xanh dương */
+  background: #f0f9ff !important;
+}
+
+.dailyDoctorStaffContent.shift-afternoon .dailyDoctorStaffLine {
+  border-left-color: #0d9488 !important; /* Xanh teal */
+  background: #f0fdfa !important;
+}
+
+.dailyDoctorStaffContent.shift-evening .dailyDoctorStaffLine {
+  border-left-color: #7c3aed !important; /* Tím */
+  background: #faf5ff !important;
+}
+
+/* Danh sách thẻ bác sĩ xếp ngang (flex-wrap) cũ */
+.dailyDoctorChipList {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  width: 100% !important;
+  padding: 1px 0 !important;
+}
+
+/* Thẻ bác sĩ — text-only badge gọn */
 .dailyDoctorChip {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 5px !important;
-  padding: 4px 6px !important;
-  border-radius: 6px !important;
+  padding: 1px 5px !important;
+  border-radius: 4px !important;
   border: 1px solid #bae6fd !important;
   background: #f0f9ff !important;
   color: #0369a1 !important;
-  width: 105px !important;
-  max-width: 105px !important;
-  min-width: 105px !important;
-  height: 28px !important;
-  box-sizing: border-box !important;
-  margin: 0 auto !important;
-  text-align: center !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  line-height: 1.4 !important;
+  flex-shrink: 0 !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
   transition: all 0.12s ease !important;
+  cursor: default !important;
 }
 
 .dailyDoctorChip:hover {
@@ -1055,17 +1098,20 @@
   max-width: none !important;        /* tự mở rộng theo nội dung */
   height: auto !important;           /* tự mở rộng theo số dòng */
   white-space: normal !important;    /* cho phép wrap */
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
 }
 
 .emergCellMerged3 .emergDoctorChipName,
 .emergCellMerged6 .emergDoctorChipName {
-  font-size: 11px !important;
+  font-size: 12.5px !important;
   white-space: normal !important;    /* hiển thị đầy đủ, không cắt */
   word-break: break-word !important; /* xuống dòng nếu cần */
   overflow: visible !important;
   text-overflow: unset !important;
   max-width: none !important;
-  text-align: left !important;
+  text-align: center !important;
   line-height: 1.35 !important;
 }
 
@@ -1223,12 +1269,45 @@
   background: #e0f2fe !important;
 }
 
+/* Nổi bật đặc biệt dành cho THƯỜNG TRỰC BAN GIÁM ĐỐC (Người chịu trách nhiệm chính) */
+.emergDirectorRow {
+  background: linear-gradient(90deg, #fffbeb 0%, #fef3c7 45%, #fffbeb 100%) !important;
+  border-left: 5px solid #d97706 !important;
+  box-shadow: inset 0 1px 0 rgba(217, 119, 6, 0.2), inset 0 -1px 0 rgba(217, 119, 6, 0.2) !important;
+}
+
+.emergDirectorRow:hover {
+  background: #fef3c7 !important;
+}
+
+.emergDirectorRow .emergCellDeptTitle {
+  background: #fef3c7 !important;
+  border-right: 2.5px solid #d97706 !important;
+}
+
+.emergDirectorRow .emergDeptIconWrap {
+  background: #d97706 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.35) !important;
+  border: 1px solid #b45309 !important;
+}
+
+.emergDirectorRow .emergDeptName {
+  color: #92400e !important;
+  font-weight: 950 !important;
+}
+
 .emergMergedLeaderCell {
   padding: 14px 20px !important;
   text-align: center !important;
   vertical-align: middle !important;
   border-bottom: 1.5px solid #bae6fd !important;
   white-space: nowrap !important;
+}
+
+.emergMergedDirectorCell {
+  border-bottom: 1.5px solid #fde68a !important;
+  padding: 12px 20px !important;
 }
 
 .emergMergedLeaderCard {
@@ -1240,6 +1319,15 @@
   white-space: nowrap !important;
   max-width: 100% !important;
   margin: 0 auto !important;
+}
+
+.emergDirectorCard {
+  gap: 22px !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  padding: 6px 20px !important;
+  border-radius: 99px !important;
+  border: 1.5px solid #fcd34d !important;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12) !important;
 }
 
 .emergMergedTag {
@@ -1259,6 +1347,23 @@
   flex-shrink: 0 !important;
 }
 
+.emergMergedTag.emergTagDirector {
+  background: linear-gradient(135deg, #b45309 0%, #d97706 60%, #f59e0b 100%) !important;
+  color: #ffffff !important;
+  font-size: 12.5px !important;
+  font-weight: 900 !important;
+  padding: 8px 18px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 3px 10px rgba(180, 83, 9, 0.35) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  letter-spacing: 0.5px !important;
+}
+
+.emergMergedTag.emergTagDirector svg {
+  color: #fef08a !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3)) !important;
+}
+
 .emergMergedTag.emergTagIT {
   background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -1276,7 +1381,7 @@
 .emergMergedLeaderMain {
   display: inline-flex !important;
   align-items: center !important;
-  gap: 14px !important;
+  gap: 16px !important;
   flex-wrap: nowrap !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
@@ -1289,7 +1394,15 @@
   text-transform: uppercase !important;
   letter-spacing: 0.4px !important;
   white-space: nowrap !important;
-  line-height: 1 !important;
+  line-height: 1.2 !important;
+}
+
+.emergMergedName.emergDirectorName {
+  font-size: 17px !important;
+  font-weight: 950 !important;
+  color: #78350f !important;
+  letter-spacing: 0.5px !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8) !important;
 }
 
 .emergMergedPhoneBtn {
@@ -1314,6 +1427,31 @@
   background: #e0f2fe !important;
   color: #0284c7 !important;
   transform: translateY(-1px) !important;
+}
+
+.emergMergedPhoneBtn.emergDirectorPhoneBtn {
+  background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%) !important;
+  border: 2px solid #d97706 !important;
+  color: #92400e !important;
+  padding: 6px 16px !important;
+  font-size: 13.5px !important;
+  font-weight: 900 !important;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25) !important;
+}
+
+.emergMergedPhoneBtn.emergDirectorPhoneBtn svg {
+  color: #d97706 !important;
+}
+
+.emergMergedPhoneBtn.emergDirectorPhoneBtn:hover {
+  background: #d97706 !important;
+  color: #ffffff !important;
+  border-color: #b45309 !important;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.35) !important;
+}
+
+.emergMergedPhoneBtn.emergDirectorPhoneBtn:hover svg {
+  color: #ffffff !important;
 }
 
 /* Nổi bật đặc biệt cho CẤP CỨU TỔNG HỢP (Bác sĩ & Điều dưỡng) */
@@ -1393,10 +1531,10 @@
 
 .emergDoctorChip {
   display: inline-flex !important;
-  align-items: flex-start !important;   /* icon luôn ở trên khi tên xuống dòng */
-  justify-content: flex-start !important;
-  gap: 2px !important;
-  padding: 3px 5px !important;
+  align-items: center !important;        /* căn giữa theo chiều dọc */
+  justify-content: center !important;   /* căn giữa theo chiều ngang */
+  gap: 4px !important;
+  padding: 3px 6px !important;
   border-radius: 6px !important;
   width: 105px !important;
   max-width: 105px !important;
@@ -1405,7 +1543,7 @@
   height: auto !important;
   box-sizing: border-box !important;
   margin: 0 auto !important;
-  text-align: left !important;
+  text-align: center !important;
   transition: all 0.12s ease !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
 }
@@ -1469,15 +1607,15 @@
 }
 
 .emergDoctorChipName {
-  font-size: 11.5px !important;
+  font-size: 13px !important;
   font-weight: 750 !important;
   white-space: normal !important;      /* hiển thị đầy đủ, không cắt */
   word-break: break-word !important;   /* xuống dòng nếu tên quá dài */
   overflow: visible !important;
   text-overflow: unset !important;
   line-height: 1.3 !important;
-  text-align: left !important;
-  flex: 1 1 auto !important;
+  text-align: center !important;
+  flex: 0 1 auto !important;
 }
 
 /* 4. Notes & Contacts Box */
@@ -1679,7 +1817,7 @@
 
   .emergDoctorChipName {
     color: #000000 !important;
-    font-size: 8.5pt !important;
+    font-size: 9.5pt !important;
   }
 }
 
@@ -1704,4 +1842,353 @@
   }
 }
 
+/* ==========================================================================
+   BẢNG PHÂN CÔNG ĐIỀU DƯỠNG - NỮ HỘ SINH (NURSE SCHEDULE CONTAINER)
+   Cấu trúc 3 cột: KHOA/PHÒNG, HÀNH CHÁNH, TĂNG CƯỜNG + GHI CHÚ NGHỈ PHÉP
+   ========================================================================== */
+.nurseScheduleContainer {
+  margin: 18px 0 36px !important;
+  background: #ffffff !important;
+  border-radius: 14px !important;
+  border: 2px solid #059669 !important;
+  box-shadow: 0 10px 30px rgba(5, 150, 105, 0.12) !important;
+  overflow: hidden !important;
+}
 
+.nurseMasthead {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px 20px !important;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%) !important;
+  border-bottom: 2.5px solid #059669 !important;
+  gap: 16px !important;
+}
+
+.nurseMastheadTitleBox {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  text-align: center !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  margin: 0 auto !important;
+}
+
+.nurseTitleRibbon {
+  background: linear-gradient(135deg, #047857 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  padding: 8px 28px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+.nurseTitleRibbon h2 {
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.5px !important;
+  color: #ffffff !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+}
+
+.nurseDateBadge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: #ffffff !important;
+  color: #047857 !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  padding: 5px 20px !important;
+  border-radius: 99px !important;
+  border: 2px solid #059669 !important;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.12) !important;
+  text-transform: uppercase !important;
+}
+
+.nurseDateBadge svg {
+  color: #059669 !important;
+}
+
+.nurseTableWrapper {
+  overflow-x: auto !important;
+  background: #ffffff !important;
+}
+
+.nurseShiftTable {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+  border: none !important;
+}
+
+.nurseColDept {
+  width: 25% !important;
+  background: #047857 !important;
+  color: #ffffff !important;
+  padding: 12px 14px !important;
+  border-right: 1.5px solid #065f46 !important;
+  border-bottom: 2px solid #065f46 !important;
+  text-align: left !important;
+}
+
+.nurseColShift {
+  padding: 12px 16px !important;
+  border-right: 1.5px solid #e2e8f0 !important;
+  border-bottom: 2px solid #cbd5e1 !important;
+}
+
+.nurseAdminCol {
+  width: 38% !important;
+  background: #f0fdf4 !important;
+  border-top: 3px solid #059669 !important;
+}
+
+.nurseReinforceCol {
+  width: 37% !important;
+  background: #faf5ff !important;
+  border-top: 3px solid #7c3aed !important;
+  border-right: none !important;
+}
+
+.nurseThContent {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.nurseThIcon {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.nurseThIcon.adminIcon {
+  background: #dcfce7 !important;
+  color: #059669 !important;
+}
+
+.nurseThIcon.reinforceIcon {
+  background: #ede9fe !important;
+  color: #7c3aed !important;
+}
+
+.nurseShiftHeaderLabel {
+  display: flex !important;
+  flex-direction: column !important;
+  text-align: left !important;
+}
+
+.nurseShiftHeaderLabel strong {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  letter-spacing: 0.3px !important;
+}
+
+.nurseShiftHeaderLabel span {
+  font-size: 11px !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+
+.nurseRowEven {
+  background: #ffffff !important;
+}
+
+.nurseRowOdd {
+  background: #f8fafc !important;
+}
+
+.nurseTdDept {
+  padding: 14px 16px !important;
+  border-right: 1.5px solid #e2e8f0 !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+  vertical-align: top !important;
+}
+
+.nurseDeptBox {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+}
+
+.nurseDeptIconWrap {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 8px !important;
+  background: #f0fdf4 !important;
+  color: #059669 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  border: 1px solid #bbf7d0 !important;
+}
+
+.nurseDeptNameCol {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.nurseDeptName {
+  font-size: 13.5px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  line-height: 1.35 !important;
+  text-transform: uppercase !important;
+}
+
+.nurseRowSubNote {
+  font-size: 11.5px !important;
+  color: #64748b !important;
+  font-style: italic !important;
+}
+
+.nurseTdShift {
+  padding: 14px 18px !important;
+  border-right: 1.5px solid #e2e8f0 !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+  vertical-align: top !important;
+}
+
+.nurseTdReinforce {
+  border-right: none !important;
+}
+
+.nurseStaffContent {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  line-height: 1.55 !important;
+}
+
+.nurseStaffLine {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  background: #f1f5f9 !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  border-left: 3px solid #059669 !important;
+}
+
+.nurseStaffContent.reinforceText .nurseStaffLine {
+  background: #faf5ff !important;
+  border-left: 3px solid #9333ea !important;
+  color: #3b0764 !important;
+}
+
+.nurseCellEmpty {
+  display: inline-block !important;
+  color: #94a3b8 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  padding: 6px 12px !important;
+}
+
+.nurseTableEmptyCell {
+  text-align: center !important;
+  padding: 30px !important;
+  color: #64748b !important;
+  font-size: 14px !important;
+  font-style: italic !important;
+}
+
+.nurseFooterNoteBox {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 14px 20px !important;
+  background: #fffbeb !important;
+  border-top: 2px solid #fde68a !important;
+  color: #92400e !important;
+}
+
+.nurseFooterNoteIcon {
+  color: #d97706 !important;
+  flex-shrink: 0 !important;
+}
+
+.nurseFooterNoteText {
+  font-size: 13.5px !important;
+  line-height: 1.45 !important;
+}
+
+.nurseThIcon.extraIcon {
+  background: #e0f2fe !important;
+  color: #0284c7 !important;
+}
+
+.nurseExtraCol {
+  width: 25% !important;
+  background: #f0f9ff !important;
+  border-top: 3px solid #0284c7 !important;
+  border-right: none !important;
+}
+
+/* Tỷ lệ 4 cột khi kích hoạt cột thứ 4 */
+.nurseColDept4 {
+  width: 22% !important;
+}
+
+.nurseAdminCol4 {
+  width: 27% !important;
+}
+
+.nurseReinforceCol4 {
+  width: 26% !important;
+  border-right: 1.5px solid #e2e8f0 !important;
+}
+
+.nurseTdDept4 {
+  width: 22% !important;
+}
+
+.nurseTdExtra {
+  padding: 14px 18px !important;
+  border-bottom: 1.5px solid #e2e8f0 !important;
+  vertical-align: top !important;
+  border-right: none !important;
+}
+
+.nurseStaffContent.extraText .nurseStaffLine {
+  background: #f0f9ff !important;
+  border-left: 3px solid #0284c7 !important;
+  color: #0369a1 !important;
+}
+
+@media (max-width: 768px) {
+  .nurseColDept {
+    width: 32% !important;
+  }
+  .nurseAdminCol {
+    width: 34% !important;
+  }
+  .nurseReinforceCol {
+    width: 34% !important;
+  }
+
+  .tableWithCol4 .nurseColDept4 {
+    width: 25% !important;
+  }
+  .tableWithCol4 .nurseAdminCol4 {
+    width: 25% !important;
+  }
+  .tableWithCol4 .nurseReinforceCol4 {
+    width: 25% !important;
+  }
+  .tableWithCol4 .nurseExtraCol {
+    width: 25% !important;
+  }
+}

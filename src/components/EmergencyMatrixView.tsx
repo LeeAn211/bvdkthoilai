@@ -458,9 +458,11 @@ export function EmergencyMatrixView({
             className={`emergDoctorChip ${isLeaderRow ? 'chip-leader' : isNurse ? 'chip-nurse' : 'chip-default'}`}
             title={name}
           >
-            <span className="emergDoctorChipIcon">
-              {renderDoctorChipIcon(deptName, subRole, isLeaderRow)}
-            </span>
+            {isLeaderRow && (
+              <span className="emergDoctorChipIcon">
+                {renderDoctorChipIcon(deptName, subRole, isLeaderRow)}
+              </span>
+            )}
             <strong className="emergDoctorChipName">{name}</strong>
           </div>
         ))}
@@ -492,20 +494,6 @@ export function EmergencyMatrixView({
             </div>
           )}
         </div>
-
-        {/* Nút in nhanh tiện ích */}
-        {shouldRender(printBtnVis) && (
-          <div className={`emergMastheadTools ${getVisibilityClass(printBtnVis)}`}>
-            <button type="button" onClick={handlePrint} className="emergPrintBtnQuick">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <polyline points="6 9 6 2 18 2 18 9" />
-                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                <rect x="6" y="14" width="12" height="8" />
-              </svg>
-              <span>In lịch trực</span>
-            </button>
-          </div>
-        )}
       </header>
 
       {/* ── 2. BẢNG MA TRẬN PHÂN CÔNG CHÍNH QUY ── */}
@@ -588,7 +576,7 @@ export function EmergencyMatrixView({
               return (
                 <tr
                   key={rIdx}
-                  className={`emergRowItem ${isPermanent ? 'emergPermanentRow' : ''} ${
+                  className={`emergRowItem ${isPermanent ? (permInfo.isLeadership ? 'emergPermanentRow emergDirectorRow' : 'emergPermanentRow') : ''} ${
                     isLeaderNormal ? 'emergLeaderNormalRow' : ''
                   } ${isEmergencyHighlight ? 'emergEmergencyHighlightRow' : ''} ${rIdx % 2 === 1 ? 'emergRowEven' : 'emergRowOdd'}`}
                 >
@@ -605,20 +593,25 @@ export function EmergencyMatrixView({
                     </div>
                   </td>
 
-                  {/* ── PERMANENT (THƯỜNG TRỰC LÃNH ĐẠO / THƯỜNG TRỰC IT): colSpan=7 badge ── */}
+                  {/* ── PERMANENT (THƯỜNG TRỰC BAN GIÁM ĐỐC / THƯỜNG TRỰC IT): colSpan=7 badge ── */}
                   {mergeMode === 'permanent' ? (
                     (() => {
                       const sampleText = slot.day2 || slot.day3 || slot.day4 || slot.day5 || slot.day6 || slot.day7 || slot.day8 || ''
                       const parsed = parseLeaderMerged(sampleText)
+                      const isDirectorRow = permInfo.isLeadership
                       return (
-                        <td colSpan={7} className="emergMergedLeaderCell">
-                          <div className="emergMergedLeaderCard">
-                            <div className={`emergMergedTag ${permInfo.isIT ? 'emergTagIT' : ''}`}>
+                        <td colSpan={7} className={`emergMergedLeaderCell ${isDirectorRow ? 'emergMergedDirectorCell' : ''}`}>
+                          <div className={`emergMergedLeaderCard ${isDirectorRow ? 'emergDirectorCard' : ''}`}>
+                            <div className={`emergMergedTag ${isDirectorRow ? 'emergTagDirector' : permInfo.isIT ? 'emergTagIT' : ''}`}>
                               {permInfo.isIT ? (
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                                   <rect x="2" y="3" width="20" height="14" rx="2" />
                                   <line x1="8" y1="21" x2="16" y2="21" />
                                   <line x1="12" y1="17" x2="12" y2="21" />
+                                </svg>
+                              ) : isDirectorRow ? (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
                                 </svg>
                               ) : (
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -628,10 +621,10 @@ export function EmergencyMatrixView({
                               <span>{permInfo.tagTitle}</span>
                             </div>
                             <div className="emergMergedLeaderMain">
-                              <strong className="emergMergedName">{parsed.name}</strong>
+                              <strong className={`emergMergedName ${isDirectorRow ? 'emergDirectorName' : ''}`}>{parsed.name}</strong>
                               {parsed.phone && (
-                                <a href={`tel:${parsed.phone.replace(/\D/g, '')}`} className="emergMergedPhoneBtn">
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <a href={`tel:${parsed.phone.replace(/\D/g, '')}`} className={`emergMergedPhoneBtn ${isDirectorRow ? 'emergDirectorPhoneBtn' : ''}`}>
+                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.12.45 2.33.69 3.58.69a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.33a1 1 0 011 1c0 1.25.24 2.46.69 3.58a1 1 0 01-.21 1.11l-2.19 2.2z" />
                                   </svg>
                                   <span>SĐT: {parsed.phone}</span>

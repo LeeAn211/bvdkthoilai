@@ -7,6 +7,7 @@ import { RichText } from '@/components/RichText'
 import { AttachmentList } from '@/components/AttachmentList'
 import { BackToList } from '@/components/BackToList'
 import { EmergencyMatrixView } from '@/components/EmergencyMatrixView'
+import { NurseScheduleView } from '@/components/NurseScheduleView'
 import { getCMS, getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
 
@@ -117,6 +118,8 @@ export default async function ScheduleDetailPage({ params }: Props) {
   }
 
   const dailyAssignments = item.dailyAssignments || []
+  const nurseAssignments = item.nurseAssignments || []
+  const isNurseSchedule = item.mode === 'nurse' || item.dailyScheduleType === 'nurse' || (nurseAssignments.length > 0 && dailyAssignments.length === 0)
   
   // Format tuần cấp cứu
   let emergencyWeekLabel = ''
@@ -300,89 +303,27 @@ export default async function ScheduleDetailPage({ params }: Props) {
     }
   }
 
-  // Helper tách và hiển thị danh sách bác sĩ thành từng thẻ Tag chuyên nghiệp, kích thước bằng nhau
+  // Helper hiển thị danh sách bác sĩ theo phong cách thẻ bo góc viền trái đẹp mắt như lịch điều dưỡng
   const renderDoctorChips = (doctorStr?: string, shiftType?: 'morning' | 'noon' | 'afternoon' | 'evening') => {
     if (!doctorStr || !doctorStr.trim() || doctorStr.trim() === '-') {
       return <span className="dailyDoctorEmpty">–</span>
     }
 
-    // Tách theo dấu phẩy, chấm phẩy hoặc dấu gạch chéo hoặc xuống dòng
-    const rawNames = doctorStr
-      .split(/[,;\n/]+/)
-      .map((n) => n.trim())
-      .filter((n) => n.length > 0)
+    // Tách theo dòng hoặc nếu người dùng viết 1 dòng dài thì tách theo các dòng có nghĩa
+    const lines = doctorStr
+      .split('\n')
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0)
 
-    if (rawNames.length === 0) {
+    if (lines.length === 0) {
       return <span className="dailyDoctorEmpty">–</span>
     }
 
     return (
-      <div
-        className="dailyDoctorChipList"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '5px',
-          width: '100%',
-        }}
-      >
-        {rawNames.map((name, idx) => (
-          <div
-            key={idx}
-            className={`dailyDoctorChip chip-${shiftType || 'default'}`}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '5px',
-              padding: '4px 6px',
-              borderRadius: '6px',
-              width: '105px',
-              maxWidth: '105px',
-              minWidth: '105px',
-              height: '28px',
-              boxSizing: 'border-box',
-              margin: '0 auto',
-              textAlign: 'center',
-              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
-            }}
-            title={name}
-          >
-            <span
-              className="dailyDoctorChipIcon"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '16px',
-                height: '16px',
-                borderRadius: '3px',
-                flexShrink: 0,
-              }}
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3" />
-                <path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4" />
-                <circle cx="20" cy="10" r="2" />
-              </svg>
-            </span>
-            <strong
-              className="dailyDoctorChipName"
-              style={{
-                fontSize: '11.5px',
-                fontWeight: 750,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                lineHeight: 1.2,
-                textAlign: 'center',
-                flex: '1 1 auto',
-              }}
-            >
-              {name}
-            </strong>
+      <div className={`dailyDoctorStaffContent shift-${shiftType || 'default'}`}>
+        {lines.map((line, idx) => (
+          <div key={idx} className="dailyDoctorStaffLine">
+            {line}
           </div>
         ))}
       </div>
@@ -393,7 +334,6 @@ export default async function ScheduleDetailPage({ params }: Props) {
     <>
       <SiteHeader />
       <PageHero
-        eyebrow={eyebrow}
         title={item.title}
         description={item.summary || undefined}
         breadcrumbParent="Khám bệnh & Dịch vụ"
@@ -402,19 +342,39 @@ export default async function ScheduleDetailPage({ params }: Props) {
         breadcrumbHref="/lich-kham"
       />
       <main className="article-shell container scheduleDetail">
-        {mode !== 'daily' && mode !== 'emergency' && image && (
+        {mode !== 'daily' && mode !== 'nurse' && mode !== 'emergency' && image && (
           <div className="articleCoverFrame">
             <img className="articleCover scheduleDetailCover" src={image} alt={item.title} />
           </div>
         )}
 
-        {mode === 'daily' && dailyAssignments.length === 0 && image && (
+        {mode === 'daily' && !isNurseSchedule && dailyAssignments.length === 0 && image && (
           <div className="articleCoverFrame">
             <img className="articleCover scheduleDetailCover" src={image} alt={item.title} />
           </div>
         )}
 
-        {mode === 'daily' && dailyAssignments.length > 0 && (
+        {/* 1. LỊCH NGÀY ĐIỀU DƯỠNG - NỮ HỘ SINH (ĐD - NHS) */}
+        {(mode === 'nurse' || (mode === 'daily' && isNurseSchedule)) && (
+          <NurseScheduleView
+            title={item.title}
+            date={item.date}
+            assignments={nurseAssignments}
+            generalNote={item.nurseGeneralNote}
+            col1Title={item.nurseCol1Title}
+            col1Sub={item.nurseCol1Sub}
+            col2Title={item.nurseCol2Title}
+            col2Sub={item.nurseCol2Sub}
+            col3Title={item.nurseCol3Title}
+            col3Sub={item.nurseCol3Sub}
+            enableCol4={item.nurseEnableCol4}
+            col4Title={item.nurseCol4Title}
+            col4Sub={item.nurseCol4Sub}
+          />
+        )}
+
+        {/* 2. LỊCH BÁC SĨ KHÁM BỆNH THEO CA (4 KHUNG GIỜ) */}
+        {mode === 'daily' && !isNurseSchedule && dailyAssignments.length > 0 && (
           <section className="dailySchedulePoster">
             {/* 1. Header tinh gọn: Chỉ giữ lại Lịch phân công bác sĩ khám bệnh và Ngày khám */}
             <header className="dailyScheduleMasthead dailyScheduleMastheadSimple">
@@ -550,7 +510,7 @@ export default async function ScheduleDetailPage({ params }: Props) {
           </section>
         )}
 
-        {mode === 'daily' && dailyAssignments.length === 0 && (
+        {mode === 'daily' && !isNurseSchedule && dailyAssignments.length === 0 && (
           <div className="scheduleDetailFacts">
             <span>
               Bác sĩ: <b>{item.doctor?.name || 'Bác sĩ phụ trách'}</b>
@@ -685,29 +645,6 @@ export default async function ScheduleDetailPage({ params }: Props) {
           title="Tệp lịch khám"
         />
         <div className="scheduleDetailActions">
-          {mode === 'emergency' ? (
-            <a
-              className="btn btn-primary"
-              href={`tel:${emergencyPhone.replace(/\s+/g, '')}`}
-              style={{
-                background: 'linear-gradient(135deg, #0369a1 0%, #0284c7 100%)',
-                borderColor: '#0284c7',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)',
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21c1.12.45 2.33.69 3.58.69a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.33a1 1 0 011 1c0 1.25.24 2.46.69 3.58a1 1 0 01-.21 1.11l-2.19 2.2z" />
-              </svg>
-              <span>Hotline Cấp cứu 24/7 ({emergencyPhone})</span>
-            </a>
-          ) : (
-            <a className="btn btn-primary" href={medpro} target="_blank" rel="noopener noreferrer">
-              Đặt lịch khám
-            </a>
-          )}
           <BackToList
             href="/lich-kham"
             label={mode === 'emergency' ? 'Trở lại danh sách lịch trực & khám' : 'Trở lại danh sách lịch khám'}

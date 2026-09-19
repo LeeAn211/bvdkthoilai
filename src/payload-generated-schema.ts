@@ -445,9 +445,20 @@ export const enum_schedules_daily_assignments_department_icon = pgEnum(
     "clinic",
   ],
 );
-export const enum_schedules_weekly_slots_day_of_week = pgEnum(
-  "enum_schedules_weekly_slots_day_of_week",
-  ["2", "3", "4", "5", "6", "7", "8"],
+export const enum_schedules_nurse_assignments_department_icon = pgEnum(
+  "enum_schedules_nurse_assignments_department_icon",
+  [
+    "stethoscope",
+    "ambulance",
+    "bed",
+    "mortar",
+    "scalpel",
+    "baby",
+    "virus",
+    "clinic",
+    "tooth",
+    "ultrasound",
+  ],
 );
 export const enum_schedules_weekly_dept_slots_dept_type = pgEnum(
   "enum_schedules_weekly_dept_slots_dept_type",
@@ -457,12 +468,20 @@ export const enum_schedules_emergency_contacts_type = pgEnum(
   "enum_schedules_emergency_contacts_type",
   ["internal", "emergency_unit"],
 );
+export const enum_schedules_weekly_slots_day_of_week = pgEnum(
+  "enum_schedules_weekly_slots_day_of_week",
+  ["2", "3", "4", "5", "6", "7", "8"],
+);
 export const enum_schedules_mode = pgEnum("enum_schedules_mode", [
   "daily",
+  "nurse",
   "emergency",
-  "weekly",
   "attachment",
 ]);
+export const enum_schedules_daily_schedule_type = pgEnum(
+  "enum_schedules_daily_schedule_type",
+  ["doctor", "nurse"],
+);
 export const enum_schedules_schedule_type = pgEnum(
   "enum_schedules_schedule_type",
   ["official", "adjustment"],
@@ -4217,7 +4236,7 @@ export const schedules_daily_assignments = pgTable(
     _order: integer("_order").notNull(),
     _parentID: integer("_parent_id").notNull(),
     id: varchar("id").primaryKey(),
-    departmentName: varchar("department_name"),
+    departmentName: varchar("department_name").notNull(),
     departmentIcon:
       enum_schedules_daily_assignments_department_icon(
         "department_icon",
@@ -4235,6 +4254,113 @@ export const schedules_daily_assignments = pgTable(
       columns: [columns["_parentID"]],
       foreignColumns: [schedules.id],
       name: "schedules_daily_assignments_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const schedules_nurse_assignments = pgTable(
+  "schedules_nurse_assignments",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    departmentName: varchar("department_name").notNull(),
+    departmentIcon:
+      enum_schedules_nurse_assignments_department_icon(
+        "department_icon",
+      ).default("stethoscope"),
+    administrativeStaff: varchar("administrative_staff"),
+    reinforcementStaff: varchar("reinforcement_staff"),
+    extraStaff: varchar("extra_staff"),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("schedules_nurse_assignments_order_idx").on(columns._order),
+    index("schedules_nurse_assignments_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [schedules.id],
+      name: "schedules_nurse_assignments_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const schedules_weekly_dept_slots = pgTable(
+  "schedules_weekly_dept_slots",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    deptName: varchar("dept_name").notNull(),
+    deptType:
+      enum_schedules_weekly_dept_slots_dept_type("dept_type").default(
+        "clinical",
+      ),
+    subRole: varchar("sub_role"),
+    day2: varchar("day2"),
+    day3: varchar("day3"),
+    day4: varchar("day4"),
+    day5: varchar("day5"),
+    day6: varchar("day6"),
+    day7: varchar("day7"),
+    day8: varchar("day8"),
+    fixedStaff: varchar("fixed_staff"),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("schedules_weekly_dept_slots_order_idx").on(columns._order),
+    index("schedules_weekly_dept_slots_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [schedules.id],
+      name: "schedules_weekly_dept_slots_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const schedules_emergency_contacts = pgTable(
+  "schedules_emergency_contacts",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    name: varchar("name").notNull(),
+    phone: varchar("phone").notNull(),
+    type: enum_schedules_emergency_contacts_type("type").default("internal"),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("schedules_emergency_contacts_order_idx").on(columns._order),
+    index("schedules_emergency_contacts_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [schedules.id],
+      name: "schedules_emergency_contacts_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const schedules_attachment_files = pgTable(
+  "schedules_attachment_files",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    file: integer("file_id")
+      .notNull()
+      .references(() => media.id, {
+        onDelete: "set null",
+      }),
+    label: varchar("label"),
+  },
+  (columns) => [
+    index("schedules_attachment_files_order_idx").on(columns._order),
+    index("schedules_attachment_files_parent_id_idx").on(columns._parentID),
+    index("schedules_attachment_files_file_idx").on(columns.file),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [schedules.id],
+      name: "schedules_attachment_files_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -4270,100 +4396,27 @@ export const schedules_weekly_slots = pgTable(
   ],
 );
 
-export const schedules_weekly_dept_slots = pgTable(
-  "schedules_weekly_dept_slots",
-  {
-    _order: integer("_order").notNull(),
-    _parentID: integer("_parent_id").notNull(),
-    id: varchar("id").primaryKey(),
-    deptName: varchar("dept_name"),
-    deptType:
-      enum_schedules_weekly_dept_slots_dept_type("dept_type").default(
-        "clinical",
-      ),
-    subRole: varchar("sub_role"),
-    day2: varchar("day2"),
-    day3: varchar("day3"),
-    day4: varchar("day4"),
-    day5: varchar("day5"),
-    day6: varchar("day6"),
-    day7: varchar("day7"),
-    day8: varchar("day8"),
-    fixedStaff: varchar("fixed_staff"),
-    note: varchar("note"),
-  },
-  (columns) => [
-    index("schedules_weekly_dept_slots_order_idx").on(columns._order),
-    index("schedules_weekly_dept_slots_parent_id_idx").on(columns._parentID),
-    foreignKey({
-      columns: [columns["_parentID"]],
-      foreignColumns: [schedules.id],
-      name: "schedules_weekly_dept_slots_parent_id_fk",
-    }).onDelete("cascade"),
-  ],
-);
-
-export const schedules_emergency_contacts = pgTable(
-  "schedules_emergency_contacts",
-  {
-    _order: integer("_order").notNull(),
-    _parentID: integer("_parent_id").notNull(),
-    id: varchar("id").primaryKey(),
-    name: varchar("name"),
-    phone: varchar("phone"),
-    type: enum_schedules_emergency_contacts_type("type").default("internal"),
-    note: varchar("note"),
-  },
-  (columns) => [
-    index("schedules_emergency_contacts_order_idx").on(columns._order),
-    index("schedules_emergency_contacts_parent_id_idx").on(columns._parentID),
-    foreignKey({
-      columns: [columns["_parentID"]],
-      foreignColumns: [schedules.id],
-      name: "schedules_emergency_contacts_parent_id_fk",
-    }).onDelete("cascade"),
-  ],
-);
-
-export const schedules_attachment_files = pgTable(
-  "schedules_attachment_files",
-  {
-    _order: integer("_order").notNull(),
-    _parentID: integer("_parent_id").notNull(),
-    id: varchar("id").primaryKey(),
-    file: integer("file_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    label: varchar("label"),
-  },
-  (columns) => [
-    index("schedules_attachment_files_order_idx").on(columns._order),
-    index("schedules_attachment_files_parent_id_idx").on(columns._parentID),
-    index("schedules_attachment_files_file_idx").on(columns.file),
-    foreignKey({
-      columns: [columns["_parentID"]],
-      foreignColumns: [schedules.id],
-      name: "schedules_attachment_files_parent_id_fk",
-    }).onDelete("cascade"),
-  ],
-);
-
 export const schedules = pgTable(
   "schedules",
   {
     id: serial("id").primaryKey(),
     title: varchar("title").notNull().default("Lịch khám bác sĩ"),
+    mode: enum_schedules_mode("mode").notNull().default("daily"),
     summary: varchar("summary"),
     coverImage: integer("cover_image_id").references(() => media.id, {
       onDelete: "set null",
     }),
     detailContent: jsonb("detail_content"),
-    mode: enum_schedules_mode("mode").notNull().default("attachment"),
+    note: varchar("note"),
+    active: boolean("active").default(true),
     date: timestamp("date", {
       mode: "string",
       withTimezone: true,
       precision: 3,
     }),
+    dailyScheduleType: enum_schedules_daily_schedule_type(
+      "daily_schedule_type",
+    ).default("doctor"),
     doctor: integer("doctor_id").references(() => doctors.id, {
       onDelete: "set null",
     }),
@@ -4373,16 +4426,20 @@ export const schedules = pgTable(
     startTime: varchar("start_time"),
     endTime: varchar("end_time"),
     room: varchar("room"),
-    weekStart: timestamp("week_start", {
-      mode: "string",
-      withTimezone: true,
-      precision: 3,
-    }),
-    weekEnd: timestamp("week_end", {
-      mode: "string",
-      withTimezone: true,
-      precision: 3,
-    }),
+    nurseCol1Title: varchar("nurse_col1_title").default("KHOA / PHÒNG"),
+    nurseCol1Sub: varchar("nurse_col1_sub"),
+    nurseCol2Title: varchar("nurse_col2_title").default("HÀNH CHÁNH"),
+    nurseCol2Sub: varchar("nurse_col2_sub").default(
+      "Ca trực chính theo phân công",
+    ),
+    nurseCol3Title: varchar("nurse_col3_title").default("TĂNG CƯỜNG"),
+    nurseCol3Sub: varchar("nurse_col3_sub").default(
+      "Hỗ trợ chuyên môn / Điều động",
+    ),
+    nurseEnableCol4: boolean("nurse_enable_col4").default(false),
+    nurseCol4Title: varchar("nurse_col4_title"),
+    nurseCol4Sub: varchar("nurse_col4_sub"),
+    nurseGeneralNote: varchar("nurse_general_note"),
     emergencyWeekStart: timestamp("emergency_week_start", {
       mode: "string",
       withTimezone: true,
@@ -4418,8 +4475,16 @@ export const schedules = pgTable(
       withTimezone: true,
       precision: 3,
     }),
-    note: varchar("note"),
-    active: boolean("active").default(true),
+    weekStart: timestamp("week_start", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    weekEnd: timestamp("week_end", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -19256,23 +19321,13 @@ export const relations_schedules_daily_assignments = relations(
     }),
   }),
 );
-export const relations_schedules_weekly_slots = relations(
-  schedules_weekly_slots,
+export const relations_schedules_nurse_assignments = relations(
+  schedules_nurse_assignments,
   ({ one }) => ({
     _parentID: one(schedules, {
-      fields: [schedules_weekly_slots._parentID],
+      fields: [schedules_nurse_assignments._parentID],
       references: [schedules.id],
-      relationName: "weeklySlots",
-    }),
-    doctor: one(doctors, {
-      fields: [schedules_weekly_slots.doctor],
-      references: [doctors.id],
-      relationName: "doctor",
-    }),
-    department: one(departments, {
-      fields: [schedules_weekly_slots.department],
-      references: [departments.id],
-      relationName: "department",
+      relationName: "nurseAssignments",
     }),
   }),
 );
@@ -19311,6 +19366,26 @@ export const relations_schedules_attachment_files = relations(
     }),
   }),
 );
+export const relations_schedules_weekly_slots = relations(
+  schedules_weekly_slots,
+  ({ one }) => ({
+    _parentID: one(schedules, {
+      fields: [schedules_weekly_slots._parentID],
+      references: [schedules.id],
+      relationName: "weeklySlots",
+    }),
+    doctor: one(doctors, {
+      fields: [schedules_weekly_slots.doctor],
+      references: [doctors.id],
+      relationName: "doctor",
+    }),
+    department: one(departments, {
+      fields: [schedules_weekly_slots.department],
+      references: [departments.id],
+      relationName: "department",
+    }),
+  }),
+);
 export const relations_schedules = relations(schedules, ({ one, many }) => ({
   coverImage: one(media, {
     fields: [schedules.coverImage],
@@ -19330,8 +19405,8 @@ export const relations_schedules = relations(schedules, ({ one, many }) => ({
     references: [departments.id],
     relationName: "department",
   }),
-  weeklySlots: many(schedules_weekly_slots, {
-    relationName: "weeklySlots",
+  nurseAssignments: many(schedules_nurse_assignments, {
+    relationName: "nurseAssignments",
   }),
   weeklyDeptSlots: many(schedules_weekly_dept_slots, {
     relationName: "weeklyDeptSlots",
@@ -19356,6 +19431,9 @@ export const relations_schedules = relations(schedules, ({ one, many }) => ({
   }),
   attachmentFiles: many(schedules_attachment_files, {
     relationName: "attachmentFiles",
+  }),
+  weeklySlots: many(schedules_weekly_slots, {
+    relationName: "weeklySlots",
   }),
 }));
 export const relations_appointments = relations(appointments, ({ one }) => ({
@@ -23855,10 +23933,12 @@ type DatabaseSchema = {
   enum_doctors_status: typeof enum_doctors_status;
   enum__doctors_v_version_status: typeof enum__doctors_v_version_status;
   enum_schedules_daily_assignments_department_icon: typeof enum_schedules_daily_assignments_department_icon;
-  enum_schedules_weekly_slots_day_of_week: typeof enum_schedules_weekly_slots_day_of_week;
+  enum_schedules_nurse_assignments_department_icon: typeof enum_schedules_nurse_assignments_department_icon;
   enum_schedules_weekly_dept_slots_dept_type: typeof enum_schedules_weekly_dept_slots_dept_type;
   enum_schedules_emergency_contacts_type: typeof enum_schedules_emergency_contacts_type;
+  enum_schedules_weekly_slots_day_of_week: typeof enum_schedules_weekly_slots_day_of_week;
   enum_schedules_mode: typeof enum_schedules_mode;
+  enum_schedules_daily_schedule_type: typeof enum_schedules_daily_schedule_type;
   enum_schedules_schedule_type: typeof enum_schedules_schedule_type;
   enum_appointments_status: typeof enum_appointments_status;
   enum_appointments_source: typeof enum_appointments_source;
@@ -24212,10 +24292,11 @@ type DatabaseSchema = {
   doctors: typeof doctors;
   _doctors_v: typeof _doctors_v;
   schedules_daily_assignments: typeof schedules_daily_assignments;
-  schedules_weekly_slots: typeof schedules_weekly_slots;
+  schedules_nurse_assignments: typeof schedules_nurse_assignments;
   schedules_weekly_dept_slots: typeof schedules_weekly_dept_slots;
   schedules_emergency_contacts: typeof schedules_emergency_contacts;
   schedules_attachment_files: typeof schedules_attachment_files;
+  schedules_weekly_slots: typeof schedules_weekly_slots;
   schedules: typeof schedules;
   appointments: typeof appointments;
   services: typeof services;
@@ -24549,10 +24630,11 @@ type DatabaseSchema = {
   relations_doctors: typeof relations_doctors;
   relations__doctors_v: typeof relations__doctors_v;
   relations_schedules_daily_assignments: typeof relations_schedules_daily_assignments;
-  relations_schedules_weekly_slots: typeof relations_schedules_weekly_slots;
+  relations_schedules_nurse_assignments: typeof relations_schedules_nurse_assignments;
   relations_schedules_weekly_dept_slots: typeof relations_schedules_weekly_dept_slots;
   relations_schedules_emergency_contacts: typeof relations_schedules_emergency_contacts;
   relations_schedules_attachment_files: typeof relations_schedules_attachment_files;
+  relations_schedules_weekly_slots: typeof relations_schedules_weekly_slots;
   relations_schedules: typeof relations_schedules;
   relations_appointments: typeof relations_appointments;
   relations_services: typeof relations_services;

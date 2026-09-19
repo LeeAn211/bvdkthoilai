@@ -305,22 +305,32 @@ export default async function HomePage() {
   } as CSSProperties)
 
   const homeEmergencySchedules = schedules.filter(item => item.mode === 'emergency').map(item => ({ id: item.id, title: item.title, summary: item.summary, note: item.note, emergencyWeekStart: item.emergencyWeekStart, emergencyWeekEnd: item.emergencyWeekEnd, imageUrl: mediaUrl(item.coverImage || item.scheduleImage) || defaultMedia.schedules, href: `/lich-kham/${item.id}` }))
-  const homeDailySchedules = schedules.filter(item => !item.mode || item.mode === 'daily').map(item => ({ id: item.id, title: item.title, summary: item.summary, doctor: item.doctor?.name || item.dailyAssignments?.[0]?.doctor?.name, department: item.department?.name || item.dailyAssignments?.[0]?.department?.name, date: item.date, startTime: item.startTime || item.dailyAssignments?.[0]?.startTime, endTime: item.endTime || item.dailyAssignments?.[0]?.endTime, room: item.room || item.dailyAssignments?.[0]?.room, note: item.note, imageUrl: mediaUrl(item.coverImage) || defaultMedia.schedules }))
-  const homeWeeklySchedules = schedules.filter(item => item.mode === 'weekly').map(item => ({ id: item.id, title: item.title, summary: item.summary, weekStart: item.weekStart, weekEnd: item.weekEnd, note: item.note, imageUrl: mediaUrl(item.coverImage) || defaultMedia.schedules, slots: (item.weeklySlots || []).map((slot: any) => ({ id: slot.id, dayOfWeek: slot.dayOfWeek, doctor: slot.doctor?.name || 'Bác sĩ', department: slot.department?.name || '', startTime: slot.startTime, endTime: slot.endTime, room: slot.room, note: slot.note })) }))
-  const homeAttachedSchedules = schedules.filter(item => item.mode === 'attachment').map(item => ({ id: item.id, title: item.title, summary: item.summary, note: item.note, validFrom: item.validFrom, validTo: item.validTo, imageUrl: mediaUrl(item.coverImage || item.scheduleImage) || defaultMedia.schedules, fileUrl: mediaUrl(item.scheduleFile), fileName: mediaLabel(item.scheduleFile), fileFormat: mediaFormat(item.scheduleFile) }))
+  const homeNurseSchedules = schedules.filter(item => item.mode === 'nurse' || item.dailyScheduleType === 'nurse').map(item => ({ id: item.id, title: item.title, summary: item.summary || item.nurseGeneralNote, date: item.date, note: item.note || item.nurseGeneralNote, imageUrl: mediaUrl(item.coverImage || item.scheduleImage) || defaultMedia.schedules, href: `/lich-kham/${item.id}` }))
+  const homeDailySchedules = schedules.filter(item => (!item.mode || item.mode === 'daily') && item.dailyScheduleType !== 'nurse').map(item => ({ id: item.id, title: item.title, summary: item.summary, doctor: item.doctor?.name || item.dailyAssignments?.[0]?.doctor?.name, department: item.department?.name || item.dailyAssignments?.[0]?.department?.name, date: item.date, startTime: item.startTime || item.dailyAssignments?.[0]?.startTime, endTime: item.endTime || item.dailyAssignments?.[0]?.endTime, room: item.room || item.dailyAssignments?.[0]?.room, note: item.note, imageUrl: mediaUrl(item.coverImage) || defaultMedia.schedules, href: `/lich-kham/${item.id}` }))
+  const homeWeeklySchedules = schedules.filter(item => item.mode === 'weekly').map(item => ({ id: item.id, title: item.title, summary: item.summary, weekStart: item.weekStart, weekEnd: item.weekEnd, note: item.note, imageUrl: mediaUrl(item.coverImage) || defaultMedia.schedules, slots: (item.weeklySlots || []).map((slot: any) => ({ id: slot.id, dayOfWeek: slot.dayOfWeek, doctor: slot.doctor?.name || 'Bác sĩ', department: slot.department?.name || '', startTime: slot.startTime, endTime: slot.endTime, room: slot.room, note: slot.note })), href: `/lich-kham/${item.id}` }))
+  const homeAttachedSchedules = schedules.filter(item => item.mode === 'attachment').map(item => ({ id: item.id, title: item.title, summary: item.summary, note: item.note, validFrom: item.validFrom, validTo: item.validTo, imageUrl: mediaUrl(item.coverImage || item.scheduleImage) || defaultMedia.schedules, fileUrl: mediaUrl(item.scheduleFile), fileName: mediaLabel(item.scheduleFile), fileFormat: mediaFormat(item.scheduleFile), href: `/lich-kham/${item.id}` }))
   const configuredScheduleOrder = (sectionConfig('schedules')?.scheduleTabOrder || []).filter((tab: any) => tab.visible !== false)
   const defaultHomeScheduleTabs = [
     { label: 'Lịch trực cấp cứu', kind: 'emergency', tab: 'emergency', visible: true },
-    { label: 'Theo ngày', kind: 'daily', tab: 'daily', visible: true },
-    { label: 'Theo tuần', kind: 'weekly', tab: 'weekly', visible: true },
+    { label: 'Lịch điều dưỡng', kind: 'nurse', tab: 'nurse', visible: true },
+    { label: 'Lịch khám bác sĩ', kind: 'daily', tab: 'daily', visible: true },
+    { label: 'Lịch khám tuần', kind: 'weekly', tab: 'weekly', visible: true },
     { label: 'Lịch đính kèm', kind: 'attachments', tab: 'attachments', visible: true },
   ]
   const rawScheduleTabs = configuredScheduleOrder.length ? configuredScheduleOrder : defaultHomeScheduleTabs
-  // Nếu database đã lưu danh sách tab từ trước mà chưa có 'emergency', tự động bổ sung tab 'emergency' lên đầu nếu có lịch trực cấp cứu
-  const hasEmergencyTab = rawScheduleTabs.some((t: any) => (t.tab || t.kind) === 'emergency')
-  const mergedScheduleTabs = (!hasEmergencyTab && homeEmergencySchedules.length > 0)
-    ? [{ label: 'Lịch trực cấp cứu', kind: 'emergency', tab: 'emergency', visible: true }, ...rawScheduleTabs]
-    : rawScheduleTabs
+  // Tự động bổ sung tab 'emergency' và tab 'nurse' nếu chưa có trong cấu hình tùy chỉnh
+  let mergedScheduleTabs = [...rawScheduleTabs]
+  if (!mergedScheduleTabs.some((t: any) => (t.tab || t.kind) === 'emergency') && homeEmergencySchedules.length > 0) {
+    mergedScheduleTabs.unshift({ label: 'Lịch trực cấp cứu', kind: 'emergency', tab: 'emergency', visible: true })
+  }
+  if (!mergedScheduleTabs.some((t: any) => (t.tab || t.kind) === 'nurse') && homeNurseSchedules.length > 0) {
+    const dailyIdx = mergedScheduleTabs.findIndex((t: any) => (t.tab || t.kind) === 'daily')
+    if (dailyIdx >= 0) {
+      mergedScheduleTabs.splice(dailyIdx + 1, 0, { label: 'Lịch điều dưỡng', kind: 'nurse', tab: 'nurse', visible: true })
+    } else {
+      mergedScheduleTabs.push({ label: 'Lịch điều dưỡng', kind: 'nurse', tab: 'nurse', visible: true })
+    }
+  }
 
   const scheduleTabOrder = mergedScheduleTabs.filter((item: any) => item.visible !== false && (item.tab || item.kind)).map((item: any) => item.tab || item.kind)
   const scheduleTabs = mergedScheduleTabs.filter((tab: any) => tab.visible !== false).map((tab: any, tabIndex: number) => ({
@@ -1477,7 +1487,7 @@ export default async function HomePage() {
               <section id="schedules" className="sectionPro configurableHomeSection homeScheduleSection" style={style} key={key}>
                 <div className="container">
                   <div className="homeSectionHead"><div><span className="sectionKicker">{cfg.eyebrow}</span><h2>{cfg.title}</h2>{cfg.description && <p>{cfg.description}</p>}</div><a href="/lich-kham">Xem tất cả →</a></div>
-                  <ScheduleExplorer daily={homeDailySchedules} weekly={homeWeeklySchedules} attachments={homeAttachedSchedules} emergency={homeEmergencySchedules} medpro={medpro} tabOrder={scheduleTabOrder.length ? scheduleTabOrder : undefined} tabs={scheduleTabs.length ? scheduleTabs : undefined} compact />
+                  <ScheduleExplorer daily={homeDailySchedules} nurse={homeNurseSchedules} weekly={homeWeeklySchedules} attachments={homeAttachedSchedules} emergency={homeEmergencySchedules} medpro={medpro} tabOrder={scheduleTabOrder.length ? scheduleTabOrder : undefined} tabs={scheduleTabs.length ? scheduleTabs : undefined} compact />
                 </div>
               </section>
             )

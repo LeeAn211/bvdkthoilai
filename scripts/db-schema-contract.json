@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260919_051_site_settings_hotline_defaults",
-  "schemaSha256": "896b2365af06c815e67314018831ceb9b37274ab2c646c1221ebc0692b8fa038"
+  "migrationId": "20260919_054_add_custom_columns_to_nurse_schedules",
+  "schemaSha256": "a72f18ed9bf7e11b2d578cd30f417a142b0f862b3c712606e6a20f55b2972cca"
 }

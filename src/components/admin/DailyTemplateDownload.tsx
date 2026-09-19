@@ -6,8 +6,12 @@ import { parseDailyScheduleWorkbook, ParsedDailyAssignment } from '@/lib/dailySc
 
 export default function DailyTemplateDownload() {
   const inputRef = useRef<HTMLInputElement>(null)
+  const imgInputRef = useRef<HTMLInputElement>(null)
   const [file, setFile] = useState<File | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [ocrBusy, setOcrBusy] = useState(false)
   const [assignments, setAssignments] = useState<ParsedDailyAssignment[] | null>(null)
   const [parsedDate, setParsedDate] = useState<string | undefined>()
   const [parsedTitle, setParsedTitle] = useState<string | undefined>()
@@ -83,6 +87,46 @@ export default function DailyTemplateDownload() {
 
     setApplied(true)
   }
+  // Xử lý quét ảnh lịch ngày bằng Gemini Vision AI
+  const handleScanImage = async () => {
+    if (!imageFile || ocrBusy) return
+    setOcrBusy(true); setError(''); setAssignments(null); setApplied(false)
+    try {
+      const formData = new FormData()
+      formData.append('image', imageFile)
+
+      const res = await fetch('/api/ai-daily-ocr', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const json = await res.json()
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || 'Quét ảnh thất bại. Vui lòng kiểm tra lại ảnh hoặc API Key.')
+      }
+
+      const data = json.data
+      const rows: ParsedDailyAssignment[] = (data.assignments || []).map((a: any) => ({
+        departmentName: a.departmentName || '',
+        departmentIcon: a.departmentIcon || 'clinic',
+        morningDoctors: a.morningDoctors || '',
+        noonDoctors: a.noonDoctors || '',
+        afternoonDoctors: a.afternoonDoctors || '',
+        eveningDoctors: a.eveningDoctors || '',
+        note: a.note || '',
+      }))
+
+      setAssignments(rows)
+      if (data.date) setParsedDate(data.date)
+      if (data.title) setParsedTitle(data.title)
+    } catch (e) {
+      console.error('Lỗi AI OCR lịch ngày:', e)
+      setError(e instanceof Error ? e.message : 'Lỗi nhận diện ảnh lịch ngày.')
+    } finally {
+      setOcrBusy(false)
+    }
+  }
+
 
   return (
     <div style={{ margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -250,8 +294,139 @@ export default function DailyTemplateDownload() {
         </button>
       </div>
 
+      {/* ── AI SCAN ẢNH LỊCH NGÀY ── */}
+      <div style={{
+        padding: '14px 18px',
+        border: '1.5px solid #a78bfa',
+        borderRadius: 12,
+        background: 'linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%)',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        gap: 16, flexWrap: 'wrap',
+        boxShadow: '0 2px 8px rgba(124, 58, 237, 0.08)',
+      }}>
+        {/* Icon + info */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
+          <div style={{
+            width: 44, height: 44, borderRadius: 10, flexShrink: 0,
+            background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 6px 14px rgba(109, 40, 217, 0.3)',
+          }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </div>
+          <div>
+            <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '1px', color: '#7c3aed', textTransform: 'uppercase', marginBottom: 2 }}>
+              AI OCR · QUÉT ẢNH LỊCH NGÀY
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#1e293b', marginBottom: 1 }}>
+              Chụp / scan ảnh lịch ngày → AI tự nhận diện và điền bảng
+            </div>
+            <div style={{ fontSize: 11, color: '#64748b' }}>
+              Hỗ trợ ảnh chụp bảng lịch ngày • JPEG, PNG, WebP • Tối đa 8 MB
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Chọn ảnh + Nút quét ── */}
+      <div style={{
+        padding: '12px 16px',
+        border: '1.5px dashed #c4b5fd',
+        borderRadius: 10,
+        background: '#fdfcff',
+        display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+      }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span style={{ fontSize: 12.5, fontWeight: 600, color: '#1e293b', flex: 1, minWidth: 0 }}>
+          <b>Chọn ảnh lịch ngày</b> — Hỗ trợ JPEG, PNG, WebP
+        </span>
+
+        <input
+          ref={imgInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            const f = e.target.files?.[0] || null
+            setImageFile(f)
+            setError('')
+            setAssignments(null)
+            setApplied(false)
+            if (f) {
+              const url = URL.createObjectURL(f)
+              setImagePreview(url)
+            } else {
+              setImagePreview(null)
+            }
+          }}
+        />
+
+        <div
+          onClick={() => imgInputRef.current?.click()}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '7px 14px', borderRadius: 7,
+            border: '1.5px dashed #7c3aed', background: '#fff',
+            color: '#7c3aed', fontSize: 12, fontWeight: 700,
+            cursor: 'pointer', whiteSpace: 'nowrap',
+            maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis',
+          }}
+        >
+          🖼️ {imageFile ? imageFile.name : 'Chọn ảnh lịch ngày'}
+        </div>
+
+        <button
+          type="button"
+          disabled={!imageFile || ocrBusy}
+          onClick={handleScanImage}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            padding: '7px 18px', borderRadius: 7, border: 0,
+            background: imageFile && !ocrBusy ? 'linear-gradient(135deg, #7c3aed, #6d28d9)' : '#e2e8f0',
+            color: imageFile && !ocrBusy ? '#fff' : '#94a3b8',
+            fontSize: 12, fontWeight: 800,
+            cursor: imageFile && !ocrBusy ? 'pointer' : 'not-allowed',
+            whiteSpace: 'nowrap', transition: 'all 0.15s',
+            boxShadow: imageFile && !ocrBusy ? '0 2px 6px rgba(109, 40, 217, 0.3)' : 'none',
+          }}
+        >
+          {ocrBusy ? (
+            <>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1s linear infinite' }}>
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+              </svg>
+              Đang quét...
+            </>
+          ) : (
+            <>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+              Quét bằng AI
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Preview ảnh đã chọn */}
+      {imagePreview && !ocrBusy && !assignments && (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '4px 0' }}>
+          <img
+            src={imagePreview}
+            alt="Xem trước ảnh lịch ngày"
+            style={{ maxHeight: 160, maxWidth: '100%', borderRadius: 8, border: '1px solid #ddd6fe', objectFit: 'contain' }}
+          />
+        </div>
+      )}
+
       {/* ── Lỗi nếu có ── */}
       {error && (
+
         <div
           style={{
             padding: '10px 14px',

@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     const user = auth.user as any
     if (!user) return json({ error: 'Bạn cần đăng nhập để sử dụng chức năng AI OCR.' }, 401)
     if (!hasModulePermission(user, 'schedules', 'import')) {
-      return json({ error: 'Bạn không có quyền nhập lịch trực.' }, 403)
+      return json({ error: 'Bạn không có quyền nhập lịch điều dưỡng.' }, 403)
     }
 
     const contentLength = Number(req.headers.get('content-length') || 0)
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       return json({ error: 'Ảnh tải lên vượt giới hạn 8 MB hoặc request không hợp lệ.' }, 413)
     }
 
-    const throttle = rateLimit(req, `schedule-ocr:${user.id}`, 5, 15 * 60_000)
+    const throttle = rateLimit(req, `nurse-ocr:${user.id}`, 5, 15 * 60_000)
     if (!throttle.allowed) {
       return json(
         { error: 'Bạn đã dùng AI OCR quá nhiều lần. Vui lòng thử lại sau.' },
@@ -49,22 +49,19 @@ export async function POST(req: NextRequest) {
     const imageFile = formData.get('image') as File | null
 
     if (!imageFile || typeof imageFile.arrayBuffer !== 'function') {
-      return json({ error: 'Vui lòng chọn hoặc tải lên ảnh chụp lịch trực.' }, 400)
+      return json({ error: 'Vui lòng chọn hoặc tải lên ảnh chụp lịch điều dưỡng.' }, 400)
     }
     if (!ALLOWED_IMAGE_TYPES.has(imageFile.type) || imageFile.size <= 0 || imageFile.size > MAX_FILE_BYTES) {
       return json({ error: 'Chỉ chấp nhận ảnh JPEG, PNG hoặc WebP có dung lượng tối đa 8 MB.' }, 415)
     }
 
-    // API key chỉ được đọc từ secret phía server; không nhận từ client hoặc Payload CMS.
     const apiKey = process.env.GEMINI_API_KEY || ''
-
     if (!apiKey) {
       return json({
         error: 'Chưa cấu hình Google Gemini API Key trên máy chủ. Vui lòng liên hệ quản trị hệ thống.'
       }, 503)
     }
 
-    // Chuyển file sang Base64
     const buffer = Buffer.from(await imageFile.arrayBuffer())
     const mimeType = imageFile.type || 'image/jpeg'
     if (!matchesImageSignature(buffer, mimeType)) {
@@ -72,66 +69,54 @@ export async function POST(req: NextRequest) {
     }
     const base64Image = buffer.toString('base64')
 
-    // System prompt chuyên dụng cho ma trận lịch trực bệnh viện Việt Nam
+    // System prompt chuyên dụng cho LỊCH NGÀY ĐD - NHS (ĐIỀU DƯỠNG - NỮ HỘ SINH)
     const prompt = `
 Bạn là chuyên gia OCR và xử lý văn bản y tế cho bệnh viện Việt Nam.
-Nhiệm vụ của bạn là phân tích bức ảnh LỊCH TRỰC TUẦN / MA TRẬN PHÂN CÔNG TRỰC BỆNH VIỆN và trích xuất dữ liệu thành định dạng JSON chuẩn.
+Nhiệm vụ của bạn là phân tích bức ảnh "LỊCH NGÀY ĐD - NHS" (Lịch Điều dưỡng - Nữ hộ sinh theo ngày) của bệnh viện và trích xuất dữ liệu thành định dạng JSON chuẩn.
 
-QUY TẮC PHÂN TÍCH:
-1. Xác định Tiêu đề lịch (VD: "LỊCH TRỰC BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI" hoặc tương đương).
-2. Xác định Thời gian tuần: "Từ ngày DD/MM/YYYY đến ngày DD/MM/YYYY". Trả về emergencyWeekStart và emergencyWeekEnd dạng YYYY-MM-DD.
-3. Nhận diện các cột ngày từ Thứ Hai đến Chủ Nhật:
-   - day2: Thứ Hai
-   - day3: Thứ Ba
-   - day4: Thứ Tư
-   - day5: Thứ Năm
-   - day6: Thứ Sáu
-   - day7: Thứ Bảy
-   - day8: Chủ Nhật
-4. Nhận diện từng dòng Khoa / Bộ phận (deptName), Vai trò / Loại nhân sự (subRole) và phân loại deptType:
-   - Lãnh đạo trực ngày: deptName: "LÃNH ĐẠO", subRole: "LÃNH ĐẠO", deptType: "leader"
-   - Cấp cứu tổng hợp - Bác sĩ: deptName: "CẤP CỨU TỔNG HỢP", subRole: "BÁC SĨ", deptType: "clinical"
-   - Cấp cứu tổng hợp - Điều dưỡng: deptName: "CẤP CỨU TỔNG HỢP", subRole: "ĐIỀU DƯỠNG", deptType: "clinical"
-   - Các khoa Sản, Nội - Nhi, Dược, Cận lâm sàng, X-Quang, Tài xế, Viện phí, Điện nước... Trích xuất chính xác tên bác sĩ / nhân viên trực từng ngày. Nếu 1 ô có nhiều tên (mỗi người 1 dòng hoặc cách nhau bởi dấu phẩy/chấm), nối các tên bằng ký tự xuống dòng '\\n'.
-5. Nhận diện dòng "THƯỜNG TRỰC LÃNH ĐẠO" (nếu có, VD: "Bs Trần Quốc Luận (Thường trực 24/7, ĐT: 0943.068.189)"): tạo một slot RIÊNG trong mảng "slots" với deptName: "THƯỜNG TRỰC LÃNH ĐẠO", deptType: "leader", và điền NỘI DUNG ĐÓ vào TẤT CẢ các trường day2 đến day8 (vì ô này gộp toàn bộ 7 ngày trên bảng). KHÔNG đặt vào generalNote hay fixedStaff.
-6. Nhận diện danh bạ điện thoại ở phía dưới (nếu có):
-   - Tên bộ phận/cá nhân, số điện thoại, type ('internal' nếu là tài xế/điện nước/bảo vệ/nội bộ, 'emergency_unit' nếu là bệnh viện tuyến trên như Đa khoa TW, Nhi Đồng...).
+CẤU TRÚC BẢNG LỊCH ĐD - NHS:
+- Tiêu đề phía trên: "LỊCH NGÀY ĐD - NHS" và dòng ngày "(Ngày DD/MM/YYYY)".
+- Bảng có 3 cột chính:
+  1. Cột 1: "KHOA" (VD: KHÁM BỆNH-LCK, HSCC, NỘI- NHI- TRUYỀN NHIỄM, YHCT và PHCN, PHỤ SẢN, NGOẠI TH, KSNK, Phòng KHTH, Phòng ĐD...)
+  2. Cột 2: "Hành chánh" (hoặc "Hành chính") chứa danh sách điều dưỡng/nữ hộ sinh trực hành chánh. Các thông tin vị trí phụ có thể ghi kèm như "Tuyền S: Phòng răng. Phòng tiêm ngừa: Ys Trang, Ys Oanh. Phòng khám lao: CN Thắm."
+  3. Cột 3: "Tăng cường" chứa nhân sự tăng cường, hỗ trợ (VD: "Trình ký giấy: Thiện. Ys Ngân S: (Phòng DV + BSGĐ)", "M.Nga, Bích, T.Hằng, Hs Loan, Ys Ngân C, Liễu, Duy, Thông C, Công C", "B.Ngân, Uyên S"...)
+- Chân trang bên dưới bảng: Có thể có dòng "Ghi chú: Nghỉ phép: ..." (VD: "Ghi chú: Nghỉ phép: Lập, Nghi, Kiên.")
+
+QUY TẮC TRÍCH XUẤT:
+1. Xác định ngày từ tiêu đề: trả về "date" dạng YYYY-MM-DD (VD: "(Ngày 18/09/2026)" -> "2026-09-18").
+2. Xác định tiêu đề lịch: "LỊCH NGÀY ĐD - NHS (Ngày 18/09/2026)".
+3. Với mỗi hàng Khoa / Phòng:
+   - "departmentName": Tên khoa chính xác như trong ảnh (VD: "KHÁM BỆNH-LCK", "HSCC", "NỘI- NHI- TRUYỀN NHIỄM", "YHCT và PHCN", "PHỤ SẢN", "NGOẠI TH", "KSNK", "Phòng KHTH", "Phòng ĐD").
+   - "departmentIcon": Chọn icon tương ứng từ danh sách:
+     + "stethoscope": KHÁM, KHÁM BỆNH-LCK, PHÒNG KHÁM
+     + "ambulance": HSCC, CẤP CỨU
+     + "bed": NỘI, NỘI-NHI, TRUYỀN NHIỄM
+     + "mortar": YHCT, PHCN, Y HỌC CỔ TRUYỀN
+     + "baby": PHỤ SẢN, SẢN
+     + "scalpel": NGOẠI TH, NGOẠI
+     + "virus": KSNK, KIỂM SOÁT NHIỄM KHUẨN
+     + "clinic": Phòng KHTH, Phòng ĐD, các phòng ban khác
+   - "administrativeStaff": Toàn bộ nội dung ở cột Hành chánh của hàng đó. Giữ nguyên xuống dòng hoặc dấu chấm phân cách các vị trí cụ thể.
+   - "reinforcementStaff": Toàn bộ nội dung ở cột Tăng cường của hàng đó. Nếu ô trống, trả về "".
+4. Dòng ghi chú nghỉ phép ở cuối: Trích xuất vào trường "generalNote" (VD: "Ghi chú: Nghỉ phép: Lập, Nghi, Kiên."). Nếu không có, trả về "".
 
 ĐỊNH DẠNG JSON BẮT BUỘC TRẢ VỀ (CHỈ TRẢ VỀ JSON HỢP LỆ, KHÔNG KÈM TEXT GIẢI THÍCH):
 {
-  "title": "Lịch trực Bệnh viện ...",
-  "emergencyWeekStart": "YYYY-MM-DD",
-  "emergencyWeekEnd": "YYYY-MM-DD",
-  "weekLabel": "Từ ngày ... đến ngày ...",
-  "generalNote": "...",
-  "slots": [
+  "title": "LỊCH NGÀY ĐD - NHS (Ngày 18/09/2026)",
+  "date": "2026-09-18",
+  "generalNote": "Ghi chú: Nghỉ phép: Lập, Nghi, Kiên.",
+  "assignments": [
     {
-      "deptName": "Tên Khoa/Phòng",
-      "subRole": "BÁC SĨ / ĐIỀU DƯỠNG / ...",
-      "deptType": "clinical | leader | paraclinical | admin",
-      "day2": "Tên nhân sự trực Thứ 2 (xuống dòng nếu nhiều người)",
-      "day3": "Tên nhân sự trực Thứ 3",
-      "day4": "Tên nhân sự trực Thứ 4",
-      "day5": "Tên nhân sự trực Thứ 5",
-      "day6": "Tên nhân sự trực Thứ 6",
-      "day7": "Tên nhân sự trực Thứ 7",
-      "day8": "Tên nhân sự trực Chủ Nhật",
-      "fixedStaff": "",
-      "note": ""
-    }
-  ],
-  "contacts": [
-    {
-      "name": "Hiện (Tài xế)",
-      "phone": "0798.010.703",
-      "type": "internal",
+      "departmentName": "KHÁM BỆNH-LCK",
+      "departmentIcon": "stethoscope",
+      "administrativeStaff": "Vân, Song, Tuấn, Hạnh, Diễm, Tuyền C, Yến.\\nTuyền S: Phòng răng.\\nPhòng tiêm ngừa: Ys Trang, Ys Oanh.\\nPhòng khám lao: CN Thắm.",
+      "reinforcementStaff": "Trình ký giấy: Thiện\\nYs Ngân S: (Phòng DV + BSGĐ)",
       "note": ""
     }
   ]
 }
 `
 
-    // Danh sách các model theo thứ tự ưu tiên (đã test 200 OK trên tài khoản của bạn)
     const CANDIDATE_MODELS = [
       'gemini-3.6-flash',
       'gemini-3.5-flash',
@@ -199,16 +184,15 @@ QUY TẮC PHÂN TÍCH:
       return json({ error: 'AI không trả về kết quả nhận diện nào.' }, 502)
     }
 
-    // Làm sạch markdown nếu có ```json ... ```
     const cleanJson = rawText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim()
     if (cleanJson.length > 1_000_000) {
       return json({ error: 'Kết quả AI vượt giới hạn xử lý an toàn.' }, 502)
     }
     const parsedData = JSON.parse(cleanJson)
-    if (!parsedData || typeof parsedData !== 'object' || !Array.isArray(parsedData.slots)) {
-      return json({ error: 'Kết quả AI không đúng định dạng lịch trực.' }, 502)
+    if (!parsedData || typeof parsedData !== 'object' || !Array.isArray(parsedData.assignments)) {
+      return json({ error: 'Kết quả AI không đúng định dạng lịch điều dưỡng.' }, 502)
     }
-    if (parsedData.slots.length > 250 || (Array.isArray(parsedData.contacts) && parsedData.contacts.length > 100)) {
+    if (parsedData.assignments.length > 100) {
       return json({ error: 'Kết quả AI vượt giới hạn số dòng cho phép.' }, 502)
     }
 
@@ -219,8 +203,8 @@ QUY TẮC PHÂN TÍCH:
         actorEmail: user.email,
         action: 'other',
         resource: 'schedules',
-        summary: 'Quét ảnh lịch trực bằng AI OCR',
-        metadata: { mimeType, fileSize: imageFile.size, slots: parsedData.slots.length },
+        summary: 'Quét ảnh lịch điều dưỡng (ĐD - NHS) bằng AI OCR',
+        metadata: { mimeType, fileSize: imageFile.size, rows: parsedData.assignments.length },
       },
       overrideAccess: true,
     }).catch(() => null)
@@ -231,7 +215,7 @@ QUY TẮC PHÂN TÍCH:
     })
 
   } catch (error: any) {
-    console.error('OCR Error:', error)
-    return json({ error: 'Có lỗi xảy ra trong quá trình quét ảnh lịch trực.' }, 500)
+    console.error('Nurse OCR Error:', error)
+    return json({ error: 'Có lỗi xảy ra trong quá trình quét ảnh lịch điều dưỡng.' }, 500)
   }
 }

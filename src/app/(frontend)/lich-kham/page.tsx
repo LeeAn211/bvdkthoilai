@@ -23,6 +23,8 @@ export default async function Page({ searchParams }: PageProps) {
   let initialCategory = 'all'
   if (rawType === 'emergency' || rawType.includes('truc') || rawType.includes('cấp cứu') || rawType.includes('cap cuu')) {
     initialCategory = 'Lịch trực cấp cứu'
+  } else if (rawType === 'nurse' || rawType.includes('dieu duong') || rawType.includes('điều dưỡng') || rawType.includes('nhs')) {
+    initialCategory = 'Lịch Điều dưỡng - NHS'
   } else if (rawType === 'weekly' || rawType.includes('tuan')) {
     initialCategory = 'Lịch khám theo tuần'
   } else if (rawType === 'daily' || rawType.includes('ngay')) {
@@ -54,16 +56,19 @@ export default async function Page({ searchParams }: PageProps) {
     displaySettings = dispConfig || {}
     items = (result.docs as any[]).map((x) => {
       const isEmergency = x.mode === 'emergency'
+      const isNurse = x.mode === 'nurse' || x.dailyScheduleType === 'nurse'
       const isWeekly = x.mode === 'weekly'
       const isAttachment = x.mode === 'attachment'
 
       const category = isEmergency
         ? 'Lịch trực cấp cứu'
-        : isAttachment
-          ? 'Lịch đính kèm'
-          : isWeekly
-            ? 'Lịch khám theo tuần'
-            : 'Lịch khám theo ngày'
+        : isNurse
+          ? 'Lịch Điều dưỡng - NHS'
+          : isAttachment
+            ? 'Lịch đính kèm'
+            : isWeekly
+              ? 'Lịch khám theo tuần'
+              : 'Lịch khám theo ngày'
 
       const date = isEmergency
         ? [formatDate(x.emergencyWeekStart), formatDate(x.emergencyWeekEnd)].filter(Boolean).join(' – ') || (x.emergencyWeekStart ? formatDate(x.emergencyWeekStart) : '')
@@ -81,9 +86,11 @@ export default async function Page({ searchParams }: PageProps) {
           x.note ||
           (isEmergency
             ? 'Lịch trực cấp cứu & bệnh viện 24/24 của Bệnh viện Đa khoa Khu vực Thới Lai.'
-            : x.department?.name
-              ? `Khoa/Phòng: ${x.department.name}`
-              : 'Thông tin lịch phân công được bệnh viện cập nhật.'),
+            : isNurse
+              ? 'Lịch phân công Điều dưỡng - Nữ hộ sinh công tác tại các Khoa / Phòng.'
+              : x.department?.name
+                ? `Khoa/Phòng: ${x.department.name}`
+                : 'Thông tin lịch phân công được bệnh viện cập nhật.'),
         category,
         date,
         coverUrl: mediaUrl(x.scheduleImage || x.coverImage) || defaults.schedules,
