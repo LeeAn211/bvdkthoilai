@@ -478,10 +478,60 @@
   }
 }
 
-@media (max-width: 520px) {
+/* Mobile: layout dọc - 1 ô chính trên, 1 ô phụ dưới */
+@media (max-width: 600px) {
+  .featuredLayoutWrapper {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  /* Ô lãnh đạo full width, chiều cao cố định */
+  .leaderCard {
+    max-width: 100%;
+    margin: 0;
+    height: 260px;
+  }
+
+  /* Thu gọn thông tin dưới ô chính */
+  .leaderInfo {
+    padding: 8px 12px 10px;
+  }
+
+  .leaderName {
+    font-size: 14px;
+    margin: 0 0 2px;
+  }
+
+  .leaderDept {
+    font-size: 11.5px;
+    margin: 0 0 6px;
+  }
+
+  .leaderActionBtn {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  /* Lưới phụ full width, chỉ hiển thị 1 ô đầu tiên */
   .expertSubGrid {
     grid-template-columns: 1fr;
-    max-width: 360px;
-    margin: 0 auto;
+    gap: 0;
+    height: 200px;
+  }
+
+  /* Ẩn tất cả ô phụ từ thứ 2 trở đi */
+  .subExpertCard:nth-child(n+2) {
+    display: none;
+  }
+
+  /* Ô phụ duy nhất full width */
+  .subExpertCard:first-child {
+    height: 200px;
+  }
+
+  /* Ẩn nút điều hướng trên mobile - vuốt để chuyển */
+  .paginationRow {
+    display: none;
   }
 }
