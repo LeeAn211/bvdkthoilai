@@ -12,9 +12,11 @@
   - `src/components/SiteHeader.tsx`: Truyền độc lập `emergency` và `hotline` vào `MobileTopBar`.
   - `src/components/MobileBottomNav.tsx`: Bổ sung prop `emergencyHotline`, nút Cấp cứu trên thanh điều hướng chân trang di động ưu tiên gọi đúng số Cấp cứu 24/24.
   - `src/app/(frontend)/layout.tsx`: Truyền đồng thời `hotline` và `emergencyHotline` từ `SiteSettings` vào `MobileBottomNav`.
-- **Files Modified**: `src/globals/SiteSettings.ts`, `src/globals/ContactSettings.ts`, `src/components/MobileTopBar.tsx`, `src/components/SiteHeader.tsx`, `src/components/MobileBottomNav.tsx`, `src/app/(frontend)/layout.tsx`, `CHANGELOG.md`, `CURRENT-TASK.md`.
-- **Database/Schema**: Giữ nguyên tên trường `hotline` và `emergencyHotline` sẵn có trong DB PostgreSQL; không thay đổi schema, không cần tạo migration mới.
-- **Git status**: Lưu tại local, **chưa commit/push lên GitHub** theo đúng yêu cầu người dùng.
+- **Files Modified**: `src/globals/SiteSettings.ts`, `src/globals/ContactSettings.ts`, `src/components/MobileTopBar.tsx`, `src/components/SiteHeader.tsx`, `src/components/MobileBottomNav.tsx`, `src/app/(frontend)/layout.tsx`, `Dockerfile`, `package.json`, `package-lock.json`, `scripts/db-migrations/20260919_051_site_settings_hotline_defaults.mjs`, `scripts/db-schema-contract.json`, `src/payload-generated-schema.ts`, `CHANGELOG.md`, `CURRENT-TASK.md`.
+- **Database/Schema**:
+  - Tạo migration `scripts/db-migrations/20260919_051_site_settings_hotline_defaults.mjs` thiết lập default chuẩn cho hotline và emergencyHotline trên các bảng `site_settings`, `_site_settings_v`, `contact_settings`, `_contact_settings_v`.
+  - Đã seal schema contract hợp lệ với migration `20260919_051_site_settings_hotline_defaults`.
+  - Kiểm tra `npm run build`: Prebuild validation pass, Next.js build 42/42 static pages đạt 100%.
 
 ## [2026-09-19] - Tối ưu trải nghiệm mobile: Khối Chuyên gia & Tự động ẩn Tab không có dữ liệu
 

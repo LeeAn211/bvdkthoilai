@@ -9423,8 +9423,8 @@ export const site_settings = pgTable(
     favicon: integer("favicon_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    hotline: varchar("hotline"),
-    emergencyHotline: varchar("emergency_hotline"),
+    emergencyHotline: varchar("emergency_hotline").default("0292 3861 115"),
+    hotline: varchar("hotline").default("0292 3861 234"),
     email: varchar("email"),
     address: varchar("address"),
     workingHours: varchar("working_hours"),
@@ -10694,8 +10694,10 @@ export const _site_settings_v = pgTable(
     version_favicon: integer("version_favicon_id").references(() => media.id, {
       onDelete: "set null",
     }),
-    version_hotline: varchar("version_hotline"),
-    version_emergencyHotline: varchar("version_emergency_hotline"),
+    version_emergencyHotline: varchar("version_emergency_hotline").default(
+      "0292 3861 115",
+    ),
+    version_hotline: varchar("version_hotline").default("0292 3861 234"),
     version_email: varchar("version_email"),
     version_address: varchar("version_address"),
     version_workingHours: varchar("version_working_hours"),
@@ -11904,10 +11906,10 @@ export const contact_settings = pgTable("contact_settings", {
   coreInfo_address: varchar("core_info_address").default(
     "Ấp Thới Phong, Xã Thới Lai, Thành phố Cần Thơ",
   ),
-  coreInfo_hotline: varchar("core_info_hotline").default("0292 3861 234"),
   coreInfo_emergencyHotline: varchar("core_info_emergency_hotline").default(
     "0292 3861 115",
   ),
+  coreInfo_hotline: varchar("core_info_hotline").default("0292 3861 234"),
   coreInfo_email: varchar("core_info_email").default(
     "bvdkthoilai@cantho.gov.vn",
   ),
@@ -11976,12 +11978,12 @@ export const _contact_settings_v = pgTable(
     version_coreInfo_address: varchar("version_core_info_address").default(
       "Ấp Thới Phong, Xã Thới Lai, Thành phố Cần Thơ",
     ),
-    version_coreInfo_hotline: varchar("version_core_info_hotline").default(
-      "0292 3861 234",
-    ),
     version_coreInfo_emergencyHotline: varchar(
       "version_core_info_emergency_hotline",
     ).default("0292 3861 115"),
+    version_coreInfo_hotline: varchar("version_core_info_hotline").default(
+      "0292 3861 234",
+    ),
     version_coreInfo_email: varchar("version_core_info_email").default(
       "bvdkthoilai@cantho.gov.vn",
     ),

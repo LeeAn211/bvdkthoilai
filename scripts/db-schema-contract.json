@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260919_050_protect_document_media_and_pin",
-  "schemaSha256": "3f48efd0b9a961764b637ded453424db7e2b4eb3cc242656da502d6272815d39"
+  "migrationId": "20260919_051_site_settings_hotline_defaults",
+  "schemaSha256": "896b2365af06c815e67314018831ceb9b37274ab2c646c1221ebc0692b8fa038"
 }

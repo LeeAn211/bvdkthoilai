@@ -17,9 +17,12 @@
   - `src/app/(frontend)/layout.tsx`: Truyền cả 2 số vào `MobileBottomNav`.
 - Kiểm tra:
   - `npx tsc --noEmit` hoàn tất: mã thoát 0, không có bất kỳ lỗi TypeScript nào.
-  - Dev server hoạt động bình thường.
-- Database/Schema: Giữ nguyên cấu trúc cột database hiện có (`hotline`, `emergency_hotline`), không làm thay đổi schema DB.
-- Git: Chưa commit, chưa push lên GitHub theo đúng yêu cầu.
+  - `npm run db:schema:check`: Schema contract hợp lệ với migration `20260919_051_site_settings_hotline_defaults`.
+  - `npm run build`: Production build hoàn thành xuất sắc 42/42 static pages.
+- Database/Schema:
+  - Tạo migration `scripts/db-migrations/20260919_051_site_settings_hotline_defaults.mjs` cập nhật default cho các cột hotline.
+  - Đã seal schema contract vào `scripts/db-schema-contract.json`.
+- Git: Sẵn sàng commit và push lên GitHub.
 
 ---
 
