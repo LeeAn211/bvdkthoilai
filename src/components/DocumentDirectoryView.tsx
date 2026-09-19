@@ -34,6 +34,16 @@ interface Props {
   title?: string
   eyebrow?: string
   emptyText?: string
+  hideColumns?: ('number' | 'issuer')[]
+  searchPlaceholder?: string
+  defaultViewMode?: 'table' | 'cards'
+  columnLabels?: {
+    number?: string
+    date?: string
+    title?: string
+    issuer?: string
+    action?: string
+  }
 }
 
 export function DocumentDirectoryView({
@@ -41,11 +51,23 @@ export function DocumentDirectoryView({
   title = 'Kho văn bản & tài liệu',
   eyebrow = 'TRA CỨU VĂN BẢN ĐIỀU HÀNH',
   emptyText = 'Không tìm thấy văn bản phù hợp.',
+  hideColumns = [],
+  searchPlaceholder = 'Tìm theo số hiệu, trích yếu, tên văn bản, cơ quan...',
+  defaultViewMode = 'table',
+  columnLabels = {},
 }: Props) {
+  const showNumber = !hideColumns.includes('number')
+  const showIssuer = !hideColumns.includes('issuer')
+  const colNumber = columnLabels.number || 'Số / Ký hiệu'
+  const colDate = columnLabels.date || 'Ngày ban hành'
+  const colTitle = columnLabels.title || 'Trích yếu nội dung văn bản'
+  const colIssuer = columnLabels.issuer || 'Cơ quan ban hành'
+  const colAction = columnLabels.action || 'Thao tác'
+
   const [keyword, setKeyword] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedYear, setSelectedYear] = useState<string>('all')
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table')
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>(defaultViewMode)
 
   // Trích xuất danh sách chuyên mục
   const categories = useMemo(() => {
@@ -118,10 +140,10 @@ export function DocumentDirectoryView({
           <input
             type="text"
             className={styles.searchInput}
-            placeholder="Tìm theo số hiệu, trích yếu, tên văn bản, cơ quan..."
+            placeholder={searchPlaceholder}
             value={keyword}
             onChange={e => setKeyword(e.target.value)}
-            aria-label="Tìm kiếm văn bản"
+            aria-label="Tìm kiếm nội dung"
           />
           {keyword && (
             <button
@@ -142,7 +164,7 @@ export function DocumentDirectoryView({
               className={styles.selectFilter}
               value={selectedCategory}
               onChange={e => setSelectedCategory(e.target.value)}
-              aria-label="Chọn chuyên mục văn bản"
+              aria-label="Chọn chuyên mục"
             >
               <option value="all">Tất cả chuyên mục ({items.length})</option>
               {categories.map(c => (
@@ -174,7 +196,7 @@ export function DocumentDirectoryView({
               type="button"
               className={`${styles.toggleBtn} ${viewMode === 'table' ? styles.toggleActive : ''}`}
               onClick={() => setViewMode('table')}
-              title="Xem dạng Bảng công văn chuẩn"
+              title="Xem dạng Bảng danh sách chuẩn"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -204,7 +226,7 @@ export function DocumentDirectoryView({
       {/* Thông tin số lượng văn bản tìm thấy */}
       <div className={styles.statusBar}>
         <span>
-          Hiển thị <strong>{filteredItems.length}</strong> / {items.length} văn bản
+          Hiển thị <strong>{filteredItems.length}</strong> / {items.length} mục
           {(selectedCategory !== 'all' || selectedYear !== 'all' || keyword) && (
             <button
               type="button"
@@ -240,11 +262,11 @@ export function DocumentDirectoryView({
               <thead>
                 <tr>
                   <th style={{ width: '60px', textAlign: 'center' }}>STT</th>
-                  <th style={{ width: '150px' }}>Số / Ký hiệu</th>
-                  <th style={{ width: '120px' }}>Ngày ban hành</th>
-                  <th>Trích yếu nội dung văn bản</th>
-                  <th style={{ width: '160px' }}>Cơ quan ban hành</th>
-                  <th style={{ width: '130px', textAlign: 'center' }}>Thao tác</th>
+                  {showNumber && <th style={{ width: '150px' }}>{colNumber}</th>}
+                  <th style={{ width: '130px' }}>{colDate}</th>
+                  <th>{colTitle}</th>
+                  {showIssuer && <th style={{ width: '170px' }}>{colIssuer}</th>}
+                  <th style={{ width: '130px', textAlign: 'center' }}>{colAction}</th>
                 </tr>
               </thead>
               <tbody>
@@ -253,29 +275,40 @@ export function DocumentDirectoryView({
                     <td className={styles.textCenter} style={{ fontWeight: 600, color: '#64748b' }}>
                       {idx + 1}
                     </td>
-                    <td>
-                      <Link href={doc.href} className={styles.numberLink}>
-                        {doc.number || 'Chưa số'}
-                      </Link>
-                      {doc.accessMode === 'pin' && (
-                        <span className={styles.tableCategoryBadge} style={{ background: '#fff1f0', color: '#cf1322', borderColor: '#ffa39e' }}>
-                          🔒 Mã PIN
-                        </span>
-                      )}
-                      {doc.accessMode === 'view_only' && (
-                        <span className={styles.tableCategoryBadge} style={{ background: '#fef3c7', color: '#92400e', borderColor: '#fcd34d' }} title="Chỉ cho xem trực tuyến, cấm tải về, sao chép và in ấn">
-                          👁️ Chỉ xem
-                        </span>
-                      )}
-                      {doc.allowDownload === false && doc.accessMode !== 'view_only' && (
-                        <span className={styles.tableCategoryBadge} style={{ background: '#f5f5f5', color: '#8c8c8c', borderColor: '#d9d9d9' }}>
-                          Chỉ xem
-                        </span>
-                      )}
-                      {doc.category && (
-                        <span className={styles.tableCategoryBadge}>{doc.category}</span>
-                      )}
-                    </td>
+                    {showNumber && (
+                      <td>
+                        {doc.number?.includes('Khẩn') ? (
+                          <span className={styles.tableCategoryBadgeUrgent}>
+                            {doc.number}
+                          </span>
+                        ) : doc.number?.includes('Quan trọng') ? (
+                          <span className={styles.tableCategoryBadgeImportant}>
+                            {doc.number}
+                          </span>
+                        ) : doc.number?.includes('Thông thường') ? (
+                          <span className={styles.tableCategoryBadge}>
+                            {doc.number}
+                          </span>
+                        ) : (
+                          <Link href={doc.href} className={styles.numberLink}>
+                            {doc.number || 'Chưa số'}
+                          </Link>
+                        )}
+                        {doc.accessMode === 'pin' && (
+                          <span className={styles.tableCategoryBadge} style={{ background: '#fff1f0', color: '#cf1322', borderColor: '#ffa39e', marginTop: 4 }}>
+                            🔒 Mã PIN
+                          </span>
+                        )}
+                        {doc.accessMode === 'view_only' && (
+                          <span className={styles.tableCategoryBadge} style={{ background: '#fef3c7', color: '#92400e', borderColor: '#fcd34d', marginTop: 4 }} title="Chỉ cho xem trực tuyến, cấm tải về, sao chép và in ấn">
+                            👁️ Chỉ xem
+                          </span>
+                        )}
+                        {doc.category && !doc.number?.includes(doc.category) && (
+                          <span className={styles.tableCategoryBadge} style={{ marginTop: 4 }}>{doc.category}</span>
+                        )}
+                      </td>
+                    )}
                     <td className={styles.dateCell}>
                       {doc.date || (doc.issuedAt ? new Date(doc.issuedAt).toLocaleDateString('vi-VN') : '—')}
                     </td>
@@ -287,9 +320,11 @@ export function DocumentDirectoryView({
                         <p className={styles.docExcerptText}>{doc.summary}</p>
                       )}
                     </td>
-                    <td className={styles.issuerCell}>
-                      {doc.issuer || 'BVĐK Khu vực Thới Lai'}
-                    </td>
+                    {showIssuer && (
+                      <td className={styles.issuerCell}>
+                        {doc.issuer || 'BVĐK Khu vực Thới Lai'}
+                      </td>
+                    )}
                     <td className={styles.actionCell}>
                       <Link href={doc.href} className={styles.btnViewDetail}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

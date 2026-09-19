@@ -1383,9 +1383,9 @@ export default async function HomePage() {
             const showNoticeCol = noticeItem.visible !== false
             const showProcCol = procItem.visible !== false
 
-            // Cân đối hoàn hảo giữa 2 khung: Thông báo hiển thị tối đa 6 nội dung mới nhất; Đấu thầu hiển thị tối đa 4 nội dung (kết hợp thanh tab chuyên mục phía trên giúp 2 cột cân xứng tuyệt đối về chiều cao)
-            const noticeLimit = noticeItem.layoutItemLimit !== undefined && noticeItem.layoutItemLimit !== null && Number(noticeItem.layoutItemLimit) !== 5 ? Math.min(20, Math.max(1, Number(noticeItem.layoutItemLimit))) : 6
-            const procLimit = procItem.layoutItemLimit !== undefined && procItem.layoutItemLimit !== null && Number(procItem.layoutItemLimit) !== 5 ? Math.min(20, Math.max(1, Number(procItem.layoutItemLimit))) : 4
+            // Thông báo hiển thị 5 ô, Đấu thầu hiển thị 3 ô (giá trị cố định; nếu cần thay đổi sửa tại đây)
+            const noticeLimit = 5
+            const procLimit = 3
 
             const noticeList = notices.slice(0, noticeLimit)
 

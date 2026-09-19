@@ -905,12 +905,12 @@
 .emergMastheadClassic {
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%) !important;
   border-bottom: 2.5px solid #0284c7 !important;
-  padding: 18px 24px !important;
+  padding: 6px 24px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   position: relative !important;
-  gap: 16px !important;
+  gap: 5px !important;
   flex-wrap: wrap !important;
   text-align: center !important;
 }
@@ -920,7 +920,7 @@
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 10px !important;
+  gap: 4px !important;
   text-align: center !important;
   margin: 0 auto !important;
 }
@@ -928,7 +928,7 @@
 .emergRibbon {
   background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%) !important;
   color: #ffffff !important;
-  padding: 9px 32px !important;
+  padding: 4px 24px !important;
   border-radius: 8px !important;
   box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3) !important;
   border: 1px solid rgba(255, 255, 255, 0.35) !important;
@@ -937,7 +937,7 @@
 
 .emergRibbon h2 {
   margin: 0 !important;
-  font-size: 18px !important;
+  font-size: 15px !important;
   font-weight: 900 !important;
   color: #ffffff !important;
   text-transform: uppercase !important;
@@ -950,12 +950,12 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
   background: #ffffff !important;
   color: #0369a1 !important;
-  font-size: 13.5px !important;
+  font-size: 12.5px !important;
   font-weight: 800 !important;
-  padding: 5px 22px !important;
+  padding: 3px 16px !important;
   border-radius: 99px !important;
   border: 2px solid #0284c7 !important;
   box-shadow: 0 2px 6px rgba(2, 132, 199, 0.12) !important;
@@ -1025,7 +1025,7 @@
 }
 
 .emergMatrixTable th {
-  padding: 10px 6px !important;
+  padding: 5px 6px !important;
   border: 1.5px solid #bae6fd !important;
   vertical-align: middle !important;
   text-align: center !important;
@@ -1033,7 +1033,7 @@
 
 /* Cột tiêu đề Khoa/Bộ phận */
 .emergColDeptHeader {
-  width: 22% !important;
+  width: 18% !important;
   background: linear-gradient(180deg, #0369a1 0%, #0284c7 100%) !important;
   color: #ffffff !important;
   white-space: nowrap !important;
@@ -1117,7 +1117,7 @@
 
 /* Cột các ngày trong tuần (T2 - CN) */
 .emergColDayHeader {
-  width: calc(78% / 7) !important;
+  width: calc(82% / 7) !important;
   background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%) !important;
 }
 
@@ -1201,7 +1201,7 @@
 
 /* Cột tiêu đề Khoa / Bộ phận */
 .emergCellDeptTitle {
-  padding: 10px 12px !important;
+  padding: 4px 8px !important;
   border-right: 2px solid #0284c7 !important;
   border-bottom: 1.5px solid #bae6fd !important;
   background: #f0f9ff !important;
@@ -1211,14 +1211,14 @@
 .emergDeptBox {
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
+  gap: 6px !important;
   white-space: nowrap !important;
 }
 
 .emergDeptIconWrap {
-  width: 34px !important;
-  height: 34px !important;
-  border-radius: 8px !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 6px !important;
   background: #e0f2fe !important;
   color: #0284c7 !important;
   display: inline-flex !important;
@@ -1237,10 +1237,10 @@
 }
 
 .emergDeptName {
-  font-size: 13px !important;
+  font-size: 11px !important;
   font-weight: 900 !important;
   color: #0f172a !important;
-  line-height: 1.3 !important;
+  line-height: 1.2 !important;
   text-transform: uppercase !important;
   white-space: nowrap !important;
   overflow: hidden !important;
@@ -1248,14 +1248,14 @@
 }
 
 .emergDeptSubRole {
-  font-size: 10px !important;
+  font-size: 9px !important;
   font-weight: 800 !important;
   color: #0369a1 !important;
   background: #e0f2fe !important;
-  padding: 2px 7px !important;
+  padding: 1px 5px !important;
   border-radius: 4px !important;
   width: fit-content !important;
-  letter-spacing: 0.3px !important;
+  letter-spacing: 0.2px !important;
   white-space: nowrap !important;
 }
 
@@ -1298,7 +1298,7 @@
 }
 
 .emergMergedLeaderCell {
-  padding: 14px 20px !important;
+  padding: 6px 20px !important;
   text-align: center !important;
   vertical-align: middle !important;
   border-bottom: 1.5px solid #bae6fd !important;
@@ -1307,7 +1307,7 @@
 
 .emergMergedDirectorCell {
   border-bottom: 1.5px solid #fde68a !important;
-  padding: 12px 20px !important;
+  padding: 5px 20px !important;
 }
 
 .emergMergedLeaderCard {
@@ -1322,9 +1322,9 @@
 }
 
 .emergDirectorCard {
-  gap: 22px !important;
+  gap: 14px !important;
   background: rgba(255, 255, 255, 0.7) !important;
-  padding: 6px 20px !important;
+  padding: 4px 14px !important;
   border-radius: 99px !important;
   border: 1.5px solid #fcd34d !important;
   box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12) !important;
@@ -1350,13 +1350,13 @@
 .emergMergedTag.emergTagDirector {
   background: linear-gradient(135deg, #b45309 0%, #d97706 60%, #f59e0b 100%) !important;
   color: #ffffff !important;
-  font-size: 12.5px !important;
+  font-size: 10.5px !important;
   font-weight: 900 !important;
-  padding: 8px 18px !important;
-  border-radius: 8px !important;
+  padding: 5px 12px !important;
+  border-radius: 6px !important;
   box-shadow: 0 3px 10px rgba(180, 83, 9, 0.35) !important;
   border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  letter-spacing: 0.5px !important;
+  letter-spacing: 0.3px !important;
 }
 
 .emergMergedTag.emergTagDirector svg {
@@ -1398,10 +1398,10 @@
 }
 
 .emergMergedName.emergDirectorName {
-  font-size: 17px !important;
-  font-weight: 950 !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
   color: #78350f !important;
-  letter-spacing: 0.5px !important;
+  letter-spacing: 0.4px !important;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8) !important;
 }
 
@@ -1431,11 +1431,11 @@
 
 .emergMergedPhoneBtn.emergDirectorPhoneBtn {
   background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%) !important;
-  border: 2px solid #d97706 !important;
+  border: 1.5px solid #d97706 !important;
   color: #92400e !important;
-  padding: 6px 16px !important;
-  font-size: 13.5px !important;
-  font-weight: 900 !important;
+  padding: 3px 10px !important;
+  font-size: 11.5px !important;
+  font-weight: 800 !important;
   box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25) !important;
 }
 
@@ -1495,7 +1495,7 @@
 
 /* Ô dữ liệu từng ngày - Canh giữa toàn bộ */
 .emergCellDayData {
-  padding: 8px 6px !important;
+  padding: 3px 3px !important;
   border-right: 1.5px solid #bae6fd !important;
   border-bottom: 1.5px solid #bae6fd !important;
   vertical-align: middle !important;
@@ -1525,21 +1525,21 @@
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 5px !important;
+  gap: 2px !important;
   width: 100% !important;
 }
 
 .emergDoctorChip {
   display: inline-flex !important;
-  align-items: center !important;        /* căn giữa theo chiều dọc */
-  justify-content: center !important;   /* căn giữa theo chiều ngang */
-  gap: 4px !important;
-  padding: 3px 6px !important;
-  border-radius: 6px !important;
-  width: 105px !important;
-  max-width: 105px !important;
-  min-width: 105px !important;
-  min-height: 28px !important;          /* tự mở rộng nếu tên nhiều dòng */
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  padding: 1px 3px !important;
+  border-radius: 4px !important;
+  width: 62px !important;
+  max-width: 62px !important;
+  min-width: 62px !important;
+  min-height: 16px !important;
   height: auto !important;
   box-sizing: border-box !important;
   margin: 0 auto !important;
@@ -1597,8 +1597,7 @@
 }
 
 .chip-leader .emergDoctorChipIcon {
-  background: #fde68a !important;
-  color: #b45309 !important;
+  display: none !important;
 }
 
 .chip-nurse .emergDoctorChipIcon {
@@ -1607,14 +1606,14 @@
 }
 
 .emergDoctorChipName {
-  font-size: 13px !important;
-  font-weight: 750 !important;
-  white-space: normal !important;      /* hiển thị đầy đủ, không cắt */
-  word-break: break-word !important;   /* xuống dòng nếu tên quá dài */
-  overflow: visible !important;
-  text-overflow: unset !important;
-  line-height: 1.3 !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
   text-align: center !important;
+  max-width: 100% !important;
   flex: 0 1 auto !important;
 }
 

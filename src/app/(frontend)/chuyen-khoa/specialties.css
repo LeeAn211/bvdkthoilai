@@ -1,82 +1,243 @@
-/* ── SPECIALTIES LISTING PAGE (HOSPITAL STANDARD) ────────────── */
+/* ── SPECIALTIES DIRECTORY (HOSPITAL STANDARD DESIGN 2026) ────────────── */
 
 .specialtiesListPage {
   background-color: #f8fafc;
   padding-bottom: 80px;
+  min-height: 85vh;
 }
 
-/* Thanh tìm kiếm & lọc chuyên khoa */
-.specialtiesFilterBar {
+.specialtiesProWrap {
+  width: 100%;
+}
+
+/* ── THANH ĐIỀU HƯỚNG TÌM KIẾM & BỘ LỌC CHUYÊN KHOA ──────────── */
+.specialtiesFilterCard {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 20px 24px;
-  margin-bottom: 32px;
-  box-shadow: 0 4px 16px rgba(15, 63, 99, 0.05);
+  border-radius: 18px;
+  padding: 20px 24px 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(8, 120, 209, 0.06);
+}
+
+.specialtiesFilterTopRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: wrap;
+  margin-bottom: 18px;
 }
 
-.specialtiesSearchForm {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
+.specialtiesSearchBox {
+  position: relative;
+  flex: 1 1 340px;
   min-width: 260px;
-  background: #f1f5f9;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 12px;
-  padding: 8px 16px;
-  transition: all 0.2s ease;
 }
 
-.specialtiesSearchForm:focus-within {
-  background: #ffffff;
-  border-color: #0878d1;
-  box-shadow: 0 0 0 3px rgba(8, 120, 209, 0.15);
-}
-
-.specialtiesSearchForm svg {
-  color: #64748b;
-  flex-shrink: 0;
+.specialtiesSearchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #0369a1;
+  pointer-events: none;
 }
 
 .specialtiesSearchInput {
-  border: none;
-  background: transparent;
   width: 100%;
-  font-size: 14.5px;
+  height: 46px;
+  padding: 0 42px 0 44px;
+  border: 1.5px solid #dce8f1;
+  border-radius: 12px;
+  font-size: 0.95rem;
   color: #0f172a;
+  background: #fbfdff;
+  transition: all 0.2s ease;
   outline: none;
 }
 
-.specialtiesSearchInput::placeholder {
+.specialtiesSearchInput:focus {
+  border-color: #0284c7;
+  background: #ffffff;
+  box-shadow: 0 0 0 3.5px rgba(2, 132, 199, 0.14);
+}
+
+.specialtiesClearBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
   color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
 }
 
-.specialtiesCountBadge {
-  font-size: 13.5px;
+.specialtiesClearBtn:hover {
+  color: #334155;
+}
+
+.specialtiesFastActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.specialtyFastCallBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  background: #eff6ff;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.specialtyFastCallBtn:hover {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+.specialtyFastBookBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border-radius: 10px;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: #0878d1;
-  background: #e0f2fe;
-  padding: 6px 14px;
-  border-radius: 999px;
-  white-space: nowrap;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+  transition: all 0.2s ease;
 }
 
-/* Lưới hiển thị danh sách Chuyên khoa */
-.specialtiesModernGrid {
+.specialtyFastBookBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+}
+
+/* Tab Bar phân loại */
+.specialtiesNavTabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 14px;
+}
+
+.specialtyTabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.specialtyTabBtn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.specialtyTabBtn.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+}
+
+.specialtyTabCount {
+  font-size: 0.76rem;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  font-weight: 700;
+}
+
+.specialtyTabBtn.active .specialtyTabCount {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.specialtyTabDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.clinicalDot {
+  background: #16a34a;
+}
+
+.paraclinicalDot {
+  background: #0284c7;
+}
+
+.otherDot {
+  background: #7c3aed;
+}
+
+/* ── STATUS BAR ──────────────────────────────────────────────── */
+.specialtiesStatusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 0.92rem;
+  color: #64748b;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.specialtiesStatusBar strong {
+  color: #0f172a;
+}
+
+.specialtiesResetBtn {
+  background: none;
+  border: none;
+  color: #0284c7;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.specialtiesResetBtn:hover {
+  text-decoration: underline;
+}
+
+/* ── LƯỚI THẺ CHUYÊN KHOA Y TẾ (GRID VIEW 3D) ────────────────── */
+.specialtiesGridHospital {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 24px;
 }
 
-.specialtyCardModern {
+.specialtyHospitalCard {
   background: #ffffff;
-  border: 1.5px solid #e2e8f0;
+  border: 1px solid #e2e8f0;
   border-radius: 18px;
   padding: 24px;
   display: flex;
@@ -84,18 +245,47 @@
   text-decoration: none;
   color: inherit;
   box-shadow: 0 4px 16px rgba(15, 63, 99, 0.04);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   overflow: hidden;
 }
 
-.specialtyCardModern:hover {
-  transform: translateY(-4px);
-  border-color: #0878d1;
-  box-shadow: 0 14px 30px rgba(8, 120, 209, 0.14);
+.specialtyHospitalCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.5px;
+  background: #0284c7;
+  opacity: 0.9;
+  transition: height 0.2s ease;
 }
 
-.specialtyCardTop {
+.specialtyHospitalCard.cardClinical::before {
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+}
+
+.specialtyHospitalCard.cardParaclinical::before {
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+}
+
+.specialtyHospitalCard.cardOther::before {
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+}
+
+.specialtyHospitalCard:hover {
+  transform: translateY(-5px);
+  border-color: #93c5fd;
+  box-shadow: 0 16px 32px rgba(8, 120, 209, 0.12);
+}
+
+.specialtyHospitalCard:hover::before {
+  height: 5px;
+}
+
+/* Header Thẻ */
+.cardTopHeader {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -103,44 +293,98 @@
   margin-bottom: 16px;
 }
 
-.specialtyCardIconBox {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
+.cardIconWrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
   background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
   color: #0369a1;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba(8, 120, 209, 0.12);
-  transition: transform 0.25s ease;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.14);
+  transition: all 0.25s ease;
 }
 
-.specialtyCardModern:hover .specialtyCardIconBox {
-  transform: scale(1.08);
-  background: linear-gradient(135deg, #0754a8 0%, #0878d1 100%);
+.cardClinical .cardIconWrap {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #15803d;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.14);
+}
+
+.cardOther .cardIconWrap {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  color: #6d28d9;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.14);
+}
+
+.specialtyHospitalCard:hover .cardIconWrap {
+  transform: scale(1.08) rotate(3deg);
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
   color: #ffffff;
 }
 
-.specialtyCardDeptBadge {
-  font-size: 11.5px;
+.specialtyHospitalCard.cardClinical:hover .cardIconWrap {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  color: #ffffff;
+}
+
+.specialtyHospitalCard.cardOther:hover .cardIconWrap {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  color: #ffffff;
+}
+
+.cardBadgeGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.cardTypeBadge {
+  font-size: 0.72rem;
   font-weight: 700;
-  color: #0878d1;
-  background: #f0f7fd;
-  border: 1px solid #bce0f8;
-  padding: 4px 10px;
-  border-radius: 6px;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
-  white-space: nowrap;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.cardClinical .cardTypeBadge {
+  background: #f0fdf4;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.cardParaclinical .cardTypeBadge {
+  background: #f0f9ff;
+  color: #0369a1;
+  border-color: #bae6fd;
+}
+
+.cardOther .cardTypeBadge {
+  background: #faf5ff;
+  color: #6b21a8;
+  border-color: #e9d5ff;
+}
+
+.cardDeptBadge {
+  font-size: 0.74rem;
+  color: #64748b;
   max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
 }
 
-.specialtyCardTitle {
-  font-size: 18px;
+/* Tiêu đề & Tagline */
+.cardTitleText {
+  font-size: 1.22rem;
   font-weight: 800;
   color: #0f172a;
   margin: 0 0 8px;
@@ -148,15 +392,36 @@
   transition: color 0.2s ease;
 }
 
-.specialtyCardModern:hover .specialtyCardTitle {
-  color: #0878d1;
+.specialtyHospitalCard:hover .cardTitleText {
+  color: #0284c7;
 }
 
-.specialtyCardDesc {
-  font-size: 14px;
+.cardTaglineBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #d97706;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  padding: 3px 9px;
+  border-radius: 6px;
+  width: fit-content;
+  margin-bottom: 12px;
+}
+
+.cardTaglineBox.fallback {
+  color: #0369a1;
+  background: #f0f9ff;
+  border-color: #e0f2fe;
+}
+
+.cardSummaryText {
+  font-size: 0.88rem;
   color: #64748b;
-  margin: 0 0 20px;
   line-height: 1.55;
+  margin: 0 0 20px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
@@ -164,28 +429,196 @@
   flex: 1;
 }
 
-.specialtyCardFooter {
+/* Chân thẻ */
+.cardBottomFooter {
   margin-top: auto;
   padding-top: 14px;
   border-top: 1px solid #f1f5f9;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 13px;
+}
+
+.cardActionLabel {
+  font-size: 0.85rem;
   font-weight: 700;
-  color: #0878d1;
+  color: #0284c7;
+  transition: color 0.2s ease;
 }
 
-.specialtyCardFooter svg {
-  transition: transform 0.2s ease;
+.cardActionArrowWrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f0f9ff;
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.22s ease;
 }
 
-.specialtyCardModern:hover .specialtyCardFooter svg {
+.specialtyHospitalCard:hover .cardActionArrowWrap {
+  background: #0284c7;
+  color: #ffffff;
   transform: translateX(4px);
 }
 
-@media (max-width: 640px) {
-  .specialtiesModernGrid {
+/* ── EMPTY STATE ─────────────────────────────────────────────── */
+.specialtiesEmptyState {
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 18px;
+  padding: 56px 24px;
+  text-align: center;
+  color: #64748b;
+}
+
+.specialtiesEmptyIconBox {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.specialtiesEmptyState h3 {
+  font-size: 1.15rem;
+  color: #0f172a;
+  margin: 0 0 8px;
+}
+
+.specialtiesEmptyState p {
+  font-size: 0.92rem;
+  max-width: 480px;
+  margin: 0 auto 20px;
+  line-height: 1.55;
+}
+
+.specialtyClearSearchBtn {
+  display: inline-flex;
+  padding: 10px 20px;
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.specialtyClearSearchBtn:hover {
+  background: #0369a1;
+}
+
+/* ── SUPPORT BANNER ─────────────────────────────────────────── */
+.specialtiesSupportBanner {
+  margin-top: 48px;
+  background: linear-gradient(135deg, #072b4c 0%, #0c4a6e 100%);
+  border-radius: 18px;
+  padding: 30px 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(7, 43, 76, 0.15);
+  flex-wrap: wrap;
+}
+
+.supportBannerContent {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1 1 450px;
+}
+
+.supportBannerIcon {
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(8px);
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.supportBannerContent h4 {
+  font-size: 1.18rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+  color: #ffffff;
+}
+
+.supportBannerContent p {
+  font-size: 0.9rem;
+  color: #bae6fd;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.supportBannerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.supportHotlineBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 22px;
+  background: #38bdf8;
+  color: #072b4c;
+  font-weight: 800;
+  font-size: 0.92rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.supportHotlineBtn:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+}
+
+.supportContactBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-weight: 600;
+  font-size: 0.92rem;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.supportContactBtn:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+@media (max-width: 768px) {
+  .specialtiesGridHospital {
     grid-template-columns: 1fr;
+  }
+  .specialtiesSupportBanner {
+    padding: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .supportBannerContent {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

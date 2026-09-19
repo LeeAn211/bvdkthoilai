@@ -95,7 +95,7 @@ export function HomeProcurementTabs({ items = [], limit = 4 }: HomeProcurementTa
             onClick={() => setActiveTab('all')}
           >
             <span>Tất cả</span>
-            <span className="homeProcTabCount">{items.length}</span>
+            <span className="homeProcTabCount">{Math.min(items.length, limit)}</span>
           </button>
 
           {categoriesWithPosts.map((cat) => {
