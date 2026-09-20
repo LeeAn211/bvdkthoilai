@@ -1158,19 +1158,58 @@ details[open] .faqSummaryIcon {
   .vaccineModernGrid {
     grid-template-columns: 1fr;
   }
-  .vaccineBottomBar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
+  .vaccineModernCard {
+    border-radius: 15px;
   }
+  .vaccineCardTopHeader {
+    padding: 11px 12px 8px;
+  }
+  .vaccineOriginPill { padding: 3px 8px; font-size: 10px; }
+  .vaccineCodeTag { font-size: 10px; }
+  .vaccineStatusPill {
+    padding: 4px 9px;
+    font-size: 10px;
+  }
+  .vaccineCardMainBody {
+    gap: 8px;
+    padding: 11px 12px;
+  }
+  .vaccineMainTitle {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 16px;
+    line-height: 1.32;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .vaccineShortSummary {
+    font-size: 12px;
+    line-height: 1.45;
+    -webkit-line-clamp: 3;
+  }
+  .vaccineInfoTableBox {
+    margin-top: 0;
+    padding: 9px 10px;
+    border-radius: 10px;
+  }
+  .vaccineInfoRow {
+    gap: 7px;
+    font-size: 12px;
+  }
+  .vaccineInfoKey {
+    min-width: 72px;
+  }
+  .vaccineBottomBar {
+    padding: 10px 12px 12px;
+    gap: 9px;
+  }
+  .vaccinePriceSub { font-size: 9px; }
+  .vaccinePriceNum { font-size: 17px; }
   .vaccineCardBtns {
-    width: 100%;
+    margin-left: auto;
   }
   .vaccineBtnDetail,
-  .vaccineBtnRegister {
-    flex: 1;
-    text-align: center;
-  }
+  .vaccineBtnRegister { padding: 7px 9px; font-size: 10.5px; }
 }
 
 /* ==========================================================================
@@ -1194,11 +1233,20 @@ details[open] .faqSummaryIcon {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 18px;
   }
+  .vaccineCarouselTrack > .vaccineModernCard:nth-child(n+3) {
+    display: none;
+  }
 }
 
 @media (max-width: 640px) {
   .vaccineCarouselTrack {
     grid-template-columns: 1fr;
+  }
+  .vaccineCarouselTrack > .vaccineModernCard:nth-child(n+2) {
+    display: none;
+  }
+  .vaccineCarouselControls {
+    margin-top: 14px;
   }
 }
 
@@ -1333,6 +1381,39 @@ details[open] .faqSummaryIcon {
   box-shadow: 0 2px 6px rgba(8, 120, 209, 0.15);
 }
 
+@media (max-width: 640px) {
+  .vaccinationTabButtons {
+    justify-content: flex-start !important;
+    overflow-x: auto;
+    padding: 4px !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .vaccinationTabButtons::-webkit-scrollbar,
+  .vaccineAgeFilterBar::-webkit-scrollbar { display: none; }
+  .vaccinationTabButtons button {
+    min-width: max-content;
+    min-height: 40px !important;
+    padding: 0 13px !important;
+    font-size: 12px !important;
+  }
+  .vaccineAgeFilterBar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 7px;
+    margin-bottom: 12px;
+    padding: 2px 1px 4px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .vaccineAgeFilterLabel { display: none; }
+  .vaccineAgeFilterBtn {
+    flex: 0 0 auto;
+    padding: 5px 11px;
+    font-size: 11px;
+  }
+}
+
 /* 3. CÂN BẰNG CHIỀU CAO THẺ VẮC XIN (EQUAL HEIGHT) */
 .vaccineModernCard {
   height: 100%;
@@ -1351,4 +1432,3 @@ details[open] .faqSummaryIcon {
 .vaccineBottomBar {
   margin-top: auto;
 }
-

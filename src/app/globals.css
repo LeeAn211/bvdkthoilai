@@ -822,7 +822,7 @@ h3 { line-height:1.35; }
 /* Cột ô ca trực chứa thẻ chip bác sĩ */
 .dailyCellShift {
   padding: 10px;
-  background: transparent;
+  background: #fff;
 }
 .dailyDoctorEmpty {
   display: block;
@@ -1270,26 +1270,331 @@ h3 { line-height:1.35; }
 .homePortalPage { background:#f7fafc; }
 .homePortalPage .heroBannerCarousel { left:auto; width:min(100%,1920px); min-width:0; max-width:1920px; height:clamp(160px,31.25vw,600px); margin:0 auto; transform:none; overflow:hidden; }
 .homePortalPage .heroBannerSlide img { object-fit:cover; }
-.homeQuickWrap { position:relative; z-index:8; margin-top:-34px; }
-.homeQuickGrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); overflow:hidden; border:1px solid #dce8f0; border-radius:23px; background:#fff; box-shadow:0 18px 48px rgba(19,67,101,.14); }
-.homeQuickItem { min-width:0; min-height:124px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-right:1px solid #e5edf3; padding:14px 8px; text-align:center; transition:.2s ease; }
-.homeQuickItem:last-child { border-right:0; }
-.homeQuickItem:hover { z-index:1; background:#f5fbff; box-shadow:inset 0 -3px 0 #0878d1; }
-.homeQuickIcon { width:43px; height:43px; display:grid; place-items:center; border-radius:13px; color:#0b6fd0; background:#eaf5ff; }
-.homeQuickItem:nth-child(2) .homeQuickIcon { color:#149054; background:#eaf8ef; }
-.homeQuickItem:nth-child(3) .homeQuickIcon { color:#6c58ce; background:#f0edff; }
-.homeQuickItem:nth-child(4) .homeQuickIcon { color:#db8818; background:#fff5e4; }
-.homeQuickItem:nth-child(5) .homeQuickIcon { color:#e13c45; background:#fff0f1; }
-.homeQuickItem:nth-child(6) .homeQuickIcon { color:#c54c2c; background:#fff0e9; }
-.homeQuickItem:nth-child(7) .homeQuickIcon { color:#0b6fd0; background:#eaf5ff; }
-.homeQuickItem:nth-child(8) .homeQuickIcon { color:#6652bd; background:#f1effc; }
-.homeQuickIcon img { width:100%; height:100%; display:block; border-radius:inherit; object-position:center; }
-.homeQuickIcon.hasCustomImage { overflow:hidden; padding:3px; background:#fff; border:1px solid #e2edf5; }
-.homeQuickIcon svg,.homeStatIcon svg,.homeDepartmentList svg,.homeLineIcon svg { width:24px; height:24px; }
-.homeQuickItem strong { margin-top:9px; overflow:hidden; color:#183750; text-overflow:ellipsis; white-space:nowrap; font-size:11px; }
-.homeQuickItem small { margin-top:3px; overflow:hidden; color:#71899b; text-overflow:ellipsis; white-space:nowrap; font-size:8.5px; }
+/* Modern Floating Island Slider for Quick Links (Medpro / Hospital Care Style) */
+.homeQuickSliderWrap {
+  position: relative;
+  z-index: 8;
+  margin-top: -46px;
+  padding: 0 16px;
+}
+.homeQuickSliderWrap.withoutHero {
+  margin-top: 24px;
+}
+.homeQuickSliderContainer {
+  position: relative;
+  max-width: var(--site-max-width, 1300px);
+  margin: 0 auto;
+  padding: 0 10px;
+}
+.homeQuickTrack {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  justify-content: center;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px 4px 18px;
+  scrollbar-width: none;
+}
+.homeQuickTrack::-webkit-scrollbar {
+  display: none;
+}
+.homeQuickCardItem {
+  flex: 0 0 112px;
+  width: 112px;
+  min-width: 112px;
+  min-height: 112px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 12px 8px 11px;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-radius: 14px;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid rgba(214,230,242,.92);
+  box-shadow:
+    0 12px 24px -15px rgba(3,74,132,.36),
+    0 2px 6px rgba(8,82,139,.05),
+    inset 0 1px 0 #fff;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+.homeQuickCardItem::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: 2px;
+  opacity: .9;
+  background: linear-gradient(90deg, transparent, var(--quick-accent, #168ee8), transparent);
+}
+.homeQuickCardItem::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 70px;
+  height: 70px;
+  top: -48px;
+  right: -42px;
+  border-radius: 50%;
+  background: transparent;
+  filter: blur(2px);
+  transition: transform .32s ease, opacity .32s ease;
+}
+.homeQuickTrack > a:nth-child(odd) { --quick-accent:#0878d1; --quick-glow:rgba(8,120,209,.14); }
+.homeQuickTrack > a:nth-child(even) { --quick-accent:#16a36a; --quick-glow:rgba(22,163,106,.14); }
+.homeQuickCardItem:hover {
+  transform: translateY(-7px);
+  border-color: color-mix(in srgb, var(--quick-accent, #1b8fe8) 42%, white);
+  background: #fff;
+  box-shadow: 0 16px 28px -17px rgba(3,74,132,.56), inset 0 1px 0 #fff;
+}
+.homeQuickCardItem:hover::after {
+  transform: scale(1.35) translate(-6px, 6px);
+  opacity: .9;
+}
+.homeQuickCardItem:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--quick-accent, #168ee8) 34%, transparent);
+  outline-offset: 3px;
+}
+.homeQuickCardIcon {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 0;
+  color: var(--quick-accent, #0878d1);
+  background: radial-gradient(circle, rgba(232,247,255,.72) 0, rgba(255,255,255,.18) 60%, transparent 74%);
+  display: grid;
+  place-items: center;
+  margin-bottom: 5px;
+  overflow: visible;
+  border: 0;
+  box-shadow: none;
+  transform: perspective(240px) rotateX(2deg);
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .32s ease;
+}
+/* Unique tinted backgrounds per icon position */
+.homeQuickCardItem:hover .homeQuickCardIcon {
+  transform: perspective(240px) rotateX(0) scale(1.06) translateY(-2px);
+  box-shadow: none;
+}
+
+.homeQuickCardIcon.hasCustomImage {
+  overflow: hidden;
+  padding: 4px;
+  background: #fff;
+  border: 1px solid #e2edf5;
+  border-radius: 16px;
+}
+.homeQuickCardIcon img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+}
+.homeQuickCardIcon svg {
+  width: 48px;
+  height: 48px;
+  overflow: visible;
+  filter: drop-shadow(0 3px 3px rgba(17, 75, 122, .10));
+  transition: transform 0.3s cubic-bezier(.16,1,.3,1), filter .3s ease;
+  display: block;
+}
+.quickServiceSvg .quickIconAccent {
+  stroke: #16a36a;
+  stroke-width: 2.8;
+}
+.quickServiceSvg .quickIconAccentFill {
+  fill: #16a36a;
+  stroke: rgba(255,255,255,.9);
+}
+.quickServiceSvg .quickIconCurrency {
+  fill: #fff;
+  stroke: none;
+  font: 800 12px/1 Arial, sans-serif;
+}
+.quickServiceSvg .quickIconDepth {
+  stroke: currentColor;
+  stroke-width: 4;
+  opacity: .13;
+}
+.quickServiceSvg .quickIconShine {
+  stroke: #fff;
+  stroke-width: 2.3;
+  opacity: .72;
+}
+.quickServiceSvg .quickIconBadge circle {
+  fill: #ffd24d;
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+.quickServiceSvg .quickIconBadge path {
+  stroke: #e53b4f;
+  stroke-width: 1.8;
+}
+.homeQuickCardItem:hover .homeQuickCardIcon svg {
+  transform: translateY(-1px) rotate(-1deg);
+  filter: drop-shadow(0 8px 7px rgba(17, 75, 122, .22));
+}
+.homeQuickCardTitle {
+  font-size: 11.5px;
+  line-height: 1.28;
+  font-weight: 600;
+  color: #073e6b;
+  text-shadow: 0 1px 0 rgba(255,255,255,.88);
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  letter-spacing: -0.15px;
+  transition: color 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homeQuickCardItem,
+  .homeQuickCardItem::after,
+  .homeQuickCardIcon,
+  .homeQuickCardIcon svg { transition: none; }
+}
+.homeQuickCardItem:hover .homeQuickCardTitle {
+  color: #075db5;
+}
+
+/* Nút điều hướng chuyển slide trái/phải */
+.homeQuickNavBtn {
+  position: absolute;
+  top: 48%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #dce8f2;
+  background: #ffffff;
+  color: #1a4d7a;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 4px 14px rgba(10, 50, 90, 0.14);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+.homeQuickNavBtn:hover {
+  background: #075db5;
+  color: #ffffff;
+  border-color: #075db5;
+  transform: translateY(-50%) scale(1.08);
+}
+.homeQuickNavBtn.prev { left: -6px; }
+.homeQuickNavBtn.next { right: -6px; }
+
+/* Legacy support fallback */
+.homeQuickWrap { position:relative; z-index:8; margin-top:-36px; padding:0 12px; }
+.homeQuickGrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); overflow:hidden; border:1px solid rgba(222,236,247,.85); border-radius:24px; background:rgba(255,255,255,.96); box-shadow:0 14px 40px -10px rgba(10,60,110,.14); }
+.homeQuickItem { min-width:0; min-height:128px; display:flex; flex-direction:column; align-items:center; justify-content:center; border-right:1px solid #edf3f8; padding:18px 10px 16px; text-align:center; text-decoration:none; }
+.homeQuickIcon { width:48px; height:48px; display:grid; place-items:center; border-radius:15px; color:#0b6fd0; background:#edf5fd; }
+.homeQuickItem strong { margin-top:11px; color:#0f2942; font-size:13.5px; font-weight:700; }
+.homeQuickItem small { margin-top:3.5px; color:#627d98; font-size:11.5px; }
 .homePortalPage .noticeTicker { margin:18px auto 0; }
 .homePortalPage .noticeTickerInner { min-height:40px; background:#fff; }
+.homeQuickUpdates {
+  position: relative;
+  z-index: 7;
+  margin: 8px auto 0;
+  padding: 0 16px;
+}
+.homeQuickUpdatesInner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid #dbeaf5;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 10px 28px -22px rgba(5,73,127,.42);
+}
+.homeQuickUpdatesHeading {
+  min-width: 126px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border-radius: 11px;
+  color: #fff;
+  background: linear-gradient(135deg,#0878d1,#0754a8);
+  font-size: 11px;
+  letter-spacing: .35px;
+}
+.homeQuickUpdatesPulse {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border: 2px solid rgba(255,255,255,.58);
+  border-radius: 50%;
+  background: #ffd24d;
+  box-shadow: 0 0 0 4px rgba(255,210,77,.18);
+}
+.homeQuickUpdatesList {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 10px;
+}
+.homeQuickUpdateItem {
+  min-width: 0;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 11px;
+  border: 1px solid #e2edf5;
+  border-radius: 11px;
+  color: #123d60;
+  background: #f8fcff;
+  text-decoration: none;
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.homeQuickUpdateItem.procurement { background: #f7fdf9; }
+.homeQuickUpdateItem:hover {
+  transform: translateY(-2px);
+  border-color: #9dcbea;
+  box-shadow: 0 8px 18px -14px rgba(8,120,209,.5);
+}
+.homeQuickUpdateIcon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: #fff;
+  background: #0878d1;
+  font-size: 15px;
+  font-weight: 900;
+}
+.homeQuickUpdateItem.procurement .homeQuickUpdateIcon { background:#16a36a; }
+.homeQuickUpdateContent { min-width:0; display:grid; gap:2px; }
+.homeQuickUpdateContent small { color:#0878d1; font-size:9px; font-weight:850; letter-spacing:.35px; }
+.homeQuickUpdateItem.procurement small { color:#138458; }
+.homeQuickUpdateContent strong { overflow:hidden; color:#153e5f; font-size:12px; font-weight:700; text-overflow:ellipsis; white-space:nowrap; }
+.homeQuickUpdateArrow { margin-left:auto; color:#7b9bb3; font-size:17px; }
+@media (max-width: 800px) {
+  .homeQuickUpdates { padding:0 8px; }
+  .homeQuickUpdatesInner { grid-template-columns:1fr; gap:8px; }
+  .homeQuickUpdatesHeading { min-height:34px; }
+  .homeQuickUpdatesList { grid-template-columns:1fr; }
+}
 
 .homePortalPage .homeSections { width:min(1180px,calc(100% - 36px)); display:grid; grid-template-columns:repeat(12,minmax(0,1fr)); gap:20px; margin:22px auto 34px; }
 .homePortalPage .configurableHomeSection { grid-column:1/-1; overflow:hidden; border:1px solid #e0eaf1; border-radius:var(--section-global-border-radius,18px); padding:var(--section-padding-top,var(--section-global-padding-top,28px)) 24px var(--section-padding-bottom,var(--section-global-padding-bottom,28px)); background:var(--section-background,var(--section-global-background,#fff)); box-shadow:0 8px 25px rgba(20,67,99,.055); }
@@ -1397,10 +1702,43 @@ h3 { line-height:1.35; }
   .homeQuickGrid { grid-template-columns:repeat(4,1fr); }
   .homeQuickItem:nth-child(4) { border-right:0; }
   .homeQuickItem:nth-child(-n+4) { border-bottom:1px solid #e5edf3; }
-  .homeSpecialtyShowcase { grid-template-columns:1fr 1fr; }
-  .homeBookingCard { grid-column:1/-1; min-height:270px; }
+  .homeQuickSliderWrap {
+    margin-top: -32px;
+    padding: 0 8px;
+  }
+  .homeQuickCardItem {
+    flex: 0 0 112px;
+    min-width: 112px;
+    padding: 12px 8px 11px;
+  }
 }
 @media (max-width: 900px) {
+  .homeQuickSliderWrap {
+    margin-top: 10px;
+    padding: 0 4px;
+  }
+  .homeQuickCardItem {
+    flex: 0 0 112px;
+    min-width: 112px;
+    border-radius: 14px;
+  }
+  .homeQuickTrack { justify-content: flex-start; }
+  .homeQuickCardIcon {
+    width: 50px;
+    height: 50px;
+    border-radius: 0;
+    margin-bottom: 5px;
+  }
+  .homeQuickCardIcon svg {
+    width: 48px;
+    height: 48px;
+  }
+  .homeQuickCardTitle {
+    font-size: 11.5px;
+  }
+  .homeQuickNavBtn {
+    display: none;
+  }
   .utilityContact span { display:none; }
   .hospitalMastheadInner { min-height:92px; }
   .mastheadLogo { width:64px; height:64px; }
@@ -1428,12 +1766,18 @@ h3 { line-height:1.35; }
   .navHomeButton { width:44px; height:50px; }
   .scrollingNotice { height:28px; }
   .homePortalPage .heroBannerCarousel { height:clamp(180px,56vw,320px); min-height:180px; }
-  .homeQuickWrap { margin-top:0; }
-  .homeQuickGrid { width:100%; grid-template-columns:repeat(4,1fr); border-radius:0; border-left:0; border-right:0; box-shadow:0 8px 20px rgba(19,67,101,.08); }
-  .homeQuickItem { min-height:96px; padding:10px 5px; }
-  .homeQuickIcon { width:34px; height:34px; }
+  .homeQuickSliderWrap { margin-top: 10px; padding: 0 4px; }
+  .homeQuickTrack { gap: 10px; padding: 6px 2px 14px; }
+  .homeQuickCardItem { flex: 0 0 108px; min-width: 108px; padding: 12px 6px 10px; border-radius: 16px; }
+  .homeQuickCardIcon { width: 48px; height: 48px; border-radius: 0; margin-bottom: 5px; }
+  .homeQuickCardIcon svg { width: 46px; height: 46px; }
+  .homeQuickCardTitle { font-size: 11px; }
+  .homeQuickWrap { margin-top:12px; padding:0 8px; }
+  .homeQuickGrid { width:100%; grid-template-columns:repeat(4,1fr); border-radius:18px; border:1px solid #dce8f0; box-shadow:0 8px 20px rgba(10,60,110,.08); }
+  .homeQuickItem { min-height:98px; padding:12px 6px; }
+  .homeQuickIcon { width:40px; height:40px; border-radius:12px; }
   .homeQuickIcon svg { width:20px; height:20px; }
-  .homeQuickItem strong { font-size:8.5px; }
+  .homeQuickItem strong { font-size:11px; margin-top:7px; }
   .homeQuickItem small { display:none; }
   .homePortalPage .noticeTicker { margin-top:10px; }
   .homePortalPage .homeSections { width:min(100% - 20px,1180px); gap:12px; margin-top:12px; }
@@ -1743,6 +2087,46 @@ h3 { line-height:1.35; }
   display: block;
   margin-top: 6px;
   font-size: 10.5px;
+}
+.assistantClarifyOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 9px;
+}
+.assistantClarifyOptions button {
+  border: 1px solid #b9d9ee;
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: #0754a8;
+  background: #f5fbff;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.assistantRating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 9px;
+  padding-top: 7px;
+  border-top: 1px solid #e7eef3;
+}
+.assistantRating span {
+  margin-right: auto;
+  color: #708596;
+  font-size: 9px;
+}
+.assistantRating button {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #d8e5ee;
+  border-radius: 7px;
+  background: #fff;
+  cursor: pointer;
 }
 
 .assistantSendError {
@@ -3637,8 +4021,8 @@ body {
   font-size: var(--site-base-font-size, 16px);
 }
 /* The legacy homepage used many compact px values. Scale typography only, not images/cards. */
-.homePortalPage .homeQuickItem strong { font-size: var(--site-fs-11, 12.65px); }
-.homePortalPage .homeQuickItem small { font-size: var(--site-fs-8-5, 9.775px); }
+.homePortalPage .homeQuickItem strong { font-size: var(--site-fs-12, 13.5px); }
+.homePortalPage .homeQuickItem small { font-size: var(--site-fs-10, 11px); }
 .homePortalPage .homeSectionHead h2 { font-size: var(--section-title-size, 30px); }
 .homePortalPage .homeSectionHead p { font-size: var(--site-fs-12, 13.8px); }
 .homePortalPage .homeSectionHead > a,

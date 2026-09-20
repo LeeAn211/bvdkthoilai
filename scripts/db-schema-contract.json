@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260919_054_add_custom_columns_to_nurse_schedules",
-  "schemaSha256": "a72f18ed9bf7e11b2d578cd30f417a142b0f862b3c712606e6a20f55b2972cca"
+  "migrationId": "20260920_057_add_booking_route_switch",
+  "schemaSha256": "e74e4bb9e99196357827bc46e029d6d607a210f2a9f78d12dd4926659a5d9daf"
 }

@@ -82,10 +82,23 @@ export const ChatbotSettings: GlobalConfig = {
       type: 'textarea',
       defaultValue: 'Tôi chưa hiểu rõ câu hỏi. Bạn hãy chọn một mục gợi ý hoặc liên hệ trực tiếp với bệnh viện để được hỗ trợ.',
     },
+    {
+      type: 'collapsible',
+      label: 'Nội dung trả lời tự động của hệ thống',
+      admin: { initCollapsed: true, description: 'Có thể dùng các biến {{TITLE}}, {{ITEMS}} và {{HOTLINE}}. Dữ liệu thực vẫn được lấy từ đúng chuyên mục trên website.' },
+      fields: [
+        { name: 'emergencyResponse', label: 'Cảnh báo cấp cứu', type: 'textarea', defaultValue: 'Dấu hiệu bạn mô tả có thể cần được cấp cứu. Vui lòng gọi ngay Bệnh viện Đa khoa Khu vực Thới Lai theo số {{HOTLINE}} hoặc gọi 115. Không tự dùng thuốc và không chờ chatbot tư vấn thêm nếu tình trạng đang nặng lên.' },
+        { name: 'scheduleResponseTemplate', label: 'Mẫu trả lời lịch khám', type: 'textarea', defaultValue: 'Lịch khám mới nhất đang được bệnh viện công bố: {{TITLE}}. Bạn hãy mở trang Lịch khám để xem bác sĩ, chuyên khoa và thời gian cụ thể.' },
+        { name: 'workingHoursResponseTemplate', label: 'Mẫu trả lời giờ làm việc', type: 'textarea', defaultValue: 'Thời gian tiếp nhận và khám bệnh đang được bệnh viện công bố:\n{{ITEMS}}' },
+        { name: 'vaccineResponseTemplate', label: 'Mẫu trả lời vắc xin', type: 'textarea', defaultValue: 'Các vắc xin đang được cập nhật là còn sẵn gồm: {{ITEMS}}. Tình trạng có thể thay đổi, vui lòng xem danh mục chi tiết trước khi đăng ký.' },
+        { name: 'noticeResponseTemplate', label: 'Mẫu trả lời thông báo', type: 'textarea', defaultValue: 'Thông báo mới nhất: {{TITLE}}' },
+        { name: 'procurementResponseTemplate', label: 'Mẫu trả lời đấu thầu – mua sắm', type: 'textarea', defaultValue: 'Thông tin Đấu thầu – Mua sắm mới nhất: {{TITLE}}' },
+        { name: 'priceResponse', label: 'Trả lời bảng giá – viện phí', type: 'textarea', defaultValue: 'Bảng giá dịch vụ và viện phí được cập nhật trực tiếp trên trang tra cứu của bệnh viện. Bạn có thể tìm theo tên dịch vụ để xem mức giá hiện hành.' },
+      ],
+    },
     { name: 'fallbackLinkLabel', label: 'Tên nút liên kết của câu trả lời mặc định', type: 'text', defaultValue: 'Liên hệ bệnh viện' },
     { name: 'fallbackLinkUrl', label: 'Đường dẫn liên kết của câu trả lời mặc định', type: 'text', defaultValue: '/lien-he' },
     { name: 'handoffEnabled', label: 'Cho phép chuyển tiếp tư vấn viên', type: 'checkbox', defaultValue: true },
     { name: 'logConversations', label: 'Lưu nhật ký hội thoại để thống kê', type: 'checkbox', defaultValue: true },
   ],
 }
-

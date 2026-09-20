@@ -75,10 +75,16 @@ export interface AdminDashboardClientProps {
   timelineData: MonthData[]
   departmentStats: DepartmentStat[]
   satisfactionScore: number
+  satisfactionCriteria: Array<{ name: string; score: string; percent: number; sampleSize: number }>
   surveyResponses: number
   slaResolvedPercent: number
+  feedbackAvgHours: number
   totalAppointments?: number
   clinicalProtocols?: number
+  protocolGroups: Array<{ name: string; count: number; percent: number; color: string; tag: string }>
+  effectiveProtocols: number
+  workloadData: Array<{ day: string; fullDay: string; appointments: number; emergency: number; total: number }>
+  workloadTimeLabel: string
   contentBreakdown?: any[]
   totalContent?: number
   totalFeedback?: number
@@ -99,10 +105,16 @@ export default function AdminDashboardClient({
   timelineData,
   departmentStats,
   satisfactionScore,
+  satisfactionCriteria,
   surveyResponses,
   slaResolvedPercent,
+  feedbackAvgHours,
   totalAppointments,
   clinicalProtocols,
+  protocolGroups,
+  effectiveProtocols,
+  workloadData,
+  workloadTimeLabel,
   contentBreakdown = [],
   totalContent = 0,
   totalFeedback = 0,
@@ -260,11 +272,16 @@ export default function AdminDashboardClient({
         timeline={timelineData}
         departmentStats={departmentStats}
         satisfactionScore={satisfactionScore}
-        totalSurveys={surveyResponses || 120}
+        satisfactionCriteria={satisfactionCriteria}
+        totalSurveys={surveyResponses}
         slaRate={slaResolvedPercent}
-        feedbackAvgHours={4.5}
+        feedbackAvgHours={feedbackAvgHours}
         totalAppointments={totalAppointments}
         clinicalProtocols={clinicalProtocols}
+        protocolGroups={protocolGroups}
+        effectiveProtocols={effectiveProtocols}
+        workloadData={workloadData}
+        workloadTimeLabel={workloadTimeLabel}
         showAreaChart={charts.showAreaChart}
         showDepartmentBar={charts.showDepartmentBar}
         showSatisfactionGauge={charts.showSatisfactionGauge}
@@ -390,4 +407,3 @@ export default function AdminDashboardClient({
     </div>
   )
 }
-

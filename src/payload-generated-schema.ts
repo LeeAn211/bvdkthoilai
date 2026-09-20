@@ -12176,7 +12176,9 @@ export const _social_settings_v = pgTable(
 export const medpro_settings = pgTable("medpro_settings", {
   id: serial("id").primaryKey(),
   enabled: boolean("enabled").default(true),
+  useFacilityBooking: boolean("use_facility_booking").default(false),
   url: varchar("url"),
+  facilityUrl: varchar("facility_url").default("/dat-lich-kham"),
   label: varchar("label").default("Đặt lịch khám"),
   openNewTab: boolean("open_new_tab").default(true),
   updatedAt: timestamp("updated_at", {
@@ -12196,7 +12198,9 @@ export const _medpro_settings_v = pgTable(
   {
     id: serial("id").primaryKey(),
     version_enabled: boolean("version_enabled").default(true),
+    version_useFacilityBooking: boolean("version_use_facility_booking").default(false),
     version_url: varchar("version_url"),
+    version_facilityUrl: varchar("version_facility_url").default("/dat-lich-kham"),
     version_label: varchar("version_label").default("Đặt lịch khám"),
     version_openNewTab: boolean("version_open_new_tab").default(true),
     version_updatedAt: timestamp("version_updated_at", {
@@ -17691,6 +17695,13 @@ export const chatbot_settings = pgTable(
     fallbackResponse: varchar("fallback_response").default(
       "Tôi chưa hiểu rõ câu hỏi. Bạn hãy chọn một mục gợi ý hoặc liên hệ trực tiếp với bệnh viện để được hỗ trợ.",
     ),
+    emergencyResponse: varchar("emergency_response"),
+    scheduleResponseTemplate: varchar("schedule_response_template"),
+    workingHoursResponseTemplate: varchar("working_hours_response_template"),
+    vaccineResponseTemplate: varchar("vaccine_response_template"),
+    noticeResponseTemplate: varchar("notice_response_template"),
+    procurementResponseTemplate: varchar("procurement_response_template"),
+    priceResponse: varchar("price_response"),
     fallbackLinkLabel: varchar("fallback_link_label").default(
       "Liên hệ bệnh viện",
     ),

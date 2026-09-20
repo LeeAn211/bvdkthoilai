@@ -4,31 +4,17 @@ export const transactional = false
 
 export async function up({ client }) {
   // 1. Thêm giá trị 'patient-portal-services' vào các enum type của homepage sections
-  await client.query(`
-    DO $$
-    BEGIN
-      IF NOT EXISTS (
-        SELECT 1 FROM pg_enum 
-        JOIN pg_type ON pg_enum.enumtypid = pg_type.oid 
-        WHERE pg_type.typname = 'enum_homepage_sections_type' AND pg_enum.enumlabel = 'patient-portal-services'
-      ) THEN
-        ALTER TYPE "enum_homepage_sections_type" ADD VALUE 'patient-portal-services';
-      END IF;
-    END $$;
-  `)
+  try {
+    await client.query(`ALTER TYPE "enum_homepage_sections_type" ADD VALUE IF NOT EXISTS 'patient-portal-services';`)
+  } catch (err) {
+    console.warn('Lưu ý khi thêm enum patient-portal-services vào enum_homepage_sections_type:', err.message)
+  }
 
-  await client.query(`
-    DO $$
-    BEGIN
-      IF NOT EXISTS (
-        SELECT 1 FROM pg_enum 
-        JOIN pg_type ON pg_enum.enumtypid = pg_type.oid 
-        WHERE pg_type.typname = 'enum__homepage_v_version_sections_type' AND pg_enum.enumlabel = 'patient-portal-services'
-      ) THEN
-        ALTER TYPE "enum__homepage_v_version_sections_type" ADD VALUE 'patient-portal-services';
-      END IF;
-    END $$;
-  `)
+  try {
+    await client.query(`ALTER TYPE "enum__homepage_v_version_sections_type" ADD VALUE IF NOT EXISTS 'patient-portal-services';`)
+  } catch (err) {
+    console.warn('Lưu ý khi thêm enum patient-portal-services vào enum__homepage_v_version_sections_type:', err.message)
+  }
 
   // 2. Tạo enum enum_hp_svc_tabs_source và enum__hp_svc_tabs_v_source
   await client.query(`

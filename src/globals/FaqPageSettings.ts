@@ -5,7 +5,7 @@ export const FaqPageSettings: GlobalConfig = {
   slug: 'faq-page-settings',
   label: 'Trang Hỏi đáp y tế (FAQ)',
   admin: {
-    group: '💬 Chăm sóc người bệnh & Khảo sát',
+    group: '🤖 Trợ lý ảo & Chatbot',
     description: 'Tùy chỉnh tiêu đề, mô tả và thông báo lưu ý trên trang /hoi-dap.',
   },
   access: { read: () => true, update: admins },

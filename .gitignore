@@ -21,6 +21,19 @@ media/
 *.bak
 -s
 
+# Local database utilities with machine-specific credentials
+scripts/check-feedback-page-settings.mjs
+scripts/inspect-contact-settings.mjs
+scripts/inspect-inpatient-settings.mjs
+scripts/inspect-patient-portal.mjs
+scripts/inspect-quality-settings.mjs
+scripts/seed-contact-settings.mjs
+scripts/seed-faq-page.mjs
+scripts/seed-forms-page.mjs
+scripts/seed-inpatient-settings.mjs
+scripts/seed-patient-portal.mjs
+scripts/seed-quality-settings.mjs
+
 # archives
 *.zip
 

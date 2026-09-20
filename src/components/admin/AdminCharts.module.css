@@ -457,6 +457,17 @@
   margin-bottom: 14px;
 }
 
+.chartEmptyState {
+  grid-column: 1 / -1;
+  padding: 24px;
+  border: 1px dashed #cbdde9;
+  border-radius: 12px;
+  color: #688298;
+  background: #f8fbfd;
+  text-align: center;
+  font-size: 12px;
+}
+
 /* 6. Clinical Protocols Distribution Breakdown (Thiết kế y tế chuẩn mực cao cấp) */
 .protocolCardNew {
   display: flex;

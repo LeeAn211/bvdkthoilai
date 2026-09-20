@@ -15,6 +15,8 @@ interface MobileTopBarProps {
   emergencyHotline?: string
   items: any[]
   medproUrl?: string
+  bookingEnabled?: boolean
+  bookingOpenNewTab?: boolean
   socialLinks?: SocialLink[]
   topBarVisibility?: string
   searchVisibility?: string
@@ -66,6 +68,8 @@ export function MobileTopBar({
   emergencyHotline,
   items,
   medproUrl = 'https://medpro.vn/',
+  bookingEnabled = true,
+  bookingOpenNewTab = true,
   socialLinks = [],
   topBarVisibility = 'mobile_only',
   searchVisibility = 'mobile_only',
@@ -197,13 +201,13 @@ export function MobileTopBar({
             </svg>
             Lịch khám
           </a>
-          <a className="mqBtn mqBtnSecondary" href={medproUrl} target="_blank" rel="noreferrer" onClick={handleClose}>
+          {bookingEnabled && <a className="mqBtn mqBtnSecondary" href={medproUrl} target={bookingOpenNewTab ? '_blank' : undefined} rel={bookingOpenNewTab ? 'noreferrer' : undefined} onClick={handleClose}>
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="9" />
               <path d="M12 8v8M8 12h8" />
             </svg>
             Đặt khám
-          </a>
+          </a>}
           <a className="mqBtn mqBtnEmergency" href={`tel:${cleanEmergency}`} title="Gọi cấp cứu 24/24">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M7.4 3.6 10 7.3 8.3 9.1c1.1 2.3 3.1 4.3 5.4 5.4l1.8-1.7 3.7 2.6-.6 3.4c-.2 1-1.1 1.7-2.1 1.6C9.3 19.5 4.5 14.7 3.6 7.5c-.1-1 .6-1.9 1.6-2.1l2.2-.4Z" />

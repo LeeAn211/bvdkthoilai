@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getGlobal } from '@/lib/payload'
+import { resolveBookingConfig } from '@/lib/booking'
 import { mediaUrl } from '@/lib/media'
 import { SocialBrandIcon } from './SocialBrandIcon'
 import styles from './SiteFooter.module.css'
@@ -56,7 +57,8 @@ export async function SiteFooter() {
   const emergencyHotline = contact?.emergencyHotline || settings?.emergencyHotline || hotline
   const email = contact?.email || settings?.email || ''
   const workingHours = contact?.workingHours || settings?.workingHours || ''
-  const medpro = medproSettings?.url || settings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'
+  const booking = resolveBookingConfig(medproSettings, settings)
+  const medpro = booking.url
   const zalo = social?.zaloUrl || settings?.zaloUrl || process.env.NEXT_PUBLIC_ZALO_URL || '#'
   const facebook = social?.facebookUrl || settings?.facebookUrl || ''
   const youtube = social?.youtubeUrl || settings?.youtubeUrl || ''
@@ -71,7 +73,14 @@ export async function SiteFooter() {
   const logo = mediaUrl(settings?.logo)
   const brand = footer?.brandOptions || {}
   const hasManagedColumns = Array.isArray(footer?.columns) && footer.columns.length > 0
-  const columns = (hasManagedColumns ? footer.columns : legacyColumns(medpro, hotline)).filter((column: any) => column?.visible !== false)
+  const columns = (hasManagedColumns ? footer.columns : legacyColumns(medpro, hotline))
+    .filter((column: any) => column?.visible !== false)
+    .map((column: any) => ({
+      ...column,
+      links: Array.isArray(column?.links)
+        ? column.links.filter((link: any) => booking.enabled || !String(link?.label || '').toLowerCase().includes('đặt lịch'))
+        : column?.links,
+    }))
   const bottom = footer?.bottom || {}
 
   return (
@@ -104,10 +113,10 @@ export async function SiteFooter() {
             </div>
 
             <div className={styles.footerActionButtons}>
-              <a
+              {booking.enabled && <a
                 href={medpro}
-                target="_blank"
-                rel="noreferrer"
+                target={booking.openNewTab ? '_blank' : undefined}
+                rel={booking.openNewTab ? 'noreferrer' : undefined}
                 className={styles.footerBookingBtn}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -117,7 +126,7 @@ export async function SiteFooter() {
                   <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
                 <span>Đặt khám trực tuyến</span>
-              </a>
+              </a>}
               <Link href="/quy-trinh-kham-benh" className={styles.footerGuideBtn}>
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />

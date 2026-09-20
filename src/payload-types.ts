@@ -2634,6 +2634,8 @@ export interface SurveyCode {
   createdAt: string;
 }
 /**
+ * Danh sách phiếu khảo sát đã gửi, điểm trung bình và thông tin chiến dịch tương ứng.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "survey-responses".
  */
@@ -6131,13 +6133,20 @@ export interface SocialSetting {
   createdAt?: string | null;
 }
 /**
+ * Chọn dùng Medpro hoặc chuyển toàn bộ nút đặt lịch chính sang form đăng ký tại cơ sở.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "medpro-settings".
  */
 export interface MedproSetting {
   id: number;
   enabled?: boolean | null;
+  /**
+   * Bật khi bệnh viện muốn nhận phiếu đăng ký trực tiếp trên website. Tắt để tiếp tục điều hướng sang Medpro.
+   */
+  useFacilityBooking?: boolean | null;
   url?: string | null;
+  facilityUrl?: string | null;
   label?: string | null;
   openNewTab?: boolean | null;
   updatedAt?: string | null;
@@ -6377,26 +6386,6 @@ export interface Homepage {
    * Khi bật: người dùng lăn chuột trên trang chủ, trình duyệt sẽ tự động hít nhẹ và căn chỉnh chuẩn đỉnh của từng Section (không bị dừng lửng lơ giữa 2 khối).
    */
   enableSectionScrollSnap?: boolean | null;
-  /**
-   * Quản lý toàn bộ các ô dịch vụ nhanh. Có thể thêm/xóa, bật/tắt, kéo thả đổi thứ tự và chọn icon có sẵn hoặc hình riêng từ Media cho từng mục.
-   */
-  quickLinks?:
-    | {
-        visible?: boolean | null;
-        title: string;
-        description?: string | null;
-        url: string;
-        openNewTab?: boolean | null;
-        visualMode?: ('icon' | 'image') | null;
-        icon?: ('calendar' | 'doctor' | 'price' | 'insurance' | 'hospital' | 'map' | 'phone' | 'document') | null;
-        /**
-         * Có thể tải PNG, JPG, WebP hoặc SVG vào Thư viện Media rồi chọn lại tại đây. Khuyên dùng ảnh/icon vuông nền trong suốt.
-         */
-        image?: (number | null) | Media;
-        imageFit?: ('contain' | 'cover') | null;
-        id?: string | null;
-      }[]
-    | null;
   intro?: {
     eyebrow?: string | null;
     title?: string | null;
@@ -8329,6 +8318,13 @@ export interface ChatbotSetting {
       }[]
     | null;
   fallbackResponse?: string | null;
+  emergencyResponse?: string | null;
+  scheduleResponseTemplate?: string | null;
+  workingHoursResponseTemplate?: string | null;
+  vaccineResponseTemplate?: string | null;
+  noticeResponseTemplate?: string | null;
+  procurementResponseTemplate?: string | null;
+  priceResponse?: string | null;
   fallbackLinkLabel?: string | null;
   fallbackLinkUrl?: string | null;
   handoffEnabled?: boolean | null;
@@ -9665,7 +9661,9 @@ export interface SocialSettingsSelect<T extends boolean = true> {
  */
 export interface MedproSettingsSelect<T extends boolean = true> {
   enabled?: T;
+  useFacilityBooking?: T;
   url?: T;
+  facilityUrl?: T;
   label?: T;
   openNewTab?: T;
   updatedAt?: T;
@@ -9844,20 +9842,6 @@ export interface HomepageSelect<T extends boolean = true> {
   showHeroBanners?: T;
   bannerAutoplaySeconds?: T;
   enableSectionScrollSnap?: T;
-  quickLinks?:
-    | T
-    | {
-        visible?: T;
-        title?: T;
-        description?: T;
-        url?: T;
-        openNewTab?: T;
-        visualMode?: T;
-        icon?: T;
-        image?: T;
-        imageFit?: T;
-        id?: T;
-      };
   intro?:
     | T
     | {
@@ -11202,6 +11186,13 @@ export interface ChatbotSettingsSelect<T extends boolean = true> {
         id?: T;
       };
   fallbackResponse?: T;
+  emergencyResponse?: T;
+  scheduleResponseTemplate?: T;
+  workingHoursResponseTemplate?: T;
+  vaccineResponseTemplate?: T;
+  noticeResponseTemplate?: T;
+  procurementResponseTemplate?: T;
+  priceResponse?: T;
   fallbackLinkLabel?: T;
   fallbackLinkUrl?: T;
   handoffEnabled?: T;

@@ -6,7 +6,8 @@ export const SurveyResponses: CollectionConfig = {
   admin: {
     useAsTitle: 'responseCode',
     group: '💬 Chăm sóc người bệnh & Khảo sát',
-    hidden: true,
+    description: 'Danh sách phiếu khảo sát đã gửi, điểm trung bình và thông tin chiến dịch tương ứng.',
+    defaultColumns: ['responseCode', 'campaign', 'department', 'overallScore', 'submittedAt'],
   },
   access: {
     read: moduleAccess('surveys', 'view'),

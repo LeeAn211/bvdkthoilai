@@ -113,6 +113,14 @@ export default async function AdminDashboard() {
     payload.find({ collection: 'doctors', limit: 300, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
   ])
 
+  const [surveyResponseMetrics, surveyAnswerMetrics, feedbackMetrics, clinicalProtocolMetrics, appointmentMetrics] = await Promise.all([
+    payload.find({ collection: 'survey-responses', limit: 5000, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
+    payload.find({ collection: 'survey-answers', limit: 10000, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
+    payload.find({ collection: 'feedback', limit: 5000, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
+    payload.find({ collection: 'clinical-protocols', limit: 1000, depth: 1, overrideAccess: true }).catch(() => ({ docs: [] })),
+    payload.find({ collection: 'appointments', where: { status: { not_equals: 'cancelled' } }, limit: 5000, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
+  ])
+
   // Lấy bài viết chuyên đề động
   const dynamicSections = dynamicSectionsResult?.docs || []
   const dynamicSectionStats = await Promise.all(
@@ -236,7 +244,7 @@ export default async function AdminDashboard() {
       id: 'clinical-protocols',
       title: 'Phác đồ điều trị chuẩn',
       value: clinicalProtocols,
-      badge: `${effectiveProtocols} đang áp dụng`,
+      badge: `${clinicalProtocols} trong danh mục`,
       badgeType: 'success',
       subtext: 'Hướng dẫn chẩn đoán & điều trị chuẩn Bộ Y tế',
       href: '/admin/collections/clinical-protocols',
@@ -593,8 +601,109 @@ export default async function AdminDashboard() {
         { name: 'Khoa Y học cổ truyền', doctors: Math.max(1, doctors - Math.round(doctors * 0.95)), percent: 5, color: '#8b5cf6' },
       ]
 
-  const slaResolvedPercent = totalFeedback ? Math.round((feedbackDone / totalFeedback) * 100) : 100
-  const satisfactionScore = surveyResponses > 0 ? 98.5 : 96.8
+  const scoreToPercent = (raw: unknown) => {
+    const score = Number(raw)
+    if (!Number.isFinite(score) || score <= 0) return null
+    if (score <= 5) return (score / 5) * 100
+    if (score <= 10) return (score / 10) * 100
+    return Math.min(score, 100)
+  }
+  const realSurveyScores = (surveyResponseMetrics.docs as any[])
+    .map((item) => scoreToPercent(item.overallScore))
+    .filter((score): score is number => score !== null)
+  const satisfactionScore = realSurveyScores.length
+    ? Number((realSurveyScores.reduce((sum, score) => sum + score, 0) / realSurveyScores.length).toFixed(1))
+    : 0
+
+  const criteriaDefinitions = [
+    { name: 'Thái độ nhân viên y tế', keywords: ['thái độ', 'nhân viên', 'giao tiếp', 'hướng dẫn'] },
+    { name: 'Cơ sở vật chất & Tiện nghi', keywords: ['cơ sở vật chất', 'tiện nghi', 'vệ sinh'] },
+    { name: 'Minh bạch viện phí, bảng giá', keywords: ['viện phí', 'bảng giá', 'chi phí', 'minh bạch'] },
+    { name: 'Thời gian chờ khám & cấp thuốc', keywords: ['thời gian chờ', 'chờ khám', 'cấp thuốc'] },
+  ]
+  const satisfactionCriteria = criteriaDefinitions.map((definition) => {
+    const scores = (surveyAnswerMetrics.docs as any[])
+      .filter((answer) => definition.keywords.some((keyword) => String(answer.questionSnapshot || '').toLocaleLowerCase('vi').includes(keyword)))
+      .map((answer) => scoreToPercent(answer.score))
+      .filter((score): score is number => score !== null)
+    const percent = scores.length ? Number((scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(1)) : 0
+    return { name: definition.name, score: scores.length ? `${percent}%` : 'Chưa có dữ liệu', percent, sampleSize: scores.length }
+  })
+
+  const operationalFeedback = (feedbackMetrics.docs as any[])
+    .filter((item) => !String(item.code || '').startsWith('KS-'))
+  const operationalFeedbackNew = operationalFeedback.filter((item) => item.status === 'new').length
+  const operationalFeedbackProcessing = operationalFeedback.filter((item) => item.status === 'processing').length
+  const operationalFeedbackDone = operationalFeedback.filter((item) => item.status === 'done').length
+  const operationalFeedbackTotal = operationalFeedback.length
+  const resolvedFeedbackDurations = operationalFeedback
+    .filter((item) => item.status === 'done' && item.createdAt && item.resolvedAt)
+    .map((item) => (new Date(item.resolvedAt).getTime() - new Date(item.createdAt).getTime()) / 3_600_000)
+    .filter((hours) => Number.isFinite(hours) && hours >= 0)
+  const slaResolvedPercent = resolvedFeedbackDurations.length
+    ? Math.round((resolvedFeedbackDurations.filter((hours) => hours <= 24).length / resolvedFeedbackDurations.length) * 100)
+    : 0
+  const feedbackAvgHours = resolvedFeedbackDurations.length
+    ? Number((resolvedFeedbackDurations.reduce((sum, hours) => sum + hours, 0) / resolvedFeedbackDurations.length).toFixed(1))
+    : 0
+
+  const protocolPalette = ['#0f766e', '#0284c7', '#d97706', '#8b5cf6', '#14b8a6', '#e11d48', '#2563eb', '#059669']
+  const protocolDocs = clinicalProtocolMetrics.docs as any[]
+  const protocolGroupMap = new Map<string, { name: string; count: number }>()
+  for (const protocol of protocolDocs) {
+    const specialty = typeof protocol.specialty === 'object' && protocol.specialty ? protocol.specialty : null
+    const key = specialty ? String(specialty.id) : 'unassigned'
+    const name = specialty?.name || specialty?.title || 'Chưa phân chuyên khoa'
+    const current = protocolGroupMap.get(key) || { name, count: 0 }
+    current.count += 1
+    protocolGroupMap.set(key, current)
+  }
+  const protocolTotal = protocolDocs.length
+  const protocolGroups = Array.from(protocolGroupMap.values())
+    .sort((a, b) => b.count - a.count)
+    .map((group, index) => ({
+      ...group,
+      percent: protocolTotal ? Number(((group.count / protocolTotal) * 100).toFixed(1)) : 0,
+      color: protocolPalette[index % protocolPalette.length],
+      tag: group.name,
+    }))
+  const nowTimestamp = Date.now()
+  const effectiveProtocolCount = protocolDocs.filter((protocol) => {
+    const effectiveAt = protocol.effectiveAt ? new Date(protocol.effectiveAt).getTime() : null
+    const issuedAt = protocol.issuedAt ? new Date(protocol.issuedAt).getTime() : null
+    return (!effectiveAt || effectiveAt <= nowTimestamp) && (!issuedAt || issuedAt <= nowTimestamp)
+  }).length
+
+  const weekStart = new Date()
+  weekStart.setHours(0, 0, 0, 0)
+  weekStart.setDate(weekStart.getDate() - ((weekStart.getDay() + 6) % 7))
+  const workloadDays = [
+    { day: 'T2', fullDay: 'Thứ Hai' }, { day: 'T3', fullDay: 'Thứ Ba' },
+    { day: 'T4', fullDay: 'Thứ Tư' }, { day: 'T5', fullDay: 'Thứ Năm' },
+    { day: 'T6', fullDay: 'Thứ Sáu' }, { day: 'T7', fullDay: 'Thứ Bảy' },
+    { day: 'CN', fullDay: 'Chủ Nhật' },
+  ]
+  const appointmentDocs = appointmentMetrics.docs as any[]
+  const localDateKey = (value: Date | string) => {
+    const date = value instanceof Date ? value : new Date(value)
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  }
+  const workloadData = workloadDays.map((label, index) => {
+    const date = new Date(weekStart)
+    date.setDate(weekStart.getDate() + index)
+    const dateKey = localDateKey(date)
+    const appointmentsForDay = appointmentDocs.filter((item) => item.appointmentDate && localDateKey(item.appointmentDate) === dateKey).length
+    return { ...label, appointments: appointmentsForDay, emergency: 0, total: appointmentsForDay }
+  })
+  const timeSlotCounts = new Map<string, number>()
+  for (const appointment of appointmentDocs) {
+    if (!appointment.appointmentDate) continue
+    const appointmentTime = new Date(appointment.appointmentDate).getTime()
+    if (appointmentTime < weekStart.getTime() || appointmentTime >= weekStart.getTime() + 7 * 86_400_000) continue
+    const label = appointment.timeSlotLabel || (appointment.timeSlot === 'morning' ? 'Buổi sáng' : appointment.timeSlot === 'afternoon' ? 'Buổi chiều' : 'Giờ hành chính')
+    timeSlotCounts.set(label, (timeSlotCounts.get(label) || 0) + 1)
+  }
+  const busiestTimeSlot = Array.from(timeSlotCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Chưa có lịch hẹn'
 
   const initialCharts = {
     showAreaChart: dSettings.showAreaChart !== false,
@@ -956,18 +1065,24 @@ export default async function AdminDashboard() {
       timelineData={elevated ? timelineData : []}
       departmentStats={elevated ? departmentStats : []}
       satisfactionScore={elevated ? satisfactionScore : 0}
-      surveyResponses={can('surveys') ? surveyResponses : 0}
+      satisfactionCriteria={elevated ? satisfactionCriteria : []}
+      surveyResponses={can('surveys') ? realSurveyScores.length : 0}
       slaResolvedPercent={can('feedback') ? slaResolvedPercent : 0}
+      feedbackAvgHours={can('feedback') ? feedbackAvgHours : 0}
       totalAppointments={can('appointments') ? appointments : 0}
       clinicalProtocols={can('clinical-protocols') ? clinicalProtocols : 0}
+      protocolGroups={can('clinical-protocols') ? protocolGroups : []}
+      effectiveProtocols={can('clinical-protocols') ? effectiveProtocolCount : 0}
+      workloadData={can('appointments') ? workloadData : []}
+      workloadTimeLabel={can('appointments') ? busiestTimeSlot : 'Không có quyền xem'}
       contentBreakdown={elevated ? contentBreakdown : []}
       totalContent={elevated ? totalContent : 0}
-      totalFeedback={can('feedback') ? totalFeedback : 0}
-      feedbackNew={can('feedback') ? feedbackNew : 0}
-      feedbackProcessing={can('feedback') ? feedbackProcessing : 0}
-      feedbackDone={can('feedback') ? feedbackDone : 0}
-      feedbackDonePercent={can('feedback') ? feedbackDonePercent : '0%'}
-      feedbackProcessingPercent={can('feedback') ? feedbackProcessingPercent : '0%'}
+      totalFeedback={can('feedback') ? operationalFeedbackTotal : 0}
+      feedbackNew={can('feedback') ? operationalFeedbackNew : 0}
+      feedbackProcessing={can('feedback') ? operationalFeedbackProcessing : 0}
+      feedbackDone={can('feedback') ? operationalFeedbackDone : 0}
+      feedbackDonePercent={can('feedback') && operationalFeedbackTotal ? `${Math.round((operationalFeedbackDone / operationalFeedbackTotal) * 100)}%` : '0%'}
+      feedbackProcessingPercent={can('feedback') && operationalFeedbackTotal ? `${Math.round((operationalFeedbackProcessing / operationalFeedbackTotal) * 100)}%` : '0%'}
       accountSummaryNode={<AdminAccountSummary key="account-summary-node" />}
       commandBarNode={elevated ? commandBarNode : null}
       bentoContentNode={elevated ? bentoContentNode : null}

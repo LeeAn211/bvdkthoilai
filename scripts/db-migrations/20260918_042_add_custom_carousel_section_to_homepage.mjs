@@ -4,31 +4,17 @@ export const transactional = false
 
 export async function up({ client }) {
   // 1. Thêm giá trị 'custom-carousel' vào các enum type của homepage sections
-  await client.query(`
-    DO $$
-    BEGIN
-      IF NOT EXISTS (
-        SELECT 1 FROM pg_enum 
-        JOIN pg_type ON pg_enum.enumtypid = pg_type.oid 
-        WHERE pg_type.typname = 'enum_homepage_sections_type' AND pg_enum.enumlabel = 'custom-carousel'
-      ) THEN
-        ALTER TYPE "enum_homepage_sections_type" ADD VALUE 'custom-carousel';
-      END IF;
-    END $$;
-  `)
+  try {
+    await client.query(`ALTER TYPE "enum_homepage_sections_type" ADD VALUE IF NOT EXISTS 'custom-carousel';`)
+  } catch (err) {
+    console.warn('Lưu ý khi thêm enum custom-carousel vào enum_homepage_sections_type:', err.message)
+  }
 
-  await client.query(`
-    DO $$
-    BEGIN
-      IF NOT EXISTS (
-        SELECT 1 FROM pg_enum 
-        JOIN pg_type ON pg_enum.enumtypid = pg_type.oid 
-        WHERE pg_type.typname = 'enum__homepage_v_version_sections_type' AND pg_enum.enumlabel = 'custom-carousel'
-      ) THEN
-        ALTER TYPE "enum__homepage_v_version_sections_type" ADD VALUE 'custom-carousel';
-      END IF;
-    END $$;
-  `)
+  try {
+    await client.query(`ALTER TYPE "enum__homepage_v_version_sections_type" ADD VALUE IF NOT EXISTS 'custom-carousel';`)
+  } catch (err) {
+    console.warn('Lưu ý khi thêm enum custom-carousel vào enum__homepage_v_version_sections_type:', err.message)
+  }
 
   // 2. Tạo enum cho statusType của customCarouselCards
   await client.query(`

@@ -14,6 +14,9 @@ type Message = {
   handoffState?: 'idle' | 'sending' | 'sent' | 'error'
   consultationToken?: string
   resolved?: boolean
+  sourceQuestion?: string
+  rating?: 'up' | 'down'
+  suggestions?: Array<{ label: string; value: string }>
 }
 
 type AssistantProps = {
@@ -28,6 +31,7 @@ type AssistantProps = {
   primaryColor?: string
   hotline?: string
   medproUrl?: string
+  bookingEnabled?: boolean
   inputPlaceholder?: string
   noticeText?: string
   fallbackResponse?: string
@@ -138,6 +142,7 @@ export function WebsiteAssistant({
   primaryColor = '#0878D1',
   hotline = '02923689115',
   medproUrl = 'https://medpro.vn/',
+  bookingEnabled = true,
   inputPlaceholder = 'Nhập câu hỏi của bạn…',
   noticeText = 'Thông tin tư vấn mang tính định hướng y tế. Vui lòng đến trực tiếp cơ sở y tế để được khám chẩn đoán.',
   fallbackResponse = 'Tôi chưa tìm thấy câu trả lời chính xác cho nội dung này. Bạn có thể chọn các gợi ý bên dưới hoặc bấm nút gửi câu hỏi để tư vấn viên hỗ trợ.',
@@ -320,11 +325,14 @@ export function WebsiteAssistant({
 
     // Đặt lịch khám trực tuyến, lấy số trước
     if (q.includes('dat kham') || q.includes('dat lich') || q.includes('lay so') || q.includes('medpro') || q.includes('hen gio') || q.includes('dang ky kham')) {
+      const isExternalBooking = /^https?:\/\//i.test(medproUrl)
       return {
-        text: `ĐĂNG KÝ ĐẶT LỊCH KHÁM TRỰC TUYẾN:\n\nQuý người bệnh có thể đăng ký đặt lịch khám trước qua ứng dụng Medpro để chủ động chọn ngày giờ khám bệnh, giúp giảm thiểu tối đa thời gian xếp hàng chờ đợi tại viện.`,
+        text: isExternalBooking
+          ? `ĐĂNG KÝ ĐẶT LỊCH KHÁM TRỰC TUYẾN:\n\nQuý người bệnh có thể đăng ký đặt lịch khám trước qua ứng dụng Medpro để chủ động chọn ngày giờ khám bệnh, giúp giảm thiểu tối đa thời gian xếp hàng chờ đợi tại viện.`
+          : `ĐĂNG KÝ ĐẶT LỊCH KHÁM TẠI CƠ SỞ:\n\nQuý người bệnh có thể gửi phiếu đăng ký trực tiếp trên website. Bệnh viện sẽ tiếp nhận và liên hệ xác nhận lịch khám.`,
         href: medproUrl,
-        linkLabel: 'Đặt lịch khám trực tuyến qua Medpro',
-        external: true,
+        linkLabel: isExternalBooking ? 'Đặt lịch khám trực tuyến qua Medpro' : 'Đặt lịch khám tại cơ sở',
+        external: isExternalBooking,
       }
     }
 
@@ -446,6 +454,17 @@ export function WebsiteAssistant({
     }
   }
 
+  const rateAnswer = async (messageId: number, rating: 'up' | 'down', question?: string) => {
+    setMessages((current) => current.map((message) => message.id === messageId ? { ...message, rating } : message))
+    try {
+      await fetch('/api/chatbot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feedback: rating, question: question || 'Phản hồi câu trả lời chatbot', sessionId: chatSessionId.current }),
+      })
+    } catch {}
+  }
+
   const send = async (value: string) => {
     const question = value.trim()
     if (!question) return
@@ -469,12 +488,18 @@ export function WebsiteAssistant({
             href: data.linkUrl || undefined,
             linkLabel: data.linkLabel || (data.linkUrl ? 'Xem chi tiết' : undefined),
             external: Boolean(data.openNewTab),
+            sourceQuestion: question,
           },
         ])
         return
       }
+      if (response.ok && Array.isArray(data.suggestions)) {
+        const fallback = answer(question)
+        setMessages((current) => [...current, { id: now + 1, from: 'bot', ...fallback, text: data.answer || fallback.text, sourceQuestion: question, suggestions: data.suggestions }])
+        return
+      }
     } catch {}
-    setMessages((current) => [...current, { id: now + 1, from: 'bot', ...answer(question) }])
+    setMessages((current) => [...current, { id: now + 1, from: 'bot', ...answer(question), sourceQuestion: question }])
   }
 
   const submit = (event: FormEvent) => {
@@ -540,6 +565,22 @@ export function WebsiteAssistant({
                   )}
                   {message.handoffState === 'error' && <small className="assistantSendError">Chưa gửi được. Vui lòng thử lại.</small>}
                   {message.consultationToken && !message.resolved && <small className="assistantWaiting">Đang đợi tư vấn viên phản hồi…</small>}
+                  {message.suggestions && message.suggestions.length > 0 && (
+                    <div className="assistantClarifyOptions">
+                      {message.suggestions.map((suggestion) => (
+                        <button type="button" key={suggestion.value} onClick={() => send(suggestion.value)}>{suggestion.label}</button>
+                      ))}
+                    </div>
+                  )}
+                  {message.from === 'bot' && message.sourceQuestion && (
+                    <div className="assistantRating" aria-label="Đánh giá câu trả lời">
+                      <span>{message.rating ? 'Cảm ơn bạn đã đánh giá' : 'Câu trả lời có hữu ích không?'}</span>
+                      {!message.rating && <>
+                        <button type="button" onClick={() => rateAnswer(message.id, 'up', message.sourceQuestion)} aria-label="Hữu ích">👍</button>
+                        <button type="button" onClick={() => rateAnswer(message.id, 'down', message.sourceQuestion)} aria-label="Chưa đúng">👎</button>
+                      </>}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -548,7 +589,11 @@ export function WebsiteAssistant({
 
           {/* Danh sách chủ đề tra cứu nhanh */}
           <div className="assistantQuickTopics">
-            {quickTopics.filter((topic) => topic.label && topic.value).map((topic, index) => (
+            {quickTopics.filter((topic) => {
+              if (!topic.label || !topic.value) return false
+              if (bookingEnabled) return true
+              return !normalize(`${topic.label} ${topic.value}`).includes('dat lich')
+            }).map((topic, index) => (
               <button type="button" key={`${topic.label}-${index}`} onClick={() => send(topic.value || '')}>
                 {topic.label}
               </button>

@@ -15,6 +15,7 @@ export function MobileBottomNav({
   hotline = '02923686115',
   emergencyHotline,
   medproUrl = 'https://medpro.vn/',
+  bookingOpenNewTab = true,
   navVisibility = 'mobile_only',
   bookingBtnVisibility = 'mobile_only',
   emergencyBtnVisibility = 'mobile_only',
@@ -23,6 +24,7 @@ export function MobileBottomNav({
   hotline?: string
   emergencyHotline?: string
   medproUrl?: string
+  bookingOpenNewTab?: boolean
   navVisibility?: string
   bookingBtnVisibility?: string
   emergencyBtnVisibility?: string
@@ -71,8 +73,8 @@ export function MobileBottomNav({
       {shouldRender(bookingBtnVisibility) && (
         <a
           href={medproUrl}
-          target="_blank"
-          rel="noreferrer"
+          target={bookingOpenNewTab ? '_blank' : undefined}
+          rel={bookingOpenNewTab ? 'noreferrer' : undefined}
           className={`mbnTab mbnBooking ${getVisibilityClass(bookingBtnVisibility)}`}
           aria-label="Đặt khám trực tuyến"
         >

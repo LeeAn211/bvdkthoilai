@@ -33,11 +33,16 @@ export interface AdminChartsProps {
   timeline: MonthData[]
   departmentStats: DepartmentStat[]
   satisfactionScore?: number
+  satisfactionCriteria?: Array<{ name: string; score: string; percent: number; sampleSize: number }>
   totalSurveys?: number
   slaRate?: number
   feedbackAvgHours?: number
   totalAppointments?: number
   clinicalProtocols?: number
+  protocolGroups?: Array<{ name: string; count: number; percent: number; color: string; tag: string }>
+  effectiveProtocols?: number
+  workloadData?: Array<{ day: string; fullDay: string; appointments: number; emergency: number; total: number }>
+  workloadTimeLabel?: string
   contentBreakdown?: ContentBreakdownItem[]
   totalContent?: number
   totalFeedback?: number
@@ -60,12 +65,17 @@ export interface AdminChartsProps {
 export default function AdminCharts({
   timeline,
   departmentStats,
-  satisfactionScore = 96.8,
-  totalSurveys = 120,
-  slaRate = 98.2,
-  feedbackAvgHours = 4.5,
+  satisfactionScore = 0,
+  satisfactionCriteria = [],
+  totalSurveys = 0,
+  slaRate = 0,
+  feedbackAvgHours = 0,
   totalAppointments = 85,
-  clinicalProtocols = 24,
+  clinicalProtocols = 0,
+  protocolGroups = [],
+  effectiveProtocols = 0,
+  workloadData = [],
+  workloadTimeLabel = 'Chưa có lịch hẹn',
   contentBreakdown = [],
   totalContent = 0,
   totalFeedback = 0,
@@ -124,26 +134,9 @@ export default function AdminCharts({
   const circumference = 2 * Math.PI * radius
   const strokeDashoffset = circumference - (satisfactionScore / 100) * circumference
 
-  const criteria = [
-    { name: 'Thái độ nhân viên y tế', score: '98.5%', percent: 98.5 },
-    { name: 'Cơ sở vật chất & Tiện nghi', score: '95.2%', percent: 95.2 },
-    { name: 'Minh bạch viện phí, bảng giá', score: '99.0%', percent: 99.0 },
-    { name: 'Thời gian chờ khám & cấp thuốc', score: '94.6%', percent: 94.6 },
-  ]
-
-  // Weekly Workload Data (Thứ 2 -> Chủ Nhật)
-  const workloadData = [
-    { day: 'T2', fullDay: 'Thứ Hai', appointments: 195, emergency: 38, total: 233 },
-    { day: 'T3', fullDay: 'Thứ Ba', appointments: 180, emergency: 34, total: 214 },
-    { day: 'T4', fullDay: 'Thứ Tư', appointments: 185, emergency: 36, total: 221 },
-    { day: 'T5', fullDay: 'Thứ Năm', appointments: 170, emergency: 32, total: 202 },
-    { day: 'T6', fullDay: 'Thứ Sáu', appointments: 175, emergency: 35, total: 210 },
-    { day: 'T7', fullDay: 'Thứ Bảy', appointments: 125, emergency: 46, total: 171 },
-    { day: 'CN', fullDay: 'Chủ Nhật', appointments: 60, emergency: 52, total: 112 },
-  ]
+  const criteria = satisfactionCriteria
 
   const totalWeeklyIntake = workloadData.reduce((acc, d) => acc + d.total, 0)
-  const totalWeeklyEmergency = workloadData.reduce((acc, d) => acc + d.emergency, 0)
 
   // Coordinates for Weekly Workload SVG Bar Chart
   const wlSvgWidth = 600
@@ -152,20 +145,14 @@ export default function AdminCharts({
   const wlPadY = 25
   const wlWidth = wlSvgWidth - wlPadX * 2
   const wlHeight = wlSvgHeight - wlPadY * 2
-  const maxWlVal = Math.max(...workloadData.map((d) => d.total), 220)
+  const maxWlVal = Math.max(...workloadData.map((d) => d.total), 1)
   const slotW = wlWidth / workloadData.length
   const barW = 14
 
   // Clinical Protocols & Medical Guidelines Breakdown
-  const protoCount = clinicalProtocols || 24
-  const protocolGroups = [
-    { name: 'Khối Hồi sức Cấp cứu & Chống độc', count: Math.max(1, Math.round(protoCount * 0.28)), percent: 28, color: '#0f766e', tag: 'Cấp cứu 24/7' },
-    { name: 'Khối Nội khoa - Nhi khoa', count: Math.max(1, Math.round(protoCount * 0.26)), percent: 26, color: '#0284c7', tag: 'Nội - Nhi' },
-    { name: 'Khối Ngoại khoa & Gây mê HSTC', count: Math.max(1, Math.round(protoCount * 0.20)), percent: 20, color: '#d97706', tag: 'Phẫu thuật' },
-    { name: 'Khối Sản phụ khoa', count: Math.max(1, Math.round(protoCount * 0.14)), percent: 14, color: '#8b5cf6', tag: 'Sản khoa' },
-    { name: 'Khối Y học cổ truyền & PHCN', count: Math.max(1, Math.round(protoCount * 0.08)), percent: 8, color: '#14b8a6', tag: 'Đông y' },
-    { name: 'Khối Cận lâm sàng & Chẩn đoán HA', count: Math.max(1, protoCount - Math.round(protoCount * 0.96)), percent: 4, color: '#e11d48', tag: 'Xét nghiệm' },
-  ]
+  const effectiveProtocolPercent = clinicalProtocols
+    ? Number(((effectiveProtocols / clinicalProtocols) * 100).toFixed(1))
+    : 0
 
   const hasRow1 = showAreaChart || showDepartmentBar
   const hasRow2 = showSatisfactionGauge || showSlaStats
@@ -338,7 +325,7 @@ export default function AdminCharts({
               </svg>
               <div className={styles.gaugeCenter}>
                 <span className={styles.gaugeScore}>{satisfactionScore}%</span>
-                <span className={styles.gaugeLabel}>Rất hài lòng</span>
+                <span className={styles.gaugeLabel}>{totalSurveys > 0 ? 'Điểm quy đổi' : 'Chưa có dữ liệu'}</span>
               </div>
             </div>
 
@@ -358,8 +345,8 @@ export default function AdminCharts({
           </div>
 
           <div className={styles.chartFooter}>
-            <span>Đạt mức 5/5 theo thang đo chuẩn quốc gia</span>
-            <span className={styles.statHighlight}>Xuất sắc</span>
+            <span>Tổng hợp trực tiếp từ các phiếu có điểm hợp lệ</span>
+            <span className={styles.statHighlight}>{totalSurveys} phiếu hợp lệ</span>
           </div>
         </div>
       )}
@@ -375,25 +362,25 @@ export default function AdminCharts({
             </div>
             <div className={styles.headerPill}>
               <span>SLA:</span>
-              <b>{slaRate}% đúng hạn</b>
+              <b>{slaRate}% trong 24h</b>
             </div>
           </div>
 
           <div className={styles.slaStats}>
             <div className={styles.slaBox}>
               <strong className={styles.slaBoxNum}>{feedbackAvgHours}h</strong>
-              <span className={styles.slaBoxLabel}>Thời gian phản hồi TB</span>
-              <span className={styles.slaBoxSub}>↓ Nhanh hơn 1.2h</span>
+              <span className={styles.slaBoxLabel}>Thời gian hoàn tất TB</span>
+              <span className={styles.slaBoxSub}>{feedbackDone} hồ sơ đã hoàn tất</span>
             </div>
             <div className={styles.slaBox}>
               <strong className={styles.slaBoxNum}>{slaRate}%</strong>
               <span className={styles.slaBoxLabel}>Tỷ lệ hoàn tất trong 24h</span>
-              <span className={styles.slaBoxSub}>↑ Đạt chỉ tiêu</span>
+              <span className={styles.slaBoxSub}>Từ hồ sơ có đủ mốc thời gian</span>
             </div>
             <div className={styles.slaBox}>
-              <strong className={styles.slaBoxNum}>100%</strong>
-              <span className={styles.slaBoxLabel}>Bảo mật thông tin</span>
-              <span className={styles.slaBoxSub}>Tuyệt đối an toàn</span>
+              <strong className={styles.slaBoxNum}>{totalFeedback}</strong>
+              <span className={styles.slaBoxLabel}>Tổng phản ánh</span>
+              <span className={styles.slaBoxSub}>{feedbackNew} mới, {feedbackProcessing} đang xử lý</span>
             </div>
           </div>
 
@@ -412,7 +399,7 @@ export default function AdminCharts({
 
           <div className={styles.chartFooter}>
             <span>Mọi phản ánh đều được Ban Giám đốc kiểm tra định kỳ</span>
-            <span className={styles.statHighlight}>Minh bạch 100%</span>
+            <span className={styles.statHighlight}>{feedbackDone}/{totalFeedback} đã xử lý</span>
           </div>
         </div>
       )}
@@ -427,28 +414,28 @@ export default function AdminCharts({
         <div className={styles.chartCard}>
           <div className={styles.cardHeader}>
             <div className={styles.headerInfo}>
-              <span className={styles.categoryTag}>LƯỢNG BỆNH & CẤP CỨU 24/7</span>
-              <h2 className={styles.cardTitle}>Tải lượng Khám bệnh & Cấp cứu trong tuần</h2>
-              <p className={styles.cardSubtitle}>Theo dõi lượt khám ngoại trú & ca tiếp nhận cấp cứu từ Thứ 2 đến Chủ Nhật</p>
+              <span className={styles.categoryTag}>LỊCH HẸN KHÁM TRONG TUẦN</span>
+              <h2 className={styles.cardTitle}>Phân bổ lịch hẹn khám theo ngày</h2>
+              <p className={styles.cardSubtitle}>Dữ liệu lịch hẹn không bị hủy từ Thứ Hai đến Chủ Nhật của tuần hiện tại</p>
             </div>
             <div className={styles.headerPill}>
-              <span>Trực 24/7:</span>
-              <b>100% Thông suốt</b>
+              <span>Nguồn:</span>
+              <b>CMS thực tế</b>
             </div>
           </div>
 
           <div className={styles.workloadStatsHeader}>
             <div className={styles.workloadKpi}>
               <strong className={styles.workloadKpiNum}>{totalWeeklyIntake.toLocaleString('vi-VN')} lượt</strong>
-              <span className={styles.workloadKpiLabel}>Tổng lượt tiếp nhận tuần</span>
+              <span className={styles.workloadKpiLabel}>Tổng lịch hẹn trong tuần</span>
             </div>
             <div className={styles.workloadKpi}>
-              <strong className={styles.workloadKpiNum} style={{ color: '#e11d48' }}>{totalWeeklyEmergency} ca</strong>
-              <span className={styles.workloadKpiLabel}>Tiếp nhận Cấp cứu 24/7</span>
+              <strong className={styles.workloadKpiNum} style={{ color: '#64748b' }}>Chưa kết nối</strong>
+              <span className={styles.workloadKpiLabel}>Dữ liệu tiếp nhận cấp cứu</span>
             </div>
             <div className={styles.workloadKpi}>
-              <strong className={styles.workloadKpiNum} style={{ color: '#0f766e' }}>07:30 - 10:30</strong>
-              <span className={styles.workloadKpiLabel}>Khung giờ cao điểm nhất</span>
+              <strong className={styles.workloadKpiNum} style={{ color: '#0f766e' }}>{workloadTimeLabel}</strong>
+              <span className={styles.workloadKpiLabel}>Khung giờ có nhiều lịch hẹn nhất</span>
             </div>
           </div>
 
@@ -458,10 +445,6 @@ export default function AdminCharts({
                 <linearGradient id="aptBarGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#0d9488" />
                   <stop offset="100%" stopColor="#14b8a6" />
-                </linearGradient>
-                <linearGradient id="emgBarGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#e11d48" />
-                  <stop offset="100%" stopColor="#f43f5e" />
                 </linearGradient>
               </defs>
 
@@ -473,11 +456,8 @@ export default function AdminCharts({
               {workloadData.map((d, idx) => {
                 const slotCenterX = wlPadX + idx * slotW + slotW / 2
                 const aptH = (d.appointments / maxWlVal) * wlHeight
-                const emgH = (d.emergency / maxWlVal) * wlHeight
-                const aptX = slotCenterX - barW - 2
-                const emgX = slotCenterX + 2
+                const aptX = slotCenterX - barW / 2
                 const aptY = wlSvgHeight - wlPadY - aptH
-                const emgY = wlSvgHeight - wlPadY - emgH
                 const isHovered = activeDay?.day === d.day
 
                 return (
@@ -499,18 +479,6 @@ export default function AdminCharts({
                       opacity={isHovered ? 1 : 0.88}
                     />
 
-                    {/* Emergency 24/7 Bar */}
-                    <rect
-                      x={emgX}
-                      y={emgY}
-                      width={barW}
-                      height={emgH}
-                      rx="3"
-                      fill="url(#emgBarGradient)"
-                      className={styles.workloadBarEmergency}
-                      opacity={isHovered ? 1 : 0.88}
-                    />
-
                     {/* Day Label */}
                     <text
                       x={slotCenterX}
@@ -527,7 +495,7 @@ export default function AdminCharts({
                     {isHovered && (
                       <text
                         x={slotCenterX}
-                        y={Math.min(aptY, emgY) - 6}
+                        y={aptY - 6}
                         textAnchor="middle"
                         fill="#0f172a"
                         fontSize="10"
@@ -546,17 +514,13 @@ export default function AdminCharts({
             <div className={styles.chartLegend}>
               <div className={styles.legendItem}>
                 <span className={styles.legendColor} style={{ background: '#0d9488' }} />
-                <span className={styles.legendText}>Khám ngoại trú & Đặt lịch</span>
-              </div>
-              <div className={styles.legendItem}>
-                <span className={styles.legendColor} style={{ background: '#e11d48' }} />
-                <span className={styles.legendText}>Trực Cấp cứu 24/7</span>
+                <span className={styles.legendText}>Lịch hẹn khám không bị hủy</span>
               </div>
             </div>
             <span>
               {activeDay
-                ? `${activeDay.fullDay}: ${activeDay.appointments} khám ngoại trú · ${activeDay.emergency} ca cấp cứu`
-                : 'Rà chuột vào từng cột để xem chi tiết ca tiếp nhận'}
+                ? `${activeDay.fullDay}: ${activeDay.appointments} lịch hẹn khám`
+                : 'Rà chuột vào từng cột để xem số lịch hẹn theo ngày'}
             </span>
           </div>
         </div>
@@ -572,8 +536,8 @@ export default function AdminCharts({
               <p className={styles.cardSubtitle}>Cơ cấu hướng dẫn chẩn đoán & phác đồ theo các khối chuyên môn y tế</p>
             </div>
             <div className={styles.headerPill}>
-              <span>Quy chuẩn:</span>
-              <b>Bộ Y tế</b>
+              <span>Dữ liệu:</span>
+              <b>CMS thực tế</b>
             </div>
           </div>
 
@@ -616,11 +580,14 @@ export default function AdminCharts({
                 </div>
               </div>
             ))}
+            {protocolGroups.length === 0 && (
+              <div className={styles.chartEmptyState}>Chưa có phác đồ được phân chuyên khoa.</div>
+            )}
           </div>
 
           <div className={styles.chartFooter}>
-            <span>100% Phác đồ ban hành đúng quy chuẩn Hội đồng KHTK</span>
-            <span className={styles.statHighlight}>Đang hiệu lực 100%</span>
+            <span>{clinicalProtocols} phác đồ trong danh mục quản lý</span>
+            <span className={styles.statHighlight}>{effectiveProtocols}/{clinicalProtocols} đang hiệu lực ({effectiveProtocolPercent}%)</span>
           </div>
         </div>
       )}

@@ -14,25 +14,83 @@ import { OurExpertsCarousel } from '@/components/OurExpertsCarousel'
 import { OurExpertsFeaturedGrid } from '@/components/OurExpertsFeaturedGrid'
 import { SpecialtiesCarousel } from '@/components/SpecialtiesCarousel'
 import { CustomCardsCarousel } from '@/components/CustomCardsCarousel'
+import { QuickLinksCardsSlider } from '@/components/QuickLinksCardsSlider'
 import { HomeScrollSnapHandler } from '@/components/HomeScrollSnapHandler'
 import { getCMS, getGlobal, getHomepage } from '@/lib/payload'
 import { mediaFormat, mediaLabel, mediaUrl } from '@/lib/media'
 import { categoryName, getDefaultContentMedia, scientificActivityGroupName } from '@/lib/defaultMedia'
+import { resolveBookingConfig } from '@/lib/booking'
 import type { CSSProperties } from 'react'
 
 export const revalidate = 0
 export const dynamic = 'force-dynamic'
 
 function HomeGlyph({ name }: { name?: string }) {
-  const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
-  if (name === 'doctor') return <svg viewBox="0 0 24 24" aria-hidden="true"><path {...common} d="M8 3v5a4 4 0 0 0 8 0V3M6 3h4M14 3h4M12 12v2a5 5 0 0 0 5 5h1M18 17a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" /></svg>
-  if (name === 'hospital') return <svg viewBox="0 0 24 24" aria-hidden="true"><path {...common} d="M4 21V5h16v16M9 5V2h6v3M9 10h6M12 7v6M7 16h3v5M14 16h3v5" /></svg>
-  if (name === 'price') return <svg viewBox="0 0 24 24" aria-hidden="true"><path {...common} d="m3 12 9-9h7v7l-9 9-7-7ZM15.5 6.5h.01M13 12H7M10 9v6" /></svg>
-  if (name === 'insurance') return <svg viewBox="0 0 24 24" aria-hidden="true"><path {...common} d="M12 3 4 6v5c0 5 3.4 8.4 8 10 4.6-1.6 8-5 8-10V6l-8-3ZM9 12h6M12 9v6" /></svg>
-  if (name === 'map') return <svg viewBox="0 0 24 24" aria-hidden="true"><path {...common} d="M12 22s7-6.1 7-13a7 7 0 1 0-14 0c0 6.9 7 13 7 13ZM12 6v6M9 9h6" /></svg>
-  if (name === 'phone') return <svg viewBox="0 0 24 24" aria-hidden="true"><path {...common} d="M7 3 4 5c-1 1 1 6 5 10s9 6 10 5l2-3-5-3-2 2c-2-1-5-4-6-6l2-2-3-5Z" /></svg>
-  if (name === 'document') return <svg viewBox="0 0 24 24" aria-hidden="true"><path {...common} d="M6 2h8l4 4v16H6V2ZM14 2v5h4M9 12h6M9 16h6" /></svg>
-  return <svg viewBox="0 0 24 24" aria-hidden="true"><path {...common} d="M5 4h14v17H5V4ZM8 2v4M16 2v4M5 9h14M9 14h6M12 11v6" /></svg>
+  const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
+  if (name === 'calendar') return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="3" {...common} />
+      <line x1="16" y1="2" x2="16" y2="6" {...common} />
+      <line x1="8" y1="2" x2="8" y2="6" {...common} />
+      <line x1="3" y1="10" x2="21" y2="10" {...common} />
+      <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" />
+    </svg>
+  )
+  if (name === 'doctor') return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4.5 3h15v4a4.5 4.5 0 0 1-9 0" {...common} />
+      <circle cx="12" cy="7" r="4" {...common} />
+      <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" {...common} />
+      <path d="M19 12v3a3 3 0 0 1-6 0v-1" {...common} />
+      <circle cx="13" cy="15" r="1" fill="currentColor" />
+    </svg>
+  )
+  if (name === 'hospital') return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="2.5" {...common} />
+      <path d="M12 7v6M9 10h6" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" />
+      <path d="M9 21v-4h6v4" {...common} />
+    </svg>
+  )
+  if (name === 'price') return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" {...common} />
+      <path d="M12 6v12M15 9.5a3 3 0 0 0-3-2.5h-1a2.5 2.5 0 0 0 0 5h2a2.5 2.5 0 0 1 0 5H11a3 3 0 0 1-3-2.5" {...common} />
+    </svg>
+  )
+  if (name === 'insurance') return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2l8 3.6v6.4c0 5.2-3.4 9.8-8 11-4.6-1.2-8-5.8-8-11V5.6L12 2z" {...common} />
+      <path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+  if (name === 'map') return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="10" r="3" {...common} />
+      <path d="M12 2a8 8 0 0 0-8 8c0 5.4 8 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z" {...common} />
+    </svg>
+  )
+  if (name === 'phone') return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" {...common} />
+    </svg>
+  )
+  if (name === 'document') return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" {...common} />
+      <polyline points="14 2 14 8 20 8" {...common} />
+      <line x1="16" y1="13" x2="8" y2="13" {...common} />
+      <line x1="16" y1="17" x2="8" y2="17" {...common} />
+      <line x1="10" y1="9" x2="8" y2="9" {...common} />
+    </svg>
+  )
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="3" width="18" height="18" rx="3" {...common} />
+      <line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" />
+      <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" strokeWidth={2.4} strokeLinecap="round" />
+    </svg>
+  )
 }
 
 
@@ -59,21 +117,24 @@ export default async function HomePage() {
   let scientificActivityGroups: any[] = []
   let siteSettings: any = {}
   let quickLinksSettings: any = {}
+  let medproSettings: any = {}
   let defaultMedia: any = { news: '/default-content/news.svg', notices: '/default-content/notices.svg', procurement: '/default-content/procurement.svg' }
   let totals = { news: 0, notices: 0, doctors: 0, departments: 0, services: 0 }
 
   try {
-    const [payload, homepage, settings, contentDefaults, quickSettings] = await Promise.all([
+    const [payload, homepage, settings, contentDefaults, quickSettings, bookingSettings] = await Promise.all([
       getCMS(),
       getHomepage().catch((e: any) => { console.error('[HomePage] getHomepage error:', e?.cause?.message || e?.message || e); return {} }),
       getGlobal('site-settings').catch((e: any) => { console.error('[HomePage] site-settings error:', e?.cause?.message || e?.message || e); return {} }),
       getDefaultContentMedia().catch(() => ({ news: '/default-content/news.svg', notices: '/default-content/notices.svg', procurement: '/default-content/procurement.svg' })),
       getGlobal('quick-links-settings').catch(() => ({})),
+      getGlobal('medpro-settings').catch(() => ({})),
     ])
     home = homepage || {}
     siteSettings = settings || {}
     defaultMedia = contentDefaults
     quickLinksSettings = quickSettings || {}
+    medproSettings = bookingSettings || {}
 
     const [newsResult, noticeResult, procurementResult, documentResult, clinicalProtocolsResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult, scientificActivitiesResult, scientificActivityGroupsResult] = await Promise.all([
       payload.find({ collection: 'news', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 100, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
@@ -147,7 +208,8 @@ export default async function HomePage() {
     console.error('[HomePage] Error loading patient care globals:', e)
   }
 
-  const medpro = siteSettings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'
+  const booking = resolveBookingConfig(medproSettings, siteSettings)
+  const medpro = booking.url
   const builtInHeroImage = '/banners/banner-bvdk-thoi-lai-1920x600.png'
   const configuredHeroSlides = (Array.isArray(home?.banners) ? home.banners : [])
     .filter((item: any) => item.visible !== false && mediaUrl(item.desktopImage))
@@ -170,7 +232,10 @@ export default async function HomePage() {
     ? quickLinksSettings.items
     : (Array.isArray(home?.quickLinks) ? home.quickLinks : fallbackQuickLinks)
   const quickLinksEnabled = quickLinksSettings?.enabled !== false
-  const quickLinks = configuredQuickLinks.filter((item: any) => item?.visible !== false).slice(0, 12)
+  const quickLinks = configuredQuickLinks
+    .filter((item: any) => item?.visible !== false && (booking.enabled || !String(item?.title || '').toLowerCase().includes('đặt lịch')))
+    .map((item: any) => booking.useFacilityBooking && String(item?.title || '').toLowerCase().includes('đặt lịch') ? { ...item, url: booking.url, openNewTab: false } : item)
+    .slice(0, 12)
   const configuredStats = Array.isArray(home?.stats) ? home.stats.filter((item: any) => item?.value && item?.label) : []
   const stats = configuredStats.length ? configuredStats.slice(0, 4) : [
     { value: `${totals.departments || 20}+`, label: 'Khoa & Phòng' },
@@ -763,6 +828,17 @@ export default async function HomePage() {
   }
   // ── HẾT HÀM RENDER ──
 
+  const quickUpdates = [
+    sectionConfig('notices')?.visible !== false && notices[0] ? {
+      type: 'notice', label: 'THÔNG BÁO NHANH', title: notices[0].title,
+      href: `/thong-bao/${notices[0].slug}`,
+    } : null,
+    sectionConfig('procurement')?.visible !== false && procurement[0] ? {
+      type: 'procurement', label: 'ĐẤU THẦU – MUA SẮM', title: procurement[0].title,
+      href: `/dau-thau-mua-sam/${procurement[0].slug}`,
+    } : null,
+  ].filter(Boolean) as Array<{ type: string; label: string; title: string; href: string }>
+
   return (
     <main className="homePortalPage">
       <SiteHeader />
@@ -770,24 +846,38 @@ export default async function HomePage() {
 
       {showHeroBanners && <HeroBannerCarousel slides={heroSlides} intervalSeconds={home?.bannerAutoplaySeconds || 6} bannerWidth={siteSettings?.headerBannerWidth || 1920} />}
 
-      {quickLinksEnabled && quickLinks.length > 0 && <section className={`homeQuickWrap ${showHeroBanners ? 'withHero' : 'withoutHero'}`} aria-label="Dịch vụ nhanh">
-        <div className="container homeQuickGrid">
-          {quickLinks.map((item: any, index: number) => {
-            const quickImage = item.visualMode === 'image' ? mediaUrl(item.image) : ''
-            const external = /^https?:\/\//.test(item.url || '')
-            const openNewTab = item.openNewTab === true || external
-            return <a className="homeQuickItem" href={item.url || '#'} key={item.id || `${item.title}-${index}`} target={openNewTab ? '_blank' : undefined} rel={openNewTab ? 'noopener noreferrer' : undefined}>
-              <span className={`homeQuickIcon ${quickImage ? 'hasCustomImage' : ''}`}>
-                {quickImage ? <img src={quickImage} alt="" style={{ objectFit: item.imageFit === 'cover' ? 'cover' : 'contain' }} /> : <HomeGlyph name={item.icon} />}
-              </span>
-              <strong>{item.title}</strong>
-              <small>{item.description || 'Xem thông tin chi tiết'}</small>
-            </a>
-          })}
-        </div>
-      </section>}
+      {quickLinksEnabled && quickLinks.length > 0 && (
+        <QuickLinksCardsSlider
+          items={quickLinks.map((item: any) => ({
+            ...item,
+            quickImage: item.visualMode === 'image' ? mediaUrl(item.image) : '',
+          }))}
+          showHeroBanners={showHeroBanners}
+        />
+      )}
 
-      {notices.length > 0 && <section className="noticeTicker"><div className="container noticeTickerInner"><span className="noticeLabel">THÔNG BÁO MỚI</span><a href={`/thong-bao/${notices[0]?.slug}`}>{notices[0]?.title}</a><a className="noticeAll" href="/thong-bao">Xem tất cả →</a></div></section>}
+      {quickUpdates.length > 0 && (
+        <section className="homeQuickUpdates" aria-label="Thông tin mới">
+          <div className="container homeQuickUpdatesInner">
+            <div className="homeQuickUpdatesHeading">
+              <span className="homeQuickUpdatesPulse" aria-hidden="true" />
+              <strong>THÔNG TIN MỚI</strong>
+            </div>
+            <div className="homeQuickUpdatesList">
+              {quickUpdates.map((update) => (
+                <a className={`homeQuickUpdateItem ${update.type}`} href={update.href} key={update.type}>
+                  <span className="homeQuickUpdateIcon" aria-hidden="true">{update.type === 'notice' ? '!' : '✓'}</span>
+                  <span className="homeQuickUpdateContent">
+                    <small>{update.label}</small>
+                    <strong>{update.title}</strong>
+                  </span>
+                  <span className="homeQuickUpdateArrow" aria-hidden="true">→</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="homeSections">
         {configuredSections.map((item: any, index: number) => {

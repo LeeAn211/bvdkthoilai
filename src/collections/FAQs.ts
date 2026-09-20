@@ -5,7 +5,7 @@ export const FAQs: CollectionConfig = {
   slug: 'faqs',
   labels: { singular: 'Câu hỏi thường gặp', plural: 'Câu hỏi thường gặp' },
   admin: {
-    useAsTitle: 'question', group: '💬 Chăm sóc người bệnh & Khảo sát', defaultColumns: ['question', 'category', 'active', 'order'],
+    useAsTitle: 'question', group: '🤖 Trợ lý ảo & Chatbot', defaultColumns: ['question', 'category', 'active', 'order'],
     description: 'Thêm từng câu hỏi hoặc dùng khung nhập Excel phía trên danh sách để cập nhật nhanh hàng loạt.',
     components: { beforeList: ['/src/components/admin/FAQExcelImport'] },
   },

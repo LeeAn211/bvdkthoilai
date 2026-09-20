@@ -1,5 +1,6 @@
 import { getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
+import { resolveBookingConfig } from '@/lib/booking'
 import { isExternalUrl, resolveMenuUrl } from '@/lib/navigation'
 import type { CSSProperties, ReactNode } from 'react'
 import { SocialBrandIcon } from './SocialBrandIcon'
@@ -73,6 +74,7 @@ export async function SiteHeader() {
   let social: any = {}
   let theme: any = {}
   let displaySettings: any = {}
+  let medproSettings: any = {}
 
   try {
     settings = await getGlobal('site-settings')
@@ -81,6 +83,7 @@ export async function SiteHeader() {
     try { social = await getGlobal('social-settings') } catch {}
     try { theme = await getGlobal('theme-settings') } catch {}
     try { displaySettings = await getGlobal('display-settings') } catch {}
+    try { medproSettings = await getGlobal('medpro-settings') } catch {}
   } catch {}
 
   const hotline = contact?.hotline || settings?.hotline || process.env.NEXT_PUBLIC_HOTLINE || '02923686115'
@@ -336,7 +339,8 @@ export async function SiteHeader() {
 
   const animClass = `anim-${menuApp.animationStyle || 'slide-down'}`
 
-  const medproUrl = settings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'
+  const booking = resolveBookingConfig(medproSettings, settings)
+  const medproUrl = booking.url
 
   return (
     <div className="siteHeaderRoot" style={shellStyle}>
@@ -445,6 +449,8 @@ export async function SiteHeader() {
         emergencyHotline={emergency}
         items={items}
         medproUrl={medproUrl}
+        bookingEnabled={booking.enabled}
+        bookingOpenNewTab={booking.openNewTab}
         socialLinks={socialLinks}
         topBarVisibility={displaySettings?.mobileTopBar || 'mobile_only'}
         searchVisibility={displaySettings?.mobileTopSearch || 'mobile_only'}

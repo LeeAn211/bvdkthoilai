@@ -5,6 +5,7 @@ import { WebsiteAssistant } from '@/components/WebsiteAssistant'
 import { MobileBottomNav } from '@/components/MobileBottomNav'
 import { getGlobal } from '@/lib/payload'
 import { mediaUrl } from '@/lib/media'
+import { resolveBookingConfig } from '@/lib/booking'
 import '../globals.css'
 import '../styles/00-tokens.css'
 import '../styles/10-public-base.css'
@@ -40,13 +41,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   let theme: any = {}
   let footer: any = {}
   let displaySettings: any = {}
+  let medproSettings: any = {}
   const gaID = process.env.NEXT_PUBLIC_GA_ID
   try { settings = await getGlobal('site-settings') } catch {}
   try { chatbotSettings = await getGlobal('chatbot-settings') } catch {}
   try { theme = await getGlobal('theme-settings') } catch {}
   try { footer = await getGlobal('footer') } catch {}
   try { displaySettings = await getGlobal('display-settings') } catch {}
+  try { medproSettings = await getGlobal('medpro-settings') } catch {}
   const assistant = { ...(settings?.websiteAssistant || {}), ...(chatbotSettings || {}) }
+  const booking = resolveBookingConfig(medproSettings, settings)
   const fontFamily = theme?.fontFamily === 'arial' ? 'Arial, sans-serif' : theme?.fontFamily === 'tahoma' ? 'Tahoma, sans-serif' : '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif'
   const fontScale = Math.max(0.9, Math.min(1.4, Number(theme?.fontScale || 115) / 100))
   const pageHero = theme?.pageHero || {}
@@ -101,7 +105,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           logoUrl={mediaUrl(assistant.assistantLogo || settings?.logo)}
           primaryColor={assistant.primaryColor || settings?.brand?.primaryColor || '#0878D1'}
           hotline={settings?.hotline || settings?.emergencyHotline || process.env.NEXT_PUBLIC_HOTLINE || '02923689115'}
-          medproUrl={settings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'}
+          medproUrl={booking.url}
+          bookingEnabled={booking.enabled}
           inputPlaceholder={assistant.inputPlaceholder || 'Nhập nội dung cần hỏi…'}
           noticeText={assistant.noticeText || 'Thông tin chỉ mang tính tham khảo. Trường hợp cấp cứu, vui lòng gọi bệnh viện ngay.'}
           fallbackResponse={assistant.fallbackResponse || 'Tôi chưa hiểu rõ câu hỏi. Bạn có thể gửi nội dung này cho tư vấn viên.'}
@@ -114,9 +119,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           enabled={footer?.showMobileBar !== false}
           hotline={settings?.hotline || process.env.NEXT_PUBLIC_HOTLINE || '02923686115'}
           emergencyHotline={settings?.emergencyHotline || '02923686115'}
-          medproUrl={settings?.medproUrl || process.env.NEXT_PUBLIC_MEDPRO_URL || 'https://medpro.vn/'}
+          medproUrl={booking.url}
+          bookingOpenNewTab={booking.openNewTab}
           navVisibility={displaySettings?.mobileBottomNav || 'mobile_only'}
-          bookingBtnVisibility={displaySettings?.mobileBottomBookingBtn || 'mobile_only'}
+          bookingBtnVisibility={booking.enabled ? (displaySettings?.mobileBottomBookingBtn || 'mobile_only') : 'off'}
           emergencyBtnVisibility={displaySettings?.mobileBottomEmergencyBtn || 'mobile_only'}
         />
       </body>
