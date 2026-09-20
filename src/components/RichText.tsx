@@ -11,6 +11,17 @@ const hyphenToCamel = (value: string) =>
 
 const converters = ({ defaultConverters }: any) => ({
   ...defaultConverters,
+  // Fix: list node từ Payload DB có thể không có trường `tag`.
+  // ListJSXConverter mặc định dùng `node.tag` trực tiếp → undefined → crash.
+  // Tự suy ra tag từ listType để đảm bảo luôn có giá trị hợp lệ.
+  list: (args: any) => {
+    const { node, nodesToJSX } = args
+    const tag = node.tag || (node.listType === 'number' ? 'ol' : 'ul')
+    const children = nodesToJSX({ nodes: node.children })
+    const Tag = tag as 'ul' | 'ol'
+    return <Tag className={`list-${node?.listType}`}>{children}</Tag>
+  },
+
   upload: (args: any) => {
     const { node } = args
     const uploadValue = node?.value
@@ -127,4 +138,5 @@ export function RichText({ data }: { data: any }) {
     </div>
   )
 }
+
 
