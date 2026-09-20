@@ -641,6 +641,11 @@ export const enum_feedback_status = pgEnum("enum_feedback_status", [
   "processing",
   "done",
 ]);
+export const enum_consult_msgs_sender = pgEnum("enum_consult_msgs_sender", [
+  "user",
+  "staff",
+  "system",
+]);
 export const enum_consultations_status = pgEnum("enum_consultations_status", [
   "new",
   "processing",
@@ -1307,27 +1312,6 @@ export const enum__theme_settings_v_version_page_hero_bg_type = pgEnum(
   "enum__theme_settings_v_version_page_hero_bg_type",
   ["gradient", "solid"],
 );
-export const enum_homepage_quick_links_visual_mode = pgEnum(
-  "enum_homepage_quick_links_visual_mode",
-  ["icon", "image"],
-);
-export const enum_homepage_quick_links_icon = pgEnum(
-  "enum_homepage_quick_links_icon",
-  [
-    "calendar",
-    "doctor",
-    "price",
-    "insurance",
-    "hospital",
-    "map",
-    "phone",
-    "document",
-  ],
-);
-export const enum_homepage_quick_links_image_fit = pgEnum(
-  "enum_homepage_quick_links_image_fit",
-  ["contain", "cover"],
-);
 export const enum_tech_items_image_fit = pgEnum("enum_tech_items_image_fit", [
   "contain",
   "cover-top",
@@ -1471,27 +1455,6 @@ export const enum_homepage_status = pgEnum("enum_homepage_status", [
   "draft",
   "published",
 ]);
-export const enum__homepage_v_version_quick_links_visual_mode = pgEnum(
-  "enum__homepage_v_version_quick_links_visual_mode",
-  ["icon", "image"],
-);
-export const enum__homepage_v_version_quick_links_icon = pgEnum(
-  "enum__homepage_v_version_quick_links_icon",
-  [
-    "calendar",
-    "doctor",
-    "price",
-    "insurance",
-    "hospital",
-    "map",
-    "phone",
-    "document",
-  ],
-);
-export const enum__homepage_v_version_quick_links_image_fit = pgEnum(
-  "enum__homepage_v_version_quick_links_image_fit",
-  ["contain", "cover"],
-);
 export const enum__tech_items_v_image_fit = pgEnum(
   "enum__tech_items_v_image_fit",
   ["contain", "cover-top", "cover-center", "cover-bottom", "fill"],
@@ -6180,6 +6143,31 @@ export const feedback = pgTable(
   ],
 );
 
+export const consult_msgs = pgTable(
+  "consult_msgs",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    sender: enum_consult_msgs_sender("sender").notNull().default("staff"),
+    text: varchar("text").notNull(),
+    sentAt: timestamp("sent_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }).notNull(),
+  },
+  (columns) => [
+    index("consult_msgs_order_idx").on(columns._order),
+    index("consult_msgs_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [consultations.id],
+      name: "consult_msgs_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const consultations = pgTable(
   "consultations",
   {
@@ -6189,6 +6177,11 @@ export const consultations = pgTable(
     status: enum_consultations_status("status").notNull().default("new"),
     staffReply: varchar("staff_reply"),
     answeredAt: timestamp("answered_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    lastMessageAt: timestamp("last_message_at", {
       mode: "string",
       withTimezone: true,
       precision: 3,
@@ -12198,9 +12191,13 @@ export const _medpro_settings_v = pgTable(
   {
     id: serial("id").primaryKey(),
     version_enabled: boolean("version_enabled").default(true),
-    version_useFacilityBooking: boolean("version_use_facility_booking").default(false),
+    version_useFacilityBooking: boolean("version_use_facility_booking").default(
+      false,
+    ),
     version_url: varchar("version_url"),
-    version_facilityUrl: varchar("version_facility_url").default("/dat-lich-kham"),
+    version_facilityUrl: varchar("version_facility_url").default(
+      "/dat-lich-kham",
+    ),
     version_label: varchar("version_label").default("Đặt lịch khám"),
     version_openNewTab: boolean("version_open_new_tab").default(true),
     version_updatedAt: timestamp("version_updated_at", {
@@ -13016,38 +13013,6 @@ export const homepage_banners = pgTable(
   ],
 );
 
-export const homepage_quick_links = pgTable(
-  "homepage_quick_links",
-  {
-    _order: integer("_order").notNull(),
-    _parentID: integer("_parent_id").notNull(),
-    id: varchar("id").primaryKey(),
-    visible: boolean("visible").default(true),
-    title: varchar("title"),
-    description: varchar("description"),
-    url: varchar("url"),
-    openNewTab: boolean("open_new_tab").default(false),
-    visualMode:
-      enum_homepage_quick_links_visual_mode("visual_mode").default("icon"),
-    icon: enum_homepage_quick_links_icon("icon").default("calendar"),
-    image: integer("image_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    imageFit:
-      enum_homepage_quick_links_image_fit("image_fit").default("contain"),
-  },
-  (columns) => [
-    index("homepage_quick_links_order_idx").on(columns._order),
-    index("homepage_quick_links_parent_id_idx").on(columns._parentID),
-    index("homepage_quick_links_image_idx").on(columns.image),
-    foreignKey({
-      columns: [columns["_parentID"]],
-      foreignColumns: [homepage.id],
-      name: "homepage_quick_links_parent_id_fk",
-    }).onDelete("cascade"),
-  ],
-);
-
 export const homepage_stats = pgTable(
   "homepage_stats",
   {
@@ -13835,45 +13800,6 @@ export const _homepage_v_version_banners = pgTable(
       columns: [columns["_parentID"]],
       foreignColumns: [_homepage_v.id],
       name: "_homepage_v_version_banners_parent_id_fk",
-    }).onDelete("cascade"),
-  ],
-);
-
-export const _homepage_v_version_quick_links = pgTable(
-  "_homepage_v_version_quick_links",
-  {
-    _order: integer("_order").notNull(),
-    _parentID: integer("_parent_id").notNull(),
-    id: serial("id").primaryKey(),
-    visible: boolean("visible").default(true),
-    title: varchar("title"),
-    description: varchar("description"),
-    url: varchar("url"),
-    openNewTab: boolean("open_new_tab").default(false),
-    visualMode:
-      enum__homepage_v_version_quick_links_visual_mode("visual_mode").default(
-        "icon",
-      ),
-    icon: enum__homepage_v_version_quick_links_icon("icon").default("calendar"),
-    image: integer("image_id").references(() => media.id, {
-      onDelete: "set null",
-    }),
-    imageFit:
-      enum__homepage_v_version_quick_links_image_fit("image_fit").default(
-        "contain",
-      ),
-    _uuid: varchar("_uuid"),
-  },
-  (columns) => [
-    index("_homepage_v_version_quick_links_order_idx").on(columns._order),
-    index("_homepage_v_version_quick_links_parent_id_idx").on(
-      columns._parentID,
-    ),
-    index("_homepage_v_version_quick_links_image_idx").on(columns.image),
-    foreignKey({
-      columns: [columns["_parentID"]],
-      foreignColumns: [_homepage_v.id],
-      name: "_homepage_v_version_quick_links_parent_id_fk",
     }).onDelete("cascade"),
   ],
 );
@@ -17695,13 +17621,29 @@ export const chatbot_settings = pgTable(
     fallbackResponse: varchar("fallback_response").default(
       "Tôi chưa hiểu rõ câu hỏi. Bạn hãy chọn một mục gợi ý hoặc liên hệ trực tiếp với bệnh viện để được hỗ trợ.",
     ),
-    emergencyResponse: varchar("emergency_response"),
-    scheduleResponseTemplate: varchar("schedule_response_template"),
-    workingHoursResponseTemplate: varchar("working_hours_response_template"),
-    vaccineResponseTemplate: varchar("vaccine_response_template"),
-    noticeResponseTemplate: varchar("notice_response_template"),
-    procurementResponseTemplate: varchar("procurement_response_template"),
-    priceResponse: varchar("price_response"),
+    emergencyResponse: varchar("emergency_response").default(
+      "Dấu hiệu bạn mô tả có thể cần được cấp cứu. Vui lòng gọi ngay Bệnh viện Đa khoa Khu vực Thới Lai theo số {{HOTLINE}} hoặc gọi 115. Không tự dùng thuốc và không chờ chatbot tư vấn thêm nếu tình trạng đang nặng lên.",
+    ),
+    scheduleResponseTemplate: varchar("schedule_response_template").default(
+      "Lịch khám mới nhất đang được bệnh viện công bố: {{TITLE}}. Bạn hãy mở trang Lịch khám để xem bác sĩ, chuyên khoa và thời gian cụ thể.",
+    ),
+    workingHoursResponseTemplate: varchar(
+      "working_hours_response_template",
+    ).default(
+      "Thời gian tiếp nhận và khám bệnh đang được bệnh viện công bố:\n{{ITEMS}}",
+    ),
+    vaccineResponseTemplate: varchar("vaccine_response_template").default(
+      "Các vắc xin đang được cập nhật là còn sẵn gồm: {{ITEMS}}. Tình trạng có thể thay đổi, vui lòng xem danh mục chi tiết trước khi đăng ký.",
+    ),
+    noticeResponseTemplate: varchar("notice_response_template").default(
+      "Thông báo mới nhất: {{TITLE}}",
+    ),
+    procurementResponseTemplate: varchar(
+      "procurement_response_template",
+    ).default("Thông tin Đấu thầu – Mua sắm mới nhất: {{TITLE}}"),
+    priceResponse: varchar("price_response").default(
+      "Bảng giá dịch vụ và viện phí được cập nhật trực tiếp trên trang tra cứu của bệnh viện. Bạn có thể tìm theo tên dịch vụ để xem mức giá hiện hành.",
+    ),
     fallbackLinkLabel: varchar("fallback_link_label").default(
       "Liên hệ bệnh viện",
     ),
@@ -19993,7 +19935,18 @@ export const relations_feedback = relations(feedback, ({ one }) => ({
     relationName: "handledBy",
   }),
 }));
-export const relations_consultations = relations(consultations, () => ({}));
+export const relations_consult_msgs = relations(consult_msgs, ({ one }) => ({
+  _parentID: one(consultations, {
+    fields: [consult_msgs._parentID],
+    references: [consultations.id],
+    relationName: "messages",
+  }),
+}));
+export const relations_consultations = relations(consultations, ({ many }) => ({
+  messages: many(consult_msgs, {
+    relationName: "messages",
+  }),
+}));
 export const relations_feedback_categories = relations(
   feedback_categories,
   ({ one }) => ({
@@ -21782,21 +21735,6 @@ export const relations_homepage_banners = relations(
     }),
   }),
 );
-export const relations_homepage_quick_links = relations(
-  homepage_quick_links,
-  ({ one }) => ({
-    _parentID: one(homepage, {
-      fields: [homepage_quick_links._parentID],
-      references: [homepage.id],
-      relationName: "quickLinks",
-    }),
-    image: one(media, {
-      fields: [homepage_quick_links.image],
-      references: [media.id],
-      relationName: "image",
-    }),
-  }),
-);
 export const relations_homepage_stats = relations(
   homepage_stats,
   ({ one }) => ({
@@ -22138,9 +22076,6 @@ export const relations_homepage = relations(homepage, ({ one, many }) => ({
   banners: many(homepage_banners, {
     relationName: "banners",
   }),
-  quickLinks: many(homepage_quick_links, {
-    relationName: "quickLinks",
-  }),
   intro_image: one(media, {
     fields: [homepage.intro_image],
     references: [media.id],
@@ -22170,21 +22105,6 @@ export const relations__homepage_v_version_banners = relations(
       fields: [_homepage_v_version_banners.mobileImage],
       references: [media.id],
       relationName: "mobileImage",
-    }),
-  }),
-);
-export const relations__homepage_v_version_quick_links = relations(
-  _homepage_v_version_quick_links,
-  ({ one }) => ({
-    _parentID: one(_homepage_v, {
-      fields: [_homepage_v_version_quick_links._parentID],
-      references: [_homepage_v.id],
-      relationName: "version_quickLinks",
-    }),
-    image: one(media, {
-      fields: [_homepage_v_version_quick_links.image],
-      references: [media.id],
-      relationName: "image",
     }),
   }),
 );
@@ -22552,9 +22472,6 @@ export const relations__homepage_v = relations(
     }),
     version_banners: many(_homepage_v_version_banners, {
       relationName: "version_banners",
-    }),
-    version_quickLinks: many(_homepage_v_version_quick_links, {
-      relationName: "version_quickLinks",
     }),
     version_intro_image: one(media, {
       fields: [_homepage_v.version_intro_image],
@@ -23984,6 +23901,7 @@ type DatabaseSchema = {
   enum_categories_scope: typeof enum_categories_scope;
   enum_feedback_type: typeof enum_feedback_type;
   enum_feedback_status: typeof enum_feedback_status;
+  enum_consult_msgs_sender: typeof enum_consult_msgs_sender;
   enum_consultations_status: typeof enum_consultations_status;
   enum_feedback_categories_default_priority: typeof enum_feedback_categories_default_priority;
   enum_feedback_cases_priority: typeof enum_feedback_cases_priority;
@@ -24086,9 +24004,6 @@ type DatabaseSchema = {
   banner_pos: typeof banner_pos;
   enum__theme_settings_v_version_font_family: typeof enum__theme_settings_v_version_font_family;
   enum__theme_settings_v_version_page_hero_bg_type: typeof enum__theme_settings_v_version_page_hero_bg_type;
-  enum_homepage_quick_links_visual_mode: typeof enum_homepage_quick_links_visual_mode;
-  enum_homepage_quick_links_icon: typeof enum_homepage_quick_links_icon;
-  enum_homepage_quick_links_image_fit: typeof enum_homepage_quick_links_image_fit;
   enum_tech_items_image_fit: typeof enum_tech_items_image_fit;
   enum_tech_items_link_mode: typeof enum_tech_items_link_mode;
   enum_expert_items_image_fit: typeof enum_expert_items_image_fit;
@@ -24113,9 +24028,6 @@ type DatabaseSchema = {
   enum_homepage_sections_document_columns: typeof enum_homepage_sections_document_columns;
   enum_homepage_sections_font_family: typeof enum_homepage_sections_font_family;
   enum_homepage_status: typeof enum_homepage_status;
-  enum__homepage_v_version_quick_links_visual_mode: typeof enum__homepage_v_version_quick_links_visual_mode;
-  enum__homepage_v_version_quick_links_icon: typeof enum__homepage_v_version_quick_links_icon;
-  enum__homepage_v_version_quick_links_image_fit: typeof enum__homepage_v_version_quick_links_image_fit;
   enum__tech_items_v_image_fit: typeof enum__tech_items_v_image_fit;
   enum__tech_items_v_link_mode: typeof enum__tech_items_v_link_mode;
   enum__expert_items_v_image_fit: typeof enum__expert_items_v_image_fit;
@@ -24346,6 +24258,7 @@ type DatabaseSchema = {
   _pages_v: typeof _pages_v;
   categories: typeof categories;
   feedback: typeof feedback;
+  consult_msgs: typeof consult_msgs;
   consultations: typeof consultations;
   feedback_categories: typeof feedback_categories;
   feedback_cases: typeof feedback_cases;
@@ -24461,7 +24374,6 @@ type DatabaseSchema = {
   theme_settings: typeof theme_settings;
   _theme_settings_v: typeof _theme_settings_v;
   homepage_banners: typeof homepage_banners;
-  homepage_quick_links: typeof homepage_quick_links;
   homepage_stats: typeof homepage_stats;
   tech_items: typeof tech_items;
   expert_items: typeof expert_items;
@@ -24484,7 +24396,6 @@ type DatabaseSchema = {
   homepage_sections: typeof homepage_sections;
   homepage: typeof homepage;
   _homepage_v_version_banners: typeof _homepage_v_version_banners;
-  _homepage_v_version_quick_links: typeof _homepage_v_version_quick_links;
   _homepage_v_version_stats: typeof _homepage_v_version_stats;
   _tech_items_v: typeof _tech_items_v;
   _expert_items_v: typeof _expert_items_v;
@@ -24684,6 +24595,7 @@ type DatabaseSchema = {
   relations__pages_v: typeof relations__pages_v;
   relations_categories: typeof relations_categories;
   relations_feedback: typeof relations_feedback;
+  relations_consult_msgs: typeof relations_consult_msgs;
   relations_consultations: typeof relations_consultations;
   relations_feedback_categories: typeof relations_feedback_categories;
   relations_feedback_cases: typeof relations_feedback_cases;
@@ -24799,7 +24711,6 @@ type DatabaseSchema = {
   relations_theme_settings: typeof relations_theme_settings;
   relations__theme_settings_v: typeof relations__theme_settings_v;
   relations_homepage_banners: typeof relations_homepage_banners;
-  relations_homepage_quick_links: typeof relations_homepage_quick_links;
   relations_homepage_stats: typeof relations_homepage_stats;
   relations_tech_items: typeof relations_tech_items;
   relations_expert_items: typeof relations_expert_items;
@@ -24822,7 +24733,6 @@ type DatabaseSchema = {
   relations_homepage_sections: typeof relations_homepage_sections;
   relations_homepage: typeof relations_homepage;
   relations__homepage_v_version_banners: typeof relations__homepage_v_version_banners;
-  relations__homepage_v_version_quick_links: typeof relations__homepage_v_version_quick_links;
   relations__homepage_v_version_stats: typeof relations__homepage_v_version_stats;
   relations__tech_items_v: typeof relations__tech_items_v;
   relations__expert_items_v: typeof relations__expert_items_v;

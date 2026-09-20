@@ -2088,6 +2088,40 @@ h3 { line-height:1.35; }
   margin-top: 6px;
   font-size: 10.5px;
 }
+
+.assistantLiveReply {
+  display: flex;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.assistantLiveReply input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #cbddec;
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: #173b57;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.assistantLiveReply input:focus {
+  border-color: var(--assistant-color, #0878d1);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--assistant-color, #0878d1) 14%, transparent);
+}
+
+.assistantLiveReply button {
+  border: 0;
+  border-radius: 10px;
+  padding: 0 13px;
+  background: var(--assistant-color, #0878d1);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
 .assistantClarifyOptions {
   display: flex;
   flex-wrap: wrap;

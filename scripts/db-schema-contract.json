@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260920_057_add_booking_route_switch",
-  "schemaSha256": "e74e4bb9e99196357827bc46e029d6d607a210f2a9f78d12dd4926659a5d9daf"
+  "migrationId": "20260920_059_reconcile_generated_schema",
+  "schemaSha256": "9d8272f6bcda96dbcf36cdf218550b90415a97e8bce2d5322a6eaabbb1a6ca9c"
 }

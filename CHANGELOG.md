@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 2026-09-20 — Sửa lỗi build DB schema contract
+
+- Sinh lại schema trực tiếp bằng Payload thay cho bản đồng bộ thủ công trước đó.
+- Thêm migration `059` để đồng bộ default chatbot và seal đúng schema production.
+- Giữ nguyên các bảng quick-link cũ, không xóa dữ liệu.
+- Prebuild, migration local và full production build đều đạt.
+
+## 2026-09-20 — Tư vấn trực tuyến nhiều tin nhắn
+
+- Nâng yêu cầu tư vấn thành phòng chat nhiều lượt giữa người dùng và tư vấn viên.
+- Người dùng tiếp tục gửi tin ngay trong chatbot; phản hồi Admin tự xuất hiện gần thời gian thực.
+- Bổ sung lịch sử tin nhắn, thời gian hoạt động gần nhất và trạng thái đóng hội thoại trong Admin.
+- Giữ tương thích dữ liệu tư vấn cũ, tăng giới hạn request phù hợp cho chat trực tiếp.
+- Migration `058`, schema contract và typecheck đều đạt.
+
 ## 2026-09-20 — Ngăn chatbot tự đoán câu hỏi mơ hồ
 
 - Không cho câu 1–2 từ tự khớp vào kịch bản dài chỉ vì trùng cụm con.

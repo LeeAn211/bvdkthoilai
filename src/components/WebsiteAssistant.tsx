@@ -13,6 +13,7 @@ type Message = {
   handoffQuestion?: string
   handoffState?: 'idle' | 'sending' | 'sent' | 'error'
   consultationToken?: string
+  consultationMessageKey?: string
   resolved?: boolean
   sourceQuestion?: string
   rating?: 'up' | 'down'
@@ -154,6 +155,7 @@ export function WebsiteAssistant({
   const [open, setOpen] = useState(false)
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [input, setInput] = useState('')
+  const [consultationInputs, setConsultationInputs] = useState<Record<string, string>>({})
   const [sessionReady, setSessionReady] = useState(false)
 
   const [messages, setMessages] = useState<Message[]>([
@@ -202,14 +204,30 @@ export function WebsiteAssistant({
         try {
           const response = await fetch(`/api/consultation?token=${encodeURIComponent(token)}`, { cache: 'no-store' })
           const data = await response.json()
-          if (response.ok && data.reply) {
+          if (response.ok) {
             setMessages((current) => {
-              if (current.some((message) => message.consultationToken === token && message.resolved)) return current
-              const staffMessage: Message = { id: Date.now(), from: 'bot', text: `Tư vấn viên trả lời: ${data.reply}` }
-              return [
-                ...current.map((message) => message.consultationToken === token ? { ...message, resolved: true } as Message : message),
-                staffMessage,
-              ]
+              const existingKeys = new Set(current.map((message) => message.consultationMessageKey).filter(Boolean))
+              const staffMessages = (Array.isArray(data.messages) ? data.messages : [])
+                .filter((item: any) => item?.sender === 'staff' && item?.text)
+                .map((item: any, index: number) => {
+                  const key = `${token}:${item.id || `${item.sentAt || ''}:${item.text}:${index}`}`
+                  return { key, item }
+                })
+                .filter(({ key }: any) => !existingKeys.has(key))
+                .map(({ key, item }: any, index: number): Message => ({
+                  id: Date.now() + index,
+                  from: 'bot',
+                  text: `Tư vấn viên: ${item.text}`,
+                  consultationMessageKey: key,
+                }))
+              if (!staffMessages.length && data.reply) {
+                const legacyKey = `${token}:legacy:${data.reply}`
+                if (!existingKeys.has(legacyKey)) staffMessages.push({ id: Date.now(), from: 'bot', text: `Tư vấn viên: ${data.reply}`, consultationMessageKey: legacyKey })
+              }
+              const updated = current.map((message) => message.consultationToken === token
+                ? { ...message, resolved: data.status === 'closed' } as Message
+                : message)
+              return staffMessages.length ? [...updated, ...staffMessages] : updated
             })
           }
         } catch {
@@ -220,7 +238,7 @@ export function WebsiteAssistant({
       }
     }
     checkReplies()
-    const timer = window.setInterval(checkReplies, 8000)
+    const timer = window.setInterval(checkReplies, 3000)
     return () => window.clearInterval(timer)
   }, [messages])
 
@@ -454,6 +472,23 @@ export function WebsiteAssistant({
     }
   }
 
+  const sendConsultationMessage = async (token: string) => {
+    const question = String(consultationInputs[token] || '').trim()
+    if (!question) return
+    try {
+      const response = await fetch('/api/consultation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, question }),
+      })
+      if (!response.ok) throw new Error('send_failed')
+      setMessages((current) => [...current, { id: Date.now(), from: 'user', text: question }])
+      setConsultationInputs((current) => ({ ...current, [token]: '' }))
+    } catch {
+      setMessages((current) => [...current, { id: Date.now(), from: 'bot', text: 'Chưa gửi được tin nhắn đến tư vấn viên. Vui lòng thử lại.' }])
+    }
+  }
+
   const rateAnswer = async (messageId: number, rating: 'up' | 'down', question?: string) => {
     setMessages((current) => current.map((message) => message.id === messageId ? { ...message, rating } : message))
     try {
@@ -564,7 +599,20 @@ export function WebsiteAssistant({
                     </div>
                   )}
                   {message.handoffState === 'error' && <small className="assistantSendError">Chưa gửi được. Vui lòng thử lại.</small>}
-                  {message.consultationToken && !message.resolved && <small className="assistantWaiting">Đang đợi tư vấn viên phản hồi…</small>}
+                  {message.consultationToken && !message.resolved && <>
+                    <small className="assistantWaiting">Đang kết nối tư vấn trực tuyến…</small>
+                    <div className="assistantLiveReply">
+                      <input
+                        value={consultationInputs[message.consultationToken] || ''}
+                        onChange={(event) => setConsultationInputs((current) => ({ ...current, [message.consultationToken as string]: event.target.value }))}
+                        onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void sendConsultationMessage(message.consultationToken as string) } }}
+                        placeholder="Nhắn tiếp cho tư vấn viên…"
+                        maxLength={3000}
+                      />
+                      <button type="button" onClick={() => void sendConsultationMessage(message.consultationToken as string)}>Gửi</button>
+                    </div>
+                  </>}
+                  {message.consultationToken && message.resolved && <small className="assistantWaiting">Hội thoại tư vấn đã kết thúc.</small>}
                   {message.suggestions && message.suggestions.length > 0 && (
                     <div className="assistantClarifyOptions">
                       {message.suggestions.map((suggestion) => (

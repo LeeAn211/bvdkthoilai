@@ -2266,6 +2266,8 @@ export interface Feedback {
   createdAt: string;
 }
 /**
+ * Mỗi hồ sơ là một phòng chat. Mở hồ sơ, thêm tin nhắn với nguồn “Tư vấn viên”, nhập nội dung và bấm Lưu để trả lời người dùng.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "consultations".
  */
@@ -2273,12 +2275,24 @@ export interface Consultation {
   id: number;
   publicToken: string;
   question: string;
+  /**
+   * Để trả lời: bấm Thêm tin nhắn, giữ nguồn “Tư vấn viên”, nhập nội dung rồi bấm Lưu hồ sơ.
+   */
+  messages?:
+    | {
+        sender: 'user' | 'staff' | 'system';
+        text: string;
+        sentAt: string;
+        id?: string | null;
+      }[]
+    | null;
   status: 'new' | 'processing' | 'answered' | 'closed';
   /**
    * Nhập câu trả lời và bấm Lưu. Người dùng đang mở chatbot sẽ nhận được nội dung tự động.
    */
   staffReply?: string | null;
   answeredAt?: string | null;
+  lastMessageAt?: string | null;
   /**
    * Không hiển thị cho người dùng.
    */
@@ -4388,9 +4402,18 @@ export interface FeedbackSelect<T extends boolean = true> {
 export interface ConsultationsSelect<T extends boolean = true> {
   publicToken?: T;
   question?: T;
+  messages?:
+    | T
+    | {
+        sender?: T;
+        text?: T;
+        sentAt?: T;
+        id?: T;
+      };
   status?: T;
   staffReply?: T;
   answeredAt?: T;
+  lastMessageAt?: T;
   internalNote?: T;
   updatedAt?: T;
   createdAt?: T;
