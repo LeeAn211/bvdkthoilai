@@ -141,6 +141,11 @@ const defaultAssistantAnswers = [
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: 'Cấu hình Website & Nhận diện',
+  // Payload 3.89 can race while creating relational document locks for this
+  // frequently opened Global. It is managed by a single administrator, so
+  // disabling only this lock avoids form-state FK failures without affecting
+  // version history or locks on content collections.
+  lockDocuments: false,
   admin: { group: '🌐 Trang chủ & Giao diện Website' },
   access: { read: () => true, update: moduleAccess('site-settings', 'edit') },
   versions: { max: 20 },

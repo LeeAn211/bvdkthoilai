@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-21 — Ổn định khóa form Site Settings trên Payload Admin
+
+- Tắt `lockDocuments` chỉ cho Global `site-settings` để tránh race condition khi Payload tạo lock quan hệ.
+- Giữ nguyên version history và document lock của tất cả Collection/Global còn lại.
+- Dọn một bản ghi khóa tạm cũ của `site-settings`; không thay đổi nội dung CMS.
+- Không thay đổi schema database và không cần migration mới.
+
 ## 2026-09-21 — Xác minh database runtime khi deploy Railway
 
 - Sau migration Direct URL, kết nối lại bằng chính `DATABASE_URL` pooled của Payload.
