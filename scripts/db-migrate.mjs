@@ -68,6 +68,71 @@ function isNeonPooledConnection(connectionString) {
   }
 }
 
+function parseDatabaseTarget(connectionString) {
+  try {
+    const url = new URL(connectionString)
+    return {
+      database: decodeURIComponent(url.pathname.replace(/^\//, '')),
+      hostname: url.hostname.toLowerCase(),
+      neonEndpoint: url.hostname.toLowerCase().replace('-pooler.', '.'),
+      username: decodeURIComponent(url.username),
+    }
+  } catch {
+    throw new Error('Database URL khong hop le.')
+  }
+}
+
+function formatDatabaseError(error) {
+  const chain = []
+  let current = error
+  while (current && !chain.includes(current)) {
+    chain.push(current)
+    current = current.cause
+  }
+
+  const detail = chain.at(-1)
+  const code = detail?.code ? ` [${detail.code}]` : ''
+  const message = detail instanceof Error ? detail.message : String(detail ?? error)
+  return `${code} ${message}`.trim()
+}
+
+async function verifyRuntimeDatabase({ connectionString, migrationConnection, latestMigration, timeout }) {
+  if (!connectionString) {
+    throw new Error('Thieu DATABASE_URL cho ket noi runtime cua Payload.')
+  }
+
+  if (migrationConnection) {
+    const runtimeTarget = parseDatabaseTarget(connectionString)
+    const migrationTarget = parseDatabaseTarget(migrationConnection)
+    if (
+      runtimeTarget.neonEndpoint !== migrationTarget.neonEndpoint
+      || runtimeTarget.database !== migrationTarget.database
+      || runtimeTarget.username !== migrationTarget.username
+    ) {
+      throw new Error(
+        'DATABASE_URL va DATABASE_MIGRATION_URL khong tro toi cung Neon endpoint, database va user.',
+      )
+    }
+  }
+
+  const runtimeClient = new Client({ connectionString, connectionTimeoutMillis: timeout })
+  try {
+    await runtimeClient.connect()
+    const applied = await readAppliedMigrations(runtimeClient)
+    if (!applied.has(latestMigration.id)) {
+      throw new Error(
+        `DATABASE_URL chua co migration moi nhat ${latestMigration.id}. Hai URL co the dang tro toi hai database khac nhau.`,
+      )
+    }
+    await latestMigration.verify({ client: runtimeClient })
+    console.log(`\nRuntime DATABASE_URL verified: ${latestMigration.id}`)
+  } catch (error) {
+    throw new Error(`Runtime DATABASE_URL verification failed: ${formatDatabaseError(error)}`)
+  } finally {
+    await runtimeClient.end().catch(() => undefined)
+  }
+}
+
 async function loadMigrations() {
   if (!fs.existsSync(MIGRATION_DIRECTORY)) {
     throw new Error(`Không tìm thấy thư mục migration: ${MIGRATION_DIRECTORY}`)
@@ -246,7 +311,8 @@ async function run() {
   const mode = parseMode()
   const migrationConnection = process.env.DATABASE_MIGRATION_URL?.trim()
     || process.env.DATABASE_URL_UNPOOLED?.trim()
-  const connectionString = migrationConnection || process.env.DATABASE_URL?.trim()
+  const runtimeConnection = process.env.DATABASE_URL?.trim()
+  const connectionString = migrationConnection || runtimeConnection
   if (!connectionString) {
     throw new Error('Thiếu DATABASE_MIGRATION_URL, DATABASE_URL_UNPOOLED hoặc DATABASE_URL.')
   }
@@ -282,6 +348,7 @@ async function run() {
 
   const client = new Client({ connectionString, connectionTimeoutMillis })
   let hasLock = false
+  let completedApply = false
 
   try {
     await client.connect()
@@ -325,14 +392,24 @@ async function run() {
     }
 
     console.log('\n✓ Database migration hoàn tất và đã được xác minh.')
+    completedApply = true
   } finally {
     if (hasLock) await releaseAdvisoryLock(client)
     await client.end().catch(() => undefined)
+  }
+
+  if (completedApply) {
+    await verifyRuntimeDatabase({
+      connectionString: runtimeConnection,
+      migrationConnection,
+      latestMigration: migrations.at(-1),
+      timeout: connectionTimeoutMillis,
+    })
   }
 }
 
 run().catch((error) => {
   console.error('\n✗ DATABASE MIGRATION FAILED')
-  console.error(error instanceof Error ? error.message : error)
+  console.error(formatDatabaseError(error))
   process.exitCode = 1
 })

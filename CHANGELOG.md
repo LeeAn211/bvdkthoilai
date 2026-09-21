@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-09-21 — Xác minh database runtime khi deploy Railway
+
+- Sau migration Direct URL, kết nối lại bằng chính `DATABASE_URL` pooled của Payload.
+- Chặn deploy nếu hai URL lệch Neon endpoint, database hoặc user.
+- Kiểm tra migration mới nhất và schema qua pooled connection trước khi chạy Next.js.
+- Rút gọn lỗi PostgreSQL về nguyên nhân sâu nhất thay vì chỉ in câu SQL dài.
+- Validation migration đạt 274/274 và schema contract behavior đạt 4/4.
+
 ## 2026-09-20 — Sửa lỗi build DB schema contract
 
 - Sinh lại schema trực tiếp bằng Payload thay cho bản đồng bộ thủ công trước đó.

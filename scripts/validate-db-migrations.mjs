@@ -37,6 +37,10 @@ check('Runner fails deployment on error', runner.includes('process.exitCode = 1'
 check('Runner has migration ledger', runner.includes('bvdk_schema_migrations'))
 check('Runner validates schema contract', runner.includes('assertSchemaContract'))
 check('Runner supports direct Neon migration URL', runner.includes('DATABASE_MIGRATION_URL') && runner.includes('DATABASE_URL_UNPOOLED'))
+check(
+  'Runner verifies the Payload runtime database after migration',
+  runner.includes('verifyRuntimeDatabase') && runner.includes('Runtime DATABASE_URL verified'),
+)
 check('Schema contract prevents reusing a migration', schemaContractModule.includes('Không được dùng lại migration'))
 check('Railway guide has Pre-Deploy command', railwayGuide.includes('npm run db:migrate:deploy'))
 check('Railway guide keeps schema push off', railwayGuide.includes('PAYLOAD_DB_PUSH=false'))

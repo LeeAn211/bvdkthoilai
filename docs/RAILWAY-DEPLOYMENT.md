@@ -56,6 +56,12 @@ Runner cũng nhận `DATABASE_URL_UNPOOLED` nếu nền tảng tự cung cấp b
 
 Production sẽ từ chối migration qua hostname Neon `-pooler`. Không commit URL, mật khẩu hoặc secret thật vào GitHub.
 
+Sau khi migration qua Direct connection hoàn tất, runner kết nối lại bằng chính
+`DATABASE_URL` của Payload, đối chiếu Neon endpoint/database/user, ledger migration
+mới nhất và verify schema. Nếu URL runtime trỏ nhầm database hoặc pooled connection
+không đọc được schema vừa migrate, deployment sẽ dừng trước khi `next start` thay vì
+khởi động website rồi mới trả lỗi truy vấn dài.
+
 ## 3. Cấu hình Railway một lần
 
 Trong **Settings → Deploy**:
