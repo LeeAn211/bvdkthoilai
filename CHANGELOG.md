@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-09-21 — Đồng bộ tỷ lệ hiển thị ảnh danh sách và các thẻ nội dung
+
+- Chuẩn hóa tỷ lệ khung ảnh các ô nhỏ hàng ngang và khối Lịch trực/Lịch khám, Tiêm chủng sang tỷ lệ 16:9 (`112px × 63px`).
+- Đồng bộ mục Điểm tin / Tin nổi bật (`FeaturedContentCarousel`) sang tỷ lệ 16:9, căn tâm trọng tâm ảnh để không bị crop xén mép.
+- Tối ưu tỷ lệ khung ảnh mục Kỹ thuật chuyên sâu (`AdvancedTechniquesCarousel`) sang 4:3 giúp ảnh chụp ngang to rõ và không bị cắt hai bên.
+- Bỏ thuộc tính `!important` trong `SearchFilter.module.css` để tôn trọng thiết lập căn chỉnh `contain`/`cover` từ CMS.
+- Typecheck và validation hiển thị đều đạt.
+
 ## 2026-09-21 — Ổn định khóa form Site Settings trên Payload Admin
 
 - Tắt `lockDocuments` chỉ cho Global `site-settings` để tránh race condition khi Payload tạo lock quan hệ.

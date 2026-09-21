@@ -49,7 +49,7 @@ export function FeaturedContentCarousel({ items, interval = 4500, cardFit = 'cov
                     decoding="async"
                     style={{
                       objectFit: fit,
-                      objectPosition: item.imagePosition || (fit === 'contain' ? 'center center' : 'top center'),
+                      objectPosition: item.imagePosition || 'center center',
                     }}
                   />
                 )}

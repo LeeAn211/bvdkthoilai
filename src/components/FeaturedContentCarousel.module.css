@@ -59,8 +59,7 @@
 .imageFrame {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1.15;
-  max-height: 310px;
+  aspect-ratio: 16 / 9;
   flex: 0 0 auto;
   overflow: hidden;
   background: #f8fbfe;
@@ -73,7 +72,7 @@
   height: 100%;
   display: block;
   object-fit: cover;
-  object-position: top center;
+  object-position: center;
   transition: transform 0.3s ease;
 }
 

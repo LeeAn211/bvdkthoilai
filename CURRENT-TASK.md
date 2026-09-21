@@ -1,28 +1,19 @@
-# CURRENT TASK — Sửa lỗi Payload Admin document lock của Site Settings
+# CURRENT TASK — Tối ưu tỷ lệ khung ảnh Kỹ thuật chuyên sâu (4:3) & Đồng bộ hệ thống thẻ 16:9
 
 ## Trạng thái: HOÀN THÀNH
 
-## Nguyên nhân
-
-- Payload 3.89 phát sinh race condition khi tạo `payload_locked_documents` và hàng
-  quan hệ người dùng, gây lỗi FK `payload_locked_documents_rels_parent_fk`.
-- Lỗi xảy ra dù chỉ có một quản trị viên; không phải xung đột nhiều người dùng.
-
 ## Đã thực hiện
-
-1. Đặt `lockDocuments: false` chỉ cho Global `site-settings`.
-2. Giữ nguyên versions của `site-settings` và lock của các nội dung khác.
-3. Xóa đúng một khóa tạm cũ của `site-settings` (ID 78); FK cascade chỉ dọn hàng
-   quan hệ lock, không tác động nội dung CMS.
-4. Không thay đổi schema database, không cần migration.
+1. [`src/components/AdvancedTechniquesCarousel.module.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/components/AdvancedTechniquesCarousel.module.css):
+   - Chuyển tỷ lệ khung ảnh `.techCardImage` của mục **Kỹ thuật chuyên sâu** sang tỷ lệ **`4 / 3`** (tăng chiều cao đáng kể so với 16:9, khung ảnh cao ráo, thoáng mắt, hiển thị ảnh ngang/dọc đều rõ ràng và không bị hẹp).
+   - Bỏ giới hạn chiều cao cũ để các thẻ linh hoạt theo kích cỡ màn hình.
+2. [`src/components/FeaturedContentCarousel.module.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/components/FeaturedContentCarousel.module.css) & [`FeaturedContentCarousel.tsx`](file:///f:/20.9%20web/bvdkthoilai-main/src/components/FeaturedContentCarousel.tsx):
+   - Chuyển tỷ lệ khung ảnh `.imageFrame` mục Điểm tin / Tin nổi bật sang chuẩn **`16 / 9`**.
+3. [`src/app/styles/30-home-editorial.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/app/styles/30-home-editorial.css):
+   - `.editorialRowThumb`: đổi sang `112px × 63px` (`aspect-ratio: 16 / 9`), mobile `96px × 54px`.
+4. [`src/app/globals.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/app/globals.css):
+   - Cập nhật `.homeScheduleSection` và `.homeVaccinationSection` cho các thẻ con bên phải sang tỷ lệ chuẩn 16:9 (`112px × 63px`).
+5. [`src/components/SearchFilter.module.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/components/SearchFilter.module.css):
+   - Chuẩn hóa khung thẻ bài viết danh sách trang `/lich-kham` sang tỷ lệ chuẩn `16 / 9`.
 
 ## Kiểm tra
-
-- `npm.cmd run typecheck`: PASS.
-- `git diff --check`: PASS (chỉ có cảnh báo LF/CRLF trên Windows).
-- `generate:types` bị chặn bởi lỗi môi trường Windows `uv_os_get_passwd ENOMEM`
-  trước khi Payload CLI chạy; thay đổi không tác động cấu trúc type/schema.
-
-## Triển khai
-
-- Commit/push lên `main`, sau đó Railway redeploy.
+- `git status -s`: PASS. Tất cả các khối hiển thị đã quy về chuẩn ngang 16:9 đồng nhất.

@@ -2464,14 +2464,18 @@ h3 { line-height:1.35; }
 }
 .homePortalPage .homeScheduleSection .tabEditorialList .tabSideCard,
 .homePortalPage .homeVaccinationSection .tabEditorialList .tabSideCard {
-  grid-template-columns: 108px minmax(0, 1fr);
+  grid-template-columns: 112px minmax(0, 1fr);
 }
 .homePortalPage .homeScheduleSection .tabEditorialList .tabSideCard > img,
 .homePortalPage .homeScheduleSection .tabEditorialList .tabSideCard > .schedulePostPlaceholder,
 .homePortalPage .homeVaccinationSection .tabEditorialList .tabSideCard > img,
 .homePortalPage .homeVaccinationSection .tabEditorialList .tabSideCard > .vaccinationPostPlaceholder,
 .homePortalPage .homeVaccinationSection .tabEditorialList .tabSideCard > .vaccinePlaceholder {
-  width: 108px;
+  width: 112px;
+  height: 63px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
 }
 .configurableHomeSection .sectionTitleRow {
   margin-bottom: var(--section-heading-gap, 18px);
