@@ -1,0 +1,134 @@
+.statsContainer {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 8px 16px;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(56, 189, 248, 0.16);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  margin-left: auto;
+}
+
+.statsTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #38bdf8;
+  font-size: 11.5px;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-right: 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.statsGrid {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.statItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.statItem svg {
+  color: #0ea5e9;
+  flex-shrink: 0;
+}
+
+.statLabel {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.statValue {
+  color: #f1f5f9;
+  font-weight: 750;
+  font-feature-settings: 'tnum';
+  font-family: inherit;
+}
+
+.onlineValue {
+  color: #22c55e;
+}
+
+.totalValue {
+  color: #38bdf8;
+}
+
+.onlinePulse {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+}
+
+.onlinePulse::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #22c55e;
+  opacity: 0.75;
+  animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.pulseDot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #22c55e;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .statsContainer {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 10px;
+    border-radius: 12px;
+    padding: 10px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .statsTitle {
+    border-right: none;
+    padding-right: 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100%;
+  }
+
+  .statsGrid {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}

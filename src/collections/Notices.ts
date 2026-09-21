@@ -7,7 +7,7 @@ import { createSlugRedirect, syncPublishedAt } from '@/hooks/contentWorkflow'
 export const Notices: CollectionConfig = {
   slug: 'notices',
   labels: { singular: 'Thông báo', plural: 'Thông báo' },
-  admin: { useAsTitle: 'title', group: '📰 Truyền thông & Văn bản', defaultColumns: ['title', 'level', 'workflowState', '_status', 'publishedAt', 'startAt', 'expireAt'] },
+  admin: { useAsTitle: 'title', group: '📰 Truyền thông & Văn bản', defaultColumns: ['title', 'level', 'views', 'workflowState', '_status', 'publishedAt', 'startAt', 'expireAt'] },
   access: { read: publicPublishedFor('notices'), create: moduleAccess('notices', 'create'), update: workflowUpdateAccess('notices'), delete: contentDeleteAccess('notices') },
   trash: true,
   versions: { drafts: { autosave: true, schedulePublish: false }, maxPerDoc: 50 },
@@ -314,6 +314,17 @@ export const Notices: CollectionConfig = {
           displayFormat: 'dd/MM/yyyy HH:mm',
           pickerAppearance: 'dayAndTime',
         },
+      },
+    },
+    {
+      name: 'views',
+      label: 'Lượt xem thông báo',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Số lượt xem thực tế được hệ thống tự động ghi nhận khi bạn đọc mở xem thông báo.',
       },
     },
     ...workflowFields,

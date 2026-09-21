@@ -663,6 +663,10 @@ export interface News {
    */
   pinned?: boolean | null;
   /**
+   * Số lượt xem thực tế được hệ thống tự động đếm khi bạn đọc mở xem bài viết.
+   */
+  views?: number | null;
+  /**
    * Thời gian đăng bài. Hệ thống tự động ghi nhận khi xuất bản hoặc có thể hẹn ngày thủ công.
    */
   publishedAt?: string | null;
@@ -818,6 +822,10 @@ export interface Notice {
    * Tự động gỡ hoặc đánh dấu hết hiệu lực sau thời điểm này.
    */
   expireAt?: string | null;
+  /**
+   * Số lượt xem thực tế được hệ thống tự động ghi nhận khi bạn đọc mở xem thông báo.
+   */
+  views?: number | null;
   /**
    * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
    */
@@ -1132,6 +1140,10 @@ export interface ClinicalProtocol {
    * Không bắt buộc. Nếu bỏ trống sẽ dùng ảnh mặc định của mục Văn bản – Tài liệu.
    */
   cover?: (number | null) | Media;
+  /**
+   * Số lượt truy cập và xem chi tiết phác đồ điều trị.
+   */
+  views?: number | null;
   seoTitle?: string | null;
   seoDescription?: string | null;
   /**
@@ -3637,6 +3649,7 @@ export interface NewsSelect<T extends boolean = true> {
   excludeFromSitemap?: T;
   featured?: T;
   pinned?: T;
+  views?: T;
   publishedAt?: T;
   workflowState?: T;
   updatedAt?: T;
@@ -3679,6 +3692,7 @@ export interface NoticesSelect<T extends boolean = true> {
   publishedAt?: T;
   startAt?: T;
   expireAt?: T;
+  views?: T;
   workflowState?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -3802,6 +3816,7 @@ export interface ClinicalProtocolsSelect<T extends boolean = true> {
   summarySize?: T;
   file?: T;
   cover?: T;
+  views?: T;
   seoTitle?: T;
   seoDescription?: T;
   seoImage?: T;
@@ -6037,6 +6052,22 @@ export interface Navigation {
 export interface Footer {
   id: number;
   enabled?: boolean | null;
+  /**
+   * Tùy chỉnh bật/tắt thanh tiện ích nhanh ở đầu chân trang và các nút gọi cấp cứu, đặt khám, hướng dẫn.
+   */
+  quickBar?: {
+    enabled?: boolean | null;
+    showEmergency?: boolean | null;
+    showBooking?: boolean | null;
+    showGuide?: boolean | null;
+    showFeedback?: boolean | null;
+    emergencyLabel?: string | null;
+    emergencyPhone?: string | null;
+    guideLabel?: string | null;
+    guideUrl?: string | null;
+    feedbackLabel?: string | null;
+    feedbackUrl?: string | null;
+  };
   brandOptions?: {
     showLogo?: boolean | null;
     showHospitalName?: boolean | null;
@@ -6084,6 +6115,23 @@ export interface Footer {
     copyright?: string | null;
     showRightText?: boolean | null;
     rightText?: string | null;
+  };
+  /**
+   * Quản lý hiển thị số lượt truy cập (hôm nay, tháng này, tổng số, đang online) tại chân trang website.
+   */
+  visitStats?: {
+    /**
+     * BẬT / TẮT hiển thị thanh thống kê lượt truy cập ở chân trang ngoài website công khai.
+     */
+    showStats?: boolean | null;
+    showOnline?: boolean | null;
+    showToday?: boolean | null;
+    showMonth?: boolean | null;
+    showTotal?: boolean | null;
+    /**
+     * Cộng thêm số lượt truy cập ban đầu từ hệ thống cũ (nếu có) vào tổng lượt hiển thị.
+     */
+    initialOffset?: number | null;
   };
   showMobileBar?: boolean | null;
   updatedAt?: string | null;
@@ -8390,6 +8438,11 @@ export interface SystemSetting {
     showDepartmentBar?: boolean | null;
     showSatisfactionGauge?: boolean | null;
     showSlaStats?: boolean | null;
+    showVisitStatsChart?: boolean | null;
+    showWeeklyWorkload?: boolean | null;
+    showResourceStructure?: boolean | null;
+    showFeedbackDonut?: boolean | null;
+    showProtocolDistribution?: boolean | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -9566,6 +9619,21 @@ export interface NavigationSelect<T extends boolean = true> {
  */
 export interface FooterSelect<T extends boolean = true> {
   enabled?: T;
+  quickBar?:
+    | T
+    | {
+        enabled?: T;
+        showEmergency?: T;
+        showBooking?: T;
+        showGuide?: T;
+        showFeedback?: T;
+        emergencyLabel?: T;
+        emergencyPhone?: T;
+        guideLabel?: T;
+        guideUrl?: T;
+        feedbackLabel?: T;
+        feedbackUrl?: T;
+      };
   brandOptions?:
     | T
     | {
@@ -9608,6 +9676,16 @@ export interface FooterSelect<T extends boolean = true> {
         copyright?: T;
         showRightText?: T;
         rightText?: T;
+      };
+  visitStats?:
+    | T
+    | {
+        showStats?: T;
+        showOnline?: T;
+        showToday?: T;
+        showMonth?: T;
+        showTotal?: T;
+        initialOffset?: T;
       };
   showMobileBar?: T;
   updatedAt?: T;
@@ -11252,6 +11330,11 @@ export interface SystemSettingsSelect<T extends boolean = true> {
         showDepartmentBar?: T;
         showSatisfactionGauge?: T;
         showSlaStats?: T;
+        showVisitStatsChart?: T;
+        showWeeklyWorkload?: T;
+        showResourceStructure?: T;
+        showFeedbackDonut?: T;
+        showProtocolDistribution?: T;
       };
   updatedAt?: T;
   createdAt?: T;

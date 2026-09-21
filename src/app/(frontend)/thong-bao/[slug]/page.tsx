@@ -121,6 +121,8 @@ export default async function Page({ params }: Props) {
       relatedTitle="Tin tức cùng chuyên mục"
       relatedItems={mappedRelated}
       baseHref="/thong-bao"
+      trackingSlug={slug}
+      trackingCollection="notices"
     />
   )
 }

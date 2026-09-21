@@ -8,6 +8,7 @@ import { BackToList } from '@/components/BackToList'
 import { ShareButtons } from '@/app/(frontend)/thong-bao/[slug]/ShareButtons'
 import { mediaUrl } from '@/lib/media'
 import { getVisibilityClass, shouldRender } from '@/lib/deviceVisibility'
+import { ArticleViewTracker } from './ArticleViewTracker'
 import styles from './ArticleDetailTemplate.module.css'
 
 export interface ArticleBreadcrumb {
@@ -157,6 +158,8 @@ export interface ArticleDetailTemplateProps {
   articleDetailSettings?: any
 
   baseHref: string // ví dụ: "/thong-bao", "/tin-tuc", "/dau-thau-mua-sam", "/ky-thuat-chuyen-sau"
+  trackingSlug?: string
+  trackingCollection?: 'news' | 'notices' | 'clinical-protocols'
 }
 
 export function ArticleDetailTemplate({
@@ -199,6 +202,8 @@ export function ArticleDetailTemplate({
   displaySettings,
   articleDetailSettings,
   baseHref,
+  trackingSlug,
+  trackingCollection,
 }: ArticleDetailTemplateProps) {
   // Ưu tiên cấu hình từ trang độc lập ArticleDetailSettings, fallback về adminConfig (ThemeSettings)
   const effectiveConfig = articleDetailSettings || adminConfig
@@ -425,6 +430,9 @@ export function ArticleDetailTemplate({
   return (
     <>
       <SiteHeader />
+      {trackingSlug && trackingCollection && (
+        <ArticleViewTracker collection={trackingCollection} slug={trackingSlug} />
+      )}
       {/* ── DẢI HERO BREADCRUMB NỀN XANH THƯƠNG HIỆU Y TẾ ───────────────── */}
       {isBreadcrumbsVisible && breadcrumbs && breadcrumbs.length > 0 && (
         <section className={`${styles.articleHeroBar} ${heroPaddingClass} ${getVisibilityClass(dsBreadcrumbs)}`}>

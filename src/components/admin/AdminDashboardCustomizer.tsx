@@ -15,6 +15,7 @@ export interface ChartVisibility {
   showDepartmentBar: boolean
   showSatisfactionGauge: boolean
   showSlaStats: boolean
+  showVisitStatsChart?: boolean
   showWeeklyWorkload?: boolean
   showProtocolDistribution?: boolean
   showResourceStructure?: boolean
@@ -39,7 +40,7 @@ export default function AdminDashboardCustomizer({
   const [cards, setCards] = useState<CardItem[]>(initialCards)
   const [charts, setCharts] = useState<ChartVisibility>(initialCharts)
 
-  const defaultChartOrder = ['rowResourcesFeedback', 'rowTrendsStaff', 'rowSatisfactionSla', 'rowWorkloadProtocols']
+  const defaultChartOrder = ['rowVisitStats', 'rowResourcesFeedback', 'rowTrendsStaff', 'rowSatisfactionSla', 'rowWorkloadProtocols']
   const [chartOrder, setChartOrder] = useState<string[]>(initialCharts.chartOrder || defaultChartOrder)
 
   // Đóng modal bằng phím ESC
@@ -96,6 +97,7 @@ export default function AdminDashboardCustomizer({
   const handleReset = () => {
     const resetCards = cards.map((c) => ({ ...c, visible: true }))
     const resetCharts: ChartVisibility = {
+      showVisitStatsChart: true,
       showAreaChart: true,
       showDepartmentBar: true,
       showSatisfactionGauge: true,
@@ -244,6 +246,49 @@ export default function AdminDashboardCustomizer({
               <span className={styles.sectionLabel}>Thứ tự các khối biểu đồ phân tích & Quản trị vận hành:</span>
               <div className={styles.itemList}>
                 {chartOrder.map((groupKey, idx) => {
+                  if (groupKey === 'rowVisitStats') {
+                    return (
+                      <React.Fragment key={groupKey}>
+                        <div className={`${styles.itemRow} ${charts.showVisitStatsChart === false ? styles.itemRowDisabled : ''}`}>
+                          <div className={styles.itemLeft}>
+                            <div className={styles.itemOrderBtns}>
+                              <button
+                                type="button"
+                                className={styles.orderBtn}
+                                disabled={idx === 0}
+                                onClick={() => moveChart(idx, 'up')}
+                                title="Chuyển cụm lên trên"
+                              >
+                                ▲
+                              </button>
+                              <button
+                                type="button"
+                                className={styles.orderBtn}
+                                disabled={idx === chartOrder.length - 1}
+                                onClick={() => moveChart(idx, 'down')}
+                                title="Chuyển cụm xuống dưới"
+                              >
+                                ▼
+                              </button>
+                            </div>
+                            <div>
+                              <div className={styles.itemTitle}>Biểu đồ phân tích lưu lượng truy cập website</div>
+                              <div className={styles.itemDesc}>Theo dõi lượt xem trang, người dùng trực tuyến và xu hướng truy cập 14 ngày gần nhất.</div>
+                            </div>
+                          </div>
+                          <label className={styles.switchWrap}>
+                            <input
+                              type="checkbox"
+                              checked={charts.showVisitStatsChart !== false}
+                              onChange={() => toggleChart('showVisitStatsChart')}
+                            />
+                            <span className={styles.slider} />
+                          </label>
+                        </div>
+                      </React.Fragment>
+                    )
+                  }
+
                   if (groupKey === 'rowResourcesFeedback') {
                     return (
                       <React.Fragment key={groupKey}>

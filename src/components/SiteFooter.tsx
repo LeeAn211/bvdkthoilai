@@ -3,6 +3,7 @@ import { getGlobal } from '@/lib/payload'
 import { resolveBookingConfig } from '@/lib/booking'
 import { mediaUrl } from '@/lib/media'
 import { SocialBrandIcon } from './SocialBrandIcon'
+import { SiteVisitStats } from './SiteVisitStats'
 import styles from './SiteFooter.module.css'
 
 const legacyColumns = (medpro: string, hotline: string) => [
@@ -82,6 +83,18 @@ export async function SiteFooter() {
         : column?.links,
     }))
   const bottom = footer?.bottom || {}
+  const quickBar = footer?.quickBar || {}
+  const showQuickBar = quickBar?.enabled !== false
+  const showEmergency = quickBar?.showEmergency !== false
+  const showBooking = quickBar?.showBooking !== false && booking.enabled
+  const showGuide = quickBar?.showGuide !== false
+  const showFeedback = quickBar?.showFeedback !== false
+  const quickEmergencyPhone = quickBar?.emergencyPhone?.trim() || emergencyHotline
+  const quickEmergencyLabel = quickBar?.emergencyLabel?.trim() || 'Cấp cứu trực 24/24'
+  const quickGuideLabel = quickBar?.guideLabel?.trim() || 'Quy trình khám'
+  const quickGuideUrl = quickBar?.guideUrl?.trim() || '/quy-trinh-kham-benh'
+  const quickFeedbackLabel = quickBar?.feedbackLabel?.trim() || 'Góp ý & Liên hệ'
+  const quickFeedbackUrl = quickBar?.feedbackUrl?.trim() || '/lien-he'
 
   return (
     <>
@@ -91,61 +104,71 @@ export async function SiteFooter() {
         <div className={styles.footerBackgroundGlowLeft} aria-hidden="true" />
 
         {/* Top Emergency & Quick Action Bar */}
-        <div className={styles.footerQuickBar}>
-          <div className={`container ${styles.footerQuickBarInner}`}>
-            <div className={styles.footerQuickBarCol}>
-              <a
-                href={`tel:${emergencyHotline.replace(/\s+/g, '')}`}
-                className={styles.footerEmergencyCard}
-                title="Gọi ngay đường dây nóng cấp cứu 24/24"
-              >
-                <div className={styles.emergencyPulseIcon}>
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                  <span className={styles.emergencyPulseDot} />
+        {showQuickBar && (
+          <div className={styles.footerQuickBar}>
+            <div className={`container ${styles.footerQuickBarInner}`}>
+              {showEmergency && (
+                <div className={styles.footerQuickBarCol}>
+                  <a
+                    href={`tel:${quickEmergencyPhone.replace(/\s+/g, '')}`}
+                    className={styles.footerEmergencyCard}
+                    title="Gọi ngay đường dây nóng cấp cứu 24/24"
+                  >
+                    <div className={styles.emergencyPulseIcon}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                      <span className={styles.emergencyPulseDot} />
+                    </div>
+                    <div className={styles.emergencyContent}>
+                      <span className={styles.emergencyLabel}>{quickEmergencyLabel}</span>
+                      <span className={styles.emergencyNumber}>{quickEmergencyPhone}</span>
+                    </div>
+                  </a>
                 </div>
-                <div className={styles.emergencyContent}>
-                  <span className={styles.emergencyLabel}>Cấp cứu trực 24/24</span>
-                  <span className={styles.emergencyNumber}>{emergencyHotline}</span>
-                </div>
-              </a>
-            </div>
+              )}
 
-            <div className={styles.footerActionButtons}>
-              {booking.enabled && <a
-                href={medpro}
-                target={booking.openNewTab ? '_blank' : undefined}
-                rel={booking.openNewTab ? 'noreferrer' : undefined}
-                className={styles.footerBookingBtn}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                <span>Đặt khám trực tuyến</span>
-              </a>}
-              <Link href="/quy-trinh-kham-benh" className={styles.footerGuideBtn}>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                  <line x1="16" y1="13" x2="8" y2="13" />
-                  <line x1="16" y1="17" x2="8" y2="17" />
-                  <polyline points="10 9 9 9 8 9" />
-                </svg>
-                <span>Quy trình khám</span>
-              </Link>
-              <Link href="/lien-he" className={styles.footerGuideBtn}>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-                <span>Góp ý &amp; Liên hệ</span>
-              </Link>
+              <div className={styles.footerActionButtons}>
+                {showBooking && (
+                  <a
+                    href={medpro}
+                    target={booking.openNewTab ? '_blank' : undefined}
+                    rel={booking.openNewTab ? 'noreferrer' : undefined}
+                    className={styles.footerBookingBtn}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <span>Đặt khám trực tuyến</span>
+                  </a>
+                )}
+                {showGuide && (
+                  <Link href={quickGuideUrl} className={styles.footerGuideBtn}>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                      <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                    <span>{quickGuideLabel}</span>
+                  </Link>
+                )}
+                {showFeedback && (
+                  <Link href={quickFeedbackUrl} className={styles.footerGuideBtn}>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <span>{quickFeedbackLabel}</span>
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Main Footer Grid */}
         <div className={styles.footerMain}>
@@ -189,7 +212,7 @@ export async function SiteFooter() {
               {/* Contact Information List with Professional Icons */}
               <div className={styles.contactInfoList}>
                 {brand.showAddress !== false && (
-                  <div className={styles.contactItem}>
+                  <div className={`${styles.contactItem} ${styles.addressItem}`}>
                     <div className={styles.contactItemIcon} aria-hidden="true">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -198,7 +221,7 @@ export async function SiteFooter() {
                     </div>
                     <div className={styles.contactItemContent}>
                       <strong>Trụ sở:</strong>
-                      <span>{contact?.address || settings?.address || 'Ấp Thới Thuận B, Thị trấn Thới Lai, Huyện Thới Lai, TP. Cần Thơ'}</span>
+                      <span className={styles.addressText}>{contact?.address || settings?.address || 'Ấp Thới Thuận B, Thị trấn Thới Lai, Huyện Thới Lai, TP. Cần Thơ'}</span>
                     </div>
                   </div>
                 )}
@@ -356,6 +379,9 @@ export async function SiteFooter() {
                   </div>
                 </div>
               )}
+
+              {/* Thống kê lượt truy cập website */}
+              <SiteVisitStats config={footer?.visitStats} />
             </div>
           </div>
         )}

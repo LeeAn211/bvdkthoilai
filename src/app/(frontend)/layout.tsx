@@ -18,16 +18,24 @@ import '../styles/90-css-policy.css'
 
 export async function generateMetadata(): Promise<Metadata> {
   let seo: any = {}
+  let settings: any = {}
   try { seo = await getGlobal('seo-settings') } catch {}
+  try { settings = await getGlobal('site-settings') } catch {}
   const siteName = seo?.siteName || 'Bệnh viện Đa khoa Khu vực Thới Lai'
   const defaultTitle = seo?.defaultTitle || siteName
   const description = seo?.defaultDescription || 'Cổng thông tin Bệnh viện Đa khoa Khu vực Thới Lai'
   const image = mediaUrl(seo?.defaultImage)
+  const favicon = mediaUrl(settings?.favicon) || mediaUrl(settings?.logo) || '/favicon.ico'
   const verification = seo?.googleSiteVerification || process.env.GOOGLE_SITE_VERIFICATION
   return {
     title: { default: defaultTitle, template: seo?.titleTemplate || '%s | BVĐK Khu vực Thới Lai' },
     description,
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+    icons: {
+      icon: favicon,
+      shortcut: favicon,
+      apple: favicon,
+    },
     robots: seo?.allowIndexing === false ? { index: false, follow: false } : { index: true, follow: true },
     openGraph: { type: 'website', locale: 'vi_VN', siteName, title: defaultTitle, description, images: image ? [image] : [] },
     twitter: { card: 'summary_large_image', title: defaultTitle, description, images: image ? [image] : [] },

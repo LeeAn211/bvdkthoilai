@@ -2393,6 +2393,7 @@ export const news = pgTable(
     excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     featured: boolean("featured").default(false),
     pinned: boolean("pinned").default(false),
+    views: numeric("views", { mode: "number" }).default(0),
     publishedAt: timestamp("published_at", {
       mode: "string",
       withTimezone: true,
@@ -2502,6 +2503,7 @@ export const _news_v = pgTable(
     ),
     version_featured: boolean("version_featured").default(false),
     version_pinned: boolean("version_pinned").default(false),
+    version_views: numeric("version_views", { mode: "number" }).default(0),
     version_publishedAt: timestamp("version_published_at", {
       mode: "string",
       withTimezone: true,
@@ -2638,6 +2640,7 @@ export const notices = pgTable(
       withTimezone: true,
       precision: 3,
     }),
+    views: numeric("views", { mode: "number" }).default(0),
     workflowState:
       enum_notices_workflow_state("workflow_state").default("draft"),
     updatedAt: timestamp("updated_at", {
@@ -2759,6 +2762,7 @@ export const _notices_v = pgTable(
       withTimezone: true,
       precision: 3,
     }),
+    version_views: numeric("version_views", { mode: "number" }).default(0),
     version_workflowState: enum__notices_v_version_workflow_state(
       "version_workflow_state",
     ).default("draft"),
@@ -3404,6 +3408,7 @@ export const clinical_protocols = pgTable(
     cover: integer("cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
+    views: numeric("views", { mode: "number" }).default(0),
     seoTitle: varchar("seo_title"),
     seoDescription: varchar("seo_description"),
     seoImage: integer("seo_image_id").references(() => media.id, {
@@ -3512,6 +3517,7 @@ export const _clinical_protocols_v = pgTable(
     version_cover: integer("version_cover_id").references(() => media.id, {
       onDelete: "set null",
     }),
+    version_views: numeric("version_views", { mode: "number" }).default(0),
     version_seoTitle: varchar("version_seo_title"),
     version_seoDescription: varchar("version_seo_description"),
     version_seoImage: integer("version_seo_image_id").references(
@@ -11771,6 +11777,17 @@ export const footer_columns = pgTable(
 export const footer = pgTable("footer", {
   id: serial("id").primaryKey(),
   enabled: boolean("enabled").default(true),
+  quickBar_enabled: boolean("quick_bar_enabled").default(true),
+  quickBar_showEmergency: boolean("quick_bar_show_emergency").default(true),
+  quickBar_showBooking: boolean("quick_bar_show_booking").default(true),
+  quickBar_showGuide: boolean("quick_bar_show_guide").default(true),
+  quickBar_showFeedback: boolean("quick_bar_show_feedback").default(true),
+  quickBar_emergencyLabel: varchar("quick_bar_emergency_label"),
+  quickBar_emergencyPhone: varchar("quick_bar_emergency_phone"),
+  quickBar_guideLabel: varchar("quick_bar_guide_label"),
+  quickBar_guideUrl: varchar("quick_bar_guide_url"),
+  quickBar_feedbackLabel: varchar("quick_bar_feedback_label"),
+  quickBar_feedbackUrl: varchar("quick_bar_feedback_url"),
   brandOptions_showLogo: boolean("brand_options_show_logo").default(true),
   brandOptions_showHospitalName: boolean(
     "brand_options_show_hospital_name",
@@ -11797,6 +11814,14 @@ export const footer = pgTable("footer", {
   bottom_rightText: varchar("bottom_right_text").default(
     "Cổng thông tin điện tử",
   ),
+  visitStats_showStats: boolean("visit_stats_show_stats").default(true),
+  visitStats_showOnline: boolean("visit_stats_show_online").default(true),
+  visitStats_showToday: boolean("visit_stats_show_today").default(true),
+  visitStats_showMonth: boolean("visit_stats_show_month").default(true),
+  visitStats_showTotal: boolean("visit_stats_show_total").default(true),
+  visitStats_initialOffset: numeric("visit_stats_initial_offset", {
+    mode: "number",
+  }).default(0),
   showMobileBar: boolean("show_mobile_bar").default(true),
   updatedAt: timestamp("updated_at", {
     mode: "string",
@@ -11874,6 +11899,31 @@ export const _footer_v = pgTable(
   {
     id: serial("id").primaryKey(),
     version_enabled: boolean("version_enabled").default(true),
+    version_quickBar_enabled: boolean("version_quick_bar_enabled").default(
+      true,
+    ),
+    version_quickBar_showEmergency: boolean(
+      "version_quick_bar_show_emergency",
+    ).default(true),
+    version_quickBar_showBooking: boolean(
+      "version_quick_bar_show_booking",
+    ).default(true),
+    version_quickBar_showGuide: boolean("version_quick_bar_show_guide").default(
+      true,
+    ),
+    version_quickBar_showFeedback: boolean(
+      "version_quick_bar_show_feedback",
+    ).default(true),
+    version_quickBar_emergencyLabel: varchar(
+      "version_quick_bar_emergency_label",
+    ),
+    version_quickBar_emergencyPhone: varchar(
+      "version_quick_bar_emergency_phone",
+    ),
+    version_quickBar_guideLabel: varchar("version_quick_bar_guide_label"),
+    version_quickBar_guideUrl: varchar("version_quick_bar_guide_url"),
+    version_quickBar_feedbackLabel: varchar("version_quick_bar_feedback_label"),
+    version_quickBar_feedbackUrl: varchar("version_quick_bar_feedback_url"),
     version_brandOptions_showLogo: boolean(
       "version_brand_options_show_logo",
     ).default(true),
@@ -11912,6 +11962,25 @@ export const _footer_v = pgTable(
     version_bottom_rightText: varchar("version_bottom_right_text").default(
       "Cổng thông tin điện tử",
     ),
+    version_visitStats_showStats: boolean(
+      "version_visit_stats_show_stats",
+    ).default(true),
+    version_visitStats_showOnline: boolean(
+      "version_visit_stats_show_online",
+    ).default(true),
+    version_visitStats_showToday: boolean(
+      "version_visit_stats_show_today",
+    ).default(true),
+    version_visitStats_showMonth: boolean(
+      "version_visit_stats_show_month",
+    ).default(true),
+    version_visitStats_showTotal: boolean(
+      "version_visit_stats_show_total",
+    ).default(true),
+    version_visitStats_initialOffset: numeric(
+      "version_visit_stats_initial_offset",
+      { mode: "number" },
+    ).default(0),
     version_showMobileBar: boolean("version_show_mobile_bar").default(true),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
@@ -17721,6 +17790,21 @@ export const system_settings = pgTable("system_settings", {
   ).default(true),
   dashboardSettings_showSlaStats: boolean(
     "dashboard_settings_show_sla_stats",
+  ).default(true),
+  dashboardSettings_showVisitStatsChart: boolean(
+    "dashboard_settings_show_visit_stats_chart",
+  ).default(true),
+  dashboardSettings_showWeeklyWorkload: boolean(
+    "dashboard_settings_show_weekly_workload",
+  ).default(true),
+  dashboardSettings_showResourceStructure: boolean(
+    "dashboard_settings_show_resource_structure",
+  ).default(true),
+  dashboardSettings_showFeedbackDonut: boolean(
+    "dashboard_settings_show_feedback_donut",
+  ).default(true),
+  dashboardSettings_showProtocolDistribution: boolean(
+    "dashboard_settings_show_protocol_distribution",
   ).default(true),
   updatedAt: timestamp("updated_at", {
     mode: "string",

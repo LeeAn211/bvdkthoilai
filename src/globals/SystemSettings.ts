@@ -85,6 +85,26 @@ export const SystemSettings: GlobalConfig = {
                 { name: 'showSlaStats', label: 'Bảng hiệu suất cam kết xử lý SLA', type: 'checkbox', defaultValue: true },
               ],
             },
+            {
+              type: 'row',
+              fields: [
+                { name: 'showVisitStatsChart', label: 'Biểu đồ phân tích lưu lượng truy cập website', type: 'checkbox', defaultValue: true },
+                { name: 'showWeeklyWorkload', label: 'Biểu đồ tải công việc đặt khám trong tuần', type: 'checkbox', defaultValue: true },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'showResourceStructure', label: 'Cơ cấu tài nguyên số bệnh viện', type: 'checkbox', defaultValue: true },
+                { name: 'showFeedbackDonut', label: 'Quy trình xử lý phản ánh & CSKH', type: 'checkbox', defaultValue: true },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'showProtocolDistribution', label: 'Biểu đồ phân bổ phác đồ điều trị', type: 'checkbox', defaultValue: true },
+              ],
+            },
           ],
         },
       ],

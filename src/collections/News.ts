@@ -10,7 +10,7 @@ export const News: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     group: '📰 Truyền thông & Văn bản',
-    defaultColumns: ['title', 'categoryRef', 'workflowState', '_status', 'publishedAt', 'updatedAt'],
+    defaultColumns: ['title', 'categoryRef', 'views', 'workflowState', '_status', 'publishedAt', 'updatedAt'],
     description: 'Đăng và quản lý tin tức, hoạt động và kiến thức sức khỏe.',
   },
   access: {
@@ -294,6 +294,17 @@ export const News: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'Ghim bài viết lên vị trí đầu tiên của danh sách tin tức.',
+      },
+    },
+    {
+      name: 'views',
+      label: 'Lượt xem bài viết',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        description: 'Số lượt xem thực tế được hệ thống tự động đếm khi bạn đọc mở xem bài viết.',
       },
     },
     {

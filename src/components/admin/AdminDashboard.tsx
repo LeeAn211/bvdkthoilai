@@ -113,12 +113,26 @@ export default async function AdminDashboard() {
     payload.find({ collection: 'doctors', limit: 300, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
   ])
 
-  const [surveyResponseMetrics, surveyAnswerMetrics, feedbackMetrics, clinicalProtocolMetrics, appointmentMetrics] = await Promise.all([
+  const [surveyResponseMetrics, surveyAnswerMetrics, feedbackMetrics, clinicalProtocolMetrics, appointmentMetrics, visitSummaryRes, visitDailyRes, topContentRes] = await Promise.all([
     payload.find({ collection: 'survey-responses', limit: 5000, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
     payload.find({ collection: 'survey-answers', limit: 10000, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
     payload.find({ collection: 'feedback', limit: 5000, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
     payload.find({ collection: 'clinical-protocols', limit: 1000, depth: 1, overrideAccess: true }).catch(() => ({ docs: [] })),
     payload.find({ collection: 'appointments', where: { status: { not_equals: 'cancelled' } }, limit: 5000, depth: 0, overrideAccess: true }).catch(() => ({ docs: [] })),
+    (payload.db as any).drizzle.execute(`SELECT total_views, total_visits, initial_offset FROM public."site_visits_summary" WHERE id = 1 LIMIT 1;`).catch(() => ({ rows: [] })),
+    (payload.db as any).drizzle.execute(`SELECT date, views, unique_visits FROM public."site_visits_daily" ORDER BY date DESC LIMIT 14;`).catch(() => ({ rows: [] })),
+    (payload.db as any).drizzle.execute(`
+      SELECT id, title, slug, 'news' AS type, 'Tin tức' AS type_label, COALESCE(views, 0)::int AS views, updated_at
+      FROM public."news" WHERE _status = 'published'
+      UNION ALL
+      SELECT id, title, slug, 'notices' AS type, 'Thông báo' AS type_label, COALESCE(views, 0)::int AS views, updated_at
+      FROM public."notices" WHERE _status = 'published'
+      UNION ALL
+      SELECT id, title, slug, 'clinical-protocols' AS type, 'Phác đồ' AS type_label, COALESCE(views, 0)::int AS views, updated_at
+      FROM public."clinical_protocols"
+      ORDER BY views DESC, updated_at DESC
+      LIMIT 10;
+    `).catch(() => ({ rows: [] })),
   ])
 
   // Lấy bài viết chuyên đề động
@@ -705,7 +719,49 @@ export default async function AdminDashboard() {
   }
   const busiestTimeSlot = Array.from(timeSlotCounts.entries()).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Chưa có lịch hẹn'
 
+  const summaryRow = (visitSummaryRes?.rows?.[0] as any) || {}
+  const dailyRows = (visitDailyRes?.rows as any[] || []).reverse()
+  const todayStr = new Date().toISOString().slice(0, 10)
+  const currentMonthStr = todayStr.slice(0, 7)
+  const todayDaily = dailyRows.find((r) => r.date === todayStr) || {}
+  const monthViews = dailyRows.filter((r) => String(r.date).startsWith(currentMonthStr)).reduce((sum, r) => sum + Number(r.views || 0), 0)
+  const monthVisits = dailyRows.filter((r) => String(r.date).startsWith(currentMonthStr)).reduce((sum, r) => sum + Number(r.unique_visits || 0), 0)
+  const vInitialOffset = Number(summaryRow.initial_offset || 0)
+
+  const topContentRows = (topContentRes?.rows as any[] || [])
+  const visitStatsData = {
+    online: 1,
+    today: {
+      views: Number(todayDaily.views || 0),
+      visits: Number(todayDaily.unique_visits || 0),
+    },
+    month: {
+      views: monthViews || Number(todayDaily.views || 0),
+      visits: monthVisits || Number(todayDaily.unique_visits || 0),
+    },
+    total: {
+      views: Number(summaryRow.total_views || 0) + vInitialOffset,
+      visits: Number(summaryRow.total_visits || 0) + vInitialOffset,
+    },
+    history: dailyRows.map((r) => ({
+      date: r.date,
+      views: Number(r.views || 0),
+      visits: Number(r.unique_visits || 0),
+    })),
+    topContent: topContentRows.map((r) => ({
+      id: r.id,
+      title: r.title,
+      slug: r.slug,
+      type: r.type,
+      typeLabel: r.type_label,
+      views: Number(r.views || 0),
+      updatedAt: r.updated_at,
+      href: r.type === 'news' ? `/tin-tuc/${r.slug}` : r.type === 'notices' ? `/thong-bao/${r.slug}` : `/phac-do-dieu-tri/${r.slug}`,
+    })),
+  }
+
   const initialCharts = {
+    showVisitStatsChart: dSettings.showVisitStatsChart !== false,
     showAreaChart: dSettings.showAreaChart !== false,
     showDepartmentBar: dSettings.showDepartmentBar !== false,
     showSatisfactionGauge: dSettings.showSatisfactionGauge !== false,
@@ -1083,6 +1139,7 @@ export default async function AdminDashboard() {
       feedbackDone={can('feedback') ? operationalFeedbackDone : 0}
       feedbackDonePercent={can('feedback') && operationalFeedbackTotal ? `${Math.round((operationalFeedbackDone / operationalFeedbackTotal) * 100)}%` : '0%'}
       feedbackProcessingPercent={can('feedback') && operationalFeedbackTotal ? `${Math.round((operationalFeedbackProcessing / operationalFeedbackTotal) * 100)}%` : '0%'}
+      visitStatsData={elevated ? visitStatsData : undefined}
       accountSummaryNode={<AdminAccountSummary key="account-summary-node" />}
       commandBarNode={elevated ? commandBarNode : null}
       bentoContentNode={elevated ? bentoContentNode : null}

@@ -9,7 +9,7 @@ export const ClinicalProtocols: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     group: '🩺 Chuyên môn & Tổ chức',
-    defaultColumns: ['title', 'code', 'specialty', 'issuedAt', 'allowDownload', 'preventCopy', 'updatedAt'],
+    defaultColumns: ['title', 'code', 'specialty', 'views', 'issuedAt', 'allowDownload', 'preventCopy', 'updatedAt'],
     description: 'Quản lý danh mục và tài liệu Phác đồ điều trị, Hướng dẫn chẩn đoán & điều trị chuẩn y khoa của Bệnh viện.',
   },
   access: {
@@ -207,6 +207,16 @@ export const ClinicalProtocols: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       admin: { description: 'Không bắt buộc. Nếu bỏ trống sẽ dùng ảnh mặc định của mục Văn bản – Tài liệu.' },
+    },
+    {
+      name: 'views',
+      label: 'Lượt xem phác đồ',
+      type: 'number',
+      defaultValue: 0,
+      admin: {
+        readOnly: true,
+        description: 'Số lượt truy cập và xem chi tiết phác đồ điều trị.',
+      },
     },
     ...seoFields,
   ],

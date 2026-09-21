@@ -93,6 +93,23 @@ export interface AdminDashboardClientProps {
   feedbackDone?: number
   feedbackDonePercent?: string
   feedbackProcessingPercent?: string
+  visitStatsData?: {
+    online: number
+    today: { views: number; visits: number }
+    month: { views: number; visits: number }
+    total: { views: number; visits: number }
+    history: Array<{ date: string; views: number; visits: number }>
+    topContent?: Array<{
+      id: string | number
+      title: string
+      slug: string
+      type: string
+      typeLabel: string
+      views: number
+      updatedAt?: string
+      href: string
+    }>
+  }
   accountSummaryNode: React.ReactNode
   commandBarNode: React.ReactNode
   bentoContentNode: React.ReactNode
@@ -123,6 +140,7 @@ export default function AdminDashboardClient({
   feedbackDone = 0,
   feedbackDonePercent = '0%',
   feedbackProcessingPercent = '0%',
+  visitStatsData,
   accountSummaryNode,
   commandBarNode,
   bentoContentNode,
@@ -281,7 +299,8 @@ export default function AdminDashboardClient({
         protocolGroups={protocolGroups}
         effectiveProtocols={effectiveProtocols}
         workloadData={workloadData}
-        workloadTimeLabel={workloadTimeLabel}
+        showVisitStatsChart={charts.showVisitStatsChart !== false}
+        visitStatsData={visitStatsData}
         showAreaChart={charts.showAreaChart}
         showDepartmentBar={charts.showDepartmentBar}
         showSatisfactionGauge={charts.showSatisfactionGauge}

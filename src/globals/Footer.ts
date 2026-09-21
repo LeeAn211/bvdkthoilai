@@ -44,6 +44,52 @@ export const Footer: GlobalConfig = {
   fields: [
     { name: 'enabled', label: 'Hiển thị Footer', type: 'checkbox', defaultValue: true },
     {
+      name: 'quickBar',
+      label: 'Thanh tiện ích nhanh & Cấp cứu (Đầu chân trang)',
+      type: 'group',
+      admin: {
+        description: 'Tùy chỉnh bật/tắt thanh tiện ích nhanh ở đầu chân trang và các nút gọi cấp cứu, đặt khám, hướng dẫn.',
+      },
+      fields: [
+        { name: 'enabled', label: 'Bật hiển thị thanh tiện ích nhanh đầu chân trang', type: 'checkbox', defaultValue: true },
+        {
+          type: 'row',
+          fields: [
+            { name: 'showEmergency', label: 'Hiện thẻ gọi Cấp cứu 24/24', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+            { name: 'showBooking', label: 'Hiện nút Đặt khám trực tuyến', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'showGuide', label: 'Hiện nút Quy trình khám', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+            { name: 'showFeedback', label: 'Hiện nút Góp ý & Liên hệ', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'emergencyLabel', label: 'Nhãn thẻ cấp cứu (mặc định: Cấp cứu trực 24/24)', type: 'text', admin: { width: '50%', placeholder: 'Cấp cứu trực 24/24' } },
+            { name: 'emergencyPhone', label: 'Số điện thoại cấp cứu riêng tại chân trang (để trống lấy từ Liên hệ & Bản đồ)', type: 'text', admin: { width: '50%', placeholder: 'VD: 0292 3861 115' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'guideLabel', label: 'Tên nút Quy trình (mặc định: Quy trình khám)', type: 'text', admin: { width: '50%', placeholder: 'Quy trình khám' } },
+            { name: 'guideUrl', label: 'Đường dẫn nút Quy trình', type: 'text', admin: { width: '50%', placeholder: '/quy-trinh-kham-benh' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'feedbackLabel', label: 'Tên nút Góp ý (mặc định: Góp ý & Liên hệ)', type: 'text', admin: { width: '50%', placeholder: 'Góp ý & Liên hệ' } },
+            { name: 'feedbackUrl', label: 'Đường dẫn nút Góp ý', type: 'text', admin: { width: '50%', placeholder: '/lien-he' } },
+          ],
+        },
+      ],
+    },
+    {
       name: 'brandOptions',
       label: 'Khối thông tin bệnh viện',
       type: 'group',
@@ -123,6 +169,48 @@ export const Footer: GlobalConfig = {
         { name: 'copyright', label: 'Nội dung bản quyền', type: 'text', defaultValue: '© {CURRENT_YEAR} Bệnh viện Đa khoa Khu vực Thới Lai' },
         { name: 'showRightText', label: 'Hiển thị nội dung bên phải', type: 'checkbox', defaultValue: true },
         { name: 'rightText', label: 'Nội dung bên phải', type: 'text', defaultValue: 'Cổng thông tin điện tử' },
+      ],
+    },
+    {
+      name: 'visitStats',
+      label: 'Thống kê lượt truy cập website',
+      type: 'group',
+      admin: {
+        description: 'Quản lý hiển thị số lượt truy cập (hôm nay, tháng này, tổng số, đang online) tại chân trang website.',
+      },
+      fields: [
+        {
+          name: 'showStats',
+          label: 'Bật hiển thị thống kê lượt truy cập ngoài Website (Footer)',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            description: 'BẬT / TẮT hiển thị thanh thống kê lượt truy cập ở chân trang ngoài website công khai.',
+          },
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'showOnline', label: 'Hiện số người đang online', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+            { name: 'showToday', label: 'Hiện lượt truy cập hôm nay', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'showMonth', label: 'Hiện lượt truy cập tháng này', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+            { name: 'showTotal', label: 'Hiện tổng lượt truy cập', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+          ],
+        },
+        {
+          name: 'initialOffset',
+          label: 'Số lượt truy cập khởi tạo cộng thêm',
+          type: 'number',
+          defaultValue: 0,
+          admin: {
+            description: 'Cộng thêm số lượt truy cập ban đầu từ hệ thống cũ (nếu có) vào tổng lượt hiển thị.',
+          },
+        },
       ],
     },
     { name: 'showMobileBar', label: 'Hiển thị thanh tiện ích mobile', type: 'checkbox', defaultValue: true },

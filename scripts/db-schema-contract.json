@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260920_059_reconcile_generated_schema",
-  "schemaSha256": "9d8272f6bcda96dbcf36cdf218550b90415a97e8bce2d5322a6eaabbb1a6ca9c"
+  "migrationId": "20260921_061_add_footer_quick_bar",
+  "schemaSha256": "8e9b048a0f9fc9185e50da78c0ae5ea5bc3965726f47fd402dffc47b7a28ceb7"
 }

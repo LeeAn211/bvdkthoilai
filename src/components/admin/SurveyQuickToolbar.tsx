@@ -58,104 +58,71 @@ const DEFAULT_CAMPAIGNS: CampaignItem[] = [
 ]
 
 const PERIOD_OPTIONS = [
-  { value: 'all', label: 'Toàn bộ thời gian' },
+  { value: 'all', label: 'Tất cả' },
   { value: 'day', label: 'Hôm nay' },
-  { value: 'week', label: 'Tuần này (7 ngày)' },
+  { value: 'week', label: '7 ngày' },
   { value: 'month', label: 'Tháng này' },
-  { value: 'quarter', label: 'Quý này (3 tháng)' },
-  { value: '6months', label: '6 tháng gần nhất' },
-  { value: '9months', label: '9 tháng gần nhất' },
-  { value: 'year', label: 'Năm nay (12 tháng)' },
+  { value: 'quarter', label: 'Quý này' },
+  { value: '6months', label: '6 tháng' },
+  { value: '9months', label: '9 tháng' },
+  { value: 'year', label: 'Năm nay' },
+]
+
+const RATING_ROWS = [
+  { key: 'verySatisfied' as const, label: 'Rất hài lòng', emoji: '😍', color: '#10b981', bg: 'linear-gradient(90deg,#10b981,#059669)' },
+  { key: 'satisfied' as const,     label: 'Hài lòng',     emoji: '🙂', color: '#0284c7', bg: 'linear-gradient(90deg,#38bdf8,#0284c7)' },
+  { key: 'neutral' as const,       label: 'Bình thường',   emoji: '😐', color: '#d97706', bg: 'linear-gradient(90deg,#fbbf24,#d97706)' },
+  { key: 'unsatisfied' as const,   label: 'Chưa hài lòng', emoji: '🙁', color: '#dc2626', bg: 'linear-gradient(90deg,#f87171,#dc2626)' },
 ]
 
 export default function SurveyQuickToolbar() {
   const [campaigns, setCampaigns] = useState<CampaignItem[]>(DEFAULT_CAMPAIGNS)
-  // 'all' nghĩa là tất cả các loại khảo sát, hoặc ID cụ thể của đợt
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>('all')
-  // Lọc theo mốc thời gian: all | day | week | month | quarter | 6months | 9months | year
   const [selectedPeriod, setSelectedPeriod] = useState<string>('all')
-
   const [stats, setStats] = useState<CampaignStats | null>(null)
   const [loadingStats, setLoadingStats] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
 
-  // 1. Tải danh sách đợt khảo sát đầy đủ từ server
   useEffect(() => {
     let isMounted = true
-    async function loadCampaigns() {
-      try {
-        const res = await fetch('/api/surveys/templates')
-        if (res.ok) {
-          const data = await res.json()
-          if (isMounted && data.campaigns && data.campaigns.length > 0) {
-            setCampaigns(data.campaigns)
-          }
-        }
-      } catch (e) {
-        console.warn('Lỗi khi tải danh sách đợt khảo sát:', e)
-      }
-    }
-    loadCampaigns()
-    return () => {
-      isMounted = false
-    }
+    fetch('/api/surveys/templates')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (isMounted && data?.campaigns?.length > 0) setCampaigns(data.campaigns) })
+      .catch(() => {})
+    return () => { isMounted = false }
   }, [])
 
-  // 2. Tải thống kê khi thay đổi đợt khảo sát hoặc thay đổi khoảng thời gian
   useEffect(() => {
     let isMounted = true
     setLoadingStats(true)
-
-    async function loadStats() {
-      try {
-        const res = await fetch(
-          `/api/surveys/statistics?campaign=${selectedCampaignId}&period=${selectedPeriod}&details=admin`
-        )
-        if (res.ok) {
-          const data = await res.json()
-          if (isMounted) {
-            setStats(data)
-          }
-        }
-      } catch (err) {
-        console.warn('Lỗi khi tải thống kê đợt khảo sát:', err)
-      } finally {
-        if (isMounted) setLoadingStats(false)
-      }
-    }
-
-    loadStats()
-    return () => {
-      isMounted = false
-    }
+    fetch(`/api/surveys/statistics?campaign=${selectedCampaignId}&period=${selectedPeriod}&details=admin`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (isMounted && data) setStats(data) })
+      .catch(() => {})
+      .finally(() => { if (isMounted) setLoadingStats(false) })
+    return () => { isMounted = false }
   }, [selectedCampaignId, selectedPeriod])
 
   const totalVotes = stats
-    ? stats.ratingDistribution.verySatisfied +
-      stats.ratingDistribution.satisfied +
-      stats.ratingDistribution.neutral +
-      stats.ratingDistribution.unsatisfied
+    ? stats.ratingDistribution.verySatisfied + stats.ratingDistribution.satisfied +
+      stats.ratingDistribution.neutral + stats.ratingDistribution.unsatisfied
     : 0
 
-  const getPercent = (count: number) => {
-    if (!totalVotes) return 0
-    return Math.round((count / totalVotes) * 100)
-  }
+  const getPct = (n: number) => (!totalVotes ? 0 : Math.round((n / totalVotes) * 100))
 
-  const handleExportExcel = () => {
-    window.open(
-      `/api/surveys/export?campaign=${selectedCampaignId}&period=${selectedPeriod}`,
-      '_blank'
-    )
-  }
+  const handleExport = () =>
+    window.open(`/api/surveys/export?campaign=${selectedCampaignId}&period=${selectedPeriod}`, '_blank')
+
+  const periodLabel = PERIOD_OPTIONS.find(p => p.value === selectedPeriod)?.label ?? ''
 
   return (
     <section className={styles.container}>
+      {/* ── HEADER ── */}
       <div className={styles.header}>
-        <div className={styles.badge}>HỆ THỐNG KHẢO SÁT Ý KIẾN BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI</div>
-        <h2 className={styles.title}>Quản Lý Khảo Sát Ý Kiến & Kết Quả Đánh Giá</h2>
+        <div className={styles.badge}>HỆ THỐNG KHẢO SÁT Ý KIẾN — BVĐK KHU VỰC THỚI LAI</div>
+        <h2 className={styles.title}>Quản Lý Khảo Sát Ý Kiến &amp; Kết Quả Đánh Giá</h2>
         <p className={styles.desc}>
-          Khu vực quản lý thống nhất: Quản lý các đợt khảo sát, theo dõi số lượt tham gia theo <strong>ngày, tuần, tháng, quý, năm</strong>, xem chi tiết từng phiếu đánh giá, biểu đồ phân tích và xuất báo cáo Excel (.xlsx).
+          Theo dõi lượt tham gia, phân tích mức độ hài lòng và xuất báo cáo Excel theo từng đợt và khoảng thời gian.
         </p>
       </div>
 
