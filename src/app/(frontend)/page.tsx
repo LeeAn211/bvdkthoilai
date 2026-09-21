@@ -25,6 +25,24 @@ import type { CSSProperties } from 'react'
 export const revalidate = 0
 export const dynamic = 'force-dynamic'
 
+function databaseErrorDetails(error: unknown) {
+  const seen = new Set<unknown>()
+  let current: any = error
+  while (current?.cause && !seen.has(current.cause)) {
+    seen.add(current)
+    current = current.cause
+  }
+
+  return {
+    name: current?.name,
+    code: current?.code,
+    message: current?.message ?? String(current ?? error),
+    detail: current?.detail,
+    table: current?.table,
+    column: current?.column,
+  }
+}
+
 function HomeGlyph({ name }: { name?: string }) {
   const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
   if (name === 'calendar') return (
@@ -124,8 +142,8 @@ export default async function HomePage() {
   try {
     const [payload, homepage, settings, contentDefaults, quickSettings, bookingSettings] = await Promise.all([
       getCMS(),
-      getHomepage().catch((e: any) => { console.error('[HomePage] getHomepage error:', e?.cause?.message || e?.message || e); return {} }),
-      getGlobal('site-settings').catch((e: any) => { console.error('[HomePage] site-settings error:', e?.cause?.message || e?.message || e); return {} }),
+      getHomepage().catch((error: unknown) => { console.error('[HomePage] getHomepage error:', databaseErrorDetails(error)); return {} }),
+      getGlobal('site-settings').catch((error: unknown) => { console.error('[HomePage] site-settings error:', databaseErrorDetails(error)); return {} }),
       getDefaultContentMedia().catch(() => ({ news: '/default-content/news.svg', notices: '/default-content/notices.svg', procurement: '/default-content/procurement.svg' })),
       getGlobal('quick-links-settings').catch(() => ({})),
       getGlobal('medpro-settings').catch(() => ({})),

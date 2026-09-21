@@ -1,30 +1,25 @@
-# CURRENT TASK — Chặn lỗi lệch database khi deploy Railway
+# CURRENT TASK — Chẩn đoán lỗi truy vấn Homepage trên Railway
 
 ## Trạng thái: HOÀN THÀNH
 
-## Phạm vi
+## Kết luận
 
-- Phân tích log Railway: migration Direct URL thành công nhưng truy vấn Payload qua
-  `DATABASE_URL` vẫn thất bại sau khi Next.js khởi động.
-- Không thay đổi schema và không thao tác dữ liệu production.
+- File log mới chỉ có câu SQL và `params: 1`, không có PostgreSQL cause.
+- Chạy lại nguyên câu SQL từ log qua `DATABASE_URL` hiện tại ở transaction read-only:
+  PASS (`query: ok`).
+- Schema `homepage` hiện tại không thiếu cột; lỗi đã gửi là log cũ hoặc lỗi kết nối
+  pooled thoáng qua, không phải migration 060/061 thất bại.
 
 ## Đã thực hiện
 
-1. Bổ sung runtime database gate vào `scripts/db-migrate.mjs`.
-2. Đối chiếu Neon endpoint, database và user giữa URL pooled và URL direct.
-3. Sau migration, kết nối lại bằng chính `DATABASE_URL` của Payload.
-4. Kiểm tra ledger có migration mới nhất và chạy verify schema qua pooled connection.
-5. Chuẩn hóa lỗi database theo nguyên nhân sâu nhất, tránh chỉ in câu SQL dài.
-6. Cập nhật validation migration và tài liệu Railway.
+1. Giữ runtime database gate trong `scripts/db-migrate.mjs`.
+2. Sửa logger Homepage để đi đến cause sâu nhất.
+3. Log mới chỉ ghi các trường hữu ích: name, SQLSTATE code, message, detail,
+   table và column; không đổ toàn bộ SQL dài.
+4. Script chẩn đoán tạm đã được xóa, không đưa vào repository.
 
 ## Kiểm tra
 
-- `node --check scripts/db-migrate.mjs`: PASS.
-- `npm.cmd run validate:migrations`: PASS 274/274.
-- DB schema contract behavior: PASS 4/4.
-- `git diff --check`: PASS (chỉ có cảnh báo LF/CRLF của Git trên Windows).
-
-## Triển khai tiếp theo
-
-- Rotate mật khẩu Neon đã bị lộ, cập nhật cả hai URL trên Railway.
-- Commit/push thay đổi và Redeploy; log phải có `Runtime DATABASE_URL verified`.
+- Truy vấn Homepage production-compatible qua DATABASE_URL: PASS.
+- `npm.cmd run typecheck`: PASS.
+- `git diff --check`: PASS (chỉ có cảnh báo LF/CRLF trên Windows).

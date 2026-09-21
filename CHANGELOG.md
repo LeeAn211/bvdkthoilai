@@ -6,6 +6,7 @@
 - Chặn deploy nếu hai URL lệch Neon endpoint, database hoặc user.
 - Kiểm tra migration mới nhất và schema qua pooled connection trước khi chạy Next.js.
 - Rút gọn lỗi PostgreSQL về nguyên nhân sâu nhất thay vì chỉ in câu SQL dài.
+- Logger trang chủ ghi trực tiếp SQLSTATE/message/detail/table/column từ nguyên nhân sâu nhất.
 - Validation migration đạt 274/274 và schema contract behavior đạt 4/4.
 
 ## 2026-09-20 — Sửa lỗi build DB schema contract
