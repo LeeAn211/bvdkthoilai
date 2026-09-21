@@ -96,6 +96,37 @@ function formatDatabaseError(error) {
   return `${code} ${message}`.trim()
 }
 
+async function connectWithRetry(client, { maxRetries = 5, delayMs = 3000, label = 'Database' } = {}) {
+  let lastError
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await client.connect()
+      if (attempt > 1) {
+        console.log(`✓ ${label} đã kết nối thành công sau lần thử thứ ${attempt}.`)
+      }
+      return
+    } catch (error) {
+      lastError = error
+      const isTimeout =
+        error?.code === 'ETIMEDOUT' ||
+        error?.message?.includes('ETIMEDOUT') ||
+        error?.message?.includes('timeout') ||
+        error?.code === 'ECONNRESET' ||
+        error?.code === '57P01'
+
+      if (isTimeout && attempt < maxRetries) {
+        console.warn(
+          `⏳ ${label} (Neon) đang thức dậy hoặc mạng trễ (Lần ${attempt}/${maxRetries}). Đợi ${delayMs / 1000}s thử lại...`
+        )
+        await new Promise((resolve) => setTimeout(resolve, delayMs))
+      } else {
+        throw error
+      }
+    }
+  }
+  throw lastError
+}
+
 async function verifyRuntimeDatabase({ connectionString, migrationConnection, latestMigration, timeout }) {
   if (!connectionString) {
     throw new Error('Thieu DATABASE_URL cho ket noi runtime cua Payload.')
@@ -117,7 +148,7 @@ async function verifyRuntimeDatabase({ connectionString, migrationConnection, la
 
   const runtimeClient = new Client({ connectionString, connectionTimeoutMillis: timeout })
   try {
-    await runtimeClient.connect()
+    await connectWithRetry(runtimeClient, { maxRetries: 4, delayMs: 2500, label: 'Runtime Database' })
     const applied = await readAppliedMigrations(runtimeClient)
     if (!applied.has(latestMigration.id)) {
       throw new Error(
@@ -351,7 +382,7 @@ async function run() {
   let completedApply = false
 
   try {
-    await client.connect()
+    await connectWithRetry(client, { maxRetries: 5, delayMs: 3000, label: 'Migration Database' })
     await client.query("SELECT set_config('statement_timeout', $1, false)", [
       `${statementTimeoutMilliseconds}ms`,
     ])

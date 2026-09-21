@@ -1,0 +1,565 @@
+/* =========================================================
+   BẢNG GIÁ DỊCH VỤ Y TẾ — BVĐK KHU VỰC THỚI LAI
+   Design: Modern Medical Transparency System
+   ========================================================= */
+
+.pricePageContainer {
+  display: grid;
+  gap: 24px;
+}
+
+/* 1. Header Căn cứ pháp lý & Thông cáo chính sách */
+.legalBanner {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1.5px solid #86efac;
+  border-radius: 16px;
+  padding: 18px 24px;
+  box-shadow: 0 4px 16px rgba(22, 163, 74, 0.06);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.legalBanner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: linear-gradient(180deg, #16a34a, #059669);
+}
+
+.legalBannerIcon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #dcfce7;
+  color: #15803d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.legalBannerBody {
+  flex: 1;
+}
+
+.legalBannerTitle {
+  margin: 0 0 6px;
+  color: #14532d;
+  font-size: 15.5px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.legalBannerContent {
+  margin: 0;
+  color: #166534;
+  font-size: 13.5px;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+/* 2. Thanh tìm kiếm hiện đại & Thanh lọc */
+.searchSection {
+  background: #ffffff;
+  border: 1px solid #d9e6f0;
+  border-radius: 18px;
+  padding: 16px 20px;
+  box-shadow: 0 8px 24px rgba(12, 53, 89, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.searchForm {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.searchInputWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1.5px solid #d0e1ee;
+  border-radius: 12px;
+  padding: 0 16px;
+  min-height: 52px;
+  transition: all 0.2s ease;
+}
+
+.searchInputWrapper:focus-within {
+  border-color: #0878d1;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(8, 120, 209, 0.12);
+}
+
+.searchIcon {
+  color: #0878d1;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.searchInput {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #0f2d4a;
+  font-size: 14.5px;
+  font-weight: 500;
+  font-family: inherit;
+}
+
+.searchInput::placeholder {
+  color: #8da1b3;
+  font-weight: 400;
+}
+
+.searchSubmitBtn {
+  min-height: 52px;
+  padding: 0 24px;
+  background: linear-gradient(135deg, #0878d1, #0564ad);
+  color: #ffffff;
+  border: 0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(8, 120, 209, 0.22);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.searchSubmitBtn:hover {
+  background: linear-gradient(135deg, #0984e3, #0878d1);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(8, 120, 209, 0.28);
+}
+
+.clearFilterBtn {
+  min-height: 52px;
+  padding: 0 18px;
+  border: 1.5px solid #cbdde8;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #567287;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.clearFilterBtn:hover {
+  background: #f1f6fa;
+  color: #1c3d59;
+  border-color: #9cbccc;
+}
+
+/* 3. Thanh thông tin & Thống kê */
+.statsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 4px 6px;
+  font-size: 13px;
+  color: #5d7589;
+}
+
+.statsHighlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badgeCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid #bae6fd;
+}
+
+.legalNoticeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 4. Khung Bảng Giá Chuẩn Y Tế (Medical Modern Table) */
+.tableContainer {
+  background: #ffffff;
+  border: 1px solid #dbe6ef;
+  border-radius: 16px;
+  box-shadow: 0 6px 22px rgba(15, 62, 102, 0.05);
+  overflow: hidden;
+}
+
+.tableScrollWrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.medicalTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 960px;
+}
+
+/* Table Header */
+.medicalTable thead {
+  background: linear-gradient(180deg, #093f6c 0%, #063155 100%);
+  color: #ffffff;
+}
+
+.medicalTable thead th {
+  padding: 11px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+}
+
+.medicalTable thead th:last-child {
+  border-right: 0;
+}
+
+.thSequence {
+  width: 55px;
+  text-align: center;
+}
+
+.thService {
+  width: 40%;
+}
+
+.thBhytPrice {
+  width: 14%;
+  text-align: center;
+}
+
+.thHospitalPrice {
+  width: 14%;
+  text-align: center;
+}
+
+.thLegalDecision {
+  width: 25%;
+  text-align: left;
+}
+
+/* Table Body - Compact & Elegant */
+.medicalTable tbody tr {
+  border-bottom: 1px solid #ebf2f7;
+  transition: background-color 0.12s ease;
+}
+
+.medicalTable tbody tr:nth-child(even) {
+  background-color: #fafcfe;
+}
+
+.medicalTable tbody tr:hover {
+  background-color: #f0f7fd;
+}
+
+.medicalTable tbody td {
+  padding: 8px 14px;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.tdSequence {
+  text-align: center;
+  font-weight: 700;
+  color: #718a9e;
+  font-size: 12.5px;
+}
+
+/* Cột Chi tiết Dịch vụ */
+.serviceDetailCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.serviceCodePill {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  background: #f1f5f9;
+  color: #0284c7;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  line-height: 1.3;
+}
+
+.serviceNameText {
+  color: #0c2b47;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.serviceMetaText {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #718a9e;
+  font-size: 11px;
+}
+
+.serviceUnit {
+  background: #f0f9ff;
+  color: #0369a1;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+/* Cột Giá BHYT */
+.priceCellBhyt {
+  text-align: center;
+}
+
+.priceNumberBhyt {
+  color: #0284c7;
+  font-weight: 800;
+  font-size: 14.5px;
+  letter-spacing: -0.2px;
+}
+
+/* Cột Giá Dịch vụ */
+.priceCellHospital {
+  text-align: center;
+}
+
+.priceNumberHospital {
+  color: #dc2626;
+  font-weight: 800;
+  font-size: 14.5px;
+  letter-spacing: -0.2px;
+}
+
+/* Cột Quyết Định & Ngày Hiệu Lực - Gọn gàng thanh thoát */
+.legalDecisionCell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.legalDecisionRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.decisionChip {
+  display: inline-flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 5px;
+  width: fit-content;
+  white-space: nowrap;
+}
+
+.decisionDefault {
+  color: #94a3b8;
+  font-size: 11.5px;
+}
+
+.effectiveDatePill {
+  display: inline-flex;
+  align-items: center;
+  color: #166534;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 1px 6px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.legalNote {
+  color: #64748b;
+  font-size: 10.5px;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+/* 5. Giao diện dạng Thẻ cho Màn hình Di động (Mobile View) */
+.mobileCardsContainer {
+  display: none;
+}
+
+.mobileCard {
+  background: #ffffff;
+  border: 1px solid #dbe6ef;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(12, 53, 89, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobileCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mobileCardTitle {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0c2b47;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.mobilePriceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background: #f8fafc;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.mobilePriceBox {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mobilePriceLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.mobileBhytLabel {
+  color: #0284c7;
+}
+
+.mobileHospitalLabel {
+  color: #dc2626;
+}
+
+.mobilePriceValue {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.mobileLegalBox {
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Empty State */
+.emptyNotice {
+  padding: 48px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.emptyNoticeIcon {
+  font-size: 42px;
+  color: #94a3b8;
+}
+
+.emptyNoticeTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #334155;
+  margin: 0;
+}
+
+.emptyNoticeLink {
+  color: #0878d1;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 820px) {
+  .searchForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchInputWrapper {
+    min-height: 48px;
+  }
+
+  .searchSubmitBtn,
+  .clearFilterBtn {
+    min-height: 46px;
+    width: 100%;
+  }
+
+  .tableContainer {
+    display: none;
+  }
+
+  .mobileCardsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+}

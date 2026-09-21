@@ -1,19 +1,14 @@
-# CURRENT TASK — Tối ưu tỷ lệ khung ảnh Kỹ thuật chuyên sâu (4:3) & Đồng bộ hệ thống thẻ 16:9
+# CURRENT TASK — Khắc phục triệt để lỗi ETIMEDOUT Neon khi khởi động (Auto-Retry Cold Boot)
 
 ## Trạng thái: HOÀN THÀNH
 
 ## Đã thực hiện
-1. [`src/components/AdvancedTechniquesCarousel.module.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/components/AdvancedTechniquesCarousel.module.css):
-   - Chuyển tỷ lệ khung ảnh `.techCardImage` của mục **Kỹ thuật chuyên sâu** sang tỷ lệ **`4 / 3`** (tăng chiều cao đáng kể so với 16:9, khung ảnh cao ráo, thoáng mắt, hiển thị ảnh ngang/dọc đều rõ ràng và không bị hẹp).
-   - Bỏ giới hạn chiều cao cũ để các thẻ linh hoạt theo kích cỡ màn hình.
-2. [`src/components/FeaturedContentCarousel.module.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/components/FeaturedContentCarousel.module.css) & [`FeaturedContentCarousel.tsx`](file:///f:/20.9%20web/bvdkthoilai-main/src/components/FeaturedContentCarousel.tsx):
-   - Chuyển tỷ lệ khung ảnh `.imageFrame` mục Điểm tin / Tin nổi bật sang chuẩn **`16 / 9`**.
-3. [`src/app/styles/30-home-editorial.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/app/styles/30-home-editorial.css):
-   - `.editorialRowThumb`: đổi sang `112px × 63px` (`aspect-ratio: 16 / 9`), mobile `96px × 54px`.
-4. [`src/app/globals.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/app/globals.css):
-   - Cập nhật `.homeScheduleSection` và `.homeVaccinationSection` cho các thẻ con bên phải sang tỷ lệ chuẩn 16:9 (`112px × 63px`).
-5. [`src/components/SearchFilter.module.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/components/SearchFilter.module.css):
-   - Chuẩn hóa khung thẻ bài viết danh sách trang `/lich-kham` sang tỷ lệ chuẩn `16 / 9`.
+1. [`scripts/db-migrate.mjs`](file:///f:/20.9%20web/bvdkthoilai-main/scripts/db-migrate.mjs):
+   - Thêm hàm `connectWithRetry` hỗ trợ xử lý đặc thù của **Neon Serverless**: Khi database đang ở trạng thái ngủ (Auto-suspend / Scale to Zero) hoặc mạng quốc tế trễ, script sẽ không văng lỗi sập container mà kiên nhẫn thử lại tối đa 5 lần (mỗi lần chờ 3 giây) để Neon kịp khởi động engine.
+   - Áp dụng `connectWithRetry` cho cả **Migration Database connection** và **Runtime Database verification**.
+   - Bắt các mã lỗi rớt mạng đặc trưng (`ETIMEDOUT`, `ECONNRESET`, `57P01`) và in log thông báo rõ ràng (`⏳ Database (Neon) đang thức dậy...`).
+2. Giao diện trang **Bảng giá dịch vụ** ([`src/app/(frontend)/bang-gia/page.tsx`](file:///f:/20.9%20web/bvdkthoilai-main/src/app/(frontend)/bang-gia/page.tsx) & [`src/app/(frontend)/bang-gia/bang-gia.module.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/app/(frontend)/bang-gia/bang-gia.module.css)):
+   - Đã tối ưu xong định dạng gọn gàng (Compact table), giá BHYT xanh dương canh giữa, giá dịch vụ đỏ canh giữa, bỏ đơn vị tính "Lần".
 
 ## Kiểm tra
-- `git status -s`: PASS. Tất cả các khối hiển thị đã quy về chuẩn ngang 16:9 đồng nhất.
+- `npm run typecheck`: PASS (0 lỗi).

@@ -3,12 +3,36 @@ import { PageHero } from '@/components/PageHero'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
 import { getCMS, getGlobal } from '@/lib/payload'
+import styles from './bang-gia.module.css'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
-export const metadata: Metadata = { title: 'Bảng giá dịch vụ', description: 'Tra cứu giá BHYT và giá dịch vụ tại Bệnh viện Đa khoa Khu vực Thới Lai.' }
+export const metadata: Metadata = {
+  title: 'Bảng giá dịch vụ',
+  description: 'Tra cứu giá BHYT và giá dịch vụ công khai tại Bệnh viện Đa khoa Khu vực Thới Lai.',
+}
+
 type Props = { searchParams: Promise<{ q?: string; page?: string }> }
-const money = (value: any) => typeof value === 'number' ? `${new Intl.NumberFormat('vi-VN').format(value)}đ` : '-'
+
+const money = (value: any) =>
+  typeof value === 'number'
+    ? `${new Intl.NumberFormat('vi-VN').format(value)} đ`
+    : '-'
+
+const formatDate = (dateVal: any) => {
+  if (!dateVal) return ''
+  try {
+    const d = new Date(dateVal)
+    if (isNaN(d.getTime())) return ''
+    return d.toLocaleDateString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+  } catch {
+    return ''
+  }
+}
 
 const pageHref = (page: number, query: string) => {
   const params = new URLSearchParams()
@@ -30,8 +54,13 @@ export default async function PricePage({ searchParams }: Props) {
     const [payload, siteSettings] = await Promise.all([getCMS(), getGlobal('site-settings')])
     settings = (siteSettings as any)?.servicePricePage || {}
     const limit = settings.rowsPerPage === '50' || settings.rowsPerPage === 50 ? 50 : 40
-    const searchable: any[] = [{ code: { contains: query } }, { name: { contains: query } }, { category: { contains: query } }]
+    const searchable: any[] = [
+      { code: { contains: query } },
+      { name: { contains: query } },
+      { category: { contains: query } },
+    ]
     if (settings.searchNotes !== false) searchable.push({ note: { contains: query } })
+
     result = await payload.find({
       collection: 'services',
       where: query ? { and: [{ active: { equals: true } }, { or: searchable }] } : { active: { equals: true } },
@@ -40,8 +69,16 @@ export default async function PricePage({ searchParams }: Props) {
       page: requestedPage,
       depth: 0,
     })
+
     const now = new Date()
-    const prices = await payload.find({ collection: 'servicePrices', where: { active: { equals: true } }, sort: '-effectiveFrom', limit: 5000, depth: 1 })
+    const prices = await payload.find({
+      collection: 'servicePrices',
+      where: { active: { equals: true } },
+      sort: '-effectiveFrom',
+      limit: 5000,
+      depth: 1,
+    })
+
     priceMap = new Map()
     for (const price of prices.docs as any[]) {
       const from = price.effectiveFrom ? new Date(price.effectiveFrom) : null
@@ -59,122 +96,283 @@ export default async function PricePage({ searchParams }: Props) {
   const currentPage = Number(result.page || requestedPage)
   const totalPages = Math.max(1, Number(result.totalPages || 1))
   const rowsPerPage = settings.rowsPerPage === '50' || settings.rowsPerPage === 50 ? 50 : 40
-  const visiblePages = Array.from(new Set([1, currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2, totalPages])).filter(page => page >= 1 && page <= totalPages).sort((a, b) => a - b)
+  const visiblePages = Array.from(
+    new Set([1, currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2, totalPages])
+  )
+    .filter((page) => page >= 1 && page <= totalPages)
+    .sort((a, b) => a - b)
 
-  return <>
-    <SiteHeader />
-    <PageHero eyebrow="CÔNG KHAI – MINH BẠCH" title={settings.title || 'Bảng giá dịch vụ'} description={settings.description || 'Tra cứu giá BHYT và giá dịch vụ được cập nhật trực tiếp từ hệ thống quản trị.'} />
-    <main className="section servicePricePage">
-      <div className="container">
-        {settings.showNoticeBanner !== false && (settings.noticeContent || settings.noticeTitle) && (
-          <div
-            style={{
-              background: '#f0fdf4',
-              border: '1.5px solid #86efac',
-              borderRadius: '16px',
-              padding: '20px 24px',
-              marginBottom: '24px',
-              boxShadow: '0 4px 14px rgba(22, 163, 74, 0.08)',
-              textAlign: settings.noticeAlign || 'left',
-            }}
-          >
-            {settings.noticeTitle && (
-              <h3
-                style={{
-                  margin: '0 0 10px',
-                  color: '#166534',
-                  fontSize: '17px',
-                  fontWeight: 800,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  justifyContent: settings.noticeAlign === 'center' ? 'center' : settings.noticeAlign === 'right' ? 'flex-end' : 'flex-start',
-                  textWrap: 'balance',
-                }}
-              >
-                <span>ℹ️</span> {settings.noticeTitle}
-              </h3>
+  return (
+    <>
+      <SiteHeader />
+      <PageHero
+        eyebrow="CÔNG KHAI – MINH BẠCH"
+        title={settings.title || 'Bảng giá dịch vụ'}
+        description={settings.description || 'Tra cứu giá BHYT và giá dịch vụ được cập nhật trực tiếp theo quy định hiện hành.'}
+      />
+
+      <main className="section servicePricePage">
+        <div className="container">
+          <div className={styles.pricePageContainer}>
+            {/* Thông cáo / Căn cứ pháp lý & Lưu ý BHYT */}
+            {settings.showNoticeBanner !== false && (settings.noticeContent || settings.noticeTitle) && (
+              <aside className={styles.legalBanner} aria-label="Thông báo và quy định bảng giá">
+                <div className={styles.legalBannerIcon} aria-hidden="true">
+                  ⚖️
+                </div>
+                <div className={styles.legalBannerBody}>
+                  {settings.noticeTitle && <h2 className={styles.legalBannerTitle}>{settings.noticeTitle}</h2>}
+                  {settings.noticeContent && <p className={styles.legalBannerContent}>{settings.noticeContent}</p>}
+                </div>
+              </aside>
             )}
-            {settings.noticeContent && (
-              <p
-                style={{
-                  margin: 0,
-                  color: '#15803d',
-                  fontSize: '14px',
-                  lineHeight: 1.7,
-                  whiteSpace: 'pre-line',
-                  textWrap: 'balance',
-                }}
-              >
-                {settings.noticeContent}
-              </p>
-            )}
-          </div>
-        )}
-        <form className="serviceSearch" action="/bang-gia" method="get">
-          <div className="serviceSearchInput">
-            <span>⌕</span>
-            <label htmlFor="service-query">Tìm dịch vụ</label>
-            <input id="service-query" name="q" defaultValue={query} placeholder={settings.searchPlaceholder || 'Nhập tên, mã dịch vụ, nhóm hoặc ghi chú…'} />
-          </div>
-          <button type="submit">Tìm kiếm</button>
-          {query && <a href="/bang-gia">Xóa bộ lọc</a>}
-        </form>
-        <div className="serviceResultBar">
-          <div>
-            <strong>{new Intl.NumberFormat('vi-VN').format(result.totalDocs || 0)}</strong>
-            <span>{query ? ` kết quả cho “${query}”` : ' dịch vụ đang công khai'}</span>
-          </div>
-          <span>Hiển thị {rowsPerPage} dòng / trang</span>
-        </div>
-        <div className="price-table price-table-full">
-          <div className="price-head">
-            <span>STT</span>
-            <span>Mã dịch vụ / Tên dịch vụ</span>
-            <span>Giá BHYT</span>
-            <span>Giá dịch vụ</span>
-            <span>Ghi chú</span>
-          </div>
-          {docs.map((item: any, index: number) => {
-            const current = priceMap.get(String(item.id))
-            return (
-              <div className="price-row" key={item.id}>
-                <span>{item.sequence || (currentPage - 1) * rowsPerPage + index + 1}</span>
-                <span>
-                  <b>{item.code}</b>
-                  <strong>{item.name}</strong>
-                  {item.category && <small>{item.category}{item.unit ? ` · ${item.unit}` : ''}</small>}
-                </span>
-                <strong>{money(current?.insurancePrice ?? item.insurancePrice)}</strong>
-                <strong>{money(current?.servicePrice ?? item.price)}</strong>
-                <span>{current?.decisionNo ? `${current.decisionNo}${current.note ? ` · ${current.note}` : ''}` : (item.note || '-')}</span>
+
+            {/* Khung tìm kiếm & Thao tác lọc */}
+            <section className={styles.searchSection} aria-label="Bộ lọc tìm kiếm bảng giá">
+              <form className={styles.searchForm} action="/bang-gia" method="get">
+                <div className={styles.searchInputWrapper}>
+                  <span className={styles.searchIcon} aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </span>
+                  <input
+                    id="service-query"
+                    name="q"
+                    className={styles.searchInput}
+                    defaultValue={query}
+                    placeholder={settings.searchPlaceholder || 'Nhập tên dịch vụ, mã kỹ thuật, nhóm chuyên khoa hoặc ghi chú...'}
+                    aria-label="Tìm kiếm dịch vụ y tế"
+                  />
+                </div>
+                <button type="submit" className={styles.searchSubmitBtn}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <span>Tìm kiếm</span>
+                </button>
+                {query && (
+                  <a href="/bang-gia" className={styles.clearFilterBtn}>
+                    ✕ Xóa bộ lọc
+                  </a>
+                )}
+              </form>
+
+              {/* Thanh thống kê kết quả */}
+              <div className={styles.statsBar}>
+                <div className={styles.statsHighlight}>
+                  <span>Kết quả:</span>
+                  <span className={styles.badgeCount}>
+                    {new Intl.NumberFormat('vi-VN').format(result.totalDocs || 0)}
+                  </span>
+                  <span>{query ? `dịch vụ khớp từ khóa “${query}”` : 'dịch vụ đang áp dụng'}</span>
+                </div>
+                <div className={styles.legalNoticeBadge}>
+                  <span aria-hidden="true">🛡️</span>
+                  <span>Đồng bộ dữ liệu quản trị & danh mục BHYT</span>
+                </div>
               </div>
-            )
-          })}
-          {docs.length === 0 && (
-            <div className="serviceEmpty">
-              <span>⌕</span>
-              <strong>{settings.emptyText || 'Không tìm thấy dịch vụ phù hợp.'}</strong>
-              <a href="/bang-gia">Xem toàn bộ bảng giá</a>
+            </section>
+
+            {/* BẢNG GIÁ HIỂN THỊ TRÊN DESKTOP & TABLET */}
+            <div className={styles.tableContainer}>
+              <div className={styles.tableScrollWrapper}>
+                <table className={styles.medicalTable}>
+                  <thead>
+                    <tr>
+                      <th className={styles.thSequence}>STT</th>
+                      <th className={styles.thService}>Mã & Tên dịch vụ kỹ thuật</th>
+                      <th className={styles.thBhytPrice}>Giá BHYT</th>
+                      <th className={styles.thHospitalPrice}>Giá Dịch vụ</th>
+                      <th className={styles.thLegalDecision}>Quyết định & Hiệu lực</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {docs.map((item: any, index: number) => {
+                      const current = priceMap.get(String(item.id))
+                      const stt = item.sequence || (currentPage - 1) * rowsPerPage + index + 1
+                      const bhytPrice = current?.insurancePrice ?? item.insurancePrice
+                      const hospitalPrice = current?.servicePrice ?? item.price
+                      const decisionNo = current?.decisionNo || ''
+                      const effectiveFromStr = formatDate(current?.effectiveFrom)
+                      const effectiveToStr = formatDate(current?.effectiveTo)
+                      const note = current?.note || item.note || ''
+
+                      return (
+                        <tr key={item.id}>
+                          <td className={styles.tdSequence}>{stt}</td>
+                          <td>
+                            <div className={styles.serviceDetailCell}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                <span className={styles.serviceCodePill}>{item.code}</span>
+                                {item.unit && !/^(lần|lan)$/i.test(item.unit.trim()) && (
+                                  <span className={styles.serviceUnit}>{item.unit}</span>
+                                )}
+                              </div>
+                              <span className={styles.serviceNameText}>{item.name}</span>
+                              {item.category && (
+                                <span className={styles.serviceMetaText}>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M20 7h-7L10 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path>
+                                  </svg>
+                                  {item.category}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td className={styles.priceCellBhyt}>
+                            <span className={styles.priceNumberBhyt}>{money(bhytPrice)}</span>
+                          </td>
+                          <td className={styles.priceCellHospital}>
+                            <span className={styles.priceNumberHospital}>{money(hospitalPrice)}</span>
+                          </td>
+                          <td>
+                            <div className={styles.legalDecisionCell}>
+                              <div className={styles.legalDecisionRow}>
+                                {decisionNo ? (
+                                  <span className={styles.decisionChip} title={`Quyết định: ${decisionNo}`}>
+                                    📜 {decisionNo}
+                                  </span>
+                                ) : (
+                                  <span className={styles.decisionDefault}>Quy định chung</span>
+                                )}
+
+                                {effectiveFromStr && (
+                                  <span className={styles.effectiveDatePill} title={`Hiệu lực từ ${effectiveFromStr}${effectiveToStr ? ` đến ${effectiveToStr}` : ''}`}>
+                                    📅 {effectiveFromStr}
+                                  </span>
+                                )}
+                              </div>
+
+                              {note && (
+                                <span className={styles.legalNote} title={note}>
+                                  * {note}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {docs.length === 0 && (
+                <div className={styles.emptyNotice}>
+                  <div className={styles.emptyNoticeIcon} aria-hidden="true">🔍</div>
+                  <h3 className={styles.emptyNoticeTitle}>{settings.emptyText || 'Không tìm thấy dịch vụ y tế phù hợp.'}</h3>
+                  <a href="/bang-gia" className={styles.emptyNoticeLink}>
+                    Nhấn vào đây để xem toàn bộ bảng giá
+                  </a>
+                </div>
+              )}
             </div>
-          )}
+
+            {/* BẢNG GIÁ DẠNG THẺ CHO MÀN HÌNH DI ĐỘNG (MOBILE) */}
+            <div className={styles.mobileCardsContainer}>
+              {docs.map((item: any, index: number) => {
+                const current = priceMap.get(String(item.id))
+                const stt = item.sequence || (currentPage - 1) * rowsPerPage + index + 1
+                const bhytPrice = current?.insurancePrice ?? item.insurancePrice
+                const hospitalPrice = current?.servicePrice ?? item.price
+                const decisionNo = current?.decisionNo || ''
+                const effectiveFromStr = formatDate(current?.effectiveFrom)
+                const note = current?.note || item.note || ''
+
+                return (
+                  <article className={styles.mobileCard} key={`m-${item.id}`}>
+                    <div className={styles.mobileCardHeader}>
+                      <span className={styles.serviceCodePill}>#{stt} · {item.code}</span>
+                      {item.unit && !/^(lần|lan)$/i.test(item.unit.trim()) && (
+                        <span className={styles.serviceUnit}>{item.unit}</span>
+                      )}
+                    </div>
+
+                    <h3 className={styles.mobileCardTitle}>{item.name}</h3>
+
+                    {item.category && (
+                      <div className={styles.serviceMetaText}>
+                        <span>📁 {item.category}</span>
+                      </div>
+                    )}
+
+                    <div className={styles.mobilePriceGrid}>
+                      <div className={styles.mobilePriceBox}>
+                        <span className={`${styles.mobilePriceLabel} ${styles.mobileBhytLabel}`}>Giá BHYT</span>
+                        <span className={`${styles.mobilePriceValue} ${styles.priceNumberBhyt}`}>{money(bhytPrice)}</span>
+                      </div>
+                      <div className={styles.mobilePriceBox}>
+                        <span className={`${styles.mobilePriceLabel} ${styles.mobileHospitalLabel}`}>Giá Dịch vụ</span>
+                        <span className={`${styles.mobilePriceValue} ${styles.priceNumberHospital}`}>{money(hospitalPrice)}</span>
+                      </div>
+                    </div>
+
+                    {(decisionNo || effectiveFromStr || note) && (
+                      <div className={styles.mobileLegalBox}>
+                        {decisionNo && (
+                          <div className={styles.decisionChip}>
+                            <span>📜 {decisionNo}</span>
+                          </div>
+                        )}
+                        {effectiveFromStr && (
+                          <div className={styles.effectiveDatesRow}>
+                            <span className={styles.effectiveDatePill}>
+                              📅 Hiệu lực: {effectiveFromStr}
+                            </span>
+                          </div>
+                        )}
+                        {note && <span className={styles.legalNote}>* {note}</span>}
+                      </div>
+                    )}
+                  </article>
+                )
+              })}
+
+              {docs.length === 0 && (
+                <div className={styles.emptyNotice}>
+                  <div className={styles.emptyNoticeIcon} aria-hidden="true">🔍</div>
+                  <h3 className={styles.emptyNoticeTitle}>{settings.emptyText || 'Không tìm thấy dịch vụ y tế phù hợp.'}</h3>
+                  <a href="/bang-gia" className={styles.emptyNoticeLink}>
+                    Nhấn vào đây để xem toàn bộ bảng giá
+                  </a>
+                </div>
+              )}
+            </div>
+
+            {/* Phân trang */}
+            {totalPages > 1 && (
+              <nav className="servicePagination" aria-label="Phân trang bảng giá">
+                <a className={currentPage <= 1 ? 'disabled' : ''} href={pageHref(Math.max(1, currentPage - 1), query)}>
+                  ← Trước
+                </a>
+                <div>
+                  {visiblePages.map((page, index) => (
+                    <span key={page}>
+                      {index > 0 && page - visiblePages[index - 1] > 1 && <i>…</i>}
+                      <a
+                        className={page === currentPage ? 'active' : ''}
+                        href={pageHref(page, query)}
+                        aria-current={page === currentPage ? 'page' : undefined}
+                      >
+                        {page}
+                      </a>
+                    </span>
+                  ))}
+                </div>
+                <a className={currentPage >= totalPages ? 'disabled' : ''} href={pageHref(Math.min(totalPages, currentPage + 1), query)}>
+                  Sau →
+                </a>
+              </nav>
+            )}
+          </div>
         </div>
-        {totalPages > 1 && (
-          <nav className="servicePagination" aria-label="Phân trang bảng giá">
-            <a className={currentPage <= 1 ? 'disabled' : ''} href={pageHref(Math.max(1, currentPage - 1), query)}>← Trước</a>
-            <div>
-              {visiblePages.map((page, index) => (
-                <span key={page}>
-                  {index > 0 && page - visiblePages[index - 1] > 1 && <i>…</i>}
-                  <a className={page === currentPage ? 'active' : ''} href={pageHref(page, query)} aria-current={page === currentPage ? 'page' : undefined}>{page}</a>
-                </span>
-              ))}
-            </div>
-            <a className={currentPage >= totalPages ? 'disabled' : ''} href={pageHref(Math.min(totalPages, currentPage + 1), query)}>Sau →</a>
-          </nav>
-        )}
-      </div>
-    </main>
-    <SiteFooter />
-  </>
+      </main>
+
+      <SiteFooter />
+    </>
+  )
 }
+
