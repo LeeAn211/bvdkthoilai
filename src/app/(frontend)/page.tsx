@@ -1743,7 +1743,10 @@ export default async function HomePage() {
             })
 
             const cpDocItems = clinicalProtocols.map((cpItem: any) => {
-              const spec = typeof cpItem.specialty === 'object' && cpItem.specialty?.name ? cpItem.specialty.name : ''
+              const specs = Array.isArray(cpItem.specialty)
+                ? cpItem.specialty.map((s: any) => (typeof s === 'object' && s?.name ? s.name : '')).filter(Boolean)
+                : (typeof cpItem.specialty === 'object' && cpItem.specialty?.name ? [cpItem.specialty.name] : [])
+              const spec = specs.join(', ')
               const cat = spec ? `Phác đồ (${spec})` : (cpItem.documentType || 'Phác đồ điều trị')
               const fileLink = mediaUrl(cpItem.file)
               const isLocked = cpItem.accessMode === 'pin' || cpItem.accessMode === 'internal' || cpItem.accessMode === 'locked' || cpItem.accessMode === 'view_only' || cpItem.allowDownload === false

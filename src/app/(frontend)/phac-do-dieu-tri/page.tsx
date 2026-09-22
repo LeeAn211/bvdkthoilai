@@ -40,7 +40,10 @@ export default async function Page() {
     const cpDocs: DocumentDirectoryItem[] = (cpRes.docs as any[]).map((x: any) => {
       const fileUrl = mediaUrl(x.file)
       const detailHref = x.slug ? `/phac-do-dieu-tri/${x.slug}` : (fileUrl || '#')
-      const spec = typeof x.specialty === 'object' && x.specialty?.name ? x.specialty.name : ''
+      const specs = Array.isArray(x.specialty)
+        ? x.specialty.map((s: any) => (typeof s === 'object' && s?.name ? s.name : '')).filter(Boolean)
+        : (typeof x.specialty === 'object' && x.specialty?.name ? [x.specialty.name] : [])
+      const spec = specs.join(', ')
       const cat = spec ? `Khoa ${spec}` : (x.documentType || 'Phác đồ điều trị')
       const dateStr = x.issuedAt ? new Date(x.issuedAt).toLocaleDateString('vi-VN') : ''
 

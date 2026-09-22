@@ -3367,9 +3367,6 @@ export const clinical_protocols = pgTable(
     title: varchar("title").notNull(),
     slug: varchar("slug").notNull(),
     code: varchar("code"),
-    specialty: integer("specialty_id").references(() => specialties.id, {
-      onDelete: "set null",
-    }),
     documentType: varchar("document_type").default("Phác đồ điều trị"),
     issuer: varchar("issuer").default("Bệnh viện Đa khoa Khu vực Thới Lai"),
     signer: varchar("signer"),
@@ -3440,13 +3437,41 @@ export const clinical_protocols = pgTable(
   (columns) => [
     uniqueIndex("clinical_protocols_slug_idx").on(columns.slug),
     index("clinical_protocols_code_idx").on(columns.code),
-    index("clinical_protocols_specialty_idx").on(columns.specialty),
     index("clinical_protocols_file_idx").on(columns.file),
     index("clinical_protocols_cover_idx").on(columns.cover),
     index("clinical_protocols_seo_image_idx").on(columns.seoImage),
     index("clinical_protocols_updated_at_idx").on(columns.updatedAt),
     index("clinical_protocols_created_at_idx").on(columns.createdAt),
     index("clinical_protocols_deleted_at_idx").on(columns.deletedAt),
+  ],
+);
+
+export const clinical_protocols_rels = pgTable(
+  "clinical_protocols_rels",
+  {
+    id: serial("id").primaryKey(),
+    order: integer("order"),
+    parent: integer("parent_id").notNull(),
+    path: varchar("path").notNull(),
+    specialtiesID: integer("specialties_id"),
+  },
+  (columns) => [
+    index("clinical_protocols_rels_order_idx").on(columns.order),
+    index("clinical_protocols_rels_parent_idx").on(columns.parent),
+    index("clinical_protocols_rels_path_idx").on(columns.path),
+    index("clinical_protocols_rels_specialties_id_idx").on(
+      columns.specialtiesID,
+    ),
+    foreignKey({
+      columns: [columns["parent"]],
+      foreignColumns: [clinical_protocols.id],
+      name: "clinical_protocols_rels_parent_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["specialtiesID"]],
+      foreignColumns: [specialties.id],
+      name: "clinical_protocols_rels_specialties_fk",
+    }).onDelete("cascade"),
   ],
 );
 
@@ -3460,12 +3485,6 @@ export const _clinical_protocols_v = pgTable(
     version_title: varchar("version_title").notNull(),
     version_slug: varchar("version_slug").notNull(),
     version_code: varchar("version_code"),
-    version_specialty: integer("version_specialty_id").references(
-      () => specialties.id,
-      {
-        onDelete: "set null",
-      },
-    ),
     version_documentType: varchar("version_document_type").default(
       "Phác đồ điều trị",
     ),
@@ -3569,9 +3588,6 @@ export const _clinical_protocols_v = pgTable(
     index("_clinical_protocols_v_version_version_code_idx").on(
       columns.version_code,
     ),
-    index("_clinical_protocols_v_version_version_specialty_idx").on(
-      columns.version_specialty,
-    ),
     index("_clinical_protocols_v_version_version_file_idx").on(
       columns.version_file,
     ),
@@ -3592,6 +3608,35 @@ export const _clinical_protocols_v = pgTable(
     ),
     index("_clinical_protocols_v_created_at_idx").on(columns.createdAt),
     index("_clinical_protocols_v_updated_at_idx").on(columns.updatedAt),
+  ],
+);
+
+export const _clinical_protocols_v_rels = pgTable(
+  "_clinical_protocols_v_rels",
+  {
+    id: serial("id").primaryKey(),
+    order: integer("order"),
+    parent: integer("parent_id").notNull(),
+    path: varchar("path").notNull(),
+    specialtiesID: integer("specialties_id"),
+  },
+  (columns) => [
+    index("_clinical_protocols_v_rels_order_idx").on(columns.order),
+    index("_clinical_protocols_v_rels_parent_idx").on(columns.parent),
+    index("_clinical_protocols_v_rels_path_idx").on(columns.path),
+    index("_clinical_protocols_v_rels_specialties_id_idx").on(
+      columns.specialtiesID,
+    ),
+    foreignKey({
+      columns: [columns["parent"]],
+      foreignColumns: [_clinical_protocols_v.id],
+      name: "_clinical_protocols_v_rels_parent_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["specialtiesID"]],
+      foreignColumns: [specialties.id],
+      name: "_clinical_protocols_v_rels_specialties_fk",
+    }).onDelete("cascade"),
   ],
 );
 
@@ -19097,14 +19142,24 @@ export const relations__documents_v = relations(_documents_v, ({ one }) => ({
     relationName: "version_seoImage",
   }),
 }));
+export const relations_clinical_protocols_rels = relations(
+  clinical_protocols_rels,
+  ({ one }) => ({
+    parent: one(clinical_protocols, {
+      fields: [clinical_protocols_rels.parent],
+      references: [clinical_protocols.id],
+      relationName: "_rels",
+    }),
+    specialtiesID: one(specialties, {
+      fields: [clinical_protocols_rels.specialtiesID],
+      references: [specialties.id],
+      relationName: "specialties",
+    }),
+  }),
+);
 export const relations_clinical_protocols = relations(
   clinical_protocols,
-  ({ one }) => ({
-    specialty: one(specialties, {
-      fields: [clinical_protocols.specialty],
-      references: [specialties.id],
-      relationName: "specialty",
-    }),
+  ({ one, many }) => ({
     file: one(media, {
       fields: [clinical_protocols.file],
       references: [media.id],
@@ -19120,20 +19175,33 @@ export const relations_clinical_protocols = relations(
       references: [media.id],
       relationName: "seoImage",
     }),
+    _rels: many(clinical_protocols_rels, {
+      relationName: "_rels",
+    }),
+  }),
+);
+export const relations__clinical_protocols_v_rels = relations(
+  _clinical_protocols_v_rels,
+  ({ one }) => ({
+    parent: one(_clinical_protocols_v, {
+      fields: [_clinical_protocols_v_rels.parent],
+      references: [_clinical_protocols_v.id],
+      relationName: "_rels",
+    }),
+    specialtiesID: one(specialties, {
+      fields: [_clinical_protocols_v_rels.specialtiesID],
+      references: [specialties.id],
+      relationName: "specialties",
+    }),
   }),
 );
 export const relations__clinical_protocols_v = relations(
   _clinical_protocols_v,
-  ({ one }) => ({
+  ({ one, many }) => ({
     parent: one(clinical_protocols, {
       fields: [_clinical_protocols_v.parent],
       references: [clinical_protocols.id],
       relationName: "parent",
-    }),
-    version_specialty: one(specialties, {
-      fields: [_clinical_protocols_v.version_specialty],
-      references: [specialties.id],
-      relationName: "version_specialty",
     }),
     version_file: one(media, {
       fields: [_clinical_protocols_v.version_file],
@@ -19149,6 +19217,9 @@ export const relations__clinical_protocols_v = relations(
       fields: [_clinical_protocols_v.version_seoImage],
       references: [media.id],
       relationName: "version_seoImage",
+    }),
+    _rels: many(_clinical_protocols_v_rels, {
+      relationName: "_rels",
     }),
   }),
 );
@@ -24288,7 +24359,9 @@ type DatabaseSchema = {
   documents: typeof documents;
   _documents_v: typeof _documents_v;
   clinical_protocols: typeof clinical_protocols;
+  clinical_protocols_rels: typeof clinical_protocols_rels;
   _clinical_protocols_v: typeof _clinical_protocols_v;
+  _clinical_protocols_v_rels: typeof _clinical_protocols_v_rels;
   departments_deputy_leaders: typeof departments_deputy_leaders;
   departments_gallery: typeof departments_gallery;
   departments: typeof departments;
@@ -24624,7 +24697,9 @@ type DatabaseSchema = {
   relations__procurement_v: typeof relations__procurement_v;
   relations_documents: typeof relations_documents;
   relations__documents_v: typeof relations__documents_v;
+  relations_clinical_protocols_rels: typeof relations_clinical_protocols_rels;
   relations_clinical_protocols: typeof relations_clinical_protocols;
+  relations__clinical_protocols_v_rels: typeof relations__clinical_protocols_v_rels;
   relations__clinical_protocols_v: typeof relations__clinical_protocols_v;
   relations_departments_deputy_leaders: typeof relations_departments_deputy_leaders;
   relations_departments_gallery: typeof relations_departments_gallery;

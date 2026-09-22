@@ -66,7 +66,10 @@ export default async function Page({ params }: Props) {
 
   if (!item) notFound()
 
-  const specName = typeof item.specialty === 'object' && item.specialty?.name ? item.specialty.name : ''
+  const specNames = Array.isArray(item.specialty)
+    ? item.specialty.map((s: any) => (typeof s === 'object' && s?.name ? s.name : '')).filter(Boolean)
+    : (typeof item.specialty === 'object' && item.specialty?.name ? [item.specialty.name] : [])
+  const specName = specNames.join(', ')
   const cat = specName || item.documentType || 'Phác đồ điều trị'
   const fileUrl = item.file
     ? `/api/document-file?collection=clinical-protocols&id=${encodeURIComponent(String(item.id))}`

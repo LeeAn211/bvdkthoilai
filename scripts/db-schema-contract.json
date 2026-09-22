@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260921_061_add_footer_quick_bar",
-  "schemaSha256": "8e9b048a0f9fc9185e50da78c0ae5ea5bc3965726f47fd402dffc47b7a28ceb7"
+  "migrationId": "20260922_062_allow_multiple_specialties_for_clinical_protocols",
+  "schemaSha256": "b6edff6f74c81a525d2c872b64e94ddc07675a33b8ed4870f723234c74b0a019"
 }

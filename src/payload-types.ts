@@ -1083,9 +1083,9 @@ export interface ClinicalProtocol {
   slug: string;
   code?: string | null;
   /**
-   * Chọn chuyên khoa áp dụng (Nội, Ngoại, Sản, Nhi, Cấp cứu...)
+   * Chọn một hoặc nhiều chuyên khoa áp dụng (Nội, Ngoại, Sản, Nhi, Cấp cứu...)
    */
-  specialty?: (number | null) | Specialty;
+  specialty?: (number | Specialty)[] | null;
   documentType?: string | null;
   issuer?: string | null;
   signer?: string | null;
