@@ -82,7 +82,7 @@ export default async function AdminDashboard() {
     count(payload, 'feedback', { status: { equals: 'processing' } }),
     count(payload, 'feedback', { status: { equals: 'done' } }),
     count(payload, 'consultations', { status: { in: ['new', 'processing'] } }),
-    count(payload, 'surveyCampaigns', { active: { equals: true } }),
+    count(payload, 'survey-campaigns', { active: { equals: true } }),
     count(payload, 'surveyResponses'),
     // Trang chủ & Giao diện Website
     count(payload, 'pages'), count(payload, 'faqs'),
