@@ -89,7 +89,19 @@ export const OrganizationChart: GlobalConfig = {
       type: 'array',
       admin: { description: 'Chọn các Phòng chức năng; kéo thả để đổi thứ tự.' },
       fields: [
-        { name: 'unit', label: 'Phòng chức năng', type: 'relationship', relationTo: 'departments', required: true, filterOptions: { kind: { equals: 'office' } } },
+        {
+          name: 'unit',
+          label: 'Phòng chức năng',
+          type: 'relationship',
+          relationTo: 'departments',
+          required: true,
+          filterOptions: {
+            or: [
+              { unitType: { equals: 'office' } },
+              { kind: { equals: 'office' } },
+            ],
+          },
+        },
       ],
     },
     {
@@ -98,7 +110,19 @@ export const OrganizationChart: GlobalConfig = {
       type: 'array',
       admin: { description: 'Chọn các Khoa chuyên môn; kéo thả để đổi thứ tự.' },
       fields: [
-        { name: 'unit', label: 'Khoa', type: 'relationship', relationTo: 'departments', required: true, filterOptions: { kind: { not_equals: 'office' } } },
+        {
+          name: 'unit',
+          label: 'Khoa',
+          type: 'relationship',
+          relationTo: 'departments',
+          required: true,
+          filterOptions: {
+            and: [
+              { unitType: { not_equals: 'office' } },
+              { kind: { not_equals: 'office' } },
+            ],
+          },
+        },
       ],
     },
     {

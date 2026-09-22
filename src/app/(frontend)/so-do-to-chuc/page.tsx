@@ -130,15 +130,16 @@ export default async function OrganizationChartPage() {
     ? configuredOffices
     : activeUnits.filter((u) => u.unitType === 'office' || u.kind === 'office')
 
-  // Khối lâm sàng: admin chọn hoặc tự lậc theo unitType='clinical'
+  // Khối lâm sàng: nếu admin chọn thì lấy các khoa lâm sàng được chọn, ngược lại tự động lấy từ DB
   const clinicalUnits = configuredDepartments.length > 0
-    ? configuredDepartments.filter((u: any) => u.unitType === 'clinical' || u.kind === 'clinical')
-    : activeUnits.filter((u) => (u.unitType === 'clinical' || u.kind === 'clinical') && u.unitType !== 'office')
+    ? configuredDepartments.filter((u: any) => u.unitType === 'clinical' || (!u.unitType && u.kind === 'clinical'))
+    : activeUnits.filter((u) => u.unitType === 'clinical' || (!u.unitType && u.kind === 'clinical' && u.name?.toLowerCase().includes('khoa')))
 
-  // Khối cận lâm sàng: luôn lấy từ CSDL thực (không phụ thuộc configuredDepartments)
-  const paraclinicalUnits = activeUnits.filter(
-    (u) => u.unitType === 'paraclinical' || u.kind === 'paraclinical'
-  )
+  // Khối cận lâm sàng: nếu admin chọn thì lấy các khoa cận lâm sàng được chọn, ngược lại tự động lấy từ DB
+  const configuredParaclinical = configuredDepartments.filter((u: any) => u.unitType === 'paraclinical' || (!u.unitType && u.kind === 'paraclinical'))
+  const paraclinicalUnits = configuredParaclinical.length > 0
+    ? configuredParaclinical
+    : activeUnits.filter((u) => u.unitType === 'paraclinical' || (!u.unitType && u.kind === 'paraclinical'))
 
   // Phó giám đốc
   const rawDeputies = Array.isArray(chart?.deputyDirectors) ? chart.deputyDirectors.filter((p: any) => p?.enabled !== false && (p?.name?.trim() || p?.doctorRef)) : []
