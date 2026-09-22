@@ -224,13 +224,15 @@ export function HomeScienceTabs({ items, tabs: configuredTabs }: { items: Scienc
       {featured ? (
         <div role="tabpanel" className="homeEditorialGrid editorialVariant3" style={{ marginTop: tabs.length > 1 ? 22 : 0 }}>
           <ScienceCard item={featured} isFeatured={true} activeTab={activeTab} />
-          <div className="editorialRowList">
-            {sideItems.map((item) =>
-              item ? (
-                <ScienceCard key={item.id} item={item} isFeatured={false} activeTab={activeTab} />
-              ) : null,
-            )}
-          </div>
+          {sideItems.length > 0 && (
+            <div className="editorialRowList">
+              {sideItems.map((item) =>
+                item ? (
+                  <ScienceCard key={item.id} item={item} isFeatured={false} activeTab={activeTab} />
+                ) : null,
+              )}
+            </div>
+          )}
         </div>
       ) : (
         <div className="professionalEmpty tabEmptyState">

@@ -236,13 +236,15 @@ export function HomeNewsTabs({ items, tabs: configuredTabs }: { items: NewsItem[
       {filteredItems.length > 0 ? (
         <div role="tabpanel" className="homeEditorialGrid editorialVariant3" style={{ marginTop: tabs.length > 1 ? 22 : 0 }}>
           {featured && <NewsCard item={featured} isFeatured={true} activeTab={activeTab} />}
-          <div className="editorialRowList">
-            {sideItems.map((item) =>
-              item ? (
-                <NewsCard key={item.id} item={item} isFeatured={false} activeTab={activeTab} />
-              ) : null,
-            )}
-          </div>
+          {sideItems.length > 0 && (
+            <div className="editorialRowList">
+              {sideItems.map((item) =>
+                item ? (
+                  <NewsCard key={item.id} item={item} isFeatured={false} activeTab={activeTab} />
+                ) : null,
+              )}
+            </div>
+          )}
         </div>
       ) : (
         <div className="professionalEmpty tabEmptyState">

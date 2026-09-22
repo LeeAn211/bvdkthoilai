@@ -222,11 +222,13 @@ export function ScheduleExplorer({
           <>
             <div className={`editorialVariant3 scheduleEditorialGrid ${visibleItems.length === 1 ? 'single' : ''}`}>
               <ScheduleCard item={visibleItems[0]} kind={definition.kind} featured />
-              <div className="editorialRowList">
-                {visibleItems.slice(1).map((item, index) => (
-                  <ScheduleCard item={item} kind={definition.kind} key={item.id || index} />
-                ))}
-              </div>
+              {visibleItems.length > 1 && (
+                <div className="editorialRowList">
+                  {visibleItems.slice(1).map((item, index) => (
+                    <ScheduleCard item={item} kind={definition.kind} key={item.id || index} />
+                  ))}
+                </div>
+              )}
             </div>
             {!compact && items.length > 5 && (
               <div className="tabViewAllWrap">
