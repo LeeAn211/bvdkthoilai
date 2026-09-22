@@ -14,12 +14,13 @@ export default async function SurveyDetailPage({
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
-  const [payload, siteSettings] = await Promise.all([
+  const [payload, specSurvey, siteSettings] = await Promise.all([
     getCMS(),
+    getGlobal('survey-page-settings' as any).catch(() => null),
     getGlobal('site-settings' as any).catch(() => ({})),
   ])
 
-  const surveyConf = (siteSettings as any)?.surveyPage || {}
+  const surveyConf = (specSurvey && Object.keys(specSurvey).length > 0) ? specSurvey : ((siteSettings as any)?.surveyPage || {})
 
   const result = await payload.find({
     collection: 'survey-campaigns',

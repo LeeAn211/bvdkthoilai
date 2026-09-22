@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import React, { useEffect, useState, useTransition } from 'react'
 import Link from 'next/link'
@@ -315,6 +315,9 @@ export default function SurveyQuickToolbar() {
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
             <Link href="/admin/collections/survey-campaigns/create" className={styles.settingBtn}>
               + Tạo Đợt Mới →
+            </Link>
+            <Link href="/admin/globals/survey-page-settings" className={styles.settingBtn} style={{ background: '#475569' }}>
+              ⚙️ Cấu hình Trang Khảo sát →
             </Link>
             <a href="/templates/mau-khao-sat-cau-hoi.docx" download className={styles.settingBtn} style={{ background: '#2b579a', textDecoration: 'none' }}>
               📄 Mẫu Word
