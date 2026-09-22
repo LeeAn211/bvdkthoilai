@@ -3,14 +3,10 @@
 ## Trạng thái: HOÀN THÀNH
 
 ## Đã thực hiện
-1. **Khắc phục lỗi cắt chữ trên mobile** ([`src/app/styles/30-home-editorial.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/app/styles/30-home-editorial.css)):
-   - Loại bỏ thuộc tính `text-wrap: balance` gây co ngắn và cắt mép chữ trên các màn hình di động hẹp (iPhone / Android).
-   - Thêm `overflow-wrap: anywhere`, `word-break: break-word` và `line-clamp: 2` cho `.editorialHeroTitle` và `.editorialRowTitle` để các chuỗi ngày tháng liền nhau (ví dụ: `21/9-27/9/2026`) tự động xuống dòng an toàn, không bị tràn ra ngoài viền phải thẻ.
-   - Cho phép `.editorialHeroDate` ngắt dòng linh hoạt với `flex-wrap: wrap` và `overflow-wrap: anywhere`.
-   - Tinh chỉnh padding thẻ `.editorialHeroBody` trên màn hình nhỏ từ `16px 18px 18px` thành `14px 14px 16px`, tăng diện tích hiển thị nội dung và tránh va chạm với nút chat / viền mép điện thoại.
+1. **Khắc phục lỗi cắt chữ và tràn khung trên mobile** ([`src/app/styles/30-home-editorial.css`](file:///f:/20.9%20web/bvdkthoilai-main/src/app/styles/30-home-editorial.css)):
+   - Khắc phục lỗi khi có 1 bài: `.editorialVariant3.single` trên màn hình di động (≤ 900px) được thiết lập lại `grid-template-columns: 1fr` thay vì bị cố định `minmax(0, 680px)`, loại bỏ nguyên nhân thẻ bị phình to vượt quá chiều rộng màn hình điện thoại dẫn đến mép phải bị cắt.
+   - Thêm `width: 100%`, `max-width: 100%`, `box-sizing: border-box` cho `.editorialHeroCard`, `.editorialHeroThumb`, `.editorialHeroBody`, `.editorialRowItem` trên thiết bị di động (≤ 600px).
+   - Thiết lập `max-width: 100%`, `overflow-wrap: anywhere`, `word-break: break-word` cho `.editorialHeroTitle`, `.editorialHeroDate`, `.editorialHeroExcerpt`, `.editorialHeroAction` để đảm bảo văn bản tự động xuống dòng và luôn hiển thị trọn vẹn trong viền thẻ, không bị tràn hay cắt chữ ở mép phải.
 
 ## Kiểm tra
 - `npm run typecheck`: PASS (0 lỗi).
-
-
-

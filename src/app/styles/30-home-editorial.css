@@ -313,6 +313,11 @@
   grid-template-columns: minmax(0, 680px);
   justify-content: center;
 }
+@media (max-width: 900px) {
+  .editorialVariant3.single {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* Khi số thẻ phụ ít hơn 4 (ví dụ 1 hoặc 2 thẻ), không kéo dài thẻ con quá mức */
 .editorialRowList:has(> .editorialRowItem:only-child),
@@ -466,19 +471,31 @@
   .editorialVariant3 {
     grid-template-columns: 1fr;
     gap: 14px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .editorialHeroCard {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .editorialHeroThumb {
+    width: 100%;
     max-height: 220px;
     aspect-ratio: 16 / 10;
   }
   .editorialHeroBody {
-    padding: 14px 14px 16px;
+    padding: 14px 16px 16px;
     box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
   }
   .editorialHeroDate {
     flex-wrap: wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
+    max-width: 100%;
   }
   .editorialHeroTitle {
     font-size: 15.5px;
@@ -487,6 +504,7 @@
     text-wrap: normal;
     overflow-wrap: anywhere;
     word-break: break-word;
+    max-width: 100%;
   }
   .editorialHeroExcerpt {
     font-size: 13px;
@@ -496,10 +514,17 @@
     margin-bottom: 12px;
     overflow-wrap: anywhere;
     word-break: break-word;
+    max-width: 100%;
+  }
+  .editorialHeroAction {
+    max-width: 100%;
   }
   .editorialRowItem {
     gap: 12px;
     padding: 10px 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .editorialRowThumb {
     width: 96px;
