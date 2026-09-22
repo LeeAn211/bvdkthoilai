@@ -12,8 +12,9 @@
 .editorialHeroCard {
   min-width: 0;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
   border-radius: 14px;
   overflow: hidden;
   background: #ffffff;
@@ -434,11 +435,16 @@
     max-width: 100%;
     box-sizing: border-box;
   }
+  .homePortalPage .homeEditorialGrid.editorialVariant3 > .editorialHeroCard,
+  .homePortalPage .homeEditorialGrid > .editorialHeroCard,
   .editorialHeroCard {
-    height: auto;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    height: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
   .editorialHeroThumb {
     max-height: 240px;
@@ -461,19 +467,19 @@
     box-sizing: border-box !important;
     height: auto !important;
   }
-  .homePortalPage .homeEditorialGrid {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: auto;
   }
-  .homePortalPage .homeEditorialGrid > a.featured {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) > a.featured {
     grid-column: 1 / span 2;
     grid-row: auto;
   }
-  .homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) > a.featured .homeEditorialImage {
     flex: 0 0 auto;
     height: 300px;
   }
-  .homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) > a.featured .homeEditorialCopy {
     flex: 1 1 auto;
     height: auto;
     min-height: 180px;
@@ -502,22 +508,31 @@
     max-width: 100%;
     box-sizing: border-box;
   }
+  .homePortalPage .homeEditorialGrid.editorialVariant3 > .editorialHeroCard,
+  .homePortalPage .homeEditorialGrid > .editorialHeroCard,
   .editorialHeroCard {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     height: auto !important;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
   .editorialHeroThumb {
-    width: 100%;
-    max-height: 200px;
-    aspect-ratio: 16 / 9;
+    width: 100% !important;
+    max-height: 200px !important;
+    aspect-ratio: 16 / 9 !important;
+    flex-shrink: 0 !important;
   }
   .editorialHeroBody {
-    padding: 12px 14px 14px;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    padding: 12px 14px 14px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
   .editorialHeroDate {
     flex-wrap: wrap;
@@ -632,23 +647,23 @@
     height: 24px !important;
     flex-shrink: 0 !important;
   }
-  .homePortalPage .homeEditorialGrid {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) {
     grid-template-columns: 1fr;
     gap: 14px;
   }
-  .homePortalPage .homeEditorialGrid > a.featured {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) > a.featured {
     grid-column: auto;
   }
-  .homePortalPage .homeEditorialGrid > a.featured .homeEditorialImage {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) > a.featured .homeEditorialImage {
     height: 220px;
   }
-  .homePortalPage .homeEditorialGrid > a:not(.featured) {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) > a:not(.featured) {
     flex-direction: row;
     align-items: stretch;
     height: auto;
     min-height: 106px;
   }
-  .homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialImage {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) > a:not(.featured) .homeEditorialImage {
     width: 110px;
     min-width: 110px;
     max-height: none;
@@ -657,10 +672,10 @@
     border-bottom: none;
     border-right: 1px solid #edf4f8;
   }
-  .homePortalPage .homeEditorialGrid > a:not(.featured) .homeEditorialCopy p {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) > a:not(.featured) .homeEditorialCopy p {
     display: none;
   }
-  .homePortalPage .homeEditorialGrid > a.featured .homeEditorialCopy p {
+  .homePortalPage .homeEditorialGrid:not(.editorialVariant3) > a.featured .homeEditorialCopy p {
     -webkit-line-clamp: 2;
     margin-top: 4px;
   }

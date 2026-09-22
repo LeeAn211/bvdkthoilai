@@ -48,7 +48,7 @@ function ScheduleCard({ item, kind, featured = false }: { item: any; kind: Sched
 
   if (featured) {
     return (
-      <a className="editorialHeroCard" href={href}>
+      <a className="editorialHeroCard featured" href={href}>
         <div className="editorialHeroThumb">
           {item.imageUrl ? (
             <img src={item.imageUrl} alt={title} className="editorialHeroImg" />

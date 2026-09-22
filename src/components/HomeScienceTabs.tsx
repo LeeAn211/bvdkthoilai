@@ -58,7 +58,7 @@ function ScienceCard({
 
   if (isFeatured) {
     return (
-      <a href={href} className="editorialHeroCard">
+      <a href={href} className="editorialHeroCard featured">
         <div className="editorialHeroThumb">
           {item.coverUrl ? (
             <img

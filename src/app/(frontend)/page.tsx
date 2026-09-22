@@ -654,7 +654,7 @@ export default async function HomePage() {
               return (
                 <a
                   href={mainEntry.href}
-                  className="editorialHeroCard"
+                  className="editorialHeroCard featured"
                   key={mainEntry.id}
                 >
                   <div

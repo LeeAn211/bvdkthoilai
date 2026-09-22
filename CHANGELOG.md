@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-09-22 — Sửa lỗi hiển thị tiêu đề và nội dung thẻ tin tức chính trên điện thoại
+
+- Khóa cố định `display: flex !important; flex-direction: column !important;` cho thẻ bài viết chính (`editorialHeroCard`) trên mobile để tránh bị quy tắc kế thừa ghi đè thành dạng hàng ngang.
+- Thêm bộ lọc `:not(.editorialVariant3)` cho các quy tắc CSS dạng lưới cũ nhằm cô lập hoàn toàn layout Phương án 3.
+- Bổ sung class `featured` trên thẻ bài viết chính ở các component `HomeNewsTabs`, `HomeScienceTabs`, `ScheduleExplorer` và `page.tsx`.
+- Typecheck và render SSR đều đạt chuẩn.
+
 ## 2026-09-21 — Đồng bộ tỷ lệ hiển thị ảnh danh sách và các thẻ nội dung
 
 - Chuẩn hóa tỷ lệ khung ảnh các ô nhỏ hàng ngang và khối Lịch trực/Lịch khám, Tiêm chủng sang tỷ lệ 16:9 (`112px × 63px`).
