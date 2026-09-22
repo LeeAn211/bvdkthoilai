@@ -116,9 +116,11 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   transition: color .2s ease;
-  text-wrap: balance;
 }
 
 .editorialHeroCard:hover .editorialHeroTitle {
@@ -255,7 +257,10 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   transition: color .2s ease;
 }
 
@@ -467,16 +472,30 @@
     aspect-ratio: 16 / 10;
   }
   .editorialHeroBody {
-    padding: 16px 18px 18px;
+    padding: 14px 14px 16px;
+    box-sizing: border-box;
+  }
+  .editorialHeroDate {
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
   .editorialHeroTitle {
-    font-size: 16px;
+    font-size: 15.5px;
+    line-height: 1.42;
     margin-bottom: 8px;
+    text-wrap: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
   .editorialHeroExcerpt {
     font-size: 13px;
+    line-height: 1.5;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     margin-bottom: 12px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
   .editorialRowItem {
     gap: 12px;
