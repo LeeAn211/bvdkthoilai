@@ -235,13 +235,18 @@ const applyCollectionPermissionVisibility = (config: CollectionConfig): Collecti
 const applyGlobalPermissionVisibility = (config: GlobalConfig): GlobalConfig =>
   hideWithoutModulePermission(config, globalPermissionModules[config.slug])
 
-const isNextBuild = process.env.NEXT_PHASE === 'phase-production-build' || process.env.npm_lifecycle_event === 'build'
-const effectivePayloadSecret = payloadSecret || (isNextBuild || !isProduction ? 'development-build-secret-32characters-fallback' : '')
+const isBuildPhase = Boolean(
+  process.env.NEXT_PHASE === 'phase-production-build' ||
+  process.env.npm_lifecycle_event === 'build' ||
+  process.env.npm_lifecycle_event === 'prebuild'
+)
+const effectivePayloadSecret = payloadSecret || (isBuildPhase || !isProduction ? 'development-build-secret-32characters-fallback' : '')
+const effectiveDatabaseURL = databaseURL || (isBuildPhase ? 'postgresql://postgres:postgres@127.0.0.1:5432/build_placeholder' : '')
 
-if (isProduction && !isNextBuild && (!effectivePayloadSecret || effectivePayloadSecret === 'CHANGE_ME' || effectivePayloadSecret.length < 32)) {
+if (isProduction && !isBuildPhase && (!effectivePayloadSecret || effectivePayloadSecret === 'CHANGE_ME' || effectivePayloadSecret.length < 32)) {
   throw new Error('PAYLOAD_SECRET bắt buộc phải có ít nhất 32 ký tự trên Production khi khởi chạy.')
 }
-if (!databaseURL && !isNextBuild) {
+if (!effectiveDatabaseURL && !isBuildPhase) {
   throw new Error('Thiếu biến môi trường DATABASE_URL.')
 }
 
@@ -284,7 +289,7 @@ export default buildConfig({
   db: postgresAdapter({
     push: process.env.PAYLOAD_DB_PUSH === 'true',
     pool: {
-      connectionString: databaseURL,
+      connectionString: effectiveDatabaseURL,
       connectionTimeoutMillis: 30000,
       max: 20,
       idleTimeoutMillis: 30000,
