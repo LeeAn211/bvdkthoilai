@@ -76,7 +76,7 @@ const RATING_ROWS = [
 ]
 
 export default function SurveyQuickToolbar() {
-  const [campaigns, setCampaigns] = useState<CampaignItem[]>(DEFAULT_CAMPAIGNS)
+  const [campaigns, setCampaigns] = useState<CampaignItem[]>([])
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>('all')
   const [selectedPeriod, setSelectedPeriod] = useState<string>('all')
   const [stats, setStats] = useState<CampaignStats | null>(null)
@@ -335,9 +335,9 @@ export default function SurveyQuickToolbar() {
           </div>
           <div className={styles.linkButtons} style={{ marginBottom: '12px' }}>
             {(() => {
-              const outCamp = campaigns.find(c => c.slug === 'ngoai-tru') || campaigns.find(c => c.id === 1)
-              const inCamp = campaigns.find(c => c.slug === 'noi-tru') || campaigns.find(c => c.id === 2)
-              const staffCamp = campaigns.find(c => c.slug === 'nhan-vien') || campaigns.find(c => c.id === 3)
+              const outCamp = campaigns.find(c => c.slug === 'ngoai-tru')
+              const inCamp = campaigns.find(c => c.slug === 'noi-tru')
+              const staffCamp = campaigns.find(c => c.slug === 'nhan-vien')
               return (
                 <>
                   <Link href={outCamp ? `/admin/collections/survey-campaigns/${outCamp.id}` : '/admin/collections/survey-campaigns'} className={styles.settingBtn} style={{ background: '#0284c7' }}>🩺 Ngoại trú →</Link>
