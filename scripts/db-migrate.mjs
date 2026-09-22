@@ -135,13 +135,14 @@ async function verifyRuntimeDatabase({ connectionString, migrationConnection, la
   if (migrationConnection) {
     const runtimeTarget = parseDatabaseTarget(connectionString)
     const migrationTarget = parseDatabaseTarget(migrationConnection)
+    const hostMismatch = runtimeTarget.neonEndpoint !== migrationTarget.neonEndpoint && runtimeTarget.hostname !== migrationTarget.hostname
     if (
-      runtimeTarget.neonEndpoint !== migrationTarget.neonEndpoint
+      hostMismatch
       || runtimeTarget.database !== migrationTarget.database
       || runtimeTarget.username !== migrationTarget.username
     ) {
       throw new Error(
-        'DATABASE_URL va DATABASE_MIGRATION_URL khong tro toi cung Neon endpoint, database va user.',
+        'DATABASE_URL va DATABASE_MIGRATION_URL khong tro toi cung database endpoint, database va user.',
       )
     }
   }
@@ -343,9 +344,11 @@ async function run() {
   const migrationConnection = process.env.DATABASE_MIGRATION_URL?.trim()
     || process.env.DATABASE_URL_UNPOOLED?.trim()
   const runtimeConnection = process.env.DATABASE_URL?.trim()
+    || process.env.DATABASE_URI?.trim()
+    || process.env.POSTGRES_URL?.trim()
   const connectionString = migrationConnection || runtimeConnection
   if (!connectionString) {
-    throw new Error('Thiếu DATABASE_MIGRATION_URL, DATABASE_URL_UNPOOLED hoặc DATABASE_URL.')
+    throw new Error('Thiếu DATABASE_MIGRATION_URL, DATABASE_URL_UNPOOLED, DATABASE_URL hoặc DATABASE_URI.')
   }
   if (isNeonPooledConnection(connectionString)) {
     const message =

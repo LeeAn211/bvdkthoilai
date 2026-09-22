@@ -99,7 +99,7 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 const isProduction = process.env.NODE_ENV === 'production'
 const payloadSecret = process.env.PAYLOAD_SECRET
-const databaseURL = process.env.DATABASE_URL
+const databaseURL = process.env.DATABASE_URL || process.env.DATABASE_URI || process.env.POSTGRES_URL
 const siteURL = process.env.NEXT_PUBLIC_SITE_URL
 // Next dev tự chuyển sang cổng kế tiếp khi 3000 đang được dùng. Payload chỉ đọc
 // JWT từ cookie khi Origin nằm trong CSRF allowlist, vì vậy cần khai báo rõ các
