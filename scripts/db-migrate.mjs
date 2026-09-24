@@ -238,6 +238,13 @@ const KNOWN_SAFE_CHECKSUM_UPDATE_IDS = new Set([
   '20260918_039_add_patient_portal_services_to_homepage',
   '20260918_040_add_vaccination_portal_services_to_homepage',
   '20260918_042_add_custom_carousel_section_to_homepage',
+  '20260923_067_add_banner_motion_to_homepage',
+  '20260923_068_add_warnings_and_legal_to_homepage',
+  '20260923_069_add_home_placement_to_notices_and_documents',
+  '20260923_070_add_visit_stats_custom_labels_to_footer',
+  '20260923_071_create_health_warnings',
+  '20260923_072_create_work_schedules',
+  '20260924_073_add_work_schedule_preset_to_navigation_enums',
 ])
 
 async function validateAndReconcileHistory(client, migrations, appliedMigrations) {

@@ -57,8 +57,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme, siteSettings, displaySettings, articleDetailSettings] = await Promise.all([
+  const [{ item, related }, defaults, theme, siteSettings, displaySettings, articleDetailSettings] = await Promise.all([
     getData(slug),
+    getDefaultContentMedia(),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
     getGlobal('site-settings').catch(() => null) as Promise<any>,
     getGlobal('display-settings').catch(() => null) as Promise<any>,
@@ -98,6 +99,9 @@ export default async function Page({ params }: Props) {
         views={item.views || 156}
         categoryName={catName}
         categoryHref="/tin-tuc"
+        coverUrl={mediaUrl(item.cover || item.image || item.seoImage) || defaults.news}
+        coverAlt={item.title}
+        showCoverImage={true}
         excerpt={item.excerpt}
         content={item.content}
         attachments={item.attachments}

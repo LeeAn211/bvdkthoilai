@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260924_073_add_work_schedule_preset_to_navigation_enums",
-  "schemaSha256": "9865915da1f164ec4669c7f6a651534542a0cc6e34d77acb44443af291182e26"
+  "migrationId": "20260924_075_add_sidebar_banner_scopes_and_full_width_images",
+  "schemaSha256": "19dd045f517d2b537634f19510edf3b7898dcb8f113932821e806dd029ef94c8"
 }

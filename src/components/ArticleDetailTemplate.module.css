@@ -236,6 +236,35 @@
   margin-bottom: 28px;
 }
 
+.postDetailCoverBox {
+  margin: 0 0 28px;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.postDetailCoverImage {
+  width: 100%;
+  height: auto;
+  max-height: 560px;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.postDetailCoverImage[src$=".svg"] {
+  object-fit: contain;
+  max-height: 300px;
+  padding: 32px 20px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
 .postDetailBody {
   font-size: 16.5px;
   line-height: 1.8;
@@ -257,6 +286,47 @@
   margin: 20px auto;
   display: block;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* ── KHI ẨN SIDEBAR BÊN PHẢI (Layout Full hoặc Layout NoRight) ──
+   Ảnh đại diện và tất cả ảnh trong bài viết chi tiết hiển thị FULL 100% bề ngang khớp hoàn toàn với khối nội dung */
+.postDetailLayoutFull .postDetailCoverBox,
+.postDetailLayoutNoRight .postDetailCoverBox {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-bottom: 32px;
+}
+
+.postDetailLayoutFull .postDetailCoverImage,
+.postDetailLayoutNoRight .postDetailCoverImage {
+  width: 100% !important;
+  max-width: 100% !important;
+  max-height: 640px;
+  object-fit: cover;
+}
+
+.postDetailLayoutFull .postDetailBody img,
+.postDetailLayoutNoRight .postDetailBody img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain;
+  margin: 24px 0 !important;
+}
+
+.postDetailLayoutFull .postDetailBody figure,
+.postDetailLayoutNoRight .postDetailBody figure {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.postDetailLayoutFull .postDetailBody figure img,
+.postDetailLayoutNoRight .postDetailBody figure img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
 }
 
 .postDetailAuthor {
@@ -440,6 +510,13 @@
   .postDetailLayout {
     grid-template-columns: 1fr 300px;
     gap: 30px;
+  }
+  .postDetailLayoutNoLeft {
+    grid-template-columns: 1fr 300px;
+  }
+  .postDetailLayoutNoRight,
+  .postDetailLayoutFull {
+    grid-template-columns: 1fr;
   }
   .postDetailShareCol {
     display: none;

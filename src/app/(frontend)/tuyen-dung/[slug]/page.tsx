@@ -110,6 +110,7 @@ export default async function RecruitmentDetail({ params }: Props) {
         views={item.views || 88}
         categoryName="Tuyển dụng Bệnh viện"
         categoryHref="/tuyen-dung"
+        coverUrl={mediaUrl(item.cover || item.seoImage)}
         expireDate={expireDate}
         highlights={highlights}
         excerpt={item.excerpt}

@@ -141,6 +141,7 @@ export default async function Page({ params }: Props) {
         views={item.views || 68}
         categoryName={section.title}
         categoryHref={`/noi-dung/${section.slug}`}
+        coverUrl={mediaUrl(item.cover || item.image)}
         excerpt={item.excerpt}
         content={item.content}
         attachments={item.attachments}

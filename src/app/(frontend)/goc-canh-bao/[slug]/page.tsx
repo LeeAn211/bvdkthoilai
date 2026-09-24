@@ -9,40 +9,43 @@ type Props = { params: Promise<{ slug: string }> }
 
 async function getData(slug: string) {
   const p = await getCMS()
-  const [current, latest] = await Promise.all([
-    p.find({
-      collection: 'health-warnings' as any,
+
+  // 1. Tìm trong collection health-warnings trước
+  let currentRes = await p.find({
+    collection: 'health-warnings' as any,
+    where: { and: [{ slug: { equals: slug } }, { _status: { equals: 'published' } }] },
+    limit: 1,
+    depth: 2,
+  }).catch(() => ({ docs: [] }))
+
+  let collectionName: 'health-warnings' | 'notices' = 'health-warnings'
+
+  // 2. Nếu không tìm thấy, fallback tìm trong notices (bài cũ chưa chuyển)
+  if (!currentRes.docs || currentRes.docs.length === 0) {
+    currentRes = await p.find({
+      collection: 'notices',
       where: { and: [{ slug: { equals: slug } }, { _status: { equals: 'published' } }] },
       limit: 1,
-      depth: 1,
-    }).catch(async () => {
-      // Fallback tìm ở notices nếu bài cũ chưa chuyển
-      return p.find({
-        collection: 'notices',
-        where: { and: [{ slug: { equals: slug } }, { _status: { equals: 'published' } }] },
-        limit: 1,
-        depth: 1,
-      }).catch(() => ({ docs: [] }))
-    }),
-    p.find({
-      collection: 'health-warnings' as any,
-      where: { and: [{ slug: { not_equals: slug } }, { _status: { equals: 'published' } }] },
-      sort: '-publishedAt',
-      limit: 6,
-      depth: 1,
-    }).catch(async () => {
-      return p.find({
-        collection: 'notices',
-        where: { and: [{ slug: { not_equals: slug } }, { _status: { equals: 'published' } }] },
-        sort: '-publishedAt',
-        limit: 6,
-        depth: 1,
-      }).catch(() => ({ docs: [] }))
-    }),
-  ])
+      depth: 2,
+    }).catch(() => ({ docs: [] }))
+    if (currentRes.docs && currentRes.docs.length > 0) {
+      collectionName = 'notices'
+    }
+  }
+
+  // 3. Lấy bài viết liên quan
+  const relatedRes = await p.find({
+    collection: collectionName as any,
+    where: { and: [{ slug: { not_equals: slug } }, { _status: { equals: 'published' } }] },
+    sort: '-publishedAt',
+    limit: 6,
+    depth: 2,
+  }).catch(() => ({ docs: [] }))
+
   return {
-    item: (current.docs[0] as any) || null,
-    related: (latest.docs as any[]) || [],
+    item: (currentRes.docs[0] as any) || null,
+    related: (relatedRes.docs as any[]) || [],
+    collectionName,
   }
 }
 
@@ -51,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params
     const [{ item }, defaults] = await Promise.all([getData(slug), getDefaultContentMedia()])
     if (!item) return {}
-    const image = mediaUrl(item.seoImage || item.cover) || defaults.notices
+    const image = mediaUrl(item.cover || item.image || item.seoImage) || defaults.notices || defaults.news
     return {
       title: item.seoTitle || `${item.title} – Cảnh báo y tế`,
       description: item.seoDescription || item.excerpt,
@@ -68,8 +71,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme, siteSettings, displaySettings, articleDetailSettings] = await Promise.all([
+  const [{ item, related, collectionName }, defaults, theme, siteSettings, displaySettings, articleDetailSettings] = await Promise.all([
     getData(slug),
+    getDefaultContentMedia(),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
     getGlobal('site-settings').catch(() => null) as Promise<any>,
     getGlobal('display-settings').catch(() => null) as Promise<any>,
@@ -133,7 +137,7 @@ export default async function Page({ params }: Props) {
       relatedItems={mappedRelated}
       baseHref="/goc-canh-bao"
       trackingSlug={slug}
-      trackingCollection="health-warnings"
+      trackingCollection={collectionName}
     />
   )
 }

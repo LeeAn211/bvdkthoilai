@@ -2265,6 +2265,10 @@ export const enum_article_detail_settings_sidebar_banner_position = pgEnum(
   "enum_article_detail_settings_sidebar_banner_position",
   ["aboveLatest", "belowLatest"],
 );
+export const enum_article_detail_settings_sidebar_banner_scope_mode = pgEnum(
+  "enum_article_detail_settings_sidebar_banner_scope_mode",
+  ["all", "custom", "none"],
+);
 export const enum_vcs_custom_blocks_text_align = pgEnum(
   "enum_vcs_custom_blocks_text_align",
   ["left", "center", "justify"],
@@ -19425,6 +19429,44 @@ export const article_detail_settings = pgTable(
       enum_article_detail_settings_sidebar_banner_position(
         "sidebar_banner_position",
       ).default("aboveLatest"),
+    sidebarBanner_scopeMode:
+      enum_article_detail_settings_sidebar_banner_scope_mode(
+        "sidebar_banner_scope_mode",
+      ).default("all"),
+    sidebarBanner_applyNews: boolean("sidebar_banner_apply_news").default(true),
+    sidebarBanner_applyNotices: boolean("sidebar_banner_apply_notices").default(
+      true,
+    ),
+    sidebarBanner_applyAdvancedTechniques: boolean(
+      "sidebar_banner_apply_advanced_techniques",
+    ).default(true),
+    sidebarBanner_applyProcurement: boolean(
+      "sidebar_banner_apply_procurement",
+    ).default(true),
+    sidebarBanner_applyRecruitment: boolean(
+      "sidebar_banner_apply_recruitment",
+    ).default(true),
+    sidebarBanner_applyCustomPosts: boolean(
+      "sidebar_banner_apply_custom_posts",
+    ).default(true),
+    sidebarBanner_applyClinicalProtocols: boolean(
+      "sidebar_banner_apply_clinical_protocols",
+    ).default(true),
+    sidebarBanner_applyHealthWarnings: boolean(
+      "sidebar_banner_apply_health_warnings",
+    ).default(true),
+    sidebarBanner_applyScientificActivities: boolean(
+      "sidebar_banner_apply_scientific_activities",
+    ).default(true),
+    sidebarBanner_applyDocuments: boolean(
+      "sidebar_banner_apply_documents",
+    ).default(true),
+    sidebarBanner_customSectionsText: varchar(
+      "sidebar_banner_custom_sections_text",
+    ),
+    sidebarBanner_banner1Enabled: boolean(
+      "sidebar_banner_banner1_enabled",
+    ).default(true),
     sidebarBanner_title: varchar("sidebar_banner_title").default(
       "ĐẶT LỊCH KHÁM BỆNH",
     ),
@@ -19496,6 +19538,12 @@ export const article_detail_settings = pgTable(
     sidebarBanner_extraBannersJson: varchar(
       "sidebar_banner_extra_banners_json",
     ),
+    displayOptions_showCoverImage: boolean(
+      "display_options_show_cover_image",
+    ).default(true),
+    displayOptions_fullWidthImages: boolean(
+      "display_options_full_width_images",
+    ).default(true),
     displayOptions_showBreadcrumbs: boolean(
       "display_options_show_breadcrumbs",
     ).default(true),
@@ -25485,6 +25533,7 @@ type DatabaseSchema = {
   enum_article_detail_settings_hero_padding: typeof enum_article_detail_settings_hero_padding;
   enum_article_detail_settings_share_settings_position: typeof enum_article_detail_settings_share_settings_position;
   enum_article_detail_settings_sidebar_banner_position: typeof enum_article_detail_settings_sidebar_banner_position;
+  enum_article_detail_settings_sidebar_banner_scope_mode: typeof enum_article_detail_settings_sidebar_banner_scope_mode;
   enum_vcs_custom_blocks_text_align: typeof enum_vcs_custom_blocks_text_align;
   vcs_not_align: typeof vcs_not_align;
   enum_vaccination_settings_content_block_text_align: typeof enum_vaccination_settings_content_block_text_align;

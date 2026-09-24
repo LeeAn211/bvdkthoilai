@@ -305,7 +305,100 @@ export const ArticleDetailSettings: GlobalConfig = {
                     { label: 'Nằm DƯỚI mục "Tin mới nhất"', value: 'belowLatest' },
                   ],
                 },
+                // --- PHẠM VI ÁP DỤNG BANNER THEO CHUYÊN MỤC ---
+                {
+                  name: 'scopeMode',
+                  label: 'Chế độ áp dụng Banner Sidebar theo chuyên mục',
+                  type: 'select',
+                  defaultValue: 'all',
+                  options: [
+                    { label: '🌟 Bật cho tất cả chuyên mục bài viết (Mặc định)', value: 'all' },
+                    { label: '⚙️ Bật/tắt tùy ý theo từng chuyên mục riêng biệt (Chọn bên dưới)', value: 'custom' },
+                    { label: '⛔ Tắt tất cả banner trên mọi chuyên mục', value: 'none' },
+                  ],
+                  admin: {
+                    description:
+                      'Lựa chọn phạm vi hiển thị banner: Có thể "Bật tất cả", "Tắt tất cả" hoặc "Bật/tắt tùy ý từng mục" (Ví dụ: tắt ở Tin tức nhưng Thông báo vẫn hiển thị đầy đủ).',
+                  },
+                },
+                {
+                  type: 'collapsible',
+                  label: '🎯 Danh sách Chuyên mục áp dụng Banner (Khi chọn "Bật/tắt tùy ý")',
+                  admin: { initCollapsed: false },
+                  fields: [
+                    {
+                      name: 'applyNews',
+                      label: 'Bật Banner cho mục Tin tức & Hoạt động (/tin-tuc)',
+                      type: 'checkbox',
+                      defaultValue: true,
+                    },
+                    {
+                      name: 'applyNotices',
+                      label: 'Bật Banner cho mục Thông báo (/thong-bao)',
+                      type: 'checkbox',
+                      defaultValue: true,
+                    },
+                    {
+                      name: 'applyAdvancedTechniques',
+                      label: 'Bật Banner cho mục Kỹ thuật chuyên sâu (/ky-thuat-chuyen-sau)',
+                      type: 'checkbox',
+                      defaultValue: true,
+                    },
+                    {
+                      name: 'applyProcurement',
+                      label: 'Bật Banner cho mục Đấu thầu – Mua sắm (/dau-thau-mua-sam)',
+                      type: 'checkbox',
+                      defaultValue: true,
+                    },
+                    {
+                      name: 'applyRecruitment',
+                      label: 'Bật Banner cho mục Tuyển dụng (/tuyen-dung)',
+                      type: 'checkbox',
+                      defaultValue: true,
+                    },
+                    {
+                      name: 'applyCustomPosts',
+                      label: 'Bật Banner cho mục Bài viết Menu mở rộng (/noi-dung)',
+                      type: 'checkbox',
+                      defaultValue: true,
+                    },
+                    {
+                      name: 'applyClinicalProtocols',
+                      label: 'Bật Banner cho mục Phác đồ điều trị (/phac-do-dieu-tri)',
+                      type: 'checkbox',
+                      defaultValue: true,
+                    },
+                    {
+                      name: 'applyHealthWarnings',
+                      label: 'Bật Banner cho mục Góc cảnh báo (/goc-canh-bao)',
+                      type: 'checkbox',
+                      defaultValue: true,
+                    },
+                    {
+                      name: 'applyScientificActivities',
+                      label: 'Bật Banner cho mục Hoạt động khoa học (/hoat-dong-khoa-hoc)',
+                      type: 'checkbox',
+                      defaultValue: true,
+                    },
+                    {
+                      name: 'applyDocuments',
+                      label: 'Bật Banner cho mục Văn bản điều hành (/van-ban)',
+                      type: 'checkbox',
+                      defaultValue: true,
+                    },
+                    {
+                      name: 'customSectionsText',
+                      label: 'Nhập thêm các đường dẫn / slug chuyên mục muốn bật banner (ngăn cách bằng dấu phẩy)',
+                      type: 'textarea',
+                      admin: {
+                        placeholder: 'chuyen-doi-so, khao-sat, dao-tao',
+                        description: 'Hỗ trợ nhập thêm các slug tùy biến khác nếu có nhu cầu.',
+                      },
+                    },
+                  ],
+                },
                 // Banner 1
+                { name: 'banner1Enabled', label: 'Bật hiển thị Banner #1', type: 'checkbox', defaultValue: true },
                 { name: 'title', label: 'Tiêu đề Banner #1', type: 'text', defaultValue: 'ĐẶT LỊCH KHÁM BỆNH' },
                 {
                   name: 'description',
@@ -371,6 +464,8 @@ export const ArticleDetailSettings: GlobalConfig = {
               label: 'Tùy chọn hiển thị nội dung & chân trang',
               type: 'group',
               fields: [
+                { name: 'showCoverImage', label: 'Hiển thị ảnh đại diện / ảnh bìa đầu bài viết', type: 'checkbox', defaultValue: true },
+                { name: 'fullWidthImages', label: 'Mở rộng ảnh hiển thị bài viết Full 100% bề ngang khi ẩn Sidebar', type: 'checkbox', defaultValue: true },
                 { name: 'showBreadcrumbs', label: 'Hiển thị thanh đường dẫn (Breadcrumbs)', type: 'checkbox', defaultValue: true },
                 { name: 'showDate', label: 'Hiển thị ngày đăng bài viết', type: 'checkbox', defaultValue: true },
                 { name: 'showViews', label: 'Hiển thị lượt xem bài viết', type: 'checkbox', defaultValue: true },

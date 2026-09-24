@@ -52,8 +52,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params
-  const [{ item, related }, theme, siteSettings, displaySettings, articleDetailSettings] = await Promise.all([
+  const [{ item, related }, defaults, theme, siteSettings, displaySettings, articleDetailSettings] = await Promise.all([
     getData(slug),
+    getDefaultContentMedia(),
     getGlobal('theme-settings').catch(() => null) as Promise<any>,
     getGlobal('site-settings').catch(() => null) as Promise<any>,
     getGlobal('display-settings').catch(() => null) as Promise<any>,
@@ -109,6 +110,9 @@ export default async function Page({ params }: Props) {
       views={item.views || 128}
       categoryName={levelLabel(item.level)}
       categoryHref={parentSectionHref}
+      coverUrl={mediaUrl(item.cover || item.image || item.seoImage) || defaults.notices}
+      coverAlt={item.title}
+      showCoverImage={true}
       expireDate={expireDate}
       excerpt={item.excerpt}
       content={item.content}

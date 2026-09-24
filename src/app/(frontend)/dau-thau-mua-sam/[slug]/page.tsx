@@ -116,6 +116,7 @@ export default async function Page({ params }: Props) {
         views={item.views || 92}
         categoryName={item.type || 'Đấu thầu – Mua sắm'}
         categoryHref="/dau-thau-mua-sam"
+        coverUrl={mediaUrl(item.seoImage || item.cover)}
         highlights={highlights}
         excerpt={item.excerpt}
         content={item.content}

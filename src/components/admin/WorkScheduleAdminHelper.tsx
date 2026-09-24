@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useRef, useState } from 'react'
-import { useForm } from '@payloadcms/ui'
+import { useAllFormFields, useForm } from '@payloadcms/ui'
 
 type DayItem = {
   dayLabel: string
@@ -9,6 +9,29 @@ type DayItem = {
   morningContent: string
   afternoonContent: string
   note: string
+}
+
+const generateHexId = () => {
+  const timestamp = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0')
+  const randomHex = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('')
+  return `${timestamp}${randomHex}`
+}
+
+const switchToDetailTab = () => {
+  setTimeout(() => {
+    try {
+      const tabButtons = document.querySelectorAll<HTMLButtonElement>('button.tabs-field__tab-button')
+      for (const btn of Array.from(tabButtons)) {
+        const text = btn.textContent || ''
+        if (text.includes('Bảng chi tiết') || text.includes('Lịch tuần') || text.includes('Sáng / Chiều')) {
+          btn.click()
+          break
+        }
+      }
+    } catch {
+      // bỏ qua nếu DOM chưa sẵn sàng
+    }
+  }, 150)
 }
 
 export default function WorkScheduleAdminHelper() {
@@ -22,8 +45,152 @@ export default function WorkScheduleAdminHelper() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [parsedData, setParsedData] = useState<any>(null)
+  const [applied, setApplied] = useState(false)
 
-  const { dispatchFields } = useForm()
+  const [fields, dispatchFields] = useAllFormFields()
+  const { getFields, setModified } = useForm()
+
+  // Hàm cốt lõi: Nạp toàn bộ dữ liệu vào Form State chuẩn Payload CMS 3
+  const applyDataToForm = (dataToApply: {
+    title?: string
+    displayMode?: string
+    documentNumber?: string
+    revision?: string
+    weekNumber?: number | string
+    year?: number | string
+    startDate?: string
+    endDate?: string
+    generalNote?: string
+    signerRole?: string
+    signerName?: string
+    days?: DayItem[]
+  }) => {
+    if (!dispatchFields) return
+
+    const currentFields: Record<string, any> = typeof getFields === 'function' ? getFields() : fields || {}
+    const nextState: Record<string, any> = {}
+
+    // 1. Giữ lại tất cả các trường không thuộc array 'days'
+    for (const [key, val] of Object.entries(currentFields)) {
+      if (!key.startsWith('days.') && key !== 'days') {
+        nextState[key] = val
+      }
+    }
+
+    // Luôn đảm bảo displayMode là 'table' để tab Bảng chi tiết Lịch tuần được hiển thị
+    nextState['displayMode'] = {
+      ...(currentFields['displayMode'] || {}),
+      value: 'table',
+      initialValue: 'table',
+      valid: true,
+      passesCondition: true,
+      isModified: true,
+    }
+
+    // 2. Cập nhật các trường đơn cấp nếu có
+    const setSingle = (path: string, val: any) => {
+      if (val !== undefined && val !== null && val !== '') {
+        nextState[path] = {
+          ...(currentFields[path] || {}),
+          value: val,
+          initialValue: val,
+          valid: true,
+          passesCondition: true,
+          isModified: true,
+        }
+      }
+    }
+
+    if (dataToApply.title) setSingle('title', dataToApply.title)
+    if (dataToApply.documentNumber) setSingle('documentNumber', dataToApply.documentNumber)
+    if (dataToApply.revision) setSingle('revision', dataToApply.revision)
+    if (dataToApply.weekNumber) setSingle('weekNumber', Number(dataToApply.weekNumber))
+    if (dataToApply.year) setSingle('year', Number(dataToApply.year))
+    if (dataToApply.startDate) setSingle('startDate', dataToApply.startDate)
+    if (dataToApply.endDate) setSingle('endDate', dataToApply.endDate)
+    if (dataToApply.generalNote) setSingle('generalNote', dataToApply.generalNote)
+    if (dataToApply.signerRole) setSingle('signerRole', dataToApply.signerRole)
+    if (dataToApply.signerName) setSingle('signerName', dataToApply.signerName)
+
+    // 3. Xử lý trường array 'days' theo đúng chuẩn state của Payload Array Field
+    const daysList = dataToApply.days || []
+    if (daysList.length > 0) {
+      const rowMetadata = daysList.map((d, index) => {
+        const rowId = generateHexId()
+        const rowPath = `days.${index}`
+
+        nextState[`${rowPath}.id`] = {
+          value: rowId,
+          initialValue: rowId,
+          valid: true,
+          passesCondition: true,
+        }
+        nextState[`${rowPath}.dayLabel`] = {
+          value: d.dayLabel || `Thứ ${index + 2}`,
+          initialValue: d.dayLabel || `Thứ ${index + 2}`,
+          valid: true,
+          passesCondition: true,
+        }
+        nextState[`${rowPath}.dateFormatted`] = {
+          value: d.dateFormatted || '',
+          initialValue: d.dateFormatted || '',
+          valid: true,
+          passesCondition: true,
+        }
+        nextState[`${rowPath}.morningContent`] = {
+          value: d.morningContent || '',
+          initialValue: d.morningContent || '',
+          valid: true,
+          passesCondition: true,
+        }
+        nextState[`${rowPath}.afternoonContent`] = {
+          value: d.afternoonContent || '',
+          initialValue: d.afternoonContent || '',
+          valid: true,
+          passesCondition: true,
+        }
+        nextState[`${rowPath}.note`] = {
+          value: d.note || '',
+          initialValue: d.note || '',
+          valid: true,
+          passesCondition: true,
+        }
+
+        return {
+          id: rowId,
+          isLoading: false,
+        }
+      })
+
+      nextState['days'] = {
+        ...(currentFields['days'] || {}),
+        disableFormData: true,
+        rows: rowMetadata,
+        value: daysList.length,
+        initialValue: daysList.length,
+        valid: true,
+        passesCondition: true,
+      }
+    }
+
+    // 4. Dispatch REPLACE_STATE để áp dụng đồng bộ toàn bộ Form
+    dispatchFields({
+      type: 'REPLACE_STATE',
+      state: nextState,
+      optimize: false,
+      sanitize: true,
+    })
+
+    // 5. Đánh dấu form đã thay đổi để bật nút Lưu thay đổi
+    if (typeof setModified === 'function') {
+      setModified(true)
+    }
+
+    setApplied(true)
+
+    // 6. Tự động chuyển người dùng sang Tab 2 xem trực tiếp bảng lịch
+    switchToDetailTab()
+  }
 
   // Xử lý nạp dữ liệu từ File Excel (.xlsx / .xls)
   const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +201,7 @@ export default function WorkScheduleAdminHelper() {
     setExcelBusy(true)
     setError('')
     setSuccess('')
+    setApplied(false)
 
     try {
       const { Workbook } = await import('exceljs')
@@ -73,22 +241,9 @@ export default function WorkScheduleAdminHelper() {
       }
 
       // Tự động điền danh sách các ngày vào Form Payload CMS
-      if (dispatchFields) {
-        dispatchFields({
-          type: 'UPDATE',
-          path: 'days',
-          value: days.map((d, index) => ({
-            id: `excel_day_${index + 1}`,
-            dayLabel: d.dayLabel,
-            dateFormatted: d.dateFormatted,
-            morningContent: d.morningContent,
-            afternoonContent: d.afternoonContent,
-            note: d.note,
-          })),
-        })
-      }
+      applyDataToForm({ days })
 
-      setSuccess(`🎉 Đã đọc thành công ${days.length} ngày từ file Excel "${file.name}" và nạp vào Form! Bạn có thể xem và bấm "Lưu thay đổi" (Save) ở góc trên.`)
+      setSuccess(`🎉 Đã đọc thành công ${days.length} ngày từ file Excel "${file.name}" và điền vào Form! Đang mở Tab Bảng chi tiết Lịch tuần để bạn kiểm tra.`)
     } catch (err) {
       console.error('Lỗi đọc Excel:', err)
       setError(err instanceof Error ? err.message : 'Không thể đọc file Excel. Vui lòng kiểm tra lại định dạng file.')
@@ -105,6 +260,7 @@ export default function WorkScheduleAdminHelper() {
     setError('')
     setSuccess('')
     setParsedData(null)
+    setApplied(false)
 
     try {
       const formData = new FormData()
@@ -121,7 +277,8 @@ export default function WorkScheduleAdminHelper() {
       }
 
       setParsedData(json.data)
-      setSuccess('Đã đọc và bóc tách dữ liệu từ ảnh thành công! Bấm "Áp dụng vào Form" để điền tự động.')
+      const dayCount = Array.isArray(json.data?.days) ? json.data.days.length : 0
+      setSuccess(`✨ Đã đọc và bóc tách thành công ${dayCount} ngày công tác từ ảnh! Bấm "Áp dụng vào Form ngay" để điền tự động.`)
     } catch (err) {
       console.error('Lỗi Quét ảnh AI:', err)
       setError(err instanceof Error ? err.message : 'Lỗi không xác định khi quét ảnh.')
@@ -132,55 +289,10 @@ export default function WorkScheduleAdminHelper() {
 
   // 2. Áp dụng kết quả AI OCR vào Form Payload CMS
   const handleApplyToForm = () => {
-    if (!parsedData || !dispatchFields) return
-
-    if (parsedData.title) {
-      dispatchFields({ type: 'UPDATE', path: 'title', value: parsedData.title })
-    }
-    if (parsedData.documentNumber) {
-      dispatchFields({ type: 'UPDATE', path: 'documentNumber', value: parsedData.documentNumber })
-    }
-    if (parsedData.revision) {
-      dispatchFields({ type: 'UPDATE', path: 'revision', value: parsedData.revision })
-    }
-    if (parsedData.weekNumber) {
-      dispatchFields({ type: 'UPDATE', path: 'weekNumber', value: Number(parsedData.weekNumber) })
-    }
-    if (parsedData.year) {
-      dispatchFields({ type: 'UPDATE', path: 'year', value: Number(parsedData.year) })
-    }
-    if (parsedData.startDate) {
-      dispatchFields({ type: 'UPDATE', path: 'startDate', value: parsedData.startDate })
-    }
-    if (parsedData.endDate) {
-      dispatchFields({ type: 'UPDATE', path: 'endDate', value: parsedData.endDate })
-    }
-    if (parsedData.generalNote) {
-      dispatchFields({ type: 'UPDATE', path: 'generalNote', value: parsedData.generalNote })
-    }
-    if (parsedData.signerRole) {
-      dispatchFields({ type: 'UPDATE', path: 'signerRole', value: parsedData.signerRole })
-    }
-    if (parsedData.signerName) {
-      dispatchFields({ type: 'UPDATE', path: 'signerName', value: parsedData.signerName })
-    }
-
-    if (Array.isArray(parsedData.days) && parsedData.days.length > 0) {
-      dispatchFields({
-        type: 'UPDATE',
-        path: 'days',
-        value: parsedData.days.map((d: DayItem, index: number) => ({
-          id: `ai_day_${index + 1}`,
-          dayLabel: d.dayLabel || `Thứ ${index + 2}`,
-          dateFormatted: d.dateFormatted || '',
-          morningContent: d.morningContent || '',
-          afternoonContent: d.afternoonContent || '',
-          note: d.note || '',
-        })),
-      })
-    }
-
-    setSuccess('✅ Đã điền toàn bộ thông tin từ ảnh vào Form thành công!')
+    if (!parsedData) return
+    applyDataToForm(parsedData)
+    const dayCount = Array.isArray(parsedData.days) ? parsedData.days.length : 0
+    setSuccess(`✅ Đã điền toàn bộ ${dayCount} ngày và thông tin công văn vào Form thành công!`)
   }
 
   // 3. Tải file mẫu Excel (.xlsx)
@@ -538,6 +650,41 @@ export default function WorkScheduleAdminHelper() {
           </div>
         )}
 
+        {/* Xem trước tóm tắt dữ liệu AI bóc tách được */}
+        {parsedData && (
+          <div style={{
+            background: '#f8fafc',
+            border: '1px solid #cbd5e1',
+            borderRadius: '6px',
+            padding: '10px 12px',
+            fontSize: '12.5px',
+            color: '#334155',
+          }}>
+            <div style={{ fontWeight: 700, color: '#1e3a8a', marginBottom: '6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span>📋 Dữ liệu AI đã bóc tách được:</span>
+              <span style={{ fontSize: '12px', color: '#059669', fontWeight: 600 }}>
+                {parsedData.days?.length || 0} ngày công tác
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', fontSize: '12px', color: '#475569', marginBottom: '6px' }}>
+              {parsedData.title && <div><b>Tiêu đề:</b> {parsedData.title}</div>}
+              {parsedData.weekNumber && <div><b>Tuần:</b> {parsedData.weekNumber}</div>}
+              {parsedData.year && <div><b>Năm:</b> {parsedData.year}</div>}
+              {parsedData.startDate && <div><b>Từ:</b> {parsedData.startDate}</div>}
+              {parsedData.endDate && <div><b>Đến:</b> {parsedData.endDate}</div>}
+            </div>
+            {Array.isArray(parsedData.days) && parsedData.days.length > 0 && (
+              <div style={{ maxHeight: '110px', overflowY: 'auto', background: '#ffffff', borderRadius: '4px', border: '1px solid #e2e8f0', padding: '6px 8px' }}>
+                {parsedData.days.map((d: any, idx: number) => (
+                  <div key={idx} style={{ fontSize: '11.5px', padding: '3px 0', borderBottom: idx < parsedData.days.length - 1 ? '1px dashed #f1f5f9' : 'none' }}>
+                    <b style={{ color: '#0369a1' }}>{d.dayLabel} {d.dateFormatted}:</b> {d.morningContent ? `[Sáng] ${d.morningContent.slice(0, 70)}... ` : ''}{d.afternoonContent ? `[Chiều] ${d.afternoonContent.slice(0, 70)}...` : ''}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Thông báo lỗi / thành công */}
         {error && (
           <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', padding: '8px 12px', borderRadius: '6px', fontSize: '12.5px' }}>
@@ -545,26 +692,65 @@ export default function WorkScheduleAdminHelper() {
           </div>
         )}
         {success && (
-          <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', color: '#15803d', padding: '8px 12px', borderRadius: '6px', fontSize: '12.5px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span>{success}</span>
-            {parsedData && (
-              <button
-                type="button"
-                onClick={handleApplyToForm}
-                style={{
-                  padding: '5px 12px',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  color: '#ffffff',
-                  background: '#16a34a',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-              >
-                ✍️ Áp dụng vào Form ngay
-              </button>
-            )}
+          <div style={{
+            background: '#f0fdf4',
+            border: '1px solid #bbf7d0',
+            color: '#15803d',
+            padding: '10px 14px',
+            borderRadius: '6px',
+            fontSize: '12.5px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '10px'
+          }}>
+            <span style={{ fontWeight: 600 }}>{success}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {parsedData && (
+                <button
+                  type="button"
+                  onClick={handleApplyToForm}
+                  style={{
+                    padding: '6px 14px',
+                    fontSize: '12.5px',
+                    fontWeight: 700,
+                    color: '#ffffff',
+                    background: '#16a34a',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 4px rgba(22, 163, 74, 0.25)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  ✍️ Áp dụng vào Form ngay
+                </button>
+              )}
+              {applied && (
+                <button
+                  type="button"
+                  onClick={switchToDetailTab}
+                  style={{
+                    padding: '6px 14px',
+                    fontSize: '12.5px',
+                    fontWeight: 700,
+                    color: '#1e40af',
+                    background: '#dbeafe',
+                    border: '1px solid #93c5fd',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                  }}
+                >
+                  👉 Xem Bảng chi tiết Lịch tuần
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>

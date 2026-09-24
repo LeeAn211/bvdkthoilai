@@ -48,6 +48,11 @@ export interface ArticleDetailTemplateProps {
   showViews?: boolean
   showCategory?: boolean
 
+  // Cover image
+  coverUrl?: string | null
+  coverAlt?: string
+  showCoverImage?: boolean
+
   // Highlights
   highlights?: HighlightMetaItem[]
   showHighlights?: boolean
@@ -107,6 +112,20 @@ export interface ArticleDetailTemplateProps {
     sidebarBanner?: {
       enabled?: boolean
       position?: 'aboveLatest' | 'belowLatest'
+      scopeMode?: 'all' | 'custom' | 'none'
+      applyNews?: boolean
+      applyNotices?: boolean
+      applyAdvancedTechniques?: boolean
+      applyProcurement?: boolean
+      applyRecruitment?: boolean
+      applyCustomPosts?: boolean
+      applyClinicalProtocols?: boolean
+      applyHealthWarnings?: boolean
+      applyScientificActivities?: boolean
+      applyDocuments?: boolean
+      customSectionsText?: string
+
+      banner1Enabled?: boolean
       title?: string
       description?: string
       buttonText?: string
@@ -133,6 +152,8 @@ export interface ArticleDetailTemplateProps {
       extraBannersJson?: string
     }
     displayOptions?: {
+      showCoverImage?: boolean
+      fullWidthImages?: boolean
       showBreadcrumbs?: boolean
       showViews?: boolean
       showDate?: boolean
@@ -162,6 +183,68 @@ export interface ArticleDetailTemplateProps {
   trackingCollection?: 'news' | 'notices' | 'clinical-protocols' | 'health-warnings'
 }
 
+/**
+ * Kiểm tra xem Banner hành động trên Sidebar có được phép hiển thị cho chuyên mục hiện tại không
+ * Tuân thủ 3 chế độ:
+ * 1. 'all': Bật cho tất cả chuyên mục (Mặc định)
+ * 2. 'none': Tắt cho tất cả chuyên mục
+ * 3. 'custom': Cho phép bật/tắt tùy ý từng chuyên mục độc lập (ví dụ: tắt ở Tin tức, nhưng Thông báo vẫn hiển thị)
+ */
+function isBannerAllowedForCategory(bannerConfig: any, baseHref: string): boolean {
+  if (!bannerConfig || bannerConfig.enabled === false) return false
+
+  const scopeMode = bannerConfig.scopeMode || 'all'
+  if (scopeMode === 'none') return false
+  if (scopeMode === 'all') return true
+
+  // Chế độ 'custom' (Bật/tắt tùy biến từng chuyên mục)
+  const normalizedHref = (baseHref || '').toLowerCase().trim()
+
+  if (normalizedHref.startsWith('/tin-tuc')) {
+    return bannerConfig.applyNews !== false
+  }
+  if (normalizedHref.startsWith('/thong-bao')) {
+    return bannerConfig.applyNotices !== false
+  }
+  if (normalizedHref.startsWith('/ky-thuat-chuyen-sau')) {
+    return bannerConfig.applyAdvancedTechniques !== false
+  }
+  if (normalizedHref.startsWith('/dau-thau-mua-sam')) {
+    return bannerConfig.applyProcurement !== false
+  }
+  if (normalizedHref.startsWith('/tuyen-dung')) {
+    return bannerConfig.applyRecruitment !== false
+  }
+  if (normalizedHref.startsWith('/noi-dung')) {
+    return bannerConfig.applyCustomPosts !== false
+  }
+  if (normalizedHref.startsWith('/phac-do-dieu-tri')) {
+    return bannerConfig.applyClinicalProtocols !== false
+  }
+  if (normalizedHref.startsWith('/goc-canh-bao')) {
+    return bannerConfig.applyHealthWarnings !== false
+  }
+  if (normalizedHref.startsWith('/hoat-dong-khoa-hoc')) {
+    return bannerConfig.applyScientificActivities !== false
+  }
+  if (normalizedHref.startsWith('/van-ban')) {
+    return bannerConfig.applyDocuments !== false
+  }
+
+  // Tùy chọn slug bổ sung
+  if (bannerConfig.customSectionsText) {
+    const customList = String(bannerConfig.customSectionsText)
+      .split(',')
+      .map((s: string) => s.trim().toLowerCase())
+      .filter(Boolean)
+    if (customList.some((slug: string) => normalizedHref.includes(slug))) {
+      return true
+    }
+  }
+
+  return false
+}
+
 export function ArticleDetailTemplate({
   breadcrumbs,
   showBreadcrumbs,
@@ -174,6 +257,9 @@ export function ArticleDetailTemplate({
   showDate,
   showViews,
   showCategory,
+  coverUrl,
+  coverAlt,
+  showCoverImage,
   highlights,
   showHighlights,
   excerpt,
@@ -237,7 +323,7 @@ export function ArticleDetailTemplate({
   const dsRelated = displaySettings?.articleRelated || 'both'
   const dsBackToList = displaySettings?.articleBackToList || 'both'
 
-  // Tính toán quyền bật/tắt (Granular Toggles kết hợp DisplaySettings)
+  // Tính toán quyền bật/tắt (Granular Toggles kết hợp DisplaySettings & ScopeMode chuyên mục)
   const isBreadcrumbsVisible = showBreadcrumbs !== undefined ? showBreadcrumbs : (displayConfig?.showBreadcrumbs !== false && shouldRender(dsBreadcrumbs))
   const isDateVisible = showDate !== undefined ? showDate : (displayConfig?.showDate !== false && shouldRender(dsDate))
   const isViewsVisible = showViews !== undefined ? showViews : (displayConfig?.showViews !== false && shouldRender(dsViews))
@@ -249,7 +335,11 @@ export function ArticleDetailTemplate({
   const isAttachmentsVisible = showAttachments !== false
   const isSidebarVisible = showSidebar !== undefined ? showSidebar : (displayConfig?.showSidebar !== false && shouldRender(dsSidebar))
   const isSidebarLatestVisible = showSidebarLatest !== undefined ? showSidebarLatest : (displayConfig?.showSidebarLatest !== false && shouldRender(dsSidebarLatest))
-  const isSidebarBannersVisible = showSidebarBanners !== undefined ? showSidebarBanners : (displayConfig?.showSidebarBanners !== false && bannerConfig?.enabled !== false && shouldRender(dsSidebarBanners))
+
+  // Kiểm tra quyền hiển thị banner theo chuyên mục (all, custom, none)
+  const isCategoryBannerAllowed = isBannerAllowedForCategory(bannerConfig, baseHref)
+  const isSidebarBannersVisible = showSidebarBanners !== undefined ? showSidebarBanners : (displayConfig?.showSidebarBanners !== false && isCategoryBannerAllowed && shouldRender(dsSidebarBanners))
+
   const isRelatedVisible = showRelatedSection !== undefined ? showRelatedSection : (displayConfig?.showRelatedSection !== false && shouldRender(dsRelated))
   const isBackToListVisible = showBackToList !== undefined ? showBackToList : (displayConfig?.showBackToList !== false && shouldRender(dsBackToList))
 
@@ -260,16 +350,6 @@ export function ArticleDetailTemplate({
   // Vị trí thanh chia sẻ: 'left' | 'right' | 'top' | 'bottom'
   const sharePosition = shareConfig?.position || 'left'
   const isLeftShare = isShareEnabled && sharePosition === 'left'
-
-  // Xác định class grid của layout theo trạng thái bật/tắt cột trái và sidebar phải
-  let layoutGridClass = styles.postDetailLayout
-  if (!isLeftShare && !isSidebarVisible) {
-    layoutGridClass = `${styles.postDetailLayout} ${styles.postDetailLayoutFull}`
-  } else if (!isLeftShare && isSidebarVisible) {
-    layoutGridClass = `${styles.postDetailLayout} ${styles.postDetailLayoutNoLeft}`
-  } else if (isLeftShare && !isSidebarVisible) {
-    layoutGridClass = `${styles.postDetailLayout} ${styles.postDetailLayoutNoRight}`
-  }
 
   // Danh sách banners
   const bannerList: Array<{
@@ -282,16 +362,19 @@ export function ArticleDetailTemplate({
   }> = []
 
   if (isSidebarBannersVisible) {
-    // Banner 1
-    const b1Img = bannerConfig?.customBannerImage ? mediaUrl(bannerConfig.customBannerImage) : null
-    bannerList.push({
-      title: bannerConfig?.title || 'ĐẶT LỊCH KHÁM BỆNH',
-      description: bannerConfig?.description || 'Khám chữa bệnh nhanh chóng, tiện lợi, không phải chờ đợi qua ứng dụng y tế.',
-      buttonText: bannerConfig?.buttonText || 'Đặt lịch khám ngay →',
-      buttonLink: bannerConfig?.buttonLink || 'https://medpro.vn/',
-      openNewTab: bannerConfig?.openNewTab !== false,
-      imageUrl: b1Img,
-    })
+    // Banner 1 (Chỉ hiển thị khi banner1Enabled không bị tắt)
+    const isBanner1Enabled = bannerConfig?.banner1Enabled !== false
+    if (isBanner1Enabled) {
+      const b1Img = bannerConfig?.customBannerImage ? mediaUrl(bannerConfig.customBannerImage) : null
+      bannerList.push({
+        title: bannerConfig?.title || 'ĐẶT LỊCH KHÁM BỆNH',
+        description: bannerConfig?.description || 'Khám chữa bệnh nhanh chóng, tiện lợi, không phải chờ đợi qua ứng dụng y tế.',
+        buttonText: bannerConfig?.buttonText || 'Đặt lịch khám ngay →',
+        buttonLink: bannerConfig?.buttonLink || 'https://medpro.vn/',
+        openNewTab: bannerConfig?.openNewTab !== false,
+        imageUrl: b1Img,
+      })
+    }
 
     // Banner 2
     if (bannerConfig?.banner2Enabled) {
@@ -425,6 +508,23 @@ export function ArticleDetailTemplate({
         </div>
       </div>
     )
+  }
+
+  // Kiểm tra sidebar có nội dung thực tế để hiển thị hay không (tránh khoảng trắng vô nghĩa khi các mục con bị ẩn/trống)
+  const isRightShare = isShareEnabled && sharePosition === 'right'
+  const hasLatestItems = Boolean(isSidebarLatestVisible && latestItems && latestItems.length > 0)
+  const hasBanners = Boolean(isSidebarBannersVisible && bannerList.length > 0)
+  const hasSidebarContent = isRightShare || hasLatestItems || hasBanners
+  const effectiveSidebarVisible = isSidebarVisible && hasSidebarContent
+
+  // Xác định class grid của layout theo trạng thái bật/tắt cột trái và sidebar phải thực tế
+  let layoutGridClass = styles.postDetailLayout
+  if (!isLeftShare && !effectiveSidebarVisible) {
+    layoutGridClass = `${styles.postDetailLayout} ${styles.postDetailLayoutFull}`
+  } else if (!isLeftShare && effectiveSidebarVisible) {
+    layoutGridClass = `${styles.postDetailLayout} ${styles.postDetailLayoutNoLeft}`
+  } else if (isLeftShare && !effectiveSidebarVisible) {
+    layoutGridClass = `${styles.postDetailLayout} ${styles.postDetailLayoutNoRight}`
   }
 
   return (
@@ -562,7 +662,7 @@ export function ArticleDetailTemplate({
               </div>
             )}
 
-            {/* Khối tùy chỉnh trên nội dung (ảnh đại diện chi tiết, khối ưu điểm...) */}
+            {/* Khối tùy chỉnh trên nội dung (khối ưu điểm, thành phần bổ sung...) */}
             {customBodyTop}
 
             {/* Nội dung chi tiết RichText */}
@@ -603,8 +703,8 @@ export function ArticleDetailTemplate({
             )}
           </article>
 
-          {/* Cột phải: Sidebar */}
-          {isSidebarVisible && (
+          {/* Cột phải: Sidebar (chỉ render khi được bật VÀ có nội dung thực tế) */}
+          {effectiveSidebarVisible && (
             <aside className={`${styles.postDetailSidebar} ${getVisibilityClass(dsSidebar)}`}>
               {/* Vị trí 4: Thanh chia sẻ đặt ở đầu Sidebar cột phải */}
               {isShareEnabled && sharePosition === 'right' && (

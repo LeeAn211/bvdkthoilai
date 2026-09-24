@@ -9258,6 +9258,25 @@ export interface ArticleDetailSetting {
   sidebarBanner?: {
     enabled?: boolean | null;
     position?: ('aboveLatest' | 'belowLatest') | null;
+    /**
+     * Lựa chọn phạm vi hiển thị banner: Có thể "Bật tất cả", "Tắt tất cả" hoặc "Bật/tắt tùy ý từng mục" (Ví dụ: tắt ở Tin tức nhưng Thông báo vẫn hiển thị đầy đủ).
+     */
+    scopeMode?: ('all' | 'custom' | 'none') | null;
+    applyNews?: boolean | null;
+    applyNotices?: boolean | null;
+    applyAdvancedTechniques?: boolean | null;
+    applyProcurement?: boolean | null;
+    applyRecruitment?: boolean | null;
+    applyCustomPosts?: boolean | null;
+    applyClinicalProtocols?: boolean | null;
+    applyHealthWarnings?: boolean | null;
+    applyScientificActivities?: boolean | null;
+    applyDocuments?: boolean | null;
+    /**
+     * Hỗ trợ nhập thêm các slug tùy biến khác nếu có nhu cầu.
+     */
+    customSectionsText?: string | null;
+    banner1Enabled?: boolean | null;
     title?: string | null;
     description?: string | null;
     buttonText?: string | null;
@@ -9281,6 +9300,8 @@ export interface ArticleDetailSetting {
     extraBannersJson?: string | null;
   };
   displayOptions?: {
+    showCoverImage?: boolean | null;
+    fullWidthImages?: boolean | null;
     showBreadcrumbs?: boolean | null;
     showDate?: boolean | null;
     showViews?: boolean | null;
@@ -12025,6 +12046,19 @@ export interface ArticleDetailSettingsSelect<T extends boolean = true> {
     | {
         enabled?: T;
         position?: T;
+        scopeMode?: T;
+        applyNews?: T;
+        applyNotices?: T;
+        applyAdvancedTechniques?: T;
+        applyProcurement?: T;
+        applyRecruitment?: T;
+        applyCustomPosts?: T;
+        applyClinicalProtocols?: T;
+        applyHealthWarnings?: T;
+        applyScientificActivities?: T;
+        applyDocuments?: T;
+        customSectionsText?: T;
+        banner1Enabled?: T;
         title?: T;
         description?: T;
         buttonText?: T;
@@ -12050,6 +12084,8 @@ export interface ArticleDetailSettingsSelect<T extends boolean = true> {
   displayOptions?:
     | T
     | {
+        showCoverImage?: T;
+        fullWidthImages?: T;
         showBreadcrumbs?: T;
         showDate?: T;
         showViews?: T;

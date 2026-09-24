@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## 2026-09-24 — Cài Đặt Phạm Vi Banner Sidebar Theo Chuyên Mục & Hiển Thị Ảnh Bài Viết Full-Width Khi Ẩn Sidebar
+
+- Thêm tùy chọn phạm vi hiển thị Banner Sidebar (`scopeMode`) trong **Bố cục & Chi tiết Bài viết** (`src/globals/ArticleDetailSettings.ts`): Bật tất cả, Tắt tất cả, hoặc Bật/tắt tùy ý theo từng chuyên mục riêng biệt.
+- Bổ sung danh sách checkbox chuyên mục độc lập: Tin tức, Thông báo, Kỹ thuật chuyên sâu, Đấu thầu, Tuyển dụng, Nội dung mở rộng, Phác đồ, Cảnh báo, Hoạt động khoa học, Văn bản điều hành (hỗ trợ bật Thông báo nhưng tắt Tin tức theo đúng nhu cầu).
+- Bổ sung tùy chọn `showCoverImage` và `fullWidthImages` trong cấu hình hiển thị bài viết.
+- Tự động hiển thị ảnh bài viết chi tiết (ảnh bìa đại diện và ảnh trong bài) Full 100% bề ngang (`width: 100% !important; max-width: 100% !important`) khi Sidebar bên phải bị ẩn, trải đều và khớp với khối nội dung.
+- Tạo migration `20260924_075_add_sidebar_banner_scopes_and_full_width_images.mjs`, áp dụng thành công vào PostgreSQL và seal DB Schema Contract snapshot 075.
+
+
+## 2026-09-24 — Sửa Lỗi Điền Form Lịch Làm Việc Cơ Quan Khi Quét Ảnh Bằng AI & Nạp Excel
+
+- Sửa lỗi mảng `days` bị trống (0 dòng) khi quét ảnh bằng AI hoặc nạp file Excel trong trang quản trị **Lịch làm việc cơ quan** (`src/components/admin/WorkScheduleAdminHelper.tsx`).
+- Chuẩn hóa cấu trúc Form State theo kiến trúc Payload CMS 3.x Array Field: sinh mã định danh hex 24 ký tự hợp lệ, khởi tạo đầy đủ metadata `rows` và toàn bộ các sub-field states (`days.0.dayLabel`, `days.0.morningContent`, `days.0.afternoonContent`,...).
+- Áp dụng state bằng action `REPLACE_STATE` đồng bộ, đảm bảo khi người dùng chuyển sang tab "📅 Bảng chi tiết Lịch tuần (Sáng / Chiều)" thì các dòng ngày và nội dung được hiển thị đầy đủ ngay lập tức.
+- Tự động chuyển người dùng sang Tab 2 ngay sau khi bấm "Áp dụng vào Form", kèm bảng preview tóm tắt dữ liệu đọc được từ AI trước khi điền.
+
+
+## 2026-09-24 — Tối Ưu Bố Cục Bài Viết: Checkbox Bật/Tắt Từng Banner & Tự Động Full Trang Khi Ẩn Sidebar
+
+- Bổ sung trường checkbox `banner1Enabled` (mặc định: bật) cho Banner #1 trong trang quản trị **Bố cục & Chi tiết Bài viết** (`src/globals/ArticleDetailSettings.ts`), hoàn thiện khả năng kiểm soát hiển thị độc lập cho từng banner trên sidebar (Banner #1, Banner #2, Banner #3).
+- Cải tiến thông minh cho layout chi tiết bài viết (`src/components/ArticleDetailTemplate.tsx`): tự động kiểm tra nội dung thực tế của Sidebar (`hasSidebarContent`). Nếu Sidebar bị tắt hoặc không có nội dung (không có banner, không có bài viết mới, không có share phải), giao diện sẽ tự động chuyển sang layout tràn full trang 100% (`postDetailLayoutFull` hoặc `postDetailLayoutNoRight`), hoàn toàn loại bỏ khoảng trống trắng thừa ở cột bên phải.
+- Mở rộng vùng hiển thị văn bản chi tiết (`src/components/DocumentDetailView.module.css`): nâng `max-width` lên 100% giúp nội dung và bảng thông tin văn bản hiển thị cân đối, trải đều toàn trang khi không có sidebar.
+- Bổ sung quy tắc CSS responsive trong breakpoint `<= 1024px` để giữ trạng thái full 100% trên các thiết bị màn hình vừa và nhỏ.
+- Tạo migration `20260924_074_add_banner1_enabled_to_article_detail_settings.mjs` và khóa DB Schema Contract snapshot 074 đạt chuẩn 100%.
+
 ## 2026-09-24 — Tối Ưu Phân Quyền Quản Trị, Bảo Mật Navigation & Khối Biểu Đồ Dashboard
 
 - Khắc phục triệt để lỗi lưu ma trận phân quyền tùy chỉnh (Custom Permissions Matrix) trong trang quản trị Người dùng (`src/components/admin/PermissionMatrixField.tsx`).
