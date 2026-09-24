@@ -32,37 +32,45 @@ export default async function Page() {
 
     const defaultIssuer = settings?.hospitalName || 'BVĐK Khu vực Thới Lai'
 
-    items = (docRes.docs as any[]).map(x => {
-      const fileUrl = mediaUrl(x.file)
-      const detailHref = x.slug ? `/van-ban/${x.slug}` : (fileUrl || '#')
-      const cat = categoryName(x) || x.category || x.documentType || 'Văn bản – Tài liệu'
-      const dateStr = x.issuedAt ? new Date(x.issuedAt).toLocaleDateString('vi-VN') : ''
+    items = (docRes.docs as any[])
+      .filter(x => {
+        const cat = (categoryName(x) || x.category || '').toLowerCase()
+        const docType = (x.documentType || '').toLowerCase()
+        const title = (x.title || '').toLowerCase()
+        // Loại trừ phác đồ điều trị để hiển thị riêng biệt tại trang /phac-do-dieu-tri
+        return !cat.includes('phác đồ') && !docType.includes('phác đồ') && !title.includes('phác đồ')
+      })
+      .map(x => {
+        const fileUrl = mediaUrl(x.file)
+        const detailHref = x.slug ? `/van-ban/${x.slug}` : (fileUrl || '#')
+        const cat = categoryName(x) || x.category || x.documentType || 'Văn bản – Tài liệu'
+        const dateStr = x.issuedAt ? new Date(x.issuedAt).toLocaleDateString('vi-VN') : ''
 
-      return {
-        id: `doc-${x.id}`,
-        title: x.title,
-        slug: x.slug,
-        number: x.number,
-        category: cat,
-        issuer: x.issuer || defaultIssuer,
-        signer: x.signer,
-        issuedAt: x.issuedAt,
-        date: dateStr,
-        year: x.year,
-        documentType: x.documentType || cat,
-        summary: x.summary,
-        excerpt: x.summary || 'Văn bản, biểu mẫu và tài liệu được bệnh viện công khai.',
-        fileUrl,
-        fileName: mediaLabel(x.file),
-        fileFormat: mediaFormat(x.file),
-        coverUrl: mediaUrl(x.cover || x.seoImage) || defaults.documents,
-        href: detailHref,
-        accessMode: x.accessMode || 'public',
-        allowDownload: x.allowDownload !== false,
-        preventCopy: Boolean(x.preventCopy),
-        showViewer: x.showViewer !== false,
-      }
-    }).sort((a, b) => {
+        return {
+          id: `doc-${x.id}`,
+          title: x.title,
+          slug: x.slug,
+          number: x.number,
+          category: cat,
+          issuer: x.issuer || defaultIssuer,
+          signer: x.signer,
+          issuedAt: x.issuedAt,
+          date: dateStr,
+          year: x.year,
+          documentType: x.documentType || cat,
+          summary: x.summary,
+          excerpt: x.summary || 'Văn bản, biểu mẫu và tài liệu được bệnh viện công khai.',
+          fileUrl,
+          fileName: mediaLabel(x.file),
+          fileFormat: mediaFormat(x.file),
+          coverUrl: mediaUrl(x.cover || x.seoImage) || defaults.documents,
+          href: detailHref,
+          accessMode: x.accessMode || 'public',
+          allowDownload: x.allowDownload !== false,
+          preventCopy: Boolean(x.preventCopy),
+          showViewer: x.showViewer !== false,
+        }
+      }).sort((a, b) => {
       const timeA = a.issuedAt ? new Date(a.issuedAt).getTime() : 0
       const timeB = b.issuedAt ? new Date(b.issuedAt).getTime() : 0
       return timeB - timeA

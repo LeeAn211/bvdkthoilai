@@ -1,6 +1,79 @@
 # CHANGELOG
 
-## 2026-09-22 — Sửa lỗi hiển thị tiêu đề và nội dung thẻ tin tức chính trên điện thoại
+## 2026-09-24 — Tối Ưu Phân Quyền Quản Trị, Bảo Mật Navigation & Khối Biểu Đồ Dashboard
+
+- Khắc phục triệt để lỗi lưu ma trận phân quyền tùy chỉnh (Custom Permissions Matrix) trong trang quản trị Người dùng (`src/components/admin/PermissionMatrixField.tsx`).
+- Ẩn hoàn toàn các mục Collections & Globals không thuộc phạm vi được phân quyền trong thanh điều hướng Admin (`payload.config.ts`), ngăn chặn tài khoản nhân viên thấy các danh mục không có quyền truy cập.
+- Tách biệt hiển thị biểu đồ "Phân bổ lịch hẹn khám theo ngày" (`showWeeklyWorkload`) trên Admin Dashboard: chỉ hiển thị cho tài khoản có quyền Lịch hẹn khám (`appointments`), không hiển thị nhầm cho tài khoản chỉ quản lý Lịch khám bệnh / Lịch trực (`schedules`).
+- Khắc phục cảnh báo Next.js Devtools `Monaco initialization` và unhandled rejection event listener trong giao diện Admin.
+- Chuẩn hóa các file DB migrations 067 - 072 đảm bảo tuân thủ nghiêm ngặt quy tắc DB schema validation (100% PASS).
+
+
+
+## 2026-09-23 — Trang Lịch Làm Việc Cơ Quan Chuẩn Cần Thơ & Quét Ảnh Lịch Bằng AI
+
+- Xây dựng hệ thống quản trị `WorkSchedules` (`src/collections/WorkSchedules.ts`) hỗ trợ 2 tùy chọn hiển thị: Bảng lịch biểu chi tiết (Sáng/Chiều theo thứ) hoặc Nhúng trình xem tệp đính kèm trực tiếp (PDF/Word/Ảnh).
+- Tích hợp công cụ Quét ảnh lịch tuần bằng AI OCR (Gemini Vision) qua API `/api/ai-work-schedule-ocr`, tự động bóc tách từ ảnh chụp văn bản (chuẩn mẫu BVĐKKV Thới Lai) để điền tự động vào Form Admin.
+- Tích hợp nút Tải file mẫu Excel (`.xlsx`) và Word (`.doc`) trực tiếp trong Admin Helper `WorkScheduleAdminHelper.tsx`.
+- Xây dựng trang công khai `/lich-lam-viec` theo đúng phong cách Cổng Lịch làm việc Cần Thơ (`lichlamviec.cantho.gov.vn`): Thanh điều hướng chuyển tuần, chọn tuần/năm, xem tệp nhúng hoặc bảng văn bản A4 có nút In A4.
+- Tạo migration `20260923_072_create_work_schedules.mjs` và khóa DB Schema Contract hợp lệ.
+- Typecheck và DB schema check đạt 100%.
+
+## 2026-09-23 — Nâng Cấp Dải Thống Kê Truy Cập Tinh Gọn & Hiện Đại (Phương Án 1)
+
+- Nâng cấp component `SiteVisitStats.tsx` dạng dải ribbon thanh thoát, thu gọn chiều cao và padding để giao diện vừa vặn, không chiếm nhiều diện tích.
+- Bộ biểu tượng (icons) mới mang phong cách công nghệ y tế sắc nét: Sóng điện tim trực tiếp (Live ECG Pulse), Lịch bo góc thông minh, Biểu đồ tăng trưởng (Trend Analytics) và Địa cầu kết nối (Global Network).
+- 4 chỉ số nổi bật với màu sắc nhận diện riêng: Đang trực tuyến (đèn xanh nhấp nháy), Hôm nay, Tháng này và Tổng lượt truy cập tích lũy.
+- Thiết kế hiệu ứng hover 3D nâng thẻ nhẹ nhàng, viền đỉnh thẻ màu sắc, background gradient sáng xanh y tế tinh tế.
+- Typecheck đạt 100%.
+
+## 2026-09-23 — Gộp Mục Cảnh Báo & Phổ Biến Pháp Luật Hiển Thị Song Song Trên 1 Hàng
+
+- Tích hợp 2 section `'health-warnings'` và `'legal-dissemination'` thành cặp hiển thị song song 2 cột (`warningsLegalPairGrid`) trên Trang chủ tương tự bố cục Thông báo & Đấu thầu.
+- Cột trái: Cảnh báo y tế khẩn cấp (thẻ cảnh báo viền đỏ, icon lịch ngày tháng đỏ rực, badge mức độ khẩn cấp).
+- Cột phải: Phổ biến văn bản pháp luật (thẻ văn bản viền xanh pháp quy trang trọng, hiển thị số hiệu, ngày ban hành, cơ quan và badge loại văn bản).
+- Thêm cơ chế tự động co giãn thành 1 cột nếu 1 trong 2 mục bị ẩn trong cấu hình Homepage, tự động tối ưu hiển thị trên thiết bị di động (< 992px).
+- Typecheck và DB schema check đạt 100%.
+
+## 2026-09-23 — Tùy Chọn Vị Trí Hiển Thị Trên Trang Chủ (Thông Báo / Cảnh Báo & Văn Bản / Pháp Luật)
+
+- Thêm trường chọn vị trí hiển thị `homePlacement` vào sidebar quản trị của collection `notices` (`Mục Thông báo` vs `Mục Cảnh báo` vs `Cả hai mục`).
+- Thêm trường `showOnHome` và trường chọn vị trí `homePlacement` vào sidebar của collection `documents` (`Mục Văn bản` vs `Mục Phổ biến pháp luật` vs `Cả hai mục`).
+- Tạo migration `20260923_069_add_home_placement_to_notices_and_documents.mjs`, áp dụng thành công vào DB PostgreSQL và cập nhật schema contract snapshot 069.
+- Cập nhật bộ lọc trên Trang chủ (`page.tsx`) giúp phân phối chính xác bài viết vào từng khối tương ứng mà không bị nhầm lẫn mục, đồng thời giữ tương thích hoàn hảo cho các bài viết cũ.
+- Typecheck và DB schema check đạt 100%.
+
+## 2026-09-23 — Thêm Mục Cảnh Báo & Mục Phổ Biến Văn Bản Pháp Luật trên Trang chủ
+
+- Bổ sung 2 loại section mới `'health-warnings'` (*Cảnh báo y tế & cộng đồng*) và `'legal-dissemination'` (*Phổ biến văn bản pháp luật*) vào schema Trang chủ (`src/globals/Homepage.ts`).
+- Tạo migration `20260923_068_add_warnings_and_legal_to_homepage.mjs` bổ sung các giá trị enum tương ứng, áp dụng an toàn và khóa schema contract snapshot 068.
+- Xây dựng component `HomeHealthWarnings.tsx` với giao diện nhận diện cảnh báo khẩn cấp nổi bật (màu đỏ cam, icon chuông cảnh báo, layout thẻ lớn + danh sách hàng ngang) tự động liên kết với kho Thông báo.
+- Xây dựng component `HomeLegalDissemination.tsx` với giao diện thẻ hồ sơ pháp quy chuẩn mực (Dossier Layout 3 cột) hiển thị số hiệu, ngày ban hành, trích yếu và nút tải/xem văn bản PDF, tự động liên kết với kho Văn bản pháp luật.
+- Hoàn tất kiểm thử typecheck và DB schema check 100%.
+
+## 2026-09-23 — Thêm Chế độ Chuyển động cho Banner Liên kết Website (Marquee / Carousel)
+
+- Bổ sung tùy chọn `bannerMotionMode` (`marquee`, `carousel`, `grid`) và `bannerAutoplaySpeed` vào cấu hình Section Banner Liên kết trên Trang chủ (`src/globals/Homepage.ts`).
+- Triển khai chế độ **Chạy trượt ngang liên tục (Marquee Ticker)**: Lướt vô tận mượt mà 60fps, tự động tạm dừng khi rê chuột để người xem dễ tương tác.
+- Triển khai chế độ **Băng chuyền chuyển trang (Slide Carousel)**: Tự động lướt theo trang 3-5s, có nút bấm điều hướng `‹` `›`, chấm tròn phân trang và hỗ trợ vuốt chạm trên mobile.
+- Thêm migration `20260923_067_add_banner_motion_to_homepage.mjs`, áp dụng thành công và đạt chuẩn schema contract snapshot 067.
+- Typecheck và giao diện responsive hoàn thiện 100%.
+
+## 2026-09-23 — Thêm Section Liên kết Website dạng Banner khối nhỏ (Mini Banner Links)
+
+- Bổ sung loại section `'partner-banners'` vào cấu hình Trang chủ (`src/globals/Homepage.ts`) cùng danh sách các banner khối nhỏ liên kết ngoài.
+- Hỗ trợ cả 2 chế độ: tải ảnh banner đồ họa có sẵn hoặc tự động tạo banner đồ họa nhận diện chuẩn (`bgGradient` preset + icon đặc thù + tiêu đề + tên miền) không sợ vi phạm bản quyền logo.
+- Thêm migration `20260923_066_add_partner_banners_to_homepage.mjs` tạo bảng `hp_partner_banners`, khóa schema contract và apply thành công vào DB.
+- Xây dựng component `HomePartnerBanners.tsx` với giao diện thẻ banner khối nhỏ sang trọng, hiệu ứng hover 3D, mở tab mới an toàn `target="_blank" rel="noopener noreferrer"`.
+- Đạt kiểm tra typecheck và schema contract 100%.
+
+## 2026-09-23 — Tự động lấy tin tức từ Website liên kết & Cổng thông tin Đa Tab
+
+- Tích hợp module `autoLinkedNews.ts` hỗ trợ bóc tách tin tức tự động từ RSS/Atom Feed hoặc Website HTML bất kỳ, kèm bộ đệm In-Memory Cache 15 phút và timeout an toàn 5s.
+- Nâng cấp cấu hình Đa Tab `linkedWebsitesTabs` trong Admin CMS: bổ sung nguồn `auto-feed` (Quét tin tự động) và trường `feedUrl` bên cạnh nguồn `cantho-syt` và `manual`.
+- Thêm migrations `20260923_063`, `20260923_064` và `20260923_065` bổ sung các bảng/cột cần thiết cho đa tab và auto-feed; khóa schema contract và deploy an toàn vào DB.
+- Tích hợp xử lý pre-fetch dữ liệu tin tức song song trên Server Component `page.tsx`; typecheck và schema check đạt 100%.
+
 
 - Khóa cố định `display: flex !important; flex-direction: column !important;` cho thẻ bài viết chính (`editorialHeroCard`) trên mobile để tránh bị quy tắc kế thừa ghi đè thành dạng hàng ngang.
 - Thêm bộ lọc `:not(.editorialVariant3)` cho các quy tắc CSS dạng lưới cũ nhằm cô lập hoàn toàn layout Phương án 3.

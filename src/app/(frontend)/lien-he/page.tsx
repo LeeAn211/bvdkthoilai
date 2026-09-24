@@ -241,7 +241,7 @@ export default async function ContactPage() {
                 </div>
                 <p className="contactCardSubText">Bắt đầu khám sớm tại các khoa chủ lực giúp người bệnh giảm chờ đợi.</p>
                 <div className="contactCardAction">
-                  <a href="/lich-lam-viec" className="contactActionLink">
+                  <a href="/lich-kham-benh" className="contactActionLink">
                     Chi tiết khung giờ →
                   </a>
                 </div>

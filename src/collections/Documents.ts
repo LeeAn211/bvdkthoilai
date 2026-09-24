@@ -407,5 +407,31 @@ export const Documents: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'showOnHome',
+      label: 'Hiển thị trên trang chủ',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Bật để cho phép văn bản này xuất hiện trên Trang chủ.',
+      },
+    },
+    {
+      name: 'homePlacement',
+      label: 'Mục hiển thị trên Trang chủ',
+      type: 'select',
+      defaultValue: 'documents',
+      options: [
+        { label: '📑 Mục Văn bản - Tài liệu thông thường', value: 'documents' },
+        { label: '⚖️ Mục Phổ biến văn bản pháp luật', value: 'legal' },
+        { label: '🌟 Hiển thị ở cả 2 mục (Văn bản & Pháp luật)', value: 'both' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'Chọn mục hiển thị trên Trang chủ hoặc cho phép hiển thị đồng thời cả 2 mục.',
+        condition: (data) => Boolean(data?.showOnHome !== false),
+      },
+    },
   ],
 }

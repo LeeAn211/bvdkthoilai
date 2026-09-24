@@ -4,6 +4,10 @@ import { HomeNewsTabs } from '@/components/HomeNewsTabs'
 import { HomeScienceTabs } from '@/components/HomeScienceTabs'
 import { HomePatientServiceTabs } from '@/components/HomePatientServiceTabs'
 import { HomeProcurementTabs } from '@/components/HomeProcurementTabs'
+import { HomeLinkedWebsitesTabs } from '@/components/HomeLinkedWebsitesTabs'
+import { HomePartnerBanners } from '@/components/HomePartnerBanners'
+import { HomeHealthWarnings } from '@/components/HomeHealthWarnings'
+import { HomeLegalDissemination } from '@/components/HomeLegalDissemination'
 import { RichText } from '@/components/RichText'
 import { ScheduleExplorer } from '@/components/ScheduleExplorer'
 import { VaccinationTabs } from '@/components/VaccinationTabs'
@@ -20,6 +24,8 @@ import { getCMS, getGlobal, getHomepage } from '@/lib/payload'
 import { mediaFormat, mediaLabel, mediaUrl } from '@/lib/media'
 import { categoryName, getDefaultContentMedia, scientificActivityGroupName } from '@/lib/defaultMedia'
 import { resolveBookingConfig } from '@/lib/booking'
+import { getCanThoHealthDeptNews } from '@/lib/canthoHealthDept'
+import { fetchAutoLinkedNews } from '@/lib/autoLinkedNews'
 import type { CSSProperties } from 'react'
 
 export const revalidate = 0
@@ -133,6 +139,8 @@ export default async function HomePage() {
   let ourExpertsList: any[] = []
   let scientificActivities: any[] = []
   let scientificActivityGroups: any[] = []
+  let healthWarnings: any[] = []
+  let canthoHealthNews: any[] = []
   let siteSettings: any = {}
   let quickLinksSettings: any = {}
   let medproSettings: any = {}
@@ -140,25 +148,27 @@ export default async function HomePage() {
   let totals = { news: 0, notices: 0, doctors: 0, departments: 0, services: 0 }
 
   try {
-    const [payload, homepage, settings, contentDefaults, quickSettings, bookingSettings] = await Promise.all([
+    const [payload, homepage, settings, contentDefaults, quickSettings, bookingSettings, canthoHealthResult] = await Promise.all([
       getCMS(),
       getHomepage().catch((error: unknown) => { console.error('[HomePage] getHomepage error:', databaseErrorDetails(error)); return {} }),
       getGlobal('site-settings').catch((error: unknown) => { console.error('[HomePage] site-settings error:', databaseErrorDetails(error)); return {} }),
       getDefaultContentMedia().catch(() => ({ news: '/default-content/news.svg', notices: '/default-content/notices.svg', procurement: '/default-content/procurement.svg' })),
       getGlobal('quick-links-settings').catch(() => ({})),
       getGlobal('medpro-settings').catch(() => ({})),
+      getCanThoHealthDeptNews(12).catch(() => []),
     ])
     home = homepage || {}
     siteSettings = settings || {}
     defaultMedia = contentDefaults
     quickLinksSettings = quickSettings || {}
     medproSettings = bookingSettings || {}
+    canthoHealthNews = canthoHealthResult || []
 
-    const [newsResult, noticeResult, procurementResult, documentResult, clinicalProtocolsResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult, scientificActivitiesResult, scientificActivityGroupsResult] = await Promise.all([
+    const [newsResult, noticeResult, procurementResult, documentResult, clinicalProtocolsResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult, scientificActivitiesResult, scientificActivityGroupsResult, healthWarningsResult] = await Promise.all([
       payload.find({ collection: 'news', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 100, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
-      payload.find({ collection: 'notices', where: { and: [{ _status: { equals: 'published' } }, { showOnHome: { equals: true } }] }, sort: ['-publishedAt', '-createdAt'], limit: 50, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
+      payload.find({ collection: 'notices', where: { and: [{ _status: { equals: 'published' } }, { showOnHome: { equals: true } }] }, sort: ['-publishedAt', '-createdAt'], limit: 50, depth: 2 }).catch(() => ({ docs: [], totalDocs: 0 })),
       payload.find({ collection: 'procurement', where: { _status: { equals: 'published' } }, sort: ['-publishedAt', '-createdAt'], limit: 100, depth: 2 }).catch(() => ({ docs: [], totalDocs: 0 })),
-      payload.find({ collection: 'documents', sort: '-issuedAt', limit: 12, depth: 2 }).catch(() => ({ docs: [], totalDocs: 0 })),
+      payload.find({ collection: 'documents', sort: '-issuedAt', limit: 50, depth: 2 }).catch(() => ({ docs: [], totalDocs: 0 })),
       payload.find({ collection: 'clinical-protocols' as any, sort: '-issuedAt', limit: 12, depth: 2 }).catch(() => ({ docs: [] })),
       payload.find({ collection: 'doctors', where: { active: { equals: true } }, limit: 50, sort: ['order', 'name'], depth: 2 }).catch(() => ({ docs: [], totalDocs: 0 })),
       payload.find({ collection: 'departments', limit: 100, sort: 'name', depth: 0 }).catch(() => ({ docs: [], totalDocs: 0 })),
@@ -174,6 +184,7 @@ export default async function HomePage() {
       payload.find({ collection: 'our-experts', where: { active: { equals: true } }, limit: 50, sort: ['order', 'name'], depth: 2 }).catch(() => ({ docs: [] })),
       payload.find({ collection: 'scientific-activities', where: { _status: { equals: 'published' } }, limit: 100, sort: ['-featured', '-publishedAt'], depth: 1 }).catch(() => ({ docs: [] })),
       payload.find({ collection: 'scientific-activity-groups', where: { active: { equals: true } }, limit: 100, sort: ['order', 'name'], depth: 0 }).catch(() => ({ docs: [] })),
+      payload.find({ collection: 'health-warnings' as any, where: { and: [{ _status: { equals: 'published' } }, { showOnHome: { equals: true } }] }, sort: ['-pinned', '-publishedAt', '-createdAt'], limit: 20, depth: 2 }).catch(() => ({ docs: [] })),
     ])
     news = newsResult.docs as any[]
     notices = noticeResult.docs as any[]
@@ -194,6 +205,7 @@ export default async function HomePage() {
     ourExpertsList = (ourExpertsResult?.docs || []) as any[]
     scientificActivities = (scientificActivitiesResult?.docs || []) as any[]
     scientificActivityGroups = (scientificActivityGroupsResult?.docs || []) as any[]
+    healthWarnings = (healthWarningsResult?.docs || []) as any[]
     totals = { news: newsResult.totalDocs, notices: noticeResult.totalDocs, doctors: doctorResult.totalDocs, departments: departmentResult.totalDocs, services: serviceResult.totalDocs }
   } catch (err) {
     console.error('[HomePage] Error loading initial data:', err)
@@ -338,6 +350,9 @@ export default async function HomePage() {
     science: { eyebrow: 'HOẠT ĐỘNG NỔI BẬT', title: 'Chuyên môn – Đào tạo', order: 8 },
     introduction: { eyebrow: home?.intro?.eyebrow || 'BỆNH VIỆN ĐA KHOA KHU VỰC THỚI LAI', title: home?.intro?.title || 'Tận tâm chăm sóc sức khỏe cộng đồng', description: home?.intro?.description, order: 9 },
     documents: { eyebrow: 'TÀI LIỆU CÔNG KHAI', title: 'Văn bản mới', description: 'Quyết định, biểu mẫu và tài liệu được cập nhật từ hệ thống quản trị.', order: 10 },
+    'partner-banners': { eyebrow: 'LIÊN KẾT WEBSITE', title: 'Cổng thông tin & Đơn vị Liên kết', description: 'Liên kết nhanh đến các cổng thông tin điện tử, cơ quan quản lý và đối tác y tế.', order: 11 },
+    'health-warnings': { eyebrow: 'CẢNH BÁO Y TẾ & CỘNG ĐỒNG', title: 'Cảnh báo khẩn cấp & Khuyến cáo sức khỏe', description: 'Thông tin cảnh báo dịch bệnh, ngộ độc thực phẩm, phòng chống lừa đảo và các khuyến cáo khẩn cấp từ Bệnh viện và Ngành Y tế.', order: 3.2 },
+    'legal-dissemination': { eyebrow: 'PHỔ BIẾN VĂN BẢN PHÁP LUẬT', title: 'Tuyên truyền & Phổ biến chính sách pháp luật y tế', description: 'Hệ thống các Luật, Nghị định của Chính phủ, Thông tư của Bộ Y tế và văn bản chỉ đạo điều hành về công tác y tế.', order: 10.5 },
   }
   const sectionConfig = (key: string) => {
     const aliases: Record<string, string[]> = { 'featured-news': ['news'] }
@@ -651,11 +666,14 @@ export default async function HomePage() {
           {mainEntry ? (
             (() => {
               const { fit, pos } = renderImageProps(mainEntry)
+              const isExt = mainEntry.isExternal || (typeof mainEntry.href === 'string' && mainEntry.href.startsWith('http'))
               return (
                 <a
                   href={mainEntry.href}
                   className="editorialHeroCard featured"
                   key={mainEntry.id}
+                  target={isExt ? '_blank' : undefined}
+                  rel={isExt ? 'noopener noreferrer' : undefined}
                 >
                   <div
                     className="editorialHeroThumb"
@@ -715,11 +733,14 @@ export default async function HomePage() {
             {subEntries.length > 0 ? (
               subEntries.map((entry: any) => {
                 const { fit, pos } = renderImageProps(entry)
+                const isExt = entry.isExternal || (typeof entry.href === 'string' && entry.href.startsWith('http'))
                 return (
                   <a
                     href={entry.href}
                     className="editorialRowItem"
                     key={entry.id}
+                    target={isExt ? '_blank' : undefined}
+                    rel={isExt ? 'noopener noreferrer' : undefined}
                   >
                     <div
                       className="editorialRowThumb"
@@ -776,23 +797,26 @@ export default async function HomePage() {
     if (layout === 'card-grid-4') {
       return (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px,1fr))', gap: '18px' }}>
-          {items.map((entry: any) => (
-            <a key={entry.id} href={entry.href} style={{ display: 'flex', flexDirection: 'column', borderRadius: '12px', overflow: 'hidden', background: '#fff', border: '1px solid #e2e8f0', boxShadow: '0 4px 14px rgba(10,45,75,0.05)', textDecoration: 'none', color: 'inherit', transition: 'transform .22s,box-shadow .22s', height: '100%' }}
-              onMouseOver={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 24px rgba(8,120,209,.12)' }}
-              onMouseOut={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px rgba(10,45,75,0.05)' }}
-            >
-              <div style={{ width: '100%', aspectRatio: '16/9', background: '#f1f5f9', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
-                <img src={entry.cover} alt={entry.title} loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }} />
-                {showCategory && entry.category && <span style={{ position: 'absolute', bottom: 8, left: 10, background: 'rgba(255,255,255,.95)', backdropFilter: 'blur(4px)', color: '#008046', fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 7px', borderRadius: '5px' }}>{badgeOverride || entry.category}</span>}
-              </div>
-              <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', padding: '13px 14px 14px' }}>
-                {showDate && <span style={{ fontSize: '11px', color: '#64748b', marginBottom: 6 }}>{entry.date || 'Mới cập nhật'}</span>}
-                <strong style={{ fontSize: '14px', fontWeight: 700, lineHeight: 1.42, color: '#0f172a', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', marginBottom: 6 }}>{entry.title}</strong>
-                {showExcerpt && entry.excerpt && <p style={{ fontSize: '12px', color: '#475569', lineHeight: 1.5, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', margin: '0 0 8px' }}>{entry.excerpt}</p>}
-                <span style={{ marginTop: 'auto', fontSize: '12px', fontWeight: 700, color: '#0878d1' }}>Xem chi tiết →</span>
-              </div>
-            </a>
-          ))}
+          {items.map((entry: any) => {
+            const isExt = entry.isExternal || (typeof entry.href === 'string' && entry.href.startsWith('http'))
+            return (
+              <a key={entry.id} href={entry.href} target={isExt ? '_blank' : undefined} rel={isExt ? 'noopener noreferrer' : undefined} style={{ display: 'flex', flexDirection: 'column', borderRadius: '12px', overflow: 'hidden', background: '#fff', border: '1px solid #e2e8f0', boxShadow: '0 4px 14px rgba(10,45,75,0.05)', textDecoration: 'none', color: 'inherit', transition: 'transform .22s,box-shadow .22s', height: '100%' }}
+                onMouseOver={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 24px rgba(8,120,209,.12)' }}
+                onMouseOut={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 14px rgba(10,45,75,0.05)' }}
+              >
+                <div style={{ width: '100%', aspectRatio: '16/9', background: '#f1f5f9', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                  <img src={entry.cover} alt={entry.title} loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }} />
+                  {showCategory && entry.category && <span style={{ position: 'absolute', bottom: 8, left: 10, background: 'rgba(255,255,255,.95)', backdropFilter: 'blur(4px)', color: '#008046', fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 7px', borderRadius: '5px' }}>{badgeOverride || entry.category}</span>}
+                </div>
+                <div style={{ flex: '1 1 auto', display: 'flex', flexDirection: 'column', padding: '13px 14px 14px' }}>
+                  {showDate && <span style={{ fontSize: '11px', color: '#64748b', marginBottom: 6 }}>{entry.date || 'Mới cập nhật'}</span>}
+                  <strong style={{ fontSize: '14px', fontWeight: 700, lineHeight: 1.42, color: '#0f172a', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', marginBottom: 6 }}>{entry.title}</strong>
+                  {showExcerpt && entry.excerpt && <p style={{ fontSize: '12px', color: '#475569', lineHeight: 1.5, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden', margin: '0 0 8px' }}>{entry.excerpt}</p>}
+                  <span style={{ marginTop: 'auto', fontSize: '12px', fontWeight: 700, color: '#0878d1' }}>Xem chi tiết →</span>
+                </div>
+              </a>
+            )
+          })}
         </div>
       )
     }
@@ -801,28 +825,31 @@ export default async function HomePage() {
     if (layout === 'list-rows') {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {items.map((entry: any) => (
-            <a key={entry.id} href={entry.href} style={{ display: 'flex', gap: '14px', alignItems: 'center', background: '#fff', border: '1px solid #e8edf4', borderRadius: '10px', overflow: 'hidden', textDecoration: 'none', color: 'inherit', padding: '0 14px 0 0', transition: 'box-shadow .2s,border-color .2s' }}
-              onMouseOver={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 18px rgba(8,120,209,.1)'; (e.currentTarget as HTMLElement).style.borderColor = '#7fb9e5' }}
-              onMouseOut={e => { (e.currentTarget as HTMLElement).style.boxShadow = ''; (e.currentTarget as HTMLElement).style.borderColor = '#e8edf4' }}
-            >
-              <div style={{ width: '110px', minWidth: '110px', height: '74px', background: '#f1f5f9', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
-                <img src={entry.cover} alt={entry.title} loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }} />
-              </div>
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3, padding: '10px 0' }}>
-                {(showDate || showCategory) && (
-                  <div style={{ display: 'flex', gap: 8, fontSize: '11px', color: '#64748b', alignItems: 'center' }}>
-                    {showDate && <span>{entry.date || 'Mới cập nhật'}</span>}
-                    {showDate && showCategory && entry.category && <span>·</span>}
-                    {showCategory && entry.category && <span style={{ color: '#0878d1', fontWeight: 600 }}>{entry.category}</span>}
-                  </div>
-                )}
-                <strong style={{ fontSize: '14px', fontWeight: 700, lineHeight: 1.4, color: '#0f172a', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{entry.title}</strong>
-                {showExcerpt && entry.excerpt && <p style={{ fontSize: '12px', color: '#64748b', margin: 0, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 1, overflow: 'hidden' }}>{entry.excerpt}</p>}
-              </div>
-              <span style={{ fontSize: '18px', color: '#bfcfdb', flexShrink: 0 }}>›</span>
-            </a>
-          ))}
+          {items.map((entry: any) => {
+            const isExt = entry.isExternal || (typeof entry.href === 'string' && entry.href.startsWith('http'))
+            return (
+              <a key={entry.id} href={entry.href} target={isExt ? '_blank' : undefined} rel={isExt ? 'noopener noreferrer' : undefined} style={{ display: 'flex', gap: '14px', alignItems: 'center', background: '#fff', border: '1px solid #e8edf4', borderRadius: '10px', overflow: 'hidden', textDecoration: 'none', color: 'inherit', padding: '0 14px 0 0', transition: 'box-shadow .2s,border-color .2s' }}
+                onMouseOver={e => { (e.currentTarget as HTMLElement).style.boxShadow = '0 6px 18px rgba(8,120,209,.1)'; (e.currentTarget as HTMLElement).style.borderColor = '#7fb9e5' }}
+                onMouseOut={e => { (e.currentTarget as HTMLElement).style.boxShadow = ''; (e.currentTarget as HTMLElement).style.borderColor = '#e8edf4' }}
+              >
+                <div style={{ width: '110px', minWidth: '110px', height: '74px', background: '#f1f5f9', overflow: 'hidden', flexShrink: 0, position: 'relative' }}>
+                  <img src={entry.cover} alt={entry.title} loading="lazy" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%' }} />
+                </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3, padding: '10px 0' }}>
+                  {(showDate || showCategory) && (
+                    <div style={{ display: 'flex', gap: 8, fontSize: '11px', color: '#64748b', alignItems: 'center' }}>
+                      {showDate && <span>{entry.date || 'Mới cập nhật'}</span>}
+                      {showDate && showCategory && entry.category && <span>·</span>}
+                      {showCategory && entry.category && <span style={{ color: '#0878d1', fontWeight: 600 }}>{entry.category}</span>}
+                    </div>
+                  )}
+                  <strong style={{ fontSize: '14px', fontWeight: 700, lineHeight: 1.4, color: '#0f172a', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{entry.title}</strong>
+                  {showExcerpt && entry.excerpt && <p style={{ fontSize: '12px', color: '#64748b', margin: 0, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 1, overflow: 'hidden' }}>{entry.excerpt}</p>}
+                </div>
+                <span style={{ fontSize: '18px', color: '#bfcfdb', flexShrink: 0 }}>›</span>
+              </a>
+            )
+          })}
         </div>
       )
     }
@@ -831,20 +858,46 @@ export default async function HomePage() {
     // compact-list hoặc fallback
     return (
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {items.map((entry: any, idx: number) => (
-          <a key={entry.id} href={entry.href} style={{ display: 'flex', alignItems: 'baseline', gap: '12px', padding: '10px 0', borderBottom: idx < items.length - 1 ? '1px solid #f0f4f8' : 'none', textDecoration: 'none', color: 'inherit', transition: 'color .18s' }}
-            onMouseOver={e => { (e.currentTarget as HTMLElement).style.color = '#0878d1' }}
-            onMouseOut={e => { (e.currentTarget as HTMLElement).style.color = '' }}
-          >
-            {showDate && <span style={{ fontSize: '11.5px', color: '#94a3b8', whiteSpace: 'nowrap', flexShrink: 0, minWidth: '72px' }}>{entry.date || '—'}</span>}
-            <span style={{ flex: 1, fontSize: '14px', fontWeight: 600, lineHeight: 1.4, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{entry.title}</span>
-            {showCategory && entry.category && <span style={{ fontSize: '11px', fontWeight: 700, color: '#0878d1', whiteSpace: 'nowrap', flexShrink: 0 }}>{entry.category}</span>}
-          </a>
-        ))}
+        {items.map((entry: any, idx: number) => {
+          const isExt = entry.isExternal || (typeof entry.href === 'string' && entry.href.startsWith('http'))
+          return (
+            <a key={entry.id} href={entry.href} target={isExt ? '_blank' : undefined} rel={isExt ? 'noopener noreferrer' : undefined} style={{ display: 'flex', alignItems: 'baseline', gap: '12px', padding: '10px 0', borderBottom: idx < items.length - 1 ? '1px solid #f0f4f8' : 'none', textDecoration: 'none', color: 'inherit', transition: 'color .18s' }}
+              onMouseOver={e => { (e.currentTarget as HTMLElement).style.color = '#0878d1' }}
+              onMouseOut={e => { (e.currentTarget as HTMLElement).style.color = '' }}
+            >
+              {showDate && <span style={{ fontSize: '11.5px', color: '#94a3b8', whiteSpace: 'nowrap', flexShrink: 0, minWidth: '72px' }}>{entry.date || '—'}</span>}
+              <span style={{ flex: 1, fontSize: '14px', fontWeight: 600, lineHeight: 1.4, display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflow: 'hidden' }}>{entry.title}</span>
+              {showCategory && entry.category && <span style={{ fontSize: '11px', fontWeight: 700, color: '#0878d1', whiteSpace: 'nowrap', flexShrink: 0 }}>{entry.category}</span>}
+            </a>
+          )
+        })}
       </div>
     )
   }
   // ── HẾT HÀM RENDER ──
+
+  // Pre-fetch tin tức cho các tab auto-feed (Cổng thông tin liên kết / cantho-health-dept)
+  const autoFeedNewsMap = new Map<string, any[]>()
+  try {
+    const healthDeptSection = configuredSections.find((s: any) => s && s.visible !== false && s.type === 'cantho-health-dept')
+    if (healthDeptSection && Array.isArray(healthDeptSection.linkedWebsitesTabs)) {
+      const sLimit = Math.min(20, Math.max(1, Number(healthDeptSection.layoutItemLimit || 5)))
+      const autoFeedTabs = healthDeptSection.linkedWebsitesTabs.filter(
+        (t: any) => t && t.enabled !== false && t.source === 'auto-feed' && t.feedUrl?.trim()
+      )
+      await Promise.all(
+        autoFeedTabs.map(async (t: any) => {
+          const url = t.feedUrl.trim()
+          if (!autoFeedNewsMap.has(url)) {
+            const feedItems = await fetchAutoLinkedNews(url, sLimit).catch(() => [])
+            autoFeedNewsMap.set(url, feedItems)
+          }
+        })
+      )
+    }
+  } catch (err) {
+    console.error('[HomePage] Error prefetching auto-feed news:', err)
+  }
 
   const quickUpdates = [
     sectionConfig('notices')?.visible !== false && notices[0] ? {
@@ -1495,7 +1548,12 @@ export default async function HomePage() {
             const noticeLimit = 5
             const procLimit = 3
 
-            const noticeList = notices.slice(0, noticeLimit)
+            // Lọc thông báo hiển thị ở mục Thông báo (notices hoặc both hoặc chưa gán)
+            const filteredNotices = notices.filter((n: any) => {
+              const placement = n.homePlacement || 'notices'
+              return placement === 'notices' || placement === 'both'
+            })
+            const noticeList = filteredNotices.slice(0, noticeLimit)
 
             return (
               <section className="sectionPro configurableHomeSection homeNoticeProcurementPairSection" style={style} key={key}>
@@ -1720,10 +1778,16 @@ export default async function HomePage() {
           if (type === 'documents') {
             const docLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 6)))
 
-            const normalDocItems = documents.map((docItem: any) => {
-              const fileLink = mediaUrl(docItem.file)
-              const isLocked = docItem.accessMode === 'pin' || docItem.accessMode === 'internal' || docItem.accessMode === 'locked' || docItem.accessMode === 'view_only' || docItem.allowDownload === false
-              return {
+            const normalDocItems = documents
+              .filter((docItem: any) => {
+                if (docItem.showOnHome === false) return false
+                const placement = docItem.homePlacement || 'documents'
+                return placement === 'documents' || placement === 'both'
+              })
+              .map((docItem: any) => {
+                const fileLink = mediaUrl(docItem.file)
+                const isLocked = docItem.accessMode === 'pin' || docItem.accessMode === 'internal' || docItem.accessMode === 'locked' || docItem.accessMode === 'view_only' || docItem.allowDownload === false
+                return {
                 id: `doc-${docItem.id}`,
                 href: docItem.slug ? `/van-ban/${docItem.slug}` : (fileLink || '/van-ban'),
                 title: docItem.title,
@@ -1929,6 +1993,114 @@ export default async function HomePage() {
             )
           }
 
+          if (type === 'cantho-health-dept') {
+            const sytLayout = item.sectionLayout || 'editorial-grid'
+            const sytLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
+
+            // 1. Danh sách bài viết lấy tự động từ Crawler Cổng Sở Y tế Cần Thơ
+            const autoSytArticles = canthoHealthNews.slice(0, sytLimit).map((art: any) => ({
+              id: `syt-${art.id}`,
+              href: art.href,
+              cover: art.cover || defaultMedia.news,
+              title: art.title,
+              excerpt: art.excerpt || 'Thông tin, văn bản chỉ đạo điều hành từ Cổng thông tin điện tử Sở Y tế TP Cần Thơ.',
+              date: art.date || 'Mới cập nhật',
+              category: art.category || 'Sở Y tế Cần Thơ',
+              coverFit: 'cover',
+              coverPosition: 'top',
+              isExternal: true,
+            }))
+
+            // 2. Cấu hình các Tabs (mặc định có 1 tab Sở Y tế Cần Thơ)
+            const rawLinkedTabs = Array.isArray(item.linkedWebsitesTabs) ? item.linkedWebsitesTabs : []
+            const defaultLinkedTabs = [
+              {
+                enabled: true,
+                label: 'Sở Y tế TP. Cần Thơ',
+                source: 'cantho-syt',
+                seeMoreUrl: 'https://soyte.cantho.gov.vn/',
+                seeMoreText: 'Xem tất cả tại soyte.cantho.gov.vn ↗',
+              },
+            ]
+            const sourceTabs = rawLinkedTabs.length > 0 ? rawLinkedTabs : defaultLinkedTabs
+
+            // 3. Chuẩn hóa dữ liệu bài viết cho từng Tab
+            const configuredTabs: any[] = []
+            for (const tCfg of sourceTabs) {
+              if (tCfg.enabled === false) continue
+
+              let tabArticles: any[] = []
+
+              if (tCfg.source === 'cantho-syt') {
+                tabArticles = autoSytArticles
+              } else if (tCfg.source === 'auto-feed') {
+                // Tab quét tin tự động từ website / RSS feed
+                const feedUrl = tCfg.feedUrl?.trim() || ''
+                const autoItems = (autoFeedNewsMap.get(feedUrl) || []).slice(0, sytLimit)
+                tabArticles = autoItems.map((a: any, aIdx: number) => ({
+                  id: `linked-auto-${a.id || aIdx}`,
+                  href: a.href || '#',
+                  cover: a.cover || defaultMedia.news,
+                  title: a.title,
+                  excerpt: a.excerpt || '',
+                  date: a.date || 'Mới cập nhật',
+                  category: a.category || tCfg.label,
+                  coverFit: 'cover',
+                  coverPosition: 'top',
+                  isExternal: true,
+                }))
+              } else {
+                // Tab nhập thủ công
+                const mItems = Array.isArray(tCfg.manualItems) ? tCfg.manualItems : []
+                tabArticles = mItems.slice(0, sytLimit).map((m: any, mIdx: number) => ({
+                  id: `linked-m-${m.id || mIdx}`,
+                  href: m.url || '#',
+                  cover: mediaUrl(m.cover) || m.coverUrl || defaultMedia.news,
+                  title: m.title,
+                  excerpt: m.excerpt || '',
+                  date: m.date || 'Mới cập nhật',
+                  category: m.category || tCfg.label,
+                  coverFit: 'cover',
+                  coverPosition: 'top',
+                  isExternal: true,
+                }))
+              }
+
+              configuredTabs.push({
+                id: tCfg.id || tCfg.label,
+                enabled: tCfg.enabled !== false,
+                label: tCfg.label?.trim() || 'Đơn vị liên kết',
+                source: tCfg.source,
+                badge: tCfg.badge,
+                seeMoreUrl: tCfg.seeMoreUrl || (tCfg.source === 'cantho-syt' ? 'https://soyte.cantho.gov.vn/' : (tCfg.source === 'auto-feed' ? tCfg.feedUrl : undefined)),
+                seeMoreText: tCfg.seeMoreText || `Xem tất cả tại ${tCfg.label} ↗`,
+                items: tabArticles,
+              })
+            }
+
+            // Nếu không có tab nào hợp lệ thì không render
+            if (configuredTabs.length === 0) return null
+
+            return (
+              <section className="sectionPro configurableHomeSection homeCanThoHealthDeptSection homePortalPage" style={style} key={key}>
+                <div className="container">
+                  <HomeLinkedWebsitesTabs
+                    tabs={configuredTabs}
+                    layout={sytLayout}
+                    showDate={item.layoutShowDate !== false}
+                    showCategory={item.layoutShowCategory !== false}
+                    showExcerpt={item.layoutShowExcerpt !== false}
+                    badgeOverride={item.layoutCardBadge}
+                    eyebrow={cfg.eyebrow || 'CHỈ ĐẠO & TIN TỨC NGÀNH'}
+                    title={cfg.title || 'Cổng thông tin Liên kết & Chỉ đạo ngành'}
+                    description={cfg.description || 'Cập nhật tin tức hoạt động, văn bản chỉ đạo điều hành từ các cơ quan, đơn vị y tế liên kết.'}
+                    defaultSeeMoreUrl="https://soyte.cantho.gov.vn/"
+                  />
+                </div>
+              </section>
+            )
+          }
+
           if (type === 'dynamic-module') {
             const module = typeof item.dynamicModule === 'object' ? item.dynamicModule : null
             if (!module || module.active === false) return null
@@ -1990,6 +2162,248 @@ export default async function HomePage() {
                     defaultDetailBtnText={defaultDetailText}
                     defaultActionBtnText={defaultActionText}
                   />
+                </div>
+              </section>
+            )
+          }
+
+          if (type === 'partner-banners') {
+            const rawBanners = Array.isArray(item.partnerBanners) ? item.partnerBanners : []
+            const activeBanners = rawBanners.filter((b: any) => b && b.enabled !== false && b.title?.trim() && b.url?.trim())
+            if (activeBanners.length === 0) return null
+
+            return (
+              <section className="sectionPro configurableHomeSection homePartnerBannersSection" style={style} key={key}>
+                <div className="container">
+                  <HomePartnerBanners
+                    banners={activeBanners}
+                    columns={item.bannerColumns || '4'}
+                    motionMode={item.bannerMotionMode || 'marquee'}
+                    autoplaySpeed={Number(item.bannerAutoplaySpeed) || 5}
+                    eyebrow={cfg.eyebrow}
+                    title={cfg.title}
+                    description={cfg.description}
+                  />
+                </div>
+              </section>
+            )
+          }
+
+          if (type === 'health-warnings' || type === 'legal-dissemination') {
+            const hasBoth = configuredSections.some((s: any) => s?.type === 'health-warnings' && s.visible !== false) &&
+                            configuredSections.some((s: any) => s?.type === 'legal-dissemination' && s.visible !== false)
+
+            // Nếu cả 2 đều bật và đây là section thứ hai -> bỏ qua để không bị render đúp
+            if (hasBoth) {
+              const firstPairType = configuredSections.find((s: any) => (s?.type === 'health-warnings' || s?.type === 'legal-dissemination') && s.visible !== false)?.type
+              if (type !== firstPairType) {
+                return null
+              }
+            }
+
+            const warningItemCfg = configuredSections.find((s: any) => s?.type === 'health-warnings') || {}
+            const legalItemCfg = configuredSections.find((s: any) => s?.type === 'legal-dissemination') || {}
+            const warningCfg = { ...(sectionDefaults['health-warnings'] || {}), ...warningItemCfg }
+            const legalCfg = { ...(sectionDefaults['legal-dissemination'] || {}), ...legalItemCfg }
+
+            const showWarningCol = warningItemCfg.visible !== false
+            const showLegalCol = legalItemCfg.visible !== false
+
+            // DỮ LIỆU CẢNH BÁO: Ưu tiên collection health_warnings độc lập, fallback sang notices cũ
+            const warningNotices = notices.filter((n: any) => {
+              const placement = n.homePlacement
+              if (placement === 'warning' || placement === 'both') return true
+              if (placement === 'notices') return false
+
+              const catName = (typeof n.category === 'object' ? n.category?.name : n.category || '').toLowerCase()
+              const titleLower = (n.title || '').toLowerCase()
+              return (
+                n.level === 'urgent' ||
+                n.level === 'important' ||
+                catName.includes('cảnh báo') ||
+                titleLower.includes('cảnh báo') ||
+                titleLower.includes('khuyến cáo')
+              )
+            })
+            const rawWarningList = healthWarnings.length > 0 ? healthWarnings : warningNotices
+            const displayWarningList = rawWarningList.slice(0, 4)
+
+            // DỮ LIỆU PHỔ BIẾN PHÁP LUẬT
+            const legalDocs = documents.filter((d: any) => {
+              if (d.showOnHome === false) return false
+              const placement = d.homePlacement
+              if (placement === 'legal' || placement === 'both') return true
+              if (placement === 'documents') return false
+
+              const catName = (typeof d.category === 'object' ? d.category?.name : d.category || '').toLowerCase()
+              const docType = (d.documentType || '').toLowerCase()
+              const titleLower = (d.title || '').toLowerCase()
+              return (
+                catName.includes('pháp luật') ||
+                catName.includes('pháp quy') ||
+                catName.includes('luật') ||
+                catName.includes('thông tư') ||
+                catName.includes('nghị định') ||
+                docType.includes('luật') ||
+                docType.includes('thông tư') ||
+                docType.includes('nghị định') ||
+                titleLower.includes('luật') ||
+                titleLower.includes('nghị định') ||
+                titleLower.includes('thông tư') ||
+                titleLower.includes('chỉ thị')
+              )
+            })
+            const displayLegalList = legalDocs.slice(0, 4)
+
+            // Nếu cả 2 đều không có dữ liệu để hiển thị thì ẩn section
+            if (displayWarningList.length === 0 && displayLegalList.length === 0) return null
+
+            return (
+              <section className="sectionPro configurableHomeSection homeNoticeProcurementPairSection homeWarningsLegalPairSection" style={style} key={key}>
+                <div className="container">
+                  <div className={`noticeProcurementPairGrid warningsLegalPairGrid ${!showWarningCol || !showLegalCol ? 'singleCol' : ''}`}>
+                    {/* CỘT 1: CẢNH BÁO Y TẾ & CỘNG ĐỒNG */}
+                    {showWarningCol && (
+                      <div className="pairColumn warningPairCol">
+                        <div className="pairColHead">
+                          <div className="pairColHeadLeft">
+                            <span className="pairColKicker">
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                <line x1="12" y1="9" x2="12" y2="13" />
+                                <line x1="12" y1="17" x2="12.01" y2="17" />
+                              </svg>
+                              {warningCfg.eyebrow || 'CẢNH BÁO KHẨN'}
+                            </span>
+                            <h2 className="pairColTitle">{warningCfg.title || 'Cảnh báo y tế & Cộng đồng'}</h2>
+                            {warningCfg.description && <p className="pairColDesc">{warningCfg.description}</p>}
+                          </div>
+                          <a className="pairColSeeAll" href="/goc-canh-bao">
+                            Xem tất cả <span>→</span>
+                          </a>
+                        </div>
+
+                        <div className="pairColList">
+                          {displayWarningList.length > 0 ? (
+                            displayWarningList.map((notice: any) => {
+                              const d = notice.publishedAt ? new Date(notice.publishedAt) : (notice.startAt ? new Date(notice.startAt) : null)
+                              const day = d ? String(d.getDate()).padStart(2, '0') : '--'
+                              const month = d ? String(d.getMonth() + 1).padStart(2, '0') : '--'
+                              const year = d ? d.getFullYear() : ''
+                              const fullDateStr = d ? `${day}/${month}/${year}` : ''
+                              const levelClass = notice.level === 'urgent' ? 'urgent' : (notice.level === 'important' ? 'important' : 'normal')
+                              const levelText = notice.level === 'urgent' ? 'Khẩn' : (notice.level === 'important' ? 'Quan trọng' : 'Cảnh báo')
+                              const categoryText = typeof notice.category === 'object' ? notice.category?.title || notice.category?.name : (notice.category || 'Cảnh báo')
+
+                              const coverImg = mediaUrl(notice.cover || notice.seoImage) || defaultMedia.notices
+
+                              return (
+                                <a className="warningCardItem hasThumb" href={`/goc-canh-bao/${notice.slug}`} key={notice.id}>
+                                  <div className="warningThumbBlock" aria-hidden="true">
+                                    <img
+                                      src={coverImg}
+                                      alt=""
+                                      loading="lazy"
+                                      className="warningThumbImg"
+                                      style={{
+                                        objectFit: notice.coverFit === 'cover' ? 'cover' : 'contain',
+                                        objectPosition: notice.coverPosition ? (notice.coverPosition === 'center' ? 'center center' : (notice.coverPosition === 'bottom' ? 'center bottom' : 'top center')) : 'center center',
+                                      }}
+                                    />
+                                  </div>
+                                  <div className="warningCardBody">
+                                    <div className="warningCardMeta">
+                                      <span className={`warningCardBadge ${levelClass}`}>
+                                        {levelText}
+                                      </span>
+                                      {categoryText && (
+                                        <span className="noticeCardCategory">{categoryText}</span>
+                                      )}
+                                      {fullDateStr && (
+                                        <span className="warningCardDate">
+                                          {fullDateStr}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <h3 className="warningCardTitle">{notice.title}</h3>
+                                    {notice.excerpt && (
+                                      <p className="warningCardExcerpt">{notice.excerpt}</p>
+                                    )}
+                                  </div>
+                                </a>
+                              )
+                            })
+                          ) : (
+                            <div className="pairColEmpty">Hiện chưa có cảnh báo y tế khẩn cấp.</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* CỘT 2: PHỔ BIẾN VĂN BẢN PHÁP LUẬT */}
+                    {showLegalCol && (
+                      <div className="pairColumn legalPairCol">
+                        <div className="pairColHead">
+                          <div className="pairColHeadLeft">
+                            <span className="pairColKicker">
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                <line x1="9" y1="7" x2="15" y2="7" />
+                                <line x1="9" y1="11" x2="15" y2="11" />
+                              </svg>
+                              {legalCfg.eyebrow || 'PHÁP LUẬT Y TẾ'}
+                            </span>
+                            <h2 className="pairColTitle">{legalCfg.title || 'Phổ biến văn bản pháp luật'}</h2>
+                            {legalCfg.description && <p className="pairColDesc">{legalCfg.description}</p>}
+                          </div>
+                          <a className="pairColSeeAll" href="/van-ban">
+                            Xem tất cả <span>→</span>
+                          </a>
+                        </div>
+
+                        <div className="pairColList">
+                          {displayLegalList.length > 0 ? (
+                            displayLegalList.map((doc: any) => {
+                              const d = doc.issuedAt ? new Date(doc.issuedAt) : null
+                              const dateStr = d ? d.toLocaleDateString('vi-VN') : 'Mới'
+                              const cat = typeof doc.category === 'object' ? doc.category?.name : (doc.category || doc.documentType || 'VĂN BẢN')
+                              const href = doc.slug ? `/van-ban/${doc.slug}` : (mediaUrl(doc.file) || '/van-ban')
+
+                              return (
+                                <a className="legalPairCardItem" href={href} key={doc.id}>
+                                  <div className="legalDocIconBlock" aria-hidden="true">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                      <polyline points="14 2 14 8 20 8" />
+                                      <line x1="16" y1="13" x2="8" y2="13" />
+                                      <line x1="16" y1="17" x2="8" y2="17" />
+                                      <polyline points="10 9 9 9 8 9" />
+                                    </svg>
+                                  </div>
+                                  <div className="legalDocCardBody">
+                                    <div className="legalDocCardMeta">
+                                      <span className="legalDocBadge">{cat}</span>
+                                      {doc.number && (
+                                        <span className="legalDocNumber">Số: {doc.number}</span>
+                                      )}
+                                      <span className="legalDocDate">{dateStr}</span>
+                                    </div>
+                                    <h3 className="legalDocCardTitle">{doc.title}</h3>
+                                    {doc.summary && (
+                                      <p className="legalDocCardExcerpt">{doc.summary}</p>
+                                    )}
+                                  </div>
+                                </a>
+                              )
+                            })
+                          ) : (
+                            <div className="pairColEmpty">Chưa có văn bản pháp luật được đăng tải.</div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </section>
             )

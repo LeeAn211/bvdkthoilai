@@ -3,10 +3,10 @@ import { admins } from '@/access'
 
 export const WorkingHoursSettings: GlobalConfig = {
   slug: 'working-hours-settings',
-  label: 'Trang Lịch làm việc',
+  label: 'Trang Lịch làm việc & Khám bệnh',
   admin: {
     group: '🏥 Khám bệnh & Dịch vụ Y tế',
-    description: 'Quản lý toàn diện nội dung, giờ làm việc từng khoa phòng, các liên kết tab lịch khám và bật/tắt các ô chưa sử dụng trên trang /lich-lam-viec.',
+    description: 'Quản lý toàn diện nội dung, giờ làm việc từng khoa phòng, các liên kết tab lịch khám và bật/tắt các ô chưa sử dụng trên trang /lich-kham-benh.',
   },
   access: { read: () => true, update: admins },
   fields: [

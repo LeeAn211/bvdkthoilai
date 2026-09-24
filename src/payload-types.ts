@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     news: News;
     notices: Notice;
+    'health-warnings': HealthWarning;
     procurement: Procurement;
     documents: Document;
     'clinical-protocols': ClinicalProtocol;
@@ -78,6 +79,7 @@ export interface Config {
     specialties: Specialty;
     doctors: Doctor;
     schedules: Schedule;
+    'work-schedules': WorkSchedule;
     appointments: Appointment;
     services: Service;
     servicePrices: ServicePrice;
@@ -128,6 +130,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
     notices: NoticesSelect<false> | NoticesSelect<true>;
+    'health-warnings': HealthWarningsSelect<false> | HealthWarningsSelect<true>;
     procurement: ProcurementSelect<false> | ProcurementSelect<true>;
     documents: DocumentsSelect<false> | DocumentsSelect<true>;
     'clinical-protocols': ClinicalProtocolsSelect<false> | ClinicalProtocolsSelect<true>;
@@ -135,6 +138,7 @@ export interface Config {
     specialties: SpecialtiesSelect<false> | SpecialtiesSelect<true>;
     doctors: DoctorsSelect<false> | DoctorsSelect<true>;
     schedules: SchedulesSelect<false> | SchedulesSelect<true>;
+    'work-schedules': WorkSchedulesSelect<false> | WorkSchedulesSelect<true>;
     appointments: AppointmentsSelect<false> | AppointmentsSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     servicePrices: ServicePricesSelect<false> | ServicePricesSelect<true>;
@@ -807,9 +811,13 @@ export interface Notice {
    */
   pinned?: boolean | null;
   /**
-   * Bật để hiển thị trong khối Thông báo trên Trang chủ.
+   * Bật để hiển thị thông báo này trên Trang chủ.
    */
   showOnHome?: boolean | null;
+  /**
+   * Chọn mục hiển thị trên Trang chủ hoặc cho phép hiển thị đồng thời cả 2 mục.
+   */
+  homePlacement?: ('notices' | 'warning' | 'both') | null;
   /**
    * Ngày và giờ phát hành thông báo.
    */
@@ -824,6 +832,135 @@ export interface Notice {
   expireAt?: string | null;
   /**
    * Số lượt xem thực tế được hệ thống tự động ghi nhận khi bạn đọc mở xem thông báo.
+   */
+  views?: number | null;
+  /**
+   * Luồng nội dung: Nháp → Gửi duyệt → Duyệt → Xuất bản/Ẩn. Quyền chuyển trạng thái được kiểm tra phía server.
+   */
+  workflowState?: ('draft' | 'submitted' | 'approved' | 'published' | 'hidden') | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * Đăng và quản lý thông tin cảnh báo dịch bệnh, an toàn thực phẩm, phòng chống lừa đảo y tế và khuyến cáo sức khỏe khẩn cấp.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "health-warnings".
+ */
+export interface HealthWarning {
+  id: number;
+  title: string;
+  /**
+   * Tự động tạo từ Tiêu đề khi để trống. Có thể chỉnh thủ công. Nếu slug bị trùng, hệ thống sẽ báo ngay để sửa trước khi lưu.
+   */
+  slug: string;
+  /**
+   * Chọn chuyên mục quản lý cảnh báo (dùng chung danh mục Thông báo & Cảnh báo).
+   */
+  categoryRef?: (number | null) | Category;
+  /**
+   * Phân loại mức độ khẩn cấp để gắn thẻ màu và ưu tiên hiển thị.
+   */
+  level: 'urgent' | 'important' | 'normal';
+  /**
+   * Tối đa 300 ký tự. Hiển thị trực tiếp trên thẻ cảnh báo nhỏ gọn.
+   */
+  excerpt?: string | null;
+  /**
+   * 💡 Khuyên dùng ảnh nằm ngang tỷ lệ 16:9 (khoảng 1200×675px hoặc 800×450px). Khi bỏ trống, website sẽ tự dùng ảnh mặc định.
+   */
+  cover?: (number | null) | Media;
+  /**
+   * Trình soạn thảo hỗ trợ định dạng tiêu đề, danh sách dấu hiệu nhận biết, khuyến cáo phòng ngừa, bảng dữ liệu và liên kết.
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  attachments?:
+    | {
+        /**
+         * Website tự động sử dụng tên và định dạng của tệp đã tải lên.
+         */
+        label?: string | null;
+        /**
+         * Chọn “Tạo mới” để tải tệp lên hoặc “Chọn từ thư viện” để dùng lại tệp đã có.
+         */
+        file: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Chọn mẫu giao diện trang chi tiết cho bài cảnh báo này.
+   */
+  layoutTemplate?: ('default' | 'bachmai' | 'classic') | null;
+  /**
+   * Nguồn hoặc đơn vị phát hành thông tin cảnh báo.
+   */
+  source?: string | null;
+  /**
+   * Bật để hiển thị thông tin nguồn dưới chân bài cảnh báo.
+   */
+  showSource?: boolean | null;
+  /**
+   * Tùy chọn cách hiển thị để ảnh không bị cắt mất chữ hoặc chi tiết quan trọng.
+   */
+  coverFit?: ('contain' | 'cover-top' | 'cover-center' | 'cover-bottom' | 'cover' | 'fill') | null;
+  /**
+   * Chỉnh góc lấy nét khi ảnh bị xén mất phần trên hoặc tiêu đề.
+   */
+  coverPosition?: ('top' | 'center' | 'bottom') | null;
+  /**
+   * Để trống sẽ tự động lấy Tiêu đề cảnh báo.
+   */
+  seoTitle?: string | null;
+  /**
+   * Để trống để dùng URL tự động.
+   */
+  canonicalUrl?: string | null;
+  /**
+   * Để trống sẽ tự động lấy từ ô Tóm tắt / Mô tả ngắn.
+   */
+  seoDescription?: string | null;
+  /**
+   * Ảnh khi chia sẻ link lên Zalo, Facebook. Để trống sẽ tự động lấy Ảnh đại diện.
+   */
+  seoImage?: (number | null) | Media;
+  /**
+   * Bật nếu không muốn Google lập chỉ mục bài cảnh báo này.
+   */
+  noIndex?: boolean | null;
+  /**
+   * Bật nếu muốn ẩn khỏi sitemap.xml.
+   */
+  excludeFromSitemap?: boolean | null;
+  /**
+   * Ghim cảnh báo lên đầu danh sách.
+   */
+  pinned?: boolean | null;
+  /**
+   * Bật để hiển thị bài cảnh báo này trong khối Cảnh báo y tế trên Trang chủ.
+   */
+  showOnHome?: boolean | null;
+  /**
+   * Thời gian phát hành thông tin cảnh báo.
+   */
+  publishedAt?: string | null;
+  /**
+   * Số lượt xem thực tế được hệ thống tự động ghi nhận khi bạn đọc mở xem.
    */
   views?: number | null;
   /**
@@ -1064,6 +1201,14 @@ export interface Document {
    * Bật nếu muốn ẩn khỏi sitemap.xml.
    */
   excludeFromSitemap?: boolean | null;
+  /**
+   * Bật để cho phép văn bản này xuất hiện trên Trang chủ.
+   */
+  showOnHome?: boolean | null;
+  /**
+   * Chọn mục hiển thị trên Trang chủ hoặc cho phép hiển thị đồng thời cả 2 mục.
+   */
+  homePlacement?: ('documents' | 'legal' | 'both') | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1698,6 +1843,58 @@ export interface Schedule {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Đăng và quản lý Lịch làm việc & Lịch công tác tuần của Ban Giám đốc và Cơ quan BVĐK Khu vực Thới Lai theo chuẩn mẫu hành chính Cần Thơ.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "work-schedules".
+ */
+export interface WorkSchedule {
+  id: number;
+  title: string;
+  /**
+   * Chọn "Bảng lịch biểu" để hiển thị bảng công tác tuần chuẩn Cần Thơ hoặc "Nhúng xem file" để hiển thị trình xem file trực tiếp.
+   */
+  displayMode: 'table' | 'viewer';
+  documentNumber?: string | null;
+  revision?: string | null;
+  /**
+   * Hiển thị công khai trên website.
+   */
+  active?: boolean | null;
+  weekNumber: number;
+  year: number;
+  startDate?: string | null;
+  endDate?: string | null;
+  /**
+   * Nhập nội dung công tác Sáng / Chiều cho từng ngày. Sử dụng công cụ Quét ảnh AI hoặc Tải mẫu Excel/Word ở tab 1 để điền nhanh.
+   */
+  days?:
+    | {
+        dayLabel: string;
+        dateFormatted?: string | null;
+        morningContent?: string | null;
+        afternoonContent?: string | null;
+        note?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Tệp đính kèm chính thức (được dùng để nhúng xem trực tiếp khi chọn Tùy chọn 2 và cho phép người xem tải về).
+   */
+  attachedFile?: (number | null) | Media;
+  /**
+   * Ảnh chụp bản in có chữ ký và mộc đỏ để hiển thị xem trực tiếp hoặc làm ảnh minh họa.
+   */
+  scannedImage?: (number | null) | Media;
+  generalNote?: string | null;
+  signerRole?: string | null;
+  signerName?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * Danh sách phiếu đặt lịch khám tại cơ sở từ website. Có bảng thống kê và tính năng xuất dữ liệu Excel màu xanh.
@@ -3331,6 +3528,10 @@ export interface PayloadLockedDocument {
         value: number | Notice;
       } | null)
     | ({
+        relationTo: 'health-warnings';
+        value: number | HealthWarning;
+      } | null)
+    | ({
         relationTo: 'procurement';
         value: number | Procurement;
       } | null)
@@ -3357,6 +3558,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'schedules';
         value: number | Schedule;
+      } | null)
+    | ({
+        relationTo: 'work-schedules';
+        value: number | WorkSchedule;
       } | null)
     | ({
         relationTo: 'appointments';
@@ -3689,9 +3894,50 @@ export interface NoticesSelect<T extends boolean = true> {
   excludeFromSitemap?: T;
   pinned?: T;
   showOnHome?: T;
+  homePlacement?: T;
   publishedAt?: T;
   startAt?: T;
   expireAt?: T;
+  views?: T;
+  workflowState?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "health-warnings_select".
+ */
+export interface HealthWarningsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  categoryRef?: T;
+  level?: T;
+  excerpt?: T;
+  cover?: T;
+  content?: T;
+  attachments?:
+    | T
+    | {
+        label?: T;
+        file?: T;
+        id?: T;
+      };
+  layoutTemplate?: T;
+  source?: T;
+  showSource?: T;
+  coverFit?: T;
+  coverPosition?: T;
+  seoTitle?: T;
+  canonicalUrl?: T;
+  seoDescription?: T;
+  seoImage?: T;
+  noIndex?: T;
+  excludeFromSitemap?: T;
+  pinned?: T;
+  showOnHome?: T;
+  publishedAt?: T;
   views?: T;
   workflowState?: T;
   updatedAt?: T;
@@ -3784,6 +4030,8 @@ export interface DocumentsSelect<T extends boolean = true> {
   seoImage?: T;
   noIndex?: T;
   excludeFromSitemap?: T;
+  showOnHome?: T;
+  homePlacement?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -4087,6 +4335,40 @@ export interface SchedulesSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "work-schedules_select".
+ */
+export interface WorkSchedulesSelect<T extends boolean = true> {
+  title?: T;
+  displayMode?: T;
+  documentNumber?: T;
+  revision?: T;
+  active?: T;
+  weekNumber?: T;
+  year?: T;
+  startDate?: T;
+  endDate?: T;
+  days?:
+    | T
+    | {
+        dayLabel?: T;
+        dateFormatted?: T;
+        morningContent?: T;
+        afternoonContent?: T;
+        note?: T;
+        id?: T;
+      };
+  attachedFile?: T;
+  scannedImage?: T;
+  generalNote?: T;
+  signerRole?: T;
+  signerName?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -5829,11 +6111,13 @@ export interface Navigation {
               | '/tin-tuc'
               | '/hoat-dong-khoa-hoc'
               | '/thong-bao'
+              | '/goc-canh-bao'
               | '/lich-kham'
               | '/bang-gia'
               | '/chat-luong-benh-vien'
               | '/danh-cho-nguoi-benh'
               | '/quy-trinh-kham-benh'
+              | '/lich-kham-benh'
               | '/lich-lam-viec'
               | '/khao-sat'
               | '/gop-y'
@@ -5945,11 +6229,13 @@ export interface Navigation {
                     | '/tin-tuc'
                     | '/hoat-dong-khoa-hoc'
                     | '/thong-bao'
+                    | '/goc-canh-bao'
                     | '/lich-kham'
                     | '/bang-gia'
                     | '/chat-luong-benh-vien'
                     | '/danh-cho-nguoi-benh'
                     | '/quy-trinh-kham-benh'
+                    | '/lich-kham-benh'
                     | '/lich-lam-viec'
                     | '/khao-sat'
                     | '/gop-y'
@@ -6121,13 +6407,21 @@ export interface Footer {
    */
   visitStats?: {
     /**
-     * BẬT / TẮT hiển thị thanh thống kê lượt truy cập ở chân trang ngoài website công khai.
+     * BẬT / TẮT hiển thị toàn bộ dải thống kê lượt truy cập ngoài website công khai.
      */
     showStats?: boolean | null;
+    kicker?: string | null;
+    title?: string | null;
+    metaTag?: string | null;
+    metaOrg?: string | null;
     showOnline?: boolean | null;
     showToday?: boolean | null;
+    onlineLabel?: string | null;
+    todayLabel?: string | null;
     showMonth?: boolean | null;
     showTotal?: boolean | null;
+    monthLabel?: string | null;
+    totalLabel?: string | null;
     /**
      * Cộng thêm số lượt truy cập ban đầu từ hệ thống cũ (nếu có) vào tổng lượt hiển thị.
      */
@@ -6495,6 +6789,10 @@ export interface Homepage {
           | 'introduction'
           | 'documents'
           | 'content-section'
+          | 'cantho-health-dept'
+          | 'partner-banners'
+          | 'health-warnings'
+          | 'legal-dissemination'
           | 'custom'
           | 'dynamic-module';
         /**
@@ -6933,6 +7231,74 @@ export interface Homepage {
               id?: string | null;
             }[]
           | null;
+        /**
+         * Thêm, bớt, chọn nguồn dữ liệu (Lấy tự động từ Sở Y tế hoặc Tự nhập danh sách bài viết) và sắp xếp thứ tự các Tab hiển thị trên Trang chủ.
+         */
+        linkedWebsitesTabs?:
+          | {
+              enabled?: boolean | null;
+              label: string;
+              source: 'cantho-syt' | 'auto-feed' | 'manual';
+              /**
+               * Hệ thống tự động phát hiện RSS Feed hoặc quét HTML để bóc tách tiêu đề, hình ảnh và đường link bài viết gốc.
+               */
+              feedUrl?: string | null;
+              badge?: string | null;
+              seeMoreUrl?: string | null;
+              seeMoreText?: string | null;
+              /**
+               * Nhập các bài viết, thông báo, quyết định từ đơn vị này. Khi người đọc bấm vào thẻ bài viết trên trang chủ sẽ mở liên kết gốc ở tab mới.
+               */
+              manualItems?:
+                | {
+                    title: string;
+                    url: string;
+                    category?: string | null;
+                    cover?: (number | null) | Media;
+                    coverUrl?: string | null;
+                    date?: string | null;
+                    badge?: string | null;
+                    excerpt?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Thêm các banner liên kết website. Người dân nhấn vào banner sẽ tự động mở trang web của cơ quan/đơn vị đó ở tab mới.
+         */
+        partnerBanners?:
+          | {
+              enabled?: boolean | null;
+              title: string;
+              subTitle?: string | null;
+              url: string;
+              openNewTab?: boolean | null;
+              /**
+               * Tải file ảnh banner chữ nhật (khuyên dùng tỷ lệ khoảng 3.5:1 hoặc 4:1)
+               */
+              bannerImage?: (number | null) | Media;
+              bannerImageUrl?: string | null;
+              /**
+               * Nếu bạn chưa có sẵn ảnh banner thiết kế, hệ thống sẽ tự động vẽ một banner màu sắc trang trọng theo mẫu chuẩn.
+               */
+              bgGradient?: ('cantho' | 'moh' | 'chinhphu' | 'dvc' | 'medical' | 'green') | null;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Chọn số cột hiển thị dải banner (thường dùng 4 banner/hàng hoặc 3 banner/hàng).
+         */
+        bannerColumns?: ('4' | '3' | '5' | '2') | null;
+        /**
+         * Chọn kiểu chuyển động cho dải banner liên kết website.
+         */
+        bannerMotionMode?: ('marquee' | 'carousel' | 'grid') | null;
+        /**
+         * Với kiểu Băng chuyền: số giây tự động đổi trang (ví dụ 4s - 5s). Với kiểu Chạy trượt ngang liên tục: tốc độ lướt.
+         */
+        bannerAutoplaySpeed?: number | null;
         /**
          * Chọn mục đã được tạo từ Menu, ví dụ Chuyển đổi số. Các bài thuộc mục này sẽ tự động hiển thị trên section và nút Xem tất cả sẽ trỏ đúng /chuyen-doi-so.
          */
@@ -7413,7 +7779,7 @@ export interface AboutPage {
   createdAt?: string | null;
 }
 /**
- * Quản lý toàn diện nội dung, giờ làm việc từng khoa phòng, các liên kết tab lịch khám và bật/tắt các ô chưa sử dụng trên trang /lich-lam-viec.
+ * Quản lý toàn diện nội dung, giờ làm việc từng khoa phòng, các liên kết tab lịch khám và bật/tắt các ô chưa sử dụng trên trang /lich-kham-benh.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "working-hours-settings".
@@ -9681,10 +10047,18 @@ export interface FooterSelect<T extends boolean = true> {
     | T
     | {
         showStats?: T;
+        kicker?: T;
+        title?: T;
+        metaTag?: T;
+        metaOrg?: T;
         showOnline?: T;
         showToday?: T;
+        onlineLabel?: T;
+        todayLabel?: T;
         showMonth?: T;
         showTotal?: T;
+        monthLabel?: T;
+        totalLabel?: T;
         initialOffset?: T;
       };
   showMobileBar?: T;
@@ -10214,6 +10588,47 @@ export interface HomepageSelect<T extends boolean = true> {
               actionBtnText?: T;
               id?: T;
             };
+        linkedWebsitesTabs?:
+          | T
+          | {
+              enabled?: T;
+              label?: T;
+              source?: T;
+              feedUrl?: T;
+              badge?: T;
+              seeMoreUrl?: T;
+              seeMoreText?: T;
+              manualItems?:
+                | T
+                | {
+                    title?: T;
+                    url?: T;
+                    category?: T;
+                    cover?: T;
+                    coverUrl?: T;
+                    date?: T;
+                    badge?: T;
+                    excerpt?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+        partnerBanners?:
+          | T
+          | {
+              enabled?: T;
+              title?: T;
+              subTitle?: T;
+              url?: T;
+              openNewTab?: T;
+              bannerImage?: T;
+              bannerImageUrl?: T;
+              bgGradient?: T;
+              id?: T;
+            };
+        bannerColumns?: T;
+        bannerMotionMode?: T;
+        bannerAutoplaySpeed?: T;
         linkedContentSection?: T;
         linkedContentLimit?: T;
         dynamicModule?: T;

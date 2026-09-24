@@ -110,6 +110,8 @@ export interface AdminDashboardClientProps {
       href: string
     }>
   }
+  canCreateNews?: boolean
+  canManageSurveys?: boolean
   accountSummaryNode: React.ReactNode
   commandBarNode: React.ReactNode
   bentoContentNode: React.ReactNode
@@ -141,6 +143,8 @@ export default function AdminDashboardClient({
   feedbackDonePercent = '0%',
   feedbackProcessingPercent = '0%',
   visitStatsData,
+  canCreateNews = true,
+  canManageSurveys = true,
   accountSummaryNode,
   commandBarNode,
   bentoContentNode,
@@ -152,7 +156,7 @@ export default function AdminDashboardClient({
   const [showCustomizer, setShowCustomizer] = useState(false)
   const [isClient, setIsClient] = useState(false)
 
-  // Đọc cấu hình từ localStorage sau khi mount
+  // Đọc cấu hình từ localStorage sau khi mount, nhưng tuyệt đối không bật các biểu đồ mà tài khoản không được phân quyền
   useEffect(() => {
     setIsClient(true)
     try {
@@ -179,12 +183,26 @@ export default function AdminDashboardClient({
 
       const savedChartsStr = localStorage.getItem('thoilai_admin_dashboard_charts')
       if (savedChartsStr) {
-        setCharts(JSON.parse(savedChartsStr))
+        const saved: Partial<ChartVisibility> = JSON.parse(savedChartsStr)
+        // Chỉ chấp nhận giá trị lưu trong cache nếu initialCharts cho phép (người dùng có quyền module tương ứng)
+        setCharts((prev) => ({
+          ...prev,
+          showVisitStatsChart: initialCharts.showVisitStatsChart ? saved.showVisitStatsChart !== false : false,
+          showAreaChart: initialCharts.showAreaChart ? Boolean(saved.showAreaChart) : false,
+          showDepartmentBar: initialCharts.showDepartmentBar ? Boolean(saved.showDepartmentBar) : false,
+          showSatisfactionGauge: initialCharts.showSatisfactionGauge ? Boolean(saved.showSatisfactionGauge) : false,
+          showSlaStats: initialCharts.showSlaStats ? Boolean(saved.showSlaStats) : false,
+          showWeeklyWorkload: initialCharts.showWeeklyWorkload ? saved.showWeeklyWorkload !== false : false,
+          showProtocolDistribution: initialCharts.showProtocolDistribution ? saved.showProtocolDistribution !== false : false,
+          showResourceStructure: initialCharts.showResourceStructure ? saved.showResourceStructure !== false : false,
+          showFeedbackDonut: initialCharts.showFeedbackDonut ? saved.showFeedbackDonut !== false : false,
+          chartOrder: saved.chartOrder || prev.chartOrder,
+        }))
       }
     } catch {
       // ignore
     }
-  }, [initialMetricCards])
+  }, [initialMetricCards, initialCharts])
 
   const handleUpdate = (updatedCardItems: CardItem[], updatedCharts: ChartVisibility) => {
     const cardMap = new Map(cards.map((c) => [c.id, c]))
@@ -271,10 +289,12 @@ export default function AdminDashboardClient({
               <span>Mở website</span>
               <DashboardGlyph name="arrowUpRight" />
             </Link>
-            <Link href="/admin/collections/news/create" className={styles.buttonSolid}>
-              <DashboardGlyph name="sparkles" />
-              <span>+ Tạo bài viết</span>
-            </Link>
+            {canCreateNews && (
+              <Link href="/admin/collections/news/create" className={styles.buttonSolid}>
+                <DashboardGlyph name="sparkles" />
+                <span>+ Tạo bài viết</span>
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -320,10 +340,12 @@ export default function AdminDashboardClient({
         feedbackProcessingPercent={feedbackProcessingPercent}
       />
 
-      {/* 2.3. Bảng Thống Kê Khảo Sát & Xuất Excel Theo Từng Đợt (Chăm sóc người bệnh & Khảo sát) */}
-      <div style={{ marginTop: 24 }}>
-        <SurveyQuickToolbar />
-      </div>
+      {/* 2.3. Bảng Thống Kê Khảo Sát & Xuất Excel Theo Từng Đợt (Chỉ hiện khi có quyền khảo sát) */}
+      {canManageSurveys && (
+        <div style={{ marginTop: 24 }}>
+          <SurveyQuickToolbar />
+        </div>
+      )}
 
       {/* 2.5. Modern Segmented Tab Navigation Hub */}
       <nav className={styles.tabNavContainer} aria-label="Bộ lọc phân hệ quản trị">
@@ -419,6 +441,7 @@ export default function AdminDashboardClient({
             visible: c.visible,
           }))}
           initialCharts={charts}
+          allowedCharts={initialCharts}
           onUpdate={handleUpdate}
           onClose={() => setShowCustomizer(false)}
         />

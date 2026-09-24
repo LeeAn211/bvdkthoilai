@@ -17,9 +17,9 @@ export const ScientificActivityGroups: CollectionConfig = {
   },
   access: {
     read: () => true,
-    create: moduleAccess('news', 'create'),
-    update: moduleAccess('news', 'edit'),
-    delete: moduleAccess('news', 'delete'),
+    create: moduleAccess('scientific-activities', 'create'),
+    update: moduleAccess('scientific-activities', 'edit'),
+    delete: moduleAccess('scientific-activities', 'delete'),
   },
   trash: true,
   fields: [

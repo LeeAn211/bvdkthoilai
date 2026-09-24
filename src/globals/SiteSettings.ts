@@ -61,8 +61,8 @@ const defaultAssistantAnswers = [
     question: 'Thời gian làm việc & Khám ngoài giờ',
     keywords: 'gio lam viec, giờ làm việc, may gio, mấy giờ, gio kham, giờ khám, thu 7, chu nhat, thứ bảy, chủ nhật, ngay nghi, ngày nghỉ, ngoai gio, ngoài giờ',
     answer: 'Thời gian phục vụ khám chữa bệnh tại BVĐK Khu vực Thới Lai:\n\n• CẤP CỨU: Trực 24/24 tất cả các ngày trong tuần (kể cả Lễ, Tết).\n• KHÁM BỆNH NGOẠI TRÚ (Thứ 2 đến Thứ 6):\n  - Buổi sáng: 07:00 – 11:30\n  - Buổi chiều: 13:00 – 16:30\n• THỨ 7, CHỦ NHẬT & NGÀY NGHỈ: Bệnh viện bố trí đội ngũ bác sĩ trực tiếp nhận khám bệnh và xử trí cấp cứu 24/7, quyền lợi BHYT vẫn được đảm bảo đầy đủ.',
-    linkLabel: 'Xem lịch làm việc chi tiết',
-    linkUrl: '/lich-lam-viec',
+    linkLabel: 'Xem lịch khám bệnh chi tiết',
+    linkUrl: '/lich-kham-benh',
   },
   {
     question: 'Lịch khám bác sĩ chuyên khoa',

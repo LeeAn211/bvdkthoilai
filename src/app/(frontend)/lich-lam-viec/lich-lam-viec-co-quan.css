@@ -1,0 +1,487 @@
+.workScheduleContainer {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+/* Thanh điều hướng tuần, năm kiểu Cần Thơ */
+.scheduleNavToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-left: 4px solid #0284c7;
+  border-radius: 10px;
+  padding: 16px 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.scheduleNavGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.scheduleNavBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0369a1;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.scheduleNavBtn:hover {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+}
+
+.scheduleNavSelect {
+  padding: 8px 14px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.scheduleNavSelect:focus {
+  border-color: #0284c7;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+}
+
+.scheduleActionBtns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.actionBtnPrint {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+.actionBtnPrint:hover {
+  background: #e2e8f0;
+}
+
+.actionBtnDownload {
+  background: #0284c7;
+  border: 1px solid #0284c7;
+  color: #ffffff;
+}
+
+.actionBtnDownload:hover {
+  background: #0369a1;
+}
+
+/* Khung hiển thị công văn A4 */
+.officialDocumentCard {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-top: 4px solid #0284c7;
+  border-radius: 12px;
+  padding: 44px 48px;
+  box-shadow: 0 10px 30px -5px rgba(2, 132, 199, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+  position: relative;
+}
+
+/* Phần Quốc hiệu & Tên cơ quan (2 cột) */
+.docHeaderGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+  margin-bottom: 28px;
+}
+
+.docHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.agencySuper {
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.agencyMain {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  width: fit-content;
+}
+
+/* Gạch chân dưới BVĐK KHU VỰC THỚI LAI: độ dài chuẩn thể thức hành chính */
+.agencyDivider {
+  width: 80px;
+  height: 1.5px;
+  background-color: #0f172a;
+  margin: 3px auto 0 auto;
+}
+
+.docNumber {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #334155;
+  text-align: center;
+}
+
+.docHeaderRight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.republicTitle {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: uppercase;
+}
+
+.mottoBox {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 2px;
+  margin-bottom: 8px;
+  width: fit-content;
+}
+
+.mottoText {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Gạch ngang dưới Độc lập - Tự do - Hạnh phúc: chuẩn thể thức Nghị định 30/2020/NĐ-CP */
+.mottoDivider {
+  width: 140px;
+  height: 1.5px;
+  background-color: #0f172a;
+  margin: 3px auto 0 auto;
+}
+
+.docDateLocation {
+  font-size: 13.5px;
+  font-style: italic;
+  color: #64748b;
+}
+
+/* Nhãn phiên bản / chỉnh sửa */
+.docRevisionBadge {
+  position: absolute;
+  top: 36px;
+  left: 48px;
+  display: inline-block;
+  border: 1.5px solid #0284c7;
+  background: #f0f9ff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #0369a1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Tiêu đề chính của lịch */
+.docTitleSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 30px auto 26px auto;
+  padding: 12px 20px;
+  background: linear-gradient(180deg, #f8fafc 0%, rgba(248, 250, 252, 0) 100%);
+  border-radius: 8px;
+}
+
+.docMainTitle {
+  font-size: 21px;
+  font-weight: 850;
+  color: #0c4a6e;
+  text-transform: uppercase;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.8px;
+  text-align: center;
+  width: 100%;
+}
+
+.docWeekSub {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0284c7;
+  margin: 0;
+  text-align: center;
+  width: 100%;
+}
+
+/* BẢNG LỊCH BIỂU CÔNG VỤ CHUẨN CẦN THƠ */
+.workScheduleTableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  border: 1.5px solid #0284c7;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.06);
+}
+
+.workScheduleTable {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #0f172a;
+}
+
+.workScheduleTable th,
+.workScheduleTable td {
+  border: 1px solid #cbd5e1;
+  padding: 12px 16px;
+  vertical-align: top;
+}
+
+.workScheduleTable th {
+  background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+  font-weight: 800;
+  font-size: 14px;
+  text-align: center;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+  border-color: #0284c7;
+  padding: 12px 14px;
+}
+
+.workScheduleTable tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.workScheduleTable tbody tr:hover {
+  background-color: #f0f9ff;
+  transition: background-color 0.15s ease;
+}
+
+.thDayCol {
+  width: 13%;
+}
+
+.thSessionCol {
+  width: 43.5%;
+}
+
+.tdDayCell {
+  text-align: center;
+  font-weight: 700;
+  background: #f8fafc;
+  border-right: 1.5px solid #94a3b8;
+}
+
+.dayNameText {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  color: #0369a1;
+}
+
+.dateFormattedText {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 3px;
+}
+
+.sessionContentText {
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #1e293b;
+}
+
+/* Ghi chú chân trang & chữ ký */
+.docFooterSection {
+  margin-top: 24px;
+}
+
+.docGeneralNote {
+  font-size: 13.5px;
+  font-style: italic;
+  color: #1e293b;
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.docGeneralNote b {
+  font-style: normal;
+  text-decoration: underline;
+}
+
+.docSignatureRow {
+  display: flex;
+  justify-content: flex-end;
+  text-align: center;
+  padding-right: 40px;
+}
+
+.docSignerBox {
+  min-width: 220px;
+}
+
+.docSignerRole {
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.docSignedText {
+  font-size: 13.5px;
+  font-style: italic;
+  font-weight: 600;
+  color: #64748b;
+  margin: 18px 0 22px 0;
+  letter-spacing: 0.3px;
+}
+
+.docSignerName {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Khung xem tài liệu đính kèm nhúng trực tiếp (Tùy chọn 2) */
+.viewerContainer {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.viewerToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f1f5f9;
+  border-bottom: 1px solid #cbd5e1;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.viewerIframe {
+  width: 100%;
+  height: 800px;
+  border: none;
+  display: block;
+}
+
+.scannedImageWrapper {
+  padding: 24px;
+  text-align: center;
+  background: #f8fafc;
+}
+
+.scannedImageWrapper img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+}
+
+/* In ấn A4 sạch sẽ */
+@media print {
+  .scheduleNavToolbar,
+  header,
+  footer,
+  .siteHeader,
+  .siteFooter {
+    display: none !important;
+  }
+
+  .workScheduleContainer {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .officialDocumentCard {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .officialDocumentCard {
+    padding: 20px 16px;
+  }
+
+  .docHeaderGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .docRevisionBadge {
+    position: static;
+    margin-bottom: 16px;
+  }
+
+  .docSignatureRow {
+    justify-content: center;
+    padding-right: 0;
+  }
+}

@@ -11,7 +11,8 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https:",
   "style-src 'self' 'unsafe-inline' https:",
-  `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${isProduction ? '' : " 'unsafe-eval'"}`,
+  `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com${isProduction ? '' : " 'unsafe-eval'"}`,
+  "worker-src 'self' blob:",
   `connect-src 'self' https: wss:${isProduction ? '' : " http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*"}`,
   "media-src 'self' blob: https:",
   "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://challenges.cloudflare.com",
@@ -32,6 +33,9 @@ const commonHeaders = [
 const nextConfig = {
   compress: true,
   poweredByHeader: false,
+  async redirects() {
+    return []
+  },
   async headers() {
     return [
       { source: '/(.*)', headers: commonHeaders },

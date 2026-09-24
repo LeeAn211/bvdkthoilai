@@ -12,7 +12,7 @@ const legacyColumns = (medpro: string, hotline: string) => [
     links: [
       { label: 'Đặt lịch khám trực tuyến', url: medpro, openNewTab: true },
       { label: 'Quy trình khám bệnh', url: '/quy-trinh-kham-benh' },
-      { label: 'Giờ làm việc & Tiếp đón', url: '/lich-lam-viec' },
+      { label: 'Lịch khám bệnh & Tiếp đón', url: '/lich-kham-benh' },
       { label: 'Lịch khám bệnh & Trực', url: '/lich-kham' },
       { label: 'Bảng giá viện phí dịch vụ', url: '/bang-gia' },
       { label: 'Hướng dẫn khám chữa BHYT', url: '/trang/kham-bhyt' },
@@ -98,6 +98,9 @@ export async function SiteFooter() {
 
   return (
     <>
+      {/* ── DẢI THỐNG KÊ TRUY CẬP TRANG CHỦ / TOÀN SITE (PHƯƠNG ÁN 1) ── */}
+      <SiteVisitStats config={footer?.visitStats} variant="ribbon" />
+
       <footer className={styles.footerWrapper}>
         {/* Subtle Decorative Ambient Glows */}
         <div className={styles.footerBackgroundGlow} aria-hidden="true" />
@@ -379,9 +382,6 @@ export async function SiteFooter() {
                   </div>
                 </div>
               )}
-
-              {/* Thống kê lượt truy cập website */}
-              <SiteVisitStats config={footer?.visitStats} />
             </div>
           </div>
         )}

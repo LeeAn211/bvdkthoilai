@@ -157,9 +157,9 @@ export interface ArticleDetailTemplateProps {
   // Cấu hình trang quản trị độc lập Bố cục & Chi tiết Bài viết (ArticleDetailSettings)
   articleDetailSettings?: any
 
-  baseHref: string // ví dụ: "/thong-bao", "/tin-tuc", "/dau-thau-mua-sam", "/ky-thuat-chuyen-sau"
+  baseHref: string // ví dụ: "/thong-bao", "/tin-tuc", "/dau-thau-mua-sam", "/ky-thuat-chuyen-sau", "/goc-canh-bao"
   trackingSlug?: string
-  trackingCollection?: 'news' | 'notices' | 'clinical-protocols'
+  trackingCollection?: 'news' | 'notices' | 'clinical-protocols' | 'health-warnings'
 }
 
 export function ArticleDetailTemplate({

@@ -14,10 +14,10 @@ export const ScientificActivities: CollectionConfig = {
     description: 'Thêm và quản lý bài viết cho mục Hoạt động khoa học trên trang chủ và trang danh sách riêng.',
   },
   access: {
-    read: publicPublishedFor('news'),
-    create: moduleAccess('news', 'create'),
-    update: workflowUpdateAccess('news'),
-    delete: contentDeleteAccess('news'),
+    read: publicPublishedFor('scientific-activities'),
+    create: moduleAccess('scientific-activities', 'create'),
+    update: workflowUpdateAccess('scientific-activities'),
+    delete: contentDeleteAccess('scientific-activities'),
   },
   trash: true,
   hooks: {

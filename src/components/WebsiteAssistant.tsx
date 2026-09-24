@@ -367,8 +367,8 @@ export function WebsiteAssistant({
     if (q.includes('gio lam viec') || q.includes('may gio') || q.includes('thu 7') || q.includes('chu nhat') || q.includes('ngoai gio') || q.includes('ngay nghi') || q.includes('nghi le')) {
       return {
         text: `THỜI GIAN LÀM VIỆC CỦA BỆNH VIỆN:\n\n• Khoa Cấp cứu: Trực 24/24 tất cả các ngày trong tuần (kể cả Lễ, Tết).\n• Khám bệnh ngoại trú (Giờ hành chính): Thứ Hai đến Thứ Sáu (Sáng: 07:00 – 11:30 | Chiều: 13:00 – 16:30).\n• Thứ Bảy, Chủ Nhật & Ngày Lễ: Bệnh viện bố trí đội ngũ bác sĩ trực tiếp nhận người bệnh, đảm bảo đầy đủ quyền lợi BHYT.`,
-        href: '/lich-lam-viec',
-        linkLabel: 'Xem chi tiết lịch làm việc',
+        href: '/lich-kham-benh',
+        linkLabel: 'Xem chi tiết lịch khám bệnh',
       }
     }
 

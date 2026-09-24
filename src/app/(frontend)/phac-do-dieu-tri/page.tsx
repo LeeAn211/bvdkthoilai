@@ -18,15 +18,9 @@ export default async function Page() {
   let items: DocumentDirectoryItem[] = []
   try {
     const payload = await getCMS()
-    const [cpRes, docRes, defaults, settings] = await Promise.all([
+    const [cpRes, defaults, settings] = await Promise.all([
       payload.find({
         collection: 'clinical-protocols' as any,
-        sort: '-issuedAt',
-        limit: 200,
-        depth: 2,
-      }).catch(() => ({ docs: [] })),
-      payload.find({
-        collection: 'documents',
         sort: '-issuedAt',
         limit: 200,
         depth: 2,
@@ -37,7 +31,7 @@ export default async function Page() {
 
     const defaultIssuer = settings?.hospitalName || 'BVĐK Khu vực Thới Lai'
 
-    const cpDocs: DocumentDirectoryItem[] = (cpRes.docs as any[]).map((x: any) => {
+    items = (cpRes.docs as any[]).map((x: any) => {
       const fileUrl = mediaUrl(x.file)
       const detailHref = x.slug ? `/phac-do-dieu-tri/${x.slug}` : (fileUrl || '#')
       const specs = Array.isArray(x.specialty)
@@ -70,47 +64,7 @@ export default async function Page() {
         preventCopy: Boolean(x.preventCopy),
         showViewer: x.showViewer !== false,
       }
-    })
-
-    const otherDocs: DocumentDirectoryItem[] = (docRes.docs as any[])
-      .filter((x: any) => {
-        const c = (categoryName(x) || x.category || '').toLowerCase()
-        const t = (x.documentType || '').toLowerCase()
-        const title = (x.title || '').toLowerCase()
-        return c.includes('phác đồ') || t.includes('phác đồ') || title.includes('phác đồ')
-      })
-      .map((x: any) => {
-        const fileUrl = mediaUrl(x.file)
-        const detailHref = x.slug ? `/van-ban/${x.slug}` : (fileUrl || '#')
-        const cat = categoryName(x) || x.category || 'Phác đồ điều trị'
-        const dateStr = x.issuedAt ? new Date(x.issuedAt).toLocaleDateString('vi-VN') : ''
-
-        return {
-          id: `doc-${x.id}`,
-          title: x.title,
-          slug: x.slug,
-          number: x.number,
-          category: cat,
-          issuer: x.issuer || 'BVĐK Khu vực Thới Lai',
-          signer: x.signer,
-          issuedAt: x.issuedAt,
-          date: dateStr,
-          documentType: 'Phác đồ điều trị',
-          summary: x.summary,
-          excerpt: x.summary || 'Phác đồ điều trị và hướng dẫn chẩn đoán chuyên môn của bệnh viện.',
-          fileUrl,
-          fileName: mediaLabel(x.file),
-          fileFormat: mediaFormat(x.file),
-          coverUrl: mediaUrl(x.cover || x.seoImage) || defaults.documents,
-          href: detailHref,
-          accessMode: x.accessMode || 'public',
-          allowDownload: x.allowDownload !== false,
-          preventCopy: Boolean(x.preventCopy),
-          showViewer: x.showViewer !== false,
-        }
-      })
-
-    items = [...cpDocs, ...otherDocs].sort((a, b) => {
+    }).sort((a, b) => {
       const timeA = a.issuedAt ? new Date(a.issuedAt).getTime() : 0
       const timeB = b.issuedAt ? new Date(b.issuedAt).getTime() : 0
       return timeB - timeA

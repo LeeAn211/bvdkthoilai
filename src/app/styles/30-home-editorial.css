@@ -1732,3 +1732,613 @@
   }
 }
 
+/* ── SỞ Y TẾ THÀNH PHỐ CẦN THƠ SECTION ── */
+.homeCanThoHealthDeptSection {
+  background: #f8fafc;
+}
+
+.homeCanThoHealthDeptSection .homeSectionActionExternal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #0878d1;
+  font-weight: 700;
+  font-size: 13.5px;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #dce8f2;
+  box-shadow: 0 2px 6px rgba(10, 42, 74, 0.04);
+  transition: all .2s ease;
+}
+
+.homeCanThoHealthDeptSection .homeSectionActionExternal:hover {
+  color: #ffffff;
+  background: #0878d1;
+  border-color: #0878d1;
+  box-shadow: 0 4px 12px rgba(8, 120, 209, 0.22);
+}
+
+/* ── SECTION LIÊN KẾT WEBSITE / BANNER ĐỐI TÁC ── */
+.homePartnerBannersBlock {
+  position: relative;
+  width: 100%;
+}
+
+/* Kiểu 1: Lưới tĩnh (Grid) */
+.partnerBannersGrid {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Thẻ Banner dùng chung */
+.partnerBannerCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  min-height: 86px;
+  height: 86px;
+  box-shadow: 0 4px 14px rgba(10, 42, 74, 0.07);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-sizing: border-box;
+  outline: none;
+}
+
+.partnerBannerCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* Kiểu 2: Chạy trượt ngang liên tục (Marquee Ticker vô tận) */
+.partnerBannersMarqueeViewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 6px 0;
+  mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+}
+
+.partnerBannersMarqueeTrack {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: max-content;
+  will-change: transform;
+  animation: partnerMarqueeScroll var(--marquee-duration, 28s) linear infinite;
+}
+
+.partnerBannersMarqueeViewport:hover .partnerBannersMarqueeTrack {
+  animation-play-state: paused;
+}
+
+.partnerBannersMarqueeGroup {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
+}
+
+.partnerBannersMarqueeGroup .partnerBannerCard {
+  width: 290px;
+  min-width: 290px;
+  flex-shrink: 0;
+}
+
+@keyframes partnerMarqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Kiểu 3: Băng chuyền chuyển trang tự động (Slide Carousel) */
+.partnerBannersCarouselViewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.partnerBannersCarouselGrid {
+  display: grid;
+  align-items: stretch;
+  gap: 16px;
+  animation: bannerSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes bannerSlideIn {
+  from {
+    opacity: 0.5;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.partnerBannersCarouselControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.partnerBannerNavBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #dce8f2;
+  background: #ffffff;
+  color: #0b4a7d;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(10, 42, 74, 0.05);
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+.partnerBannerNavBtn:hover {
+  background: #0878d1;
+  color: #ffffff;
+  border-color: #0878d1;
+  box-shadow: 0 4px 12px rgba(8, 120, 209, 0.25);
+  transform: translateY(-2px);
+}
+
+.partnerBannerDots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.partnerBannerDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #cbd5e1;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.partnerBannerDot.active {
+  width: 24px;
+  background: #0878d1;
+}
+
+@media (max-width: 640px) {
+  .partnerBannersMarqueeGroup .partnerBannerCard {
+    width: 260px;
+    min-width: 260px;
+    min-height: 80px;
+    height: 80px;
+  }
+}
+
+/* ── CẢNH BÁO Y TẾ & CỘNG ĐỒNG SECTION ── */
+.homeHealthWarningsSection {
+  background: #fff8f8;
+  border-top: 1px solid #fee2e2;
+  border-bottom: 1px solid #fee2e2;
+}
+
+.homeHealthWarningsBlock .warningHeroCard {
+  border-color: #fecaca;
+  transition: all 0.25s ease;
+}
+
+.homeHealthWarningsBlock .warningHeroCard:hover {
+  transform: translateY(-4px);
+  border-color: #ef4444;
+  box-shadow: 0 16px 32px rgba(220, 38, 38, 0.16);
+}
+
+.homeHealthWarningsBlock .warningRowItem {
+  transition: all 0.25s ease;
+}
+
+.homeHealthWarningsBlock .warningRowItem:hover {
+  transform: translateX(4px);
+  border-color: #f87171;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.1);
+}
+
+/* ── PHỔ BIẾN VĂN BẢN PHÁP LUẬT SECTION ── */
+.homeLegalDisseminationSection {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.legalDocCard {
+  transition: all 0.25s ease;
+}
+
+.legalDocCard:hover {
+  transform: translateY(-4px);
+  border-color: #1d4ed8;
+  box-shadow: 0 12px 28px rgba(29, 78, 216, 0.14);
+}
+
+/* ── CẶP SECTION HIỂN THỊ TRÊN 1 HÀNG: CẢNH BÁO Y TẾ & PHỔ BIẾN PHÁP LUẬT ── */
+.homeWarningsLegalPairSection {
+  position: relative;
+  background: #fdfefe;
+}
+
+.warningsLegalPairGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+.warningsLegalPairGrid.singleCol {
+  grid-template-columns: 1fr;
+}
+
+.warningPairCol {
+  border-color: #fee2e2;
+  box-shadow: 0 4px 18px rgba(220, 38, 38, 0.05);
+}
+
+.warningPairCol:hover {
+  border-color: #fca5a5;
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.1);
+}
+
+.warningPairCol .pairColHead {
+  border-bottom-color: #fee2e2;
+}
+
+.warningPairCol .pairColKicker {
+  color: #dc2626;
+}
+
+.warningPairCol .pairColTitle {
+  color: #7f1d1d;
+}
+
+.warningPairCol .pairColSeeAll {
+  color: #dc2626;
+  background: #fff5f5;
+  border-color: #fecaca;
+}
+
+.warningPairCol .pairColSeeAll:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+/* Thẻ cảnh báo trong cột */
+.warningCardItem {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #fffbfb;
+  border: 1px solid #fee2e2;
+  border-left: 3.5px solid #dc2626;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background-color .22s ease;
+}
+
+.warningCardItem:hover {
+  background: #ffffff;
+  border-color: #fca5a5;
+  border-left-color: #ef4444;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.12);
+}
+
+.warningIconBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  width: 44px;
+  height: 46px;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  border-radius: 9px;
+  flex-shrink: 0;
+  color: #dc2626;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.08);
+}
+
+/* Khung ảnh đại diện chuyên nghiệp của thẻ cảnh báo */
+.warningThumbBlock {
+  position: relative;
+  width: 96px;
+  min-width: 96px;
+  height: 68px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  padding: 2px;
+}
+
+.warningThumbImg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  transition: transform .3s ease;
+}
+
+.warningCardItem:hover .warningThumbImg {
+  transform: scale(1.04);
+}
+
+.warningCardDate {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: auto;
+}
+
+.warningCardDate::before {
+  content: '•';
+  color: #cbd5e1;
+  margin-right: 2px;
+}
+
+.warningDateDay {
+  font-size: 15px;
+  font-weight: 850;
+  color: #b91c1c;
+  line-height: 1;
+}
+
+.warningDateMonth {
+  font-size: 9.5px;
+  font-weight: 750;
+  color: #ef4444;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.warningCardBody {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.warningCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.warningCardBadge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 1.5px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.warningCardBadge.urgent {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+.warningCardBadge.important {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fde68a;
+}
+
+.warningCardTitle {
+  font-size: 14px;
+  font-weight: 750;
+  color: #7f1d1d;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  transition: color .2s ease;
+}
+
+.warningCardItem:hover .warningCardTitle {
+  color: #dc2626;
+}
+
+.warningCardExcerpt {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+/* CỘT PHỔ BIẾN VĂN BẢN PHÁP LUẬT */
+.legalPairCol {
+  border-color: #dbeafe;
+  box-shadow: 0 4px 18px rgba(29, 78, 216, 0.05);
+}
+
+.legalPairCol:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 8px 24px rgba(29, 78, 216, 0.1);
+}
+
+.legalPairCol .pairColHead {
+  border-bottom-color: #e0e7ff;
+}
+
+.legalPairCol .pairColKicker {
+  color: #1d4ed8;
+}
+
+.legalPairCol .pairColTitle {
+  color: #1e3a8a;
+}
+
+.legalPairCol .pairColSeeAll {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.legalPairCol .pairColSeeAll:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+  border-color: #1d4ed8;
+}
+
+/* Thẻ văn bản pháp luật trong cột */
+.legalPairCardItem {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #f8fbfe;
+  border: 1px solid #e0e7ff;
+  border-left: 3.5px solid #1d4ed8;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background-color .22s ease;
+}
+
+.legalPairCardItem:hover {
+  background: #ffffff;
+  border-color: #93c5fd;
+  border-left-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.1);
+}
+
+.legalDocIconBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  width: 44px;
+  height: 46px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 9px;
+  flex-shrink: 0;
+  color: #1d4ed8;
+  box-shadow: 0 2px 6px rgba(29, 78, 216, 0.08);
+}
+
+.legalDocCardBody {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.legalDocCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.legalDocBadge {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 1.5px 7px;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.legalDocNumber {
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.legalDocDate {
+  font-size: 11px;
+  color: #64748b;
+  margin-left: auto;
+}
+
+.legalDocCardTitle {
+  font-size: 14px;
+  font-weight: 750;
+  color: #1e293b;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  transition: color .2s ease;
+}
+
+.legalPairCardItem:hover .legalDocCardTitle {
+  color: #1d4ed8;
+}
+
+.legalDocCardExcerpt {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+@media (max-width: 992px) {
+  .warningsLegalPairGrid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+
+
+
+

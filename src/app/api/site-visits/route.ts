@@ -158,11 +158,14 @@ export async function POST(req: NextRequest) {
           updated_at = now();
     `)
 
-    // 4. Nếu có truyền thông tin bài viết cụ thể (news, notices, clinical-protocols) -> Tăng views của bài đó
+    // 4. Nếu có truyền thông tin bài viết cụ thể (news, notices, clinical-protocols, health-warnings) -> Tăng views của bài đó
     if (collection && slug) {
-      const allowedCollections = ['news', 'notices', 'clinical-protocols']
+      const allowedCollections = ['news', 'notices', 'clinical-protocols', 'health-warnings']
       if (allowedCollections.includes(collection)) {
-        const tableName = collection === 'clinical-protocols' ? 'clinical_protocols' : collection
+        let tableName = collection
+        if (collection === 'clinical-protocols') tableName = 'clinical_protocols'
+        else if (collection === 'health-warnings') tableName = 'health_warnings'
+
         await payload.db.drizzle.execute(`
           UPDATE public."${tableName}"
           SET views = COALESCE(views, 0) + 1

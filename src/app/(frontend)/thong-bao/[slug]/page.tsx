@@ -82,9 +82,13 @@ export default async function Page({ params }: Props) {
   const levelLabel = (lvl: string | undefined | null) =>
     lvl ? (levelLabels[lvl] ?? 'Thông báo') : 'Thông báo'
 
+  const isWarningNotice = item.homePlacement === 'warning' || item.level === 'urgent' || item.level === 'important'
+  const parentSectionLabel = isWarningNotice ? 'Góc cảnh báo' : 'Thông báo'
+  const parentSectionHref = isWarningNotice ? '/goc-canh-bao' : '/thong-bao'
+
   const breadcrumbs = [
     { label: 'Trang chủ', href: '/' },
-    { label: 'Thông báo', href: '/thong-bao' },
+    { label: parentSectionLabel, href: parentSectionHref },
     ...(item.level ? [{ label: levelLabel(item.level) }] : []),
   ]
 
@@ -104,7 +108,7 @@ export default async function Page({ params }: Props) {
       publishedDate={publishedDate}
       views={item.views || 128}
       categoryName={levelLabel(item.level)}
-      categoryHref="/thong-bao"
+      categoryHref={parentSectionHref}
       expireDate={expireDate}
       excerpt={item.excerpt}
       content={item.content}

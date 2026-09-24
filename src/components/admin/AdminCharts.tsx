@@ -174,12 +174,13 @@ export default function AdminCharts({
     ? Number(((effectiveProtocols / clinicalProtocols) * 100).toFixed(1))
     : 0
 
-  const hasRow1 = showAreaChart || showDepartmentBar
-  const hasRow2 = showSatisfactionGauge || showSlaStats
-  const hasRow3 = showWeeklyWorkload || showProtocolDistribution
-  const hasRow4 = showResourceStructure || showFeedbackDonut
+  const hasRow1 = Boolean(showAreaChart || showDepartmentBar)
+  const hasRow2 = Boolean(showSatisfactionGauge || showSlaStats)
+  const hasRow3 = Boolean(showWeeklyWorkload || showProtocolDistribution)
+  const hasRow4 = Boolean(showResourceStructure || showFeedbackDonut)
+  const hasVisitStats = Boolean(showVisitStatsChart)
 
-  if (!hasRow1 && !hasRow2 && !hasRow3 && !hasRow4) {
+  if (!hasRow1 && !hasRow2 && !hasRow3 && !hasRow4 && !hasVisitStats) {
     return null
   }
 

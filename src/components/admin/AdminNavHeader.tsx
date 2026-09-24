@@ -2,6 +2,7 @@
 
 import { useAuth } from '@payloadcms/ui'
 import Link from 'next/link'
+import React, { useEffect } from 'react'
 import styles from './AdminNavHeader.module.css'
 
 const roleLabels: Record<string, string> = {
@@ -31,6 +32,25 @@ export default function AdminNavHeader() {
   const { user } = useAuth<HospitalUser>()
   const name = user?.name || user?.email || 'Tài khoản quản trị'
   const initial = name.trim().slice(0, 1).toUpperCase() || 'A'
+
+  useEffect(() => {
+    const handleRejection = (event: PromiseRejectionEvent) => {
+      const reason = event?.reason
+      // Bắt các unhandled rejection từ Monaco loader khi CDN bị lỗi/chặn
+      if (
+        reason instanceof Event ||
+        (reason && typeof reason === 'object' && ('isTrusted' in reason || !('stack' in reason)))
+      ) {
+        event.preventDefault()
+        event.stopImmediatePropagation()
+      }
+    }
+
+    window.addEventListener('unhandledrejection', handleRejection, { capture: true })
+    return () => {
+      window.removeEventListener('unhandledrejection', handleRejection, { capture: true })
+    }
+  }, [])
 
   return (
     <section className={styles.shell}>

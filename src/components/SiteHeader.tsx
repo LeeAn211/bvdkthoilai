@@ -139,7 +139,7 @@ export async function SiteHeader() {
       children: [
         { label: 'Cổng tổng hợp tiện ích', url: '/danh-cho-nguoi-benh' },
         { label: 'Quy trình khám bệnh', url: '/quy-trinh-kham-benh' },
-        { label: 'Giờ làm việc & Khám sớm', url: '/lich-lam-viec' },
+        { label: 'Lịch khám bệnh & Giờ làm việc', url: '/lich-kham-benh' },
         { label: 'Hướng dẫn điều trị nội trú', url: '/dieu-tri-noi-tru' },
         { label: 'Gói khám sức khỏe', url: '/goi-kham' },
         { label: 'Sơ đồ bệnh viện & Chỉ dẫn', url: '/so-do-benh-vien' },
@@ -155,6 +155,7 @@ export async function SiteHeader() {
       url: '/lich-kham',
       children: [
         { label: 'Tất cả lịch khám', url: '/lich-kham' },
+        { label: 'Lịch làm việc cơ quan', url: '/lich-lam-viec' },
         { label: 'Lịch trực cấp cứu 24/24', url: '/lich-kham?type=emergency' },
         { label: 'Lịch khám bệnh theo tuần', url: '/lich-kham?type=weekly' },
         { label: 'Lịch khám bác sĩ theo ngày', url: '/lich-kham?type=daily' },

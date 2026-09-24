@@ -306,8 +306,8 @@ export async function POST(req: Request) {
         answer: summary
           ? renderTemplate(chatbotSettings.workingHoursResponseTemplate, 'Thời gian tiếp nhận và khám bệnh đang được bệnh viện công bố:\n{{ITEMS}}', { ITEMS: summary })
           : 'Thông tin giờ làm việc đang được cập nhật. Bạn vui lòng xem trang Lịch làm việc hoặc gọi hotline để được hỗ trợ.',
-        linkLabel: 'Xem đầy đủ lịch làm việc',
-        linkUrl: '/lich-lam-viec',
+        linkLabel: 'Xem đầy đủ lịch khám bệnh',
+        linkUrl: '/lich-kham-benh',
       }
     }
 

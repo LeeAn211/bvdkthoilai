@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 
 export interface ArticleViewTrackerProps {
-  collection: 'news' | 'notices' | 'clinical-protocols'
+  collection: 'news' | 'notices' | 'clinical-protocols' | 'health-warnings'
   slug: string
 }
 

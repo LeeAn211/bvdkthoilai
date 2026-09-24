@@ -1,6 +1,6 @@
 'use client'
 
-import { useField } from '@payloadcms/ui'
+import { useAllFormFields, useField, useForm } from '@payloadcms/ui'
 import React, { useCallback, useMemo } from 'react'
 
 import {
@@ -27,16 +27,80 @@ type PermissionMatrixFieldProps = {
 
 const uniqueActions = (actions: PermissionActionValue[]) => [...new Set(actions)]
 
+const moduleOrderList = Array.from(PERMISSION_MODULE_VALUES)
+
+const generateHexId = () => {
+  const timestamp = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0')
+  const randomHex = Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('')
+  return `${timestamp}${randomHex}`
+}
+
+function extractRowsFromFields(fields: Record<string, any> | undefined, path: string): PermissionRow[] {
+  if (!fields) return []
+
+  const rowMap = new Map<number, Partial<PermissionRow>>()
+  const prefix = `${path}.`
+
+  for (const [key, fieldState] of Object.entries(fields)) {
+    if (key.startsWith(prefix)) {
+      const rest = key.slice(prefix.length)
+      const dotIndex = rest.indexOf('.')
+      if (dotIndex === -1) continue
+
+      const rowIndex = parseInt(rest.slice(0, dotIndex), 10)
+      const prop = rest.slice(dotIndex + 1)
+      if (Number.isNaN(rowIndex)) continue
+
+      if (!rowMap.has(rowIndex)) {
+        rowMap.set(rowIndex, {})
+      }
+      const row = rowMap.get(rowIndex)!
+      if (prop === 'id') {
+        row.id = fieldState?.value != null ? String(fieldState.value) : null
+      } else if (prop === 'module') {
+        row.module = fieldState?.value != null ? String(fieldState.value) : ''
+      } else if (prop === 'actions') {
+        row.actions = Array.isArray(fieldState?.value) ? (fieldState.value as PermissionActionValue[]) : []
+      }
+    }
+  }
+
+  if (rowMap.size > 0) {
+    const sortedIndices = Array.from(rowMap.keys()).sort((a, b) => a - b)
+    const result: PermissionRow[] = []
+    for (const idx of sortedIndices) {
+      const r = rowMap.get(idx)!
+      if (r.module) {
+        result.push({
+          id: r.id || null,
+          module: r.module,
+          actions: Array.isArray(r.actions) ? r.actions : [],
+        })
+      }
+    }
+    return result
+  }
+
+  const parentValue = fields[path]?.value
+  if (Array.isArray(parentValue)) {
+    return parentValue as PermissionRow[]
+  }
+
+  return []
+}
+
 export default function PermissionMatrixField({
   label = 'Ma trận phân quyền',
   path,
   readOnly = false,
   required = false,
 }: PermissionMatrixFieldProps) {
-  const { setValue, value } = useField<PermissionRow[]>({ path, hasRows: true })
+  const [fields, dispatchFields] = useAllFormFields()
+  const { setModified } = useForm()
   const { value: useCustomPermissions } = useField<boolean>({ path: 'useCustomPermissions' })
 
-  const rows = useMemo(() => (Array.isArray(value) ? value : []), [value])
+  const rows = useMemo(() => extractRowsFromFields(fields, path), [fields, path])
+
   const knownRows = useMemo(
     () => new Map(rows.filter((row) => PERMISSION_MODULE_VALUES.has(row.module)).map((row) => [row.module, row])),
     [rows],
@@ -44,6 +108,93 @@ export default function PermissionMatrixField({
   const unknownRows = useMemo(
     () => rows.filter((row) => !PERMISSION_MODULE_VALUES.has(row.module)),
     [rows],
+  )
+
+  const syncRowsToForm = useCallback(
+    (nextRows: PermissionRow[]) => {
+      if (readOnly) return
+
+      // Sắp xếp thứ tự modules nhất quán theo catalog
+      nextRows.sort((a, b) => {
+        const indexA = moduleOrderList.indexOf(a.module)
+        const indexB = moduleOrderList.indexOf(b.module)
+        if (indexA !== -1 && indexB !== -1) return indexA - indexB
+        if (indexA !== -1) return -1
+        if (indexB !== -1) return 1
+        return a.module.localeCompare(b.module)
+      })
+
+      const prefix = `${path}.`
+      const nextState: Record<string, any> = {}
+
+      // Giữ lại tất cả các trường không thuộc array path này
+      for (const [key, val] of Object.entries(fields || {})) {
+        if (!key.startsWith(prefix) && key !== path) {
+          nextState[key] = val
+        }
+      }
+
+      if (nextRows.length === 0) {
+        // Khi không còn quyền nào được chọn:
+        // Đặt disableFormData: false và value: [] để Payload submit permissions: [] lên API
+        nextState[path] = {
+          ...(fields?.[path] || {}),
+          disableFormData: false,
+          rows: [],
+          value: [],
+          valid: true,
+          passesCondition: true,
+        }
+      } else {
+        const rowMetadata = nextRows.map((row, index) => {
+          const rowId = row.id || generateHexId()
+          const rowPath = `${path}.${index}`
+
+          nextState[`${rowPath}.id`] = {
+            value: rowId,
+            initialValue: rowId,
+            valid: true,
+            passesCondition: true,
+          }
+          nextState[`${rowPath}.module`] = {
+            value: row.module,
+            initialValue: row.module,
+            valid: true,
+            passesCondition: true,
+          }
+          nextState[`${rowPath}.actions`] = {
+            value: row.actions || [],
+            initialValue: row.actions || [],
+            valid: true,
+            passesCondition: true,
+          }
+
+          return {
+            id: rowId,
+            isLoading: false,
+          }
+        })
+
+        nextState[path] = {
+          ...(fields?.[path] || {}),
+          disableFormData: true,
+          rows: rowMetadata,
+          value: nextRows.length,
+          valid: true,
+          passesCondition: true,
+        }
+      }
+
+      dispatchFields({
+        type: 'REPLACE_STATE',
+        state: nextState,
+      })
+
+      if (typeof setModified === 'function') {
+        setModified(true)
+      }
+    },
+    [dispatchFields, fields, path, readOnly, setModified],
   )
 
   const updateModule = useCallback(
@@ -54,21 +205,23 @@ export default function PermissionMatrixField({
       const existingRow = rows.find((row) => row.module === moduleName)
       const otherRows = rows.filter((row) => row.module !== moduleName)
 
+      let nextRows: PermissionRow[]
       if (normalizedActions.length === 0) {
-        setValue(otherRows)
-        return
+        nextRows = otherRows
+      } else {
+        nextRows = [
+          ...otherRows,
+          {
+            ...(existingRow?.id ? { id: existingRow.id } : {}),
+            module: moduleName,
+            actions: normalizedActions,
+          },
+        ]
       }
 
-      setValue([
-        ...otherRows,
-        {
-          ...(existingRow?.id ? { id: existingRow.id } : {}),
-          module: moduleName,
-          actions: normalizedActions,
-        },
-      ])
+      syncRowsToForm(nextRows)
     },
-    [readOnly, rows, setValue],
+    [readOnly, rows, syncRowsToForm],
   )
 
   const toggleAction = useCallback(

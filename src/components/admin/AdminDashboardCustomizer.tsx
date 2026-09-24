@@ -26,6 +26,7 @@ export interface ChartVisibility {
 interface AdminDashboardCustomizerProps {
   initialCards: CardItem[]
   initialCharts: ChartVisibility
+  allowedCharts?: Partial<ChartVisibility>
   onUpdate: (cards: CardItem[], charts: ChartVisibility) => void
   onClose: () => void
 }
@@ -33,12 +34,19 @@ interface AdminDashboardCustomizerProps {
 export default function AdminDashboardCustomizer({
   initialCards,
   initialCharts,
+  allowedCharts,
   onUpdate,
   onClose,
 }: AdminDashboardCustomizerProps) {
   const [activeTab, setActiveTab] = useState<'cards' | 'charts'>('cards')
   const [cards, setCards] = useState<CardItem[]>(initialCards)
   const [charts, setCharts] = useState<ChartVisibility>(initialCharts)
+
+  // Kiểm tra biểu đồ có được phép hiển thị cho user này hay không
+  const isChartAllowed = (key: keyof ChartVisibility) => {
+    if (!allowedCharts) return true
+    return allowedCharts[key] !== false
+  }
 
   const defaultChartOrder = ['rowVisitStats', 'rowResourcesFeedback', 'rowTrendsStaff', 'rowSatisfactionSla', 'rowWorkloadProtocols']
   const [chartOrder, setChartOrder] = useState<string[]>(initialCharts.chartOrder || defaultChartOrder)
@@ -85,8 +93,9 @@ export default function AdminDashboardCustomizer({
     )
   }
 
-  // Bật/tắt biểu đồ
+  // Bật/tắt biểu đồ (chỉ cho phép nếu user có quyền)
   const toggleChart = (key: keyof ChartVisibility) => {
+    if (!isChartAllowed(key)) return
     setCharts((prev) => ({
       ...prev,
       [key]: !prev[key],
@@ -97,15 +106,15 @@ export default function AdminDashboardCustomizer({
   const handleReset = () => {
     const resetCards = cards.map((c) => ({ ...c, visible: true }))
     const resetCharts: ChartVisibility = {
-      showVisitStatsChart: true,
-      showAreaChart: true,
-      showDepartmentBar: true,
-      showSatisfactionGauge: true,
-      showSlaStats: true,
-      showWeeklyWorkload: true,
-      showProtocolDistribution: true,
-      showResourceStructure: true,
-      showFeedbackDonut: true,
+      showVisitStatsChart: isChartAllowed('showVisitStatsChart'),
+      showAreaChart: isChartAllowed('showAreaChart'),
+      showDepartmentBar: isChartAllowed('showDepartmentBar'),
+      showSatisfactionGauge: isChartAllowed('showSatisfactionGauge'),
+      showSlaStats: isChartAllowed('showSlaStats'),
+      showWeeklyWorkload: isChartAllowed('showWeeklyWorkload'),
+      showProtocolDistribution: isChartAllowed('showProtocolDistribution'),
+      showResourceStructure: isChartAllowed('showResourceStructure'),
+      showFeedbackDonut: isChartAllowed('showFeedbackDonut'),
       chartOrder: defaultChartOrder,
     }
     setCards(resetCards)
@@ -247,6 +256,7 @@ export default function AdminDashboardCustomizer({
               <div className={styles.itemList}>
                 {chartOrder.map((groupKey, idx) => {
                   if (groupKey === 'rowVisitStats') {
+                    if (!isChartAllowed('showVisitStatsChart')) return null
                     return (
                       <React.Fragment key={groupKey}>
                         <div className={`${styles.itemRow} ${charts.showVisitStatsChart === false ? styles.itemRowDisabled : ''}`}>
@@ -290,245 +300,273 @@ export default function AdminDashboardCustomizer({
                   }
 
                   if (groupKey === 'rowResourcesFeedback') {
+                    const allowResource = isChartAllowed('showResourceStructure')
+                    const allowFeedback = isChartAllowed('showFeedbackDonut')
+                    if (!allowResource && !allowFeedback) return null
                     return (
                       <React.Fragment key={groupKey}>
-                        <div className={`${styles.itemRow} ${charts.showResourceStructure === false ? styles.itemRowDisabled : ''}`}>
-                          <div className={styles.itemLeft}>
-                            <div className={styles.itemOrderBtns}>
-                              <button
-                                type="button"
-                                className={styles.orderBtn}
-                                disabled={idx === 0}
-                                onClick={() => moveChart(idx, 'up')}
-                                title="Chuyển cụm lên trên"
-                              >
-                                ▲
-                              </button>
-                              <button
-                                type="button"
-                                className={styles.orderBtn}
-                                disabled={idx === chartOrder.length - 1}
-                                onClick={() => moveChart(idx, 'down')}
-                                title="Chuyển cụm xuống dưới"
-                              >
-                                ▼
-                              </button>
+                        {allowResource && (
+                          <div className={`${styles.itemRow} ${charts.showResourceStructure === false ? styles.itemRowDisabled : ''}`}>
+                            <div className={styles.itemLeft}>
+                              <div className={styles.itemOrderBtns}>
+                                <button
+                                  type="button"
+                                  className={styles.orderBtn}
+                                  disabled={idx === 0}
+                                  onClick={() => moveChart(idx, 'up')}
+                                  title="Chuyển cụm lên trên"
+                                >
+                                  ▲
+                                </button>
+                                <button
+                                  type="button"
+                                  className={styles.orderBtn}
+                                  disabled={idx === chartOrder.length - 1}
+                                  onClick={() => moveChart(idx, 'down')}
+                                  title="Chuyển cụm xuống dưới"
+                                >
+                                  ▼
+                                </button>
+                              </div>
+                              <div>
+                                <div className={styles.itemTitle}>Cơ cấu tài nguyên số bệnh viện</div>
+                                <div className={styles.itemDesc}>Tỷ lệ phân bổ dữ liệu phác đồ, tin tức, thông báo, văn bản, thầu và tuyển dụng.</div>
+                              </div>
                             </div>
-                            <div>
-                              <div className={styles.itemTitle}>Cơ cấu tài nguyên số bệnh viện</div>
-                              <div className={styles.itemDesc}>Tỷ lệ phân bổ dữ liệu phác đồ, tin tức, thông báo, văn bản, thầu và tuyển dụng.</div>
-                            </div>
+                            <label className={styles.switchWrap}>
+                              <input
+                                type="checkbox"
+                                checked={charts.showResourceStructure !== false}
+                                onChange={() => toggleChart('showResourceStructure')}
+                              />
+                              <span className={styles.slider} />
+                            </label>
                           </div>
-                          <label className={styles.switchWrap}>
-                            <input
-                              type="checkbox"
-                              checked={charts.showResourceStructure !== false}
-                              onChange={() => toggleChart('showResourceStructure')}
-                            />
-                            <span className={styles.slider} />
-                          </label>
-                        </div>
+                        )}
 
-                        <div className={`${styles.itemRow} ${charts.showFeedbackDonut === false ? styles.itemRowDisabled : ''}`}>
-                          <div className={styles.itemLeft}>
-                            <div style={{ width: 22 }} />
-                            <div>
-                              <div className={styles.itemTitle}>Quy trình & Tiến độ xử lý phản ánh (CSKH)</div>
-                              <div className={styles.itemDesc}>Biểu đồ Donut tỷ lệ ý kiến mới, đang xử lý và đã giải quyết của người bệnh.</div>
+                        {allowFeedback && (
+                          <div className={`${styles.itemRow} ${charts.showFeedbackDonut === false ? styles.itemRowDisabled : ''}`}>
+                            <div className={styles.itemLeft}>
+                              <div style={{ width: 22 }} />
+                              <div>
+                                <div className={styles.itemTitle}>Quy trình & Tiến độ xử lý phản ánh (CSKH)</div>
+                                <div className={styles.itemDesc}>Biểu đồ Donut tỷ lệ ý kiến mới, đang xử lý và đã giải quyết của người bệnh.</div>
+                              </div>
                             </div>
+                            <label className={styles.switchWrap}>
+                              <input
+                                type="checkbox"
+                                checked={charts.showFeedbackDonut !== false}
+                                onChange={() => toggleChart('showFeedbackDonut')}
+                              />
+                              <span className={styles.slider} />
+                            </label>
                           </div>
-                          <label className={styles.switchWrap}>
-                            <input
-                              type="checkbox"
-                              checked={charts.showFeedbackDonut !== false}
-                              onChange={() => toggleChart('showFeedbackDonut')}
-                            />
-                            <span className={styles.slider} />
-                          </label>
-                        </div>
+                        )}
                       </React.Fragment>
                     )
                   }
 
                   if (groupKey === 'rowTrendsStaff') {
+                    const allowArea = isChartAllowed('showAreaChart')
+                    const allowStaff = isChartAllowed('showDepartmentBar')
+                    if (!allowArea && !allowStaff) return null
                     return (
                       <React.Fragment key={groupKey}>
-                        <div className={`${styles.itemRow} ${!charts.showAreaChart ? styles.itemRowDisabled : ''}`}>
-                          <div className={styles.itemLeft}>
-                            <div className={styles.itemOrderBtns}>
-                              <button
-                                type="button"
-                                className={styles.orderBtn}
-                                disabled={idx === 0}
-                                onClick={() => moveChart(idx, 'up')}
-                                title="Chuyển cụm lên trên"
-                              >
-                                ▲
-                              </button>
-                              <button
-                                type="button"
-                                className={styles.orderBtn}
-                                disabled={idx === chartOrder.length - 1}
-                                onClick={() => moveChart(idx, 'down')}
-                                title="Chuyển cụm xuống dưới"
-                              >
-                                ▼
-                              </button>
+                        {allowArea && (
+                          <div className={`${styles.itemRow} ${!charts.showAreaChart ? styles.itemRowDisabled : ''}`}>
+                            <div className={styles.itemLeft}>
+                              <div className={styles.itemOrderBtns}>
+                                <button
+                                  type="button"
+                                  className={styles.orderBtn}
+                                  disabled={idx === 0}
+                                  onClick={() => moveChart(idx, 'up')}
+                                  title="Chuyển cụm lên trên"
+                                >
+                                  ▲
+                                </button>
+                                <button
+                                  type="button"
+                                  className={styles.orderBtn}
+                                  disabled={idx === chartOrder.length - 1}
+                                  onClick={() => moveChart(idx, 'down')}
+                                  title="Chuyển cụm xuống dưới"
+                                >
+                                  ▼
+                                </button>
+                              </div>
+                              <div>
+                                <div className={styles.itemTitle}>Biểu đồ xu hướng xuất bản tin bài</div>
+                                <div className={styles.itemDesc}>Biểu đồ dạng vùng theo dõi số lượng tin tức, thông báo, thầu qua từng tháng.</div>
+                              </div>
                             </div>
-                            <div>
-                              <div className={styles.itemTitle}>Biểu đồ xu hướng xuất bản tin bài</div>
-                              <div className={styles.itemDesc}>Biểu đồ dạng vùng theo dõi số lượng tin tức, thông báo, thầu qua từng tháng.</div>
-                            </div>
+                            <label className={styles.switchWrap}>
+                              <input
+                                type="checkbox"
+                                checked={charts.showAreaChart}
+                                onChange={() => toggleChart('showAreaChart')}
+                              />
+                              <span className={styles.slider} />
+                            </label>
                           </div>
-                          <label className={styles.switchWrap}>
-                            <input
-                              type="checkbox"
-                              checked={charts.showAreaChart}
-                              onChange={() => toggleChart('showAreaChart')}
-                            />
-                            <span className={styles.slider} />
-                          </label>
-                        </div>
+                        )}
 
-                        <div className={`${styles.itemRow} ${!charts.showDepartmentBar ? styles.itemRowDisabled : ''}`}>
-                          <div className={styles.itemLeft}>
-                            <div style={{ width: 22 }} />
-                            <div>
-                              <div className={styles.itemTitle}>Biểu đồ phân bổ nhân lực khoa phòng</div>
-                              <div className={styles.itemDesc}>Tỷ lệ bác sĩ, nhân viên trực tại các khoa phòng mũi nhọn.</div>
+                        {allowStaff && (
+                          <div className={`${styles.itemRow} ${!charts.showDepartmentBar ? styles.itemRowDisabled : ''}`}>
+                            <div className={styles.itemLeft}>
+                              <div style={{ width: 22 }} />
+                              <div>
+                                <div className={styles.itemTitle}>Biểu đồ phân bổ nhân lực khoa phòng</div>
+                                <div className={styles.itemDesc}>Tỷ lệ bác sĩ, nhân viên trực tại các khoa phòng mũi nhọn.</div>
+                              </div>
                             </div>
+                            <label className={styles.switchWrap}>
+                              <input
+                                type="checkbox"
+                                checked={charts.showDepartmentBar}
+                                onChange={() => toggleChart('showDepartmentBar')}
+                              />
+                              <span className={styles.slider} />
+                            </label>
                           </div>
-                          <label className={styles.switchWrap}>
-                            <input
-                              type="checkbox"
-                              checked={charts.showDepartmentBar}
-                              onChange={() => toggleChart('showDepartmentBar')}
-                            />
-                            <span className={styles.slider} />
-                          </label>
-                        </div>
+                        )}
                       </React.Fragment>
                     )
                   }
 
                   if (groupKey === 'rowSatisfactionSla') {
+                    const allowSat = isChartAllowed('showSatisfactionGauge')
+                    const allowSla = isChartAllowed('showSlaStats')
+                    if (!allowSat && !allowSla) return null
                     return (
                       <React.Fragment key={groupKey}>
-                        <div className={`${styles.itemRow} ${!charts.showSatisfactionGauge ? styles.itemRowDisabled : ''}`}>
-                          <div className={styles.itemLeft}>
-                            <div className={styles.itemOrderBtns}>
-                              <button
-                                type="button"
-                                className={styles.orderBtn}
-                                disabled={idx === 0}
-                                onClick={() => moveChart(idx, 'up')}
-                                title="Chuyển cụm lên trên"
-                              >
-                                ▲
-                              </button>
-                              <button
-                                type="button"
-                                className={styles.orderBtn}
-                                disabled={idx === chartOrder.length - 1}
-                                onClick={() => moveChart(idx, 'down')}
-                                title="Chuyển cụm xuống dưới"
-                              >
-                                ▼
-                              </button>
+                        {allowSat && (
+                          <div className={`${styles.itemRow} ${!charts.showSatisfactionGauge ? styles.itemRowDisabled : ''}`}>
+                            <div className={styles.itemLeft}>
+                              <div className={styles.itemOrderBtns}>
+                                <button
+                                  type="button"
+                                  className={styles.orderBtn}
+                                  disabled={idx === 0}
+                                  onClick={() => moveChart(idx, 'up')}
+                                  title="Chuyển cụm lên trên"
+                                >
+                                  ▲
+                                </button>
+                                <button
+                                  type="button"
+                                  className={styles.orderBtn}
+                                  disabled={idx === chartOrder.length - 1}
+                                  onClick={() => moveChart(idx, 'down')}
+                                  title="Chuyển cụm xuống dưới"
+                                >
+                                  ▼
+                                </button>
+                              </div>
+                              <div>
+                                <div className={styles.itemTitle}>Đồng hồ chỉ số hài lòng người bệnh</div>
+                                <div className={styles.itemDesc}>Tổng hợp điểm khảo sát trải nghiệm dịch vụ theo chuẩn Bộ Y tế.</div>
+                              </div>
                             </div>
-                            <div>
-                              <div className={styles.itemTitle}>Đồng hồ chỉ số hài lòng người bệnh</div>
-                              <div className={styles.itemDesc}>Tổng hợp điểm khảo sát trải nghiệm dịch vụ theo chuẩn Bộ Y tế.</div>
-                            </div>
+                            <label className={styles.switchWrap}>
+                              <input
+                                type="checkbox"
+                                checked={charts.showSatisfactionGauge}
+                                onChange={() => toggleChart('showSatisfactionGauge')}
+                              />
+                              <span className={styles.slider} />
+                            </label>
                           </div>
-                          <label className={styles.switchWrap}>
-                            <input
-                              type="checkbox"
-                              checked={charts.showSatisfactionGauge}
-                              onChange={() => toggleChart('showSatisfactionGauge')}
-                            />
-                            <span className={styles.slider} />
-                          </label>
-                        </div>
+                        )}
 
-                        <div className={`${styles.itemRow} ${!charts.showSlaStats ? styles.itemRowDisabled : ''}`}>
-                          <div className={styles.itemLeft}>
-                            <div style={{ width: 22 }} />
-                            <div>
-                              <div className={styles.itemTitle}>Bảng hiệu suất cam kết xử lý SLA</div>
-                              <div className={styles.itemDesc}>Tỷ lệ giải quyết góp ý đúng hẹn và thời gian phản hồi trung bình.</div>
+                        {allowSla && (
+                          <div className={`${styles.itemRow} ${!charts.showSlaStats ? styles.itemRowDisabled : ''}`}>
+                            <div className={styles.itemLeft}>
+                              <div style={{ width: 22 }} />
+                              <div>
+                                <div className={styles.itemTitle}>Bảng hiệu suất cam kết xử lý SLA</div>
+                                <div className={styles.itemDesc}>Tỷ lệ giải quyết góp ý đúng hẹn và thời gian phản hồi trung bình.</div>
+                              </div>
                             </div>
+                            <label className={styles.switchWrap}>
+                              <input
+                                type="checkbox"
+                                checked={charts.showSlaStats}
+                                onChange={() => toggleChart('showSlaStats')}
+                              />
+                              <span className={styles.slider} />
+                            </label>
                           </div>
-                          <label className={styles.switchWrap}>
-                            <input
-                              type="checkbox"
-                              checked={charts.showSlaStats}
-                              onChange={() => toggleChart('showSlaStats')}
-                            />
-                            <span className={styles.slider} />
-                          </label>
-                        </div>
+                        )}
                       </React.Fragment>
                     )
                   }
 
                   if (groupKey === 'rowWorkloadProtocols') {
+                    const allowWorkload = isChartAllowed('showWeeklyWorkload')
+                    const allowProtocols = isChartAllowed('showProtocolDistribution')
+                    if (!allowWorkload && !allowProtocols) return null
                     return (
                       <React.Fragment key={groupKey}>
-                        <div className={`${styles.itemRow} ${charts.showWeeklyWorkload === false ? styles.itemRowDisabled : ''}`}>
-                          <div className={styles.itemLeft}>
-                            <div className={styles.itemOrderBtns}>
-                              <button
-                                type="button"
-                                className={styles.orderBtn}
-                                disabled={idx === 0}
-                                onClick={() => moveChart(idx, 'up')}
-                                title="Chuyển cụm lên trên"
-                              >
-                                ▲
-                              </button>
-                              <button
-                                type="button"
-                                className={styles.orderBtn}
-                                disabled={idx === chartOrder.length - 1}
-                                onClick={() => moveChart(idx, 'down')}
-                                title="Chuyển cụm xuống dưới"
-                              >
-                                ▼
-                              </button>
+                        {allowWorkload && (
+                          <div className={`${styles.itemRow} ${charts.showWeeklyWorkload === false ? styles.itemRowDisabled : ''}`}>
+                            <div className={styles.itemLeft}>
+                              <div className={styles.itemOrderBtns}>
+                                <button
+                                  type="button"
+                                  className={styles.orderBtn}
+                                  disabled={idx === 0}
+                                  onClick={() => moveChart(idx, 'up')}
+                                  title="Chuyển cụm lên trên"
+                                >
+                                  ▲
+                                </button>
+                                <button
+                                  type="button"
+                                  className={styles.orderBtn}
+                                  disabled={idx === chartOrder.length - 1}
+                                  onClick={() => moveChart(idx, 'down')}
+                                  title="Chuyển cụm xuống dưới"
+                                >
+                                  ▼
+                                </button>
+                              </div>
+                              <div>
+                                <div className={styles.itemTitle}>Biểu đồ phân bổ lịch hẹn khám theo ngày</div>
+                                <div className={styles.itemDesc}>Dữ liệu lịch hẹn khám không bị hủy từ Thứ Hai đến Chủ Nhật trong tuần.</div>
+                              </div>
                             </div>
-                            <div>
-                              <div className={styles.itemTitle}>Biểu đồ tải lượng khám & Cấp cứu 24/7 tuần</div>
-                              <div className={styles.itemDesc}>Lượt khám ngoại trú & ca tiếp nhận cấp cứu qua các ngày trong tuần.</div>
-                            </div>
+                            <label className={styles.switchWrap}>
+                              <input
+                                type="checkbox"
+                                checked={charts.showWeeklyWorkload !== false}
+                                onChange={() => toggleChart('showWeeklyWorkload')}
+                              />
+                              <span className={styles.slider} />
+                            </label>
                           </div>
-                          <label className={styles.switchWrap}>
-                            <input
-                              type="checkbox"
-                              checked={charts.showWeeklyWorkload !== false}
-                              onChange={() => toggleChart('showWeeklyWorkload')}
-                            />
-                            <span className={styles.slider} />
-                          </label>
-                        </div>
+                        )}
 
-                        <div className={`${styles.itemRow} ${charts.showProtocolDistribution === false ? styles.itemRowDisabled : ''}`}>
-                          <div className={styles.itemLeft}>
-                            <div style={{ width: 22 }} />
-                            <div>
-                              <div className={styles.itemTitle}>Biểu đồ phân bổ phác đồ điều trị chuẩn</div>
-                              <div className={styles.itemDesc}>Cơ cấu phác đồ điều trị theo 6 khối chuyên môn theo chuẩn Bộ Y tế.</div>
+                        {allowProtocols && (
+                          <div className={`${styles.itemRow} ${charts.showProtocolDistribution === false ? styles.itemRowDisabled : ''}`}>
+                            <div className={styles.itemLeft}>
+                              <div style={{ width: 22 }} />
+                              <div>
+                                <div className={styles.itemTitle}>Biểu đồ phân bổ phác đồ điều trị chuẩn</div>
+                                <div className={styles.itemDesc}>Cơ cấu phác đồ điều trị theo 6 khối chuyên môn theo chuẩn Bộ Y tế.</div>
+                              </div>
                             </div>
+                            <label className={styles.switchWrap}>
+                              <input
+                                type="checkbox"
+                                checked={charts.showProtocolDistribution !== false}
+                                onChange={() => toggleChart('showProtocolDistribution')}
+                              />
+                              <span className={styles.slider} />
+                            </label>
                           </div>
-                          <label className={styles.switchWrap}>
-                            <input
-                              type="checkbox"
-                              checked={charts.showProtocolDistribution !== false}
-                              onChange={() => toggleChart('showProtocolDistribution')}
-                            />
-                            <span className={styles.slider} />
-                          </label>
-                        </div>
+                        )}
                       </React.Fragment>
                     )
                   }

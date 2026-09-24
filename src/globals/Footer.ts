@@ -118,7 +118,8 @@ export const Footer: GlobalConfig = {
           title: 'Dành cho người bệnh',
           links: [
             { visible: true, label: 'Đặt lịch khám', linkMode: 'external', url: 'https://medpro.vn/' },
-            { visible: true, label: 'Giờ làm việc', linkMode: 'internal', url: '/lich-lam-viec' },
+            { visible: true, label: 'Lịch khám bệnh', linkMode: 'internal', url: '/lich-kham-benh' },
+            { visible: true, label: 'Lịch làm việc cơ quan', linkMode: 'internal', url: '/lich-lam-viec' },
             { visible: true, label: 'Lịch khám & Trực', linkMode: 'internal', url: '/lich-kham' },
             { visible: true, label: 'Bảng giá dịch vụ', linkMode: 'internal', url: '/bang-gia' },
             { visible: true, label: 'Hướng dẫn BHYT', linkMode: 'internal', url: '/trang/kham-bhyt' },
@@ -181,12 +182,50 @@ export const Footer: GlobalConfig = {
       fields: [
         {
           name: 'showStats',
-          label: 'Bật hiển thị thống kê lượt truy cập ngoài Website (Footer)',
+          label: 'Bật hiển thị dải thống kê lượt truy cập (Trên Footer)',
           type: 'checkbox',
           defaultValue: true,
           admin: {
-            description: 'BẬT / TẮT hiển thị thanh thống kê lượt truy cập ở chân trang ngoài website công khai.',
+            description: 'BẬT / TẮT hiển thị toàn bộ dải thống kê lượt truy cập ngoài website công khai.',
           },
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'kicker',
+              label: 'Dòng Kicker nhỏ trên tiêu đề',
+              type: 'text',
+              defaultValue: 'HỆ THỐNG GIÁM SÁT TRUY CẬP',
+              admin: { width: '50%', placeholder: 'HỆ THỐNG GIÁM SÁT TRUY CẬP' },
+            },
+            {
+              name: 'title',
+              label: 'Tiêu đề khối thống kê',
+              type: 'text',
+              defaultValue: 'Thống kê truy cập Cổng thông tin điện tử',
+              admin: { width: '50%', placeholder: 'Thống kê truy cập Cổng thông tin điện tử' },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'metaTag',
+              label: 'Nhãn trạng thái bên phải (Meta Badge)',
+              type: 'text',
+              defaultValue: 'Hệ thống thời gian thực',
+              admin: { width: '50%', placeholder: 'Hệ thống thời gian thực' },
+            },
+            {
+              name: 'metaOrg',
+              label: 'Tên đơn vị bên phải (Meta Org)',
+              type: 'text',
+              defaultValue: 'BVĐK KHU VỰC THỚI LAI',
+              admin: { width: '50%', placeholder: 'BVĐK KHU VỰC THỚI LAI' },
+            },
+          ],
         },
         {
           type: 'row',
@@ -198,8 +237,46 @@ export const Footer: GlobalConfig = {
         {
           type: 'row',
           fields: [
+            {
+              name: 'onlineLabel',
+              label: 'Nhãn thẻ Đang online',
+              type: 'text',
+              defaultValue: 'Đang trực tuyến',
+              admin: { width: '50%', placeholder: 'Đang trực tuyến' },
+            },
+            {
+              name: 'todayLabel',
+              label: 'Nhãn thẻ Lượt truy cập ngày',
+              type: 'text',
+              defaultValue: 'Lượt truy cập ngày',
+              admin: { width: '50%', placeholder: 'Lượt truy cập ngày' },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
             { name: 'showMonth', label: 'Hiện lượt truy cập tháng này', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
             { name: 'showTotal', label: 'Hiện tổng lượt truy cập', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'monthLabel',
+              label: 'Nhãn thẻ Lượt truy cập tháng',
+              type: 'text',
+              defaultValue: 'Lượt truy cập tháng',
+              admin: { width: '50%', placeholder: 'Lượt truy cập tháng' },
+            },
+            {
+              name: 'totalLabel',
+              label: 'Nhãn thẻ Tổng lượt truy cập',
+              type: 'text',
+              defaultValue: 'Tổng lượt truy cập',
+              admin: { width: '50%', placeholder: 'Tổng lượt truy cập' },
+            },
           ],
         },
         {

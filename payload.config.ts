@@ -12,6 +12,7 @@ import { Users } from './src/collections/Users'
 import { Media } from './src/collections/Media'
 import { News } from './src/collections/News'
 import { Notices } from './src/collections/Notices'
+import { HealthWarnings } from './src/collections/HealthWarnings'
 import { Procurement } from './src/collections/Procurement'
 import { Documents } from './src/collections/Documents'
 import { ClinicalProtocols } from './src/collections/ClinicalProtocols'
@@ -19,6 +20,7 @@ import { Departments } from './src/collections/Departments'
 import { Doctors } from './src/collections/Doctors'
 import { Specialties } from './src/collections/Specialties'
 import { Schedules } from './src/collections/Schedules'
+import { WorkSchedules } from './src/collections/WorkSchedules'
 import { Services } from './src/collections/Services'
 import { Vaccinations } from './src/collections/Vaccinations'
 import { ServicePrices } from './src/collections/ServicePrices'
@@ -135,6 +137,7 @@ const collectionPermissionModules: Record<string, string> = {
   media: 'media',
   news: 'news',
   notices: 'notices',
+  'health-warnings': 'health-warnings',
   procurement: 'procurement',
   documents: 'documents',
   'clinical-protocols': 'clinical-protocols',
@@ -142,6 +145,7 @@ const collectionPermissionModules: Record<string, string> = {
   specialties: 'specialties',
   doctors: 'doctors',
   schedules: 'schedules',
+  'work-schedules': 'work-schedules',
   appointments: 'appointments',
   services: 'services',
   servicePrices: 'services',
@@ -173,12 +177,12 @@ const collectionPermissionModules: Record<string, string> = {
   'survey-statistics': 'surveys',
   redirects: 'pages',
   'dynamic-modules': 'pages',
-  'content-sections': 'pages',
-  'custom-posts': 'pages',
-  'advanced-techniques': 'pages',
+  'content-sections': 'custom-posts',
+  'custom-posts': 'custom-posts',
+  'advanced-techniques': 'advanced-techniques',
   'our-experts': 'doctors',
-  'scientific-activity-groups': 'news',
-  'scientific-activities': 'news',
+  'scientific-activity-groups': 'scientific-activities',
+  'scientific-activities': 'scientific-activities',
   importJobs: 'services',
 }
 
@@ -187,13 +191,16 @@ const globalPermissionModules: Record<string, string> = {
   navigation: 'navigation',
   footer: 'site-settings',
   'contact-settings': 'site-settings',
+  'social-settings': 'site-settings',
   'theme-settings': 'site-settings',
   homepage: 'homepage',
+  'display-settings': 'homepage',
+  'quick-links-settings': 'homepage',
   'medpro-settings': 'appointments',
   'chatbot-settings': 'chatbot',
   'schedule-settings': 'schedules',
+  'working-hours-settings': 'schedules',
   'appointment-settings': 'appointments',
-  'quick-links-settings': 'homepage',
   'patient-portal-settings': 'site-settings',
   'examination-flow-settings': 'services',
   'inpatient-guide-settings': 'services',
@@ -206,15 +213,40 @@ const globalPermissionModules: Record<string, string> = {
   'feedback-page-settings': 'feedback',
   'article-detail-settings': 'site-settings',
   'vaccination-settings': 'services',
+  'organization-chart': 'departments',
+  'hospital-history': 'pages',
+  'about-page': 'pages',
+  'upload-settings': 'site-settings',
+  'default-media-settings': 'site-settings',
+  'seo-settings': 'site-settings',
 }
 
 const hideWithoutModulePermission = <T extends CollectionConfig | GlobalConfig>(
   config: T,
   moduleName?: string,
 ): T => {
+  const existingHidden = config.admin?.hidden
+
+  // Nhóm quản trị hệ thống cao cấp: Người dùng, Nhật ký và Cấu hình hệ thống chỉ dành cho Admin cấp cao
+  if (config.slug === 'users' || config.slug === 'audit-logs' || config.slug === 'system-settings') {
+    return {
+      ...config,
+      admin: {
+        ...config.admin,
+        hidden: (args: any) => {
+          const alreadyHidden = typeof existingHidden === 'function'
+            ? existingHidden(args)
+            : existingHidden === true
+          const userRole = args.user?.role
+          const isElevated = userRole === 'super-admin' || userRole === 'system-admin' || userRole === 'admin'
+          return alreadyHidden || !isElevated
+        },
+      },
+    }
+  }
+
   if (!moduleName) return config
 
-  const existingHidden = config.admin?.hidden
   return {
     ...config,
     admin: {
@@ -338,11 +370,11 @@ export default buildConfig({
     }
   },
   collections: [
-    Users,
-    ...[Media, News, Notices, Procurement, Documents, ClinicalProtocols,
-      Departments, Specialties, Doctors, Schedules, Appointments, Services, ServicePrices, Vaccinations, VaccinationSchedules, Vaccines, VaccinePrices, Recruitment, Pages, Categories, Feedback, Consultations, FeedbackCategories, FeedbackCases, FeedbackActions, FAQs, Forms, FormSubmissions, ChatbotIntents, ChatbotConversations, ChatbotUnanswered, SurveyTemplates, SurveyTemplateVersions, SurveyQuestions, SurveyCampaigns, SurveyCodes, SurveyResponses, SurveyAnswers, SurveyStatistics, Redirects, DynamicModules, ContentSections, CustomPosts, AdvancedTechniques, OurExperts, ScientificActivityGroups, ScientificActivities, ImportJobs
+    applyCollectionPermissionVisibility(Users),
+    ...[Media, News, Notices, HealthWarnings, Procurement, Documents, ClinicalProtocols,
+      Departments, Specialties, Doctors, Schedules, WorkSchedules, Appointments, Services, ServicePrices, Vaccinations, VaccinationSchedules, Vaccines, VaccinePrices, Recruitment, Pages, Categories, Feedback, Consultations, FeedbackCategories, FeedbackCases, FeedbackActions, FAQs, Forms, FormSubmissions, ChatbotIntents, ChatbotConversations, ChatbotUnanswered, SurveyTemplates, SurveyTemplateVersions, SurveyQuestions, SurveyCampaigns, SurveyCodes, SurveyResponses, SurveyAnswers, SurveyStatistics, Redirects, DynamicModules, ContentSections, CustomPosts, AdvancedTechniques, OurExperts, ScientificActivityGroups, ScientificActivities, ImportJobs
     ].map((collection) => withAudit(applyCollectionPermissionVisibility(collection))),
-    AuditLogs,
+    applyCollectionPermissionVisibility(AuditLogs),
   ],
   globals: [
     SiteSettings, Navigation, Footer, ContactSettings, SocialSettings, MedproSettings, ThemeSettings, Homepage, OrganizationChart, HospitalHistory, AboutPage, WorkingHoursSettings, PatientPortalSettings,

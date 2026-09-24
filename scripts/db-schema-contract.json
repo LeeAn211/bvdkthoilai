@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260922_062_allow_multiple_specialties_for_clinical_protocols",
-  "schemaSha256": "b6edff6f74c81a525d2c872b64e94ddc07675a33b8ed4870f723234c74b0a019"
+  "migrationId": "20260923_072_create_work_schedules",
+  "schemaSha256": "75e64b8895d7b4c333b8bdf05002bcf34e62f5e503c1ac0c125bed20555a9050"
 }

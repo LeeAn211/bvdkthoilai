@@ -20,11 +20,15 @@ export default async function AdminDashboard() {
   const elevated = ['super-admin', 'system-admin', 'admin'].includes(currentUser?.role)
   const can = (moduleName: string, action: 'view' | 'create' = 'view') =>
     hasModulePermission(currentUser, moduleName, action)
+  const canPublish = (moduleName: string) =>
+    elevated || hasModulePermission(currentUser, moduleName, 'publish') || hasModulePermission(currentUser, moduleName, 'approve')
+
   // Truy vấn đồng thời toàn bộ chỉ số thực tế từ cơ sở dữ liệu
   const [
     // 📰 Truyền thông & Văn bản
     news, publishedNews,
     notices, priorityNotices,
+    healthWarnings,
     procurement, openProcurement,
     documents, recruitment, customPosts,
     // 🩺 Chuyên môn & Tổ chức
@@ -32,7 +36,7 @@ export default async function AdminDashboard() {
     doctors, departments, specialties,
     advancedTechniques, scientificActivities, ourExperts,
     // 🏥 Khám bệnh & Dịch vụ Y tế
-    schedules, appointments, pendingAppointments,
+    schedules, workSchedules, appointments, pendingAppointments,
     vaccines, vaccinationSchedules, services, servicePrices,
     // 💬 Chăm sóc & Khảo sát
     feedbackNew, feedbackProcessing, feedbackDone,
@@ -68,6 +72,7 @@ export default async function AdminDashboard() {
     // Truyền thông & Văn bản
     count(payload, 'news'), count(payload, 'news', { _status: { equals: 'published' } }),
     count(payload, 'notices'), count(payload, 'notices', { level: { in: ['important', 'urgent'] } }),
+    count(payload, 'health-warnings'),
     count(payload, 'procurement'), count(payload, 'procurement', { procurementStatus: { in: ['open', 'closing'] } }),
     count(payload, 'documents'), count(payload, 'recruitment'), count(payload, 'custom-posts'),
     // Chuyên môn & Tổ chức
@@ -75,7 +80,7 @@ export default async function AdminDashboard() {
     count(payload, 'doctors'), count(payload, 'departments'), count(payload, 'specialties'),
     count(payload, 'advanced-techniques'), count(payload, 'scientific-activities'), count(payload, 'our-experts'),
     // Khám bệnh & Dịch vụ Y tế
-    count(payload, 'schedules'), count(payload, 'appointments'), count(payload, 'appointments', { status: { in: ['pending', 'new'] } }),
+    count(payload, 'schedules'), count(payload, 'work-schedules'), count(payload, 'appointments'), count(payload, 'appointments', { status: { in: ['pending', 'new'] } }),
     count(payload, 'vaccines'), count(payload, 'vaccinationSchedules'), count(payload, 'services'), count(payload, 'servicePrices'),
     // Chăm sóc & Khảo sát
     count(payload, 'feedback', { status: { equals: 'new' } }),
@@ -199,6 +204,19 @@ export default async function AdminDashboard() {
       icon: 'schedule',
       categoryGroup: 'kham-benh',
       visible: cardVisibility.schedules,
+    },
+    {
+      id: 'work-schedules',
+      title: 'Lịch công tác cơ quan (Ban Giám đốc)',
+      value: workSchedules,
+      badge: 'Lịch tuần BGĐ',
+      badgeType: 'info',
+      subtext: 'Lịch làm việc Ban Giám đốc và Cơ quan bệnh viện',
+      href: '/admin/collections/work-schedules',
+      createHref: '/admin/collections/work-schedules/create',
+      icon: 'schedule',
+      categoryGroup: 'kham-benh',
+      visible: true,
     },
     {
       id: 'appointments',
@@ -346,6 +364,19 @@ export default async function AdminDashboard() {
       icon: 'notice',
       categoryGroup: 'truyen-thong',
       visible: cardVisibility.notices,
+    },
+    {
+      id: 'health-warnings',
+      title: 'Cảnh báo y tế khẩn cấp',
+      value: healthWarnings,
+      badge: 'Dịch bệnh & An toàn',
+      badgeType: 'warning',
+      subtext: 'Khuyến cáo cộng đồng, cảnh báo dịch bệnh & an toàn',
+      href: '/admin/collections/health-warnings',
+      createHref: '/admin/collections/health-warnings/create',
+      icon: 'notice',
+      categoryGroup: 'truyen-thong',
+      visible: true,
     },
     {
       id: 'procurement',
@@ -516,6 +547,7 @@ export default async function AdminDashboard() {
 
   const cardPermissionModules: Record<string, string> = {
     schedules: 'schedules',
+    'work-schedules': 'work-schedules',
     appointments: 'appointments',
     services: 'services',
     'service-prices': 'services',
@@ -523,10 +555,11 @@ export default async function AdminDashboard() {
     'clinical-protocols': 'clinical-protocols',
     doctors: 'doctors',
     departments: 'departments',
-    'advanced-techniques': 'pages',
-    'scientific-activities': 'news',
+    'advanced-techniques': 'advanced-techniques',
+    'scientific-activities': 'scientific-activities',
     news: 'news',
     notices: 'notices',
+    'health-warnings': 'health-warnings',
     procurement: 'procurement',
     documents: 'documents',
     recruitment: 'recruitment',
@@ -542,56 +575,108 @@ export default async function AdminDashboard() {
     .filter((card) => {
       if (card.visible === false) return false
       if (card.id === 'users' || card.id === 'audit-logs') return elevated
-      if (card.id.startsWith('section-')) return can('pages')
+      if (card.id.startsWith('section-')) return can('custom-posts') || can('pages')
       const moduleName = cardPermissionModules[card.id]
       return moduleName ? can(moduleName) : false
     })
     .map((card) => {
-      const moduleName = card.id.startsWith('section-') ? 'pages' : cardPermissionModules[card.id]
+      const moduleName = card.id.startsWith('section-') ? 'custom-posts' : cardPermissionModules[card.id]
       if (!card.createHref || !moduleName || can(moduleName, 'create')) return card
       return { ...card, createHref: undefined }
     })
 
-  // Cơ cấu dữ liệu hệ thống
-  const contentBreakdown = [
-    { id: 'clinical-protocols', label: 'Phác đồ điều trị chuẩn', count: clinicalProtocols, totalPercent: Math.round((clinicalProtocols / maxContent) * 100), color: '#0f766e', href: '/admin/collections/clinical-protocols' },
-    { id: 'news', label: 'Tin tức y tế & hoạt động', count: news, totalPercent: Math.round((news / maxContent) * 100), color: '#0284c7', href: '/admin/collections/news' },
-    { id: 'notices', label: 'Thông báo & Chỉ đạo điều hành', count: notices, totalPercent: Math.round((notices / maxContent) * 100), color: '#059669', href: '/admin/collections/notices' },
-    { id: 'documents', label: 'Văn bản pháp quy & Biểu mẫu', count: documents, totalPercent: Math.round((documents / maxContent) * 100), color: '#0d9488', href: '/admin/collections/documents' },
-    { id: 'procurement', label: 'Gói thầu mua sắm trang thiết bị', count: procurement, totalPercent: Math.round((procurement / maxContent) * 100), color: '#d97706', href: '/admin/collections/procurement' },
-    { id: 'recruitment', label: 'Thông tin tuyển dụng viên chức', count: recruitment, totalPercent: Math.round((recruitment / maxContent) * 100), color: '#8b5cf6', href: '/admin/collections/recruitment' },
+  // Cơ cấu dữ liệu hệ thống (chỉ hiển thị những module người dùng có quyền xem)
+  const rawContentBreakdown = [
+    { id: 'clinical-protocols', module: 'clinical-protocols', label: 'Phác đồ điều trị chuẩn', count: clinicalProtocols, color: '#0f766e', href: '/admin/collections/clinical-protocols' },
+    { id: 'news', module: 'news', label: 'Tin tức y tế & hoạt động', count: news, color: '#0284c7', href: '/admin/collections/news' },
+    { id: 'notices', module: 'notices', label: 'Thông báo & Chỉ đạo điều hành', count: notices, color: '#059669', href: '/admin/collections/notices' },
+    { id: 'documents', module: 'documents', label: 'Văn bản pháp quy & Biểu mẫu', count: documents, color: '#0d9488', href: '/admin/collections/documents' },
+    { id: 'procurement', module: 'procurement', label: 'Gói thầu mua sắm trang thiết bị', count: procurement, color: '#d97706', href: '/admin/collections/procurement' },
+    { id: 'recruitment', module: 'recruitment', label: 'Thông tin tuyển dụng viên chức', count: recruitment, color: '#8b5cf6', href: '/admin/collections/recruitment' },
   ]
+  const allowedContentItems = rawContentBreakdown.filter((item) => elevated || can(item.module))
+  const allowedMaxContent = Math.max(...allowedContentItems.map((item) => item.count), 1)
+  const contentBreakdown = allowedContentItems.map((item) => ({
+    id: item.id,
+    label: item.label,
+    count: item.count,
+    totalPercent: Math.round((item.count / allowedMaxContent) * 100),
+    color: item.color,
+    href: item.href,
+  }))
 
-  // Mock timeline and department statistics for visualization
-  const timelineData = [
-    { month: 'T4', news: Math.max(1, Math.round(news * 0.45)), notices: Math.max(1, Math.round(notices * 0.4)), procurement: Math.max(0, Math.round(procurement * 0.3)), total: Math.max(3, Math.round((news + notices + procurement) * 0.4)) },
-    { month: 'T5', news: Math.max(1, Math.round(news * 0.55)), notices: Math.max(1, Math.round(notices * 0.5)), procurement: Math.max(0, Math.round(procurement * 0.4)), total: Math.max(4, Math.round((news + notices + procurement) * 0.5)) },
-    { month: 'T6', news: Math.max(2, Math.round(news * 0.7)), notices: Math.max(1, Math.round(notices * 0.65)), procurement: Math.max(0, Math.round(procurement * 0.6)), total: Math.max(5, Math.round((news + notices + procurement) * 0.65)) },
-    { month: 'T7', news: Math.max(2, Math.round(news * 0.8)), notices: Math.max(2, Math.round(notices * 0.75)), procurement: Math.max(1, Math.round(procurement * 0.8)), total: Math.max(6, Math.round((news + notices + procurement) * 0.8)) },
-    { month: 'T8', news: Math.max(2, Math.round(news * 0.9)), notices: Math.max(2, Math.round(notices * 0.85)), procurement: Math.max(1, Math.round(procurement * 0.9)), total: Math.max(7, Math.round((news + notices + procurement) * 0.88)) },
-    { month: 'T9', news: news || 5, notices: notices || 4, procurement: procurement || 2, total: (news + notices + procurement) || 11 },
-  ]
+  // Timeline visualization - lọc theo các module được phân quyền
+  const canSeeNews = elevated || can('news')
+  const canSeeNotices = elevated || can('notices')
+  const canSeeProcurement = elevated || can('procurement')
+  const timelineData = (canSeeNews || canSeeNotices || canSeeProcurement) ? [
+    {
+      month: 'T4',
+      news: canSeeNews ? Math.max(1, Math.round(news * 0.45)) : 0,
+      notices: canSeeNotices ? Math.max(1, Math.round(notices * 0.4)) : 0,
+      procurement: canSeeProcurement ? Math.max(0, Math.round(procurement * 0.3)) : 0,
+      total: (canSeeNews ? Math.max(1, Math.round(news * 0.45)) : 0) + (canSeeNotices ? Math.max(1, Math.round(notices * 0.4)) : 0) + (canSeeProcurement ? Math.max(0, Math.round(procurement * 0.3)) : 0),
+    },
+    {
+      month: 'T5',
+      news: canSeeNews ? Math.max(1, Math.round(news * 0.55)) : 0,
+      notices: canSeeNotices ? Math.max(1, Math.round(notices * 0.5)) : 0,
+      procurement: canSeeProcurement ? Math.max(0, Math.round(procurement * 0.4)) : 0,
+      total: (canSeeNews ? Math.max(1, Math.round(news * 0.55)) : 0) + (canSeeNotices ? Math.max(1, Math.round(notices * 0.5)) : 0) + (canSeeProcurement ? Math.max(0, Math.round(procurement * 0.4)) : 0),
+    },
+    {
+      month: 'T6',
+      news: canSeeNews ? Math.max(2, Math.round(news * 0.7)) : 0,
+      notices: canSeeNotices ? Math.max(1, Math.round(notices * 0.65)) : 0,
+      procurement: canSeeProcurement ? Math.max(0, Math.round(procurement * 0.6)) : 0,
+      total: (canSeeNews ? Math.max(2, Math.round(news * 0.7)) : 0) + (canSeeNotices ? Math.max(1, Math.round(notices * 0.65)) : 0) + (canSeeProcurement ? Math.max(0, Math.round(procurement * 0.6)) : 0),
+    },
+    {
+      month: 'T7',
+      news: canSeeNews ? Math.max(2, Math.round(news * 0.8)) : 0,
+      notices: canSeeNotices ? Math.max(2, Math.round(notices * 0.75)) : 0,
+      procurement: canSeeProcurement ? Math.max(1, Math.round(procurement * 0.8)) : 0,
+      total: (canSeeNews ? Math.max(2, Math.round(news * 0.8)) : 0) + (canSeeNotices ? Math.max(2, Math.round(notices * 0.75)) : 0) + (canSeeProcurement ? Math.max(1, Math.round(procurement * 0.8)) : 0),
+    },
+    {
+      month: 'T8',
+      news: canSeeNews ? Math.max(2, Math.round(news * 0.9)) : 0,
+      notices: canSeeNotices ? Math.max(2, Math.round(notices * 0.85)) : 0,
+      procurement: canSeeProcurement ? Math.max(1, Math.round(procurement * 0.9)) : 0,
+      total: (canSeeNews ? Math.max(2, Math.round(news * 0.9)) : 0) + (canSeeNotices ? Math.max(2, Math.round(notices * 0.85)) : 0) + (canSeeProcurement ? Math.max(1, Math.round(procurement * 0.9)) : 0),
+    },
+    {
+      month: 'T9',
+      news: canSeeNews ? (news || 5) : 0,
+      notices: canSeeNotices ? (notices || 4) : 0,
+      procurement: canSeeProcurement ? (procurement || 2) : 0,
+      total: (canSeeNews ? (news || 5) : 0) + (canSeeNotices ? (notices || 4) : 0) + (canSeeProcurement ? (procurement || 2) : 0),
+    },
+  ] : []
 
   // Tính toán số liệu thống kê THỰC TẾ 100% về phân bổ Bác sĩ theo Khoa/Phòng
+  const canSeeStaff = elevated || can('doctors') || can('departments')
   const deptsList = departmentsDocs?.docs || []
   const allDocsList = doctorsDocs?.docs || []
   const deptCountMap = new Map<string, { name: string; count: number }>()
 
-  deptsList.forEach((dept: any) => {
-    deptCountMap.set(String(dept.id), {
-      name: dept.name || 'Khoa/Phòng',
-      count: 0,
+  if (canSeeStaff) {
+    deptsList.forEach((dept: any) => {
+      deptCountMap.set(String(dept.id), {
+        name: dept.name || 'Khoa/Phòng',
+        count: 0,
+      })
     })
-  })
 
-  allDocsList.forEach((doc: any) => {
-    const dId = typeof doc.department === 'object' && doc.department !== null
-      ? String(doc.department.id)
-      : String(doc.department || '')
-    if (dId && deptCountMap.has(dId)) {
-      deptCountMap.get(dId)!.count += 1
-    }
-  })
+    allDocsList.forEach((doc: any) => {
+      const dId = typeof doc.department === 'object' && doc.department !== null
+        ? String(doc.department.id)
+        : String(doc.department || '')
+      if (dId && deptCountMap.has(dId)) {
+        deptCountMap.get(dId)!.count += 1
+      }
+    })
+  }
 
   const palette = ['#0f766e', '#0284c7', '#d97706', '#14b8a6', '#8b5cf6', '#e11d48', '#2563eb', '#059669']
   const sortedDepts = Array.from(deptCountMap.values())
@@ -600,20 +685,22 @@ export default async function AdminDashboard() {
     .slice(0, 6)
 
   const totalCalculatedDocs = Math.max(doctors, 1)
-  const departmentStats = sortedDepts.length > 0
-    ? sortedDepts.map((dept, idx) => ({
-        name: dept.name,
-        doctors: dept.count,
-        percent: Math.round((dept.count / totalCalculatedDocs) * 100),
-        color: palette[idx % palette.length],
-      }))
-    : [
-        { name: 'Khoa Khám bệnh', doctors: Math.round(doctors * 0.35), percent: 35, color: '#0f766e' },
-        { name: 'Khoa Hồi sức cấp cứu', doctors: Math.round(doctors * 0.25), percent: 25, color: '#0284c7' },
-        { name: 'Khoa Ngoại tổng hợp', doctors: Math.round(doctors * 0.20), percent: 20, color: '#d97706' },
-        { name: 'Khoa Nội - Nhi', doctors: Math.round(doctors * 0.15), percent: 15, color: '#14b8a6' },
-        { name: 'Khoa Y học cổ truyền', doctors: Math.max(1, doctors - Math.round(doctors * 0.95)), percent: 5, color: '#8b5cf6' },
-      ]
+  const departmentStats = canSeeStaff
+    ? (sortedDepts.length > 0
+        ? sortedDepts.map((dept, idx) => ({
+            name: dept.name,
+            doctors: dept.count,
+            percent: Math.round((dept.count / totalCalculatedDocs) * 100),
+            color: palette[idx % palette.length],
+          }))
+        : [
+            { name: 'Khoa Khám bệnh', doctors: Math.round(doctors * 0.35), percent: 35, color: '#0f766e' },
+            { name: 'Khoa Hồi sức cấp cứu', doctors: Math.round(doctors * 0.25), percent: 25, color: '#0284c7' },
+            { name: 'Khoa Ngoại tổng hợp', doctors: Math.round(doctors * 0.20), percent: 20, color: '#d97706' },
+            { name: 'Khoa Nội - Nhi', doctors: Math.round(doctors * 0.15), percent: 15, color: '#14b8a6' },
+            { name: 'Khoa Y học cổ truyền', doctors: Math.max(1, doctors - Math.round(doctors * 0.95)), percent: 5, color: '#8b5cf6' },
+          ])
+    : []
 
   const scoreToPercent = (raw: unknown) => {
     const score = Number(raw)
@@ -664,20 +751,39 @@ export default async function AdminDashboard() {
   const protocolPalette = ['#0f766e', '#0284c7', '#d97706', '#8b5cf6', '#14b8a6', '#e11d48', '#2563eb', '#059669']
   const protocolDocs = clinicalProtocolMetrics.docs as any[]
   const protocolGroupMap = new Map<string, { name: string; count: number }>()
+
   for (const protocol of protocolDocs) {
-    const specialty = typeof protocol.specialty === 'object' && protocol.specialty ? protocol.specialty : null
-    const key = specialty ? String(specialty.id) : 'unassigned'
-    const name = specialty?.name || specialty?.title || 'Chưa phân chuyên khoa'
-    const current = protocolGroupMap.get(key) || { name, count: 0 }
-    current.count += 1
-    protocolGroupMap.set(key, current)
+    const rawSpecialty = protocol.specialty
+    const specialtiesList = Array.isArray(rawSpecialty)
+      ? rawSpecialty.filter(Boolean)
+      : rawSpecialty && typeof rawSpecialty === 'object'
+        ? [rawSpecialty]
+        : []
+
+    if (specialtiesList.length === 0) {
+      const key = 'unassigned'
+      const current = protocolGroupMap.get(key) || { name: 'Chưa phân chuyên khoa', count: 0 }
+      current.count += 1
+      protocolGroupMap.set(key, current)
+    } else {
+      for (const spec of specialtiesList) {
+        const specObj = typeof spec === 'object' ? spec : null
+        const key = specObj ? String(specObj.id) : String(spec)
+        const name = specObj?.name || specObj?.title || 'Chuyên khoa khác'
+        const current = protocolGroupMap.get(key) || { name, count: 0 }
+        current.count += 1
+        protocolGroupMap.set(key, current)
+      }
+    }
   }
+
   const protocolTotal = protocolDocs.length
+  const totalAssignedCount = Array.from(protocolGroupMap.values()).reduce((sum, g) => sum + g.count, 0) || 1
   const protocolGroups = Array.from(protocolGroupMap.values())
     .sort((a, b) => b.count - a.count)
     .map((group, index) => ({
       ...group,
-      percent: protocolTotal ? Number(((group.count / protocolTotal) * 100).toFixed(1)) : 0,
+      percent: protocolTotal ? Number(((group.count / totalAssignedCount) * 100).toFixed(1)) : 0,
       color: protocolPalette[index % protocolPalette.length],
       tag: group.name,
     }))
@@ -760,16 +866,17 @@ export default async function AdminDashboard() {
     })),
   }
 
-  const initialCharts = {
-    showVisitStatsChart: dSettings.showVisitStatsChart !== false,
-    showAreaChart: dSettings.showAreaChart !== false,
-    showDepartmentBar: dSettings.showDepartmentBar !== false,
-    showSatisfactionGauge: dSettings.showSatisfactionGauge !== false,
-    showSlaStats: dSettings.showSlaStats !== false,
-    showWeeklyWorkload: dSettings.showWeeklyWorkload !== false,
-    showProtocolDistribution: dSettings.showProtocolDistribution !== false,
-    showResourceStructure: dSettings.showResourceStructure !== false,
-    showFeedbackDonut: dSettings.showFeedbackDonut !== false,
+  // Cấu hình hiển thị biểu đồ theo đúng phân quyền của tài khoản
+  const userCharts = {
+    showVisitStatsChart: (elevated || can('pages') || can('news')) && dSettings.showVisitStatsChart !== false,
+    showAreaChart: (elevated || can('news') || can('notices') || can('procurement')) && dSettings.showAreaChart !== false,
+    showDepartmentBar: (elevated || can('doctors') || can('departments')) && dSettings.showDepartmentBar !== false,
+    showSatisfactionGauge: (elevated || can('surveys')) && dSettings.showSatisfactionGauge !== false,
+    showSlaStats: (elevated || can('feedback')) && dSettings.showSlaStats !== false,
+    showWeeklyWorkload: (elevated || can('appointments')) && dSettings.showWeeklyWorkload !== false,
+    showProtocolDistribution: (elevated || can('clinical-protocols')) && dSettings.showProtocolDistribution !== false,
+    showResourceStructure: (elevated || allowedContentItems.length >= 2) && dSettings.showResourceStructure !== false,
+    showFeedbackDonut: (elevated || can('feedback')) && dSettings.showFeedbackDonut !== false,
   }
 
   // Live Metrics Command Bar
@@ -813,10 +920,7 @@ export default async function AdminDashboard() {
     </div>
   )
 
-  // Tổng hợp bài viết chờ duyệt xuất bản
-  const totalSubmitted = submittedNews + submittedNotices + submittedProcurement + submittedRecruitment + submittedCustomPosts + submittedScientific
-
-  // Tổng hợp tất cả các mục cần xử lý / phản hồi gấp cho người quản lý
+  // Tổng hợp tất cả các mục cần xử lý / phản hồi gấp cho người quản trị theo đúng quyền
   const pendingItems: Array<{
     id: string | number
     title: string
@@ -827,73 +931,110 @@ export default async function AdminDashboard() {
     updatedAt?: string
   }> = []
 
-  // 1. Phản hồi người bệnh (Góp ý / Khiếu nại)
-  ;(pendingFeedbackDocs?.docs || []).forEach((doc: any) => {
-    const isComplaint = doc.type === 'Khiếu nại'
-    pendingItems.push({
-      id: doc.id,
-      title: `${doc.type || 'Phản ánh'}: ${doc.name || 'Người bệnh'} - "${(doc.message || '').slice(0, 45)}${(doc.message || '').length > 45 ? '...' : ''}"`,
-      collection: 'feedback',
-      collectionLabel: isComplaint ? 'Khiếu nại' : 'Góp ý người bệnh',
-      actionLabel: 'Xử lý ngay →',
-      severity: isComplaint ? 'danger' : 'urgent',
-      updatedAt: doc.createdAt || doc.updatedAt,
+  // 1. Phản hồi người bệnh (Góp ý / Khiếu nại) - Chỉ hiện khi có quyền xem/xử lý feedback
+  const canSeeFeedback = elevated || can('feedback')
+  if (canSeeFeedback) {
+    ;(pendingFeedbackDocs?.docs || []).forEach((doc: any) => {
+      const isComplaint = doc.type === 'Khiếu nại'
+      pendingItems.push({
+        id: doc.id,
+        title: `${doc.type || 'Phản ánh'}: ${doc.name || 'Người bệnh'} - "${(doc.message || '').slice(0, 45)}${(doc.message || '').length > 45 ? '...' : ''}"`,
+        collection: 'feedback',
+        collectionLabel: isComplaint ? 'Khiếu nại' : 'Góp ý người bệnh',
+        actionLabel: 'Xử lý ngay →',
+        severity: isComplaint ? 'danger' : 'urgent',
+        updatedAt: doc.createdAt || doc.updatedAt,
+      })
     })
-  })
+  }
 
-  // 2. Đặt lịch khám tại cơ sở (Chờ xác nhận)
-  ;(pendingAppointmentDocs?.docs || []).forEach((doc: any) => {
-    pendingItems.push({
-      id: doc.id,
-      title: `Hẹn khám: ${doc.fullName || 'Bệnh nhân'} (${doc.phone || ''}) - ${doc.specialtyTitle || 'Khám bệnh'}`,
-      collection: 'appointments',
-      collectionLabel: 'Đặt lịch khám',
-      actionLabel: 'Gọi xác nhận →',
-      severity: 'urgent',
-      updatedAt: doc.createdAt || doc.updatedAt,
+  // 2. Đặt lịch khám tại cơ sở (Chờ xác nhận) - Chỉ hiện khi có quyền xem/xử lý appointments
+  const canSeeAppointments = elevated || can('appointments')
+  if (canSeeAppointments) {
+    ;(pendingAppointmentDocs?.docs || []).forEach((doc: any) => {
+      pendingItems.push({
+        id: doc.id,
+        title: `Hẹn khám: ${doc.fullName || 'Bệnh nhân'} (${doc.phone || ''}) - ${doc.specialtyTitle || 'Khám bệnh'}`,
+        collection: 'appointments',
+        collectionLabel: 'Đặt lịch khám',
+        actionLabel: 'Gọi xác nhận →',
+        severity: 'urgent',
+        updatedAt: doc.createdAt || doc.updatedAt,
+      })
     })
-  })
+  }
 
-  // 3. Tư vấn sức khỏe trực tuyến (Chờ giải đáp)
-  ;(pendingConsultationDocs?.docs || []).forEach((doc: any) => {
-    pendingItems.push({
-      id: doc.id,
-      title: `Tư vấn: "${(doc.question || '').slice(0, 50)}${(doc.question || '').length > 50 ? '...' : ''}"`,
-      collection: 'consultations',
-      collectionLabel: 'Tư vấn trực tuyến',
-      actionLabel: 'Trả lời ngay →',
-      severity: 'info',
-      updatedAt: doc.createdAt || doc.updatedAt,
+  // 3. Tư vấn sức khỏe trực tuyến (Chờ giải đáp) - Chỉ hiện khi có quyền xem/xử lý consultations
+  const canSeeConsultations = elevated || can('consultations')
+  if (canSeeConsultations) {
+    ;(pendingConsultationDocs?.docs || []).forEach((doc: any) => {
+      pendingItems.push({
+        id: doc.id,
+        title: `Tư vấn: "${(doc.question || '').slice(0, 50)}${(doc.question || '').length > 50 ? '...' : ''}"`,
+        collection: 'consultations',
+        collectionLabel: 'Tư vấn trực tuyến',
+        actionLabel: 'Trả lời ngay →',
+        severity: 'info',
+        updatedAt: doc.createdAt || doc.updatedAt,
+      })
     })
-  })
+  }
 
-  // 4. Bài viết gửi duyệt xuất bản
-  ;(submittedNewsDocs?.docs || []).forEach((doc: any) => {
-    pendingItems.push({ id: doc.id, title: doc.title || 'Tin tức chưa đặt tiêu đề', collection: 'news', collectionLabel: 'Tin tức', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
-  })
-  ;(submittedNoticesDocs?.docs || []).forEach((doc: any) => {
-    pendingItems.push({ id: doc.id, title: doc.title || 'Thông báo chưa đặt tiêu đề', collection: 'notices', collectionLabel: 'Thông báo', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
-  })
-  ;(submittedProcurementDocs?.docs || []).forEach((doc: any) => {
-    pendingItems.push({ id: doc.id, title: doc.title || 'Gói thầu chưa đặt tiêu đề', collection: 'procurement', collectionLabel: 'Đấu thầu', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
-  })
-  ;(submittedRecruitmentDocs?.docs || []).forEach((doc: any) => {
-    pendingItems.push({ id: doc.id, title: doc.title || 'Tuyển dụng chưa đặt tiêu đề', collection: 'recruitment', collectionLabel: 'Tuyển dụng', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
-  })
-  ;(submittedCustomPostsDocs?.docs || []).forEach((doc: any) => {
-    pendingItems.push({ id: doc.id, title: doc.title || 'Bài viết chuyên đề', collection: 'custom-posts', collectionLabel: 'Chuyên đề', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
-  })
-  ;(submittedScientificDocs?.docs || []).forEach((doc: any) => {
-    pendingItems.push({ id: doc.id, title: doc.title || 'Sinh hoạt KH', collection: 'scientific-activities', collectionLabel: 'Sinh hoạt KH', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
-  })
+  // 4. Bài viết gửi duyệt xuất bản - CHỈ HIỂN THỊ KHI CÓ QUYỀN DUYỆT (approve / publish / elevated) CỦA ĐÚNG MODULE ĐÓ
+  let userSubmittedCount = 0
 
-  // Đếm tổng số việc cần xử lý / kiểm tra nhanh
-  const totalActionNeeded = totalSubmitted + feedbackNew + pendingAppointments + consultations
+  if (canPublish('news')) {
+    userSubmittedCount += submittedNews
+    ;(submittedNewsDocs?.docs || []).forEach((doc: any) => {
+      pendingItems.push({ id: doc.id, title: doc.title || 'Tin tức chưa đặt tiêu đề', collection: 'news', collectionLabel: 'Tin tức', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
+    })
+  }
+
+  if (canPublish('notices')) {
+    userSubmittedCount += submittedNotices
+    ;(submittedNoticesDocs?.docs || []).forEach((doc: any) => {
+      pendingItems.push({ id: doc.id, title: doc.title || 'Thông báo chưa đặt tiêu đề', collection: 'notices', collectionLabel: 'Thông báo', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
+    })
+  }
+
+  if (canPublish('procurement')) {
+    userSubmittedCount += submittedProcurement
+    ;(submittedProcurementDocs?.docs || []).forEach((doc: any) => {
+      pendingItems.push({ id: doc.id, title: doc.title || 'Gói thầu chưa đặt tiêu đề', collection: 'procurement', collectionLabel: 'Đấu thầu', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
+    })
+  }
+
+  if (canPublish('recruitment')) {
+    userSubmittedCount += submittedRecruitment
+    ;(submittedRecruitmentDocs?.docs || []).forEach((doc: any) => {
+      pendingItems.push({ id: doc.id, title: doc.title || 'Tuyển dụng chưa đặt tiêu đề', collection: 'recruitment', collectionLabel: 'Tuyển dụng', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
+    })
+  }
+
+  if (canPublish('custom-posts')) {
+    userSubmittedCount += submittedCustomPosts
+    ;(submittedCustomPostsDocs?.docs || []).forEach((doc: any) => {
+      pendingItems.push({ id: doc.id, title: doc.title || 'Bài viết chuyên đề', collection: 'custom-posts', collectionLabel: 'Chuyên đề', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
+    })
+  }
+
+  if (canPublish('scientific-activities')) {
+    userSubmittedCount += submittedScientific
+    ;(submittedScientificDocs?.docs || []).forEach((doc: any) => {
+      pendingItems.push({ id: doc.id, title: doc.title || 'Sinh hoạt KH', collection: 'scientific-activities', collectionLabel: 'Sinh hoạt KH', actionLabel: 'Duyệt bài →', severity: 'normal', updatedAt: doc.updatedAt })
+    })
+  }
+
+  // Đếm tổng số việc cần xử lý / kiểm tra nhanh theo quyền của tài khoản
+  const userFeedbackNew = canSeeFeedback ? feedbackNew : 0
+  const userPendingAppointments = canSeeAppointments ? pendingAppointments : 0
+  const userConsultations = canSeeConsultations ? consultations : 0
+  const totalActionNeeded = userSubmittedCount + userFeedbackNew + userPendingAppointments + userConsultations
 
   // Sắp xếp các mục theo thứ tự thời gian mới nhất
   pendingItems.sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime())
 
-  // ⚠️ Khối cảnh báo & Kiểm tra nhanh (Đặt trên đầu trang cho Ban Quản lý / Lãnh đạo)
+  // ⚠️ Khối cảnh báo & Tiếp nhận xử lý nhanh (chỉ hiện khi có việc cần phản hồi/duyệt thuộc quyền của user)
   const pendingTriageNode = totalActionNeeded > 0 ? (
     <div key="pending-triage-banner-node" className={styles.pendingTriageBanner}>
       <div className={styles.pendingTriageHeader}>
@@ -906,33 +1047,33 @@ export default async function AdminDashboard() {
               Trung tâm Cảnh báo & Tiếp nhận Xử lý nhanh ({totalActionNeeded} việc cần phản hồi)
             </h2>
             <p className={styles.pendingTriageSubtext}>
-              {totalSubmitted > 0 ? `Có ${totalSubmitted} bài viết chờ duyệt · ` : ''}
-              {pendingAppointments > 0 ? `${pendingAppointments} lịch khám chờ xác nhận · ` : ''}
-              {feedbackNew > 0 ? `${feedbackNew} phản hồi/khiếu nại mới · ` : ''}
-              {consultations > 0 ? `${consultations} câu hỏi tư vấn y tế · ` : ''}
+              {userSubmittedCount > 0 ? `Có ${userSubmittedCount} bài viết chờ duyệt · ` : ''}
+              {userPendingAppointments > 0 ? `${userPendingAppointments} lịch khám chờ xác nhận · ` : ''}
+              {userFeedbackNew > 0 ? `${userFeedbackNew} phản hồi/khiếu nại mới · ` : ''}
+              {userConsultations > 0 ? `${userConsultations} câu hỏi tư vấn y tế · ` : ''}
               Ban quản lý vui lòng kiểm tra và xử lý kịp thời.
             </p>
           </div>
         </div>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {totalSubmitted > 0 && (
+          {userSubmittedCount > 0 && (
             <span className={styles.pendingTriageBadge}>
-              {totalSubmitted} bài chờ duyệt
+              {userSubmittedCount} bài chờ duyệt
             </span>
           )}
-          {pendingAppointments > 0 && (
+          {userPendingAppointments > 0 && (
             <span className={styles.pendingTriageBadge} style={{ background: '#fff7ed', borderColor: '#fed7aa', color: '#ea580c' }}>
-              {pendingAppointments} hẹn khám mới
+              {userPendingAppointments} hẹn khám mới
             </span>
           )}
-          {feedbackNew > 0 && (
+          {userFeedbackNew > 0 && (
             <span className={styles.pendingTriageBadge} style={{ background: '#fef2f2', borderColor: '#fecaca', color: '#dc2626' }}>
-              {feedbackNew} phản hồi mới
+              {userFeedbackNew} phản hồi mới
             </span>
           )}
-          {consultations > 0 && (
+          {userConsultations > 0 && (
             <span className={styles.pendingTriageBadge} style={{ background: '#f0f9ff', borderColor: '#bae6fd', color: '#0284c7' }}>
-              {consultations} câu hỏi tư vấn
+              {userConsultations} câu hỏi tư vấn
             </span>
           )}
         </div>
@@ -973,85 +1114,93 @@ export default async function AdminDashboard() {
     </div>
   ) : null
 
+  // Bento Activity Feeds & Quick Action Links theo quyền
+  const canSeeProtocols = elevated || can('clinical-protocols')
   const bentoContentNode = (
     <div key="bento-content-wrapper">
       {/* 5. Linear Activity Feeds Grid */}
-      <div className={styles.bentoGrid}>
-        {/* Feed 1: Phác đồ điều trị & Văn bản mới cập nhật */}
-        <div className={styles.bentoCard}>
-          <div className={styles.cardHeading}>
-            <div>
-              <span className={styles.cardCategory}>CHUYÊN MÔN Y TẾ</span>
-              <h2 className={styles.cardTitle}>Phác đồ điều trị vừa cập nhật</h2>
-            </div>
-            <Link href="/admin/collections/clinical-protocols" className={styles.cardLink}>Xem tất cả →</Link>
-          </div>
-
-          <div className={styles.activityFeed}>
-            {(latestProtocols.docs as any[]).length === 0 && (
-              <div className={styles.emptyFeed}>Chưa có phác đồ điều trị nào trong hệ thống.</div>
-            )}
-            {(latestProtocols.docs as any[]).map((item) => (
-              <Link href={`/admin/collections/clinical-protocols/${item.id}`} key={item.id} className={styles.feedRow}>
-                <div className={styles.feedAvatar}>
-                  <DashboardGlyph name="stethoscope" />
+      {(canSeeProtocols || canSeeFeedback) && (
+        <div className={styles.bentoGrid}>
+          {/* Feed 1: Phác đồ điều trị & Văn bản mới cập nhật (Chỉ hiện khi có quyền clinical-protocols) */}
+          {canSeeProtocols && (
+            <div className={styles.bentoCard}>
+              <div className={styles.cardHeading}>
+                <div>
+                  <span className={styles.cardCategory}>CHUYÊN MÔN Y TẾ</span>
+                  <h2 className={styles.cardTitle}>Phác đồ điều trị vừa cập nhật</h2>
                 </div>
-                <div className={styles.feedBody}>
-                  <span className={styles.feedTitle}>{item.title || 'Chưa đặt tiêu đề'}</span>
-                  <div className={styles.feedSub}>
-                    <span>{item.protocolNumber ? `Số ${item.protocolNumber}` : 'Phác đồ điều trị'}</span>
-                    <span>·</span>
-                    <span>{formatDate(item.updatedAt)}</span>
-                  </div>
-                </div>
-                <span className={`${styles.statusBadge} ${item.status === 'effective' ? styles.statusPublished : styles.statusDraft}`}>
-                  {item.status === 'effective' ? 'Hiệu lực' : 'Đang dự thảo'}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Feed 2: Ý kiến người bệnh chờ xử lý */}
-        <div className={styles.bentoCard}>
-          <div className={styles.cardHeading}>
-            <div>
-              <span className={styles.cardCategory}>HỘP THƯ GÓP Ý</span>
-              <h2 className={styles.cardTitle}>Ý kiến người bệnh chờ xử lý</h2>
-            </div>
-            <Link href="/admin/collections/feedback" className={styles.cardLink}>Xem tất cả →</Link>
-          </div>
-
-          <div className={styles.activityFeed}>
-            {(latestFeedback.docs as any[]).length === 0 && (
-              <div className={styles.emptyFeed}>
-                <span className={styles.emptyIcon}>✓</span>
-                <span>Hộp thư đang trống. Tất cả ý kiến đã được xử lý hoàn tất!</span>
+                <Link href="/admin/collections/clinical-protocols" className={styles.cardLink}>Xem tất cả →</Link>
               </div>
-            )}
-            {(latestFeedback.docs as any[]).map((item) => (
-              <Link href={`/admin/collections/feedback/${item.id}`} key={item.id} className={styles.feedRow}>
-                <div className={`${styles.feedAvatar} ${styles.avatarUser}`}>
-                  {item.name?.slice(0, 1)?.toUpperCase() || 'U'}
-                </div>
-                <div className={styles.feedBody}>
-                  <span className={styles.feedTitle}>{item.name || 'Người gửi ẩn danh'}</span>
-                  <div className={styles.feedSub}>
-                    <span>{item.type || 'Góp ý'}</span>
-                    <span>·</span>
-                    <span>{formatDate(item.createdAt)}</span>
-                  </div>
-                </div>
-                <span className={`${styles.statusBadge} ${item.status === 'new' ? styles.statusNew : styles.statusProcessing}`}>
-                  {item.status === 'new' ? 'Mới gửi' : 'Đang xử lý'}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
 
-      {/* 5. Quick Launch Command Grid */}
+              <div className={styles.activityFeed}>
+                {(latestProtocols.docs as any[]).length === 0 && (
+                  <div className={styles.emptyFeed}>Chưa có phác đồ điều trị nào trong hệ thống.</div>
+                )}
+                {(latestProtocols.docs as any[]).map((item) => (
+                  <Link href={`/admin/collections/clinical-protocols/${item.id}`} key={item.id} className={styles.feedRow}>
+                    <div className={styles.feedAvatar}>
+                      <DashboardGlyph name="stethoscope" />
+                    </div>
+                    <div className={styles.feedBody}>
+                      <span className={styles.feedTitle}>{item.title || 'Chưa đặt tiêu đề'}</span>
+                      <div className={styles.feedSub}>
+                        <span>{item.protocolNumber ? `Số ${item.protocolNumber}` : 'Phác đồ điều trị'}</span>
+                        <span>·</span>
+                        <span>{formatDate(item.updatedAt)}</span>
+                      </div>
+                    </div>
+                    <span className={`${styles.statusBadge} ${item.status === 'effective' ? styles.statusPublished : styles.statusDraft}`}>
+                      {item.status === 'effective' ? 'Hiệu lực' : 'Đang dự thảo'}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Feed 2: Ý kiến người bệnh chờ xử lý (Chỉ hiện khi có quyền feedback) */}
+          {canSeeFeedback && (
+            <div className={styles.bentoCard}>
+              <div className={styles.cardHeading}>
+                <div>
+                  <span className={styles.cardCategory}>HỘP THƯ GÓP Ý</span>
+                  <h2 className={styles.cardTitle}>Ý kiến người bệnh chờ xử lý</h2>
+                </div>
+                <Link href="/admin/collections/feedback" className={styles.cardLink}>Xem tất cả →</Link>
+              </div>
+
+              <div className={styles.activityFeed}>
+                {(latestFeedback.docs as any[]).length === 0 && (
+                  <div className={styles.emptyFeed}>
+                    <span className={styles.emptyIcon}>✓</span>
+                    <span>Hộp thư đang trống. Tất cả ý kiến đã được xử lý hoàn tất!</span>
+                  </div>
+                )}
+                {(latestFeedback.docs as any[]).map((item) => (
+                  <Link href={`/admin/collections/feedback/${item.id}`} key={item.id} className={styles.feedRow}>
+                    <div className={`${styles.feedAvatar} ${styles.avatarUser}`}>
+                      {item.name?.slice(0, 1)?.toUpperCase() || 'U'}
+                    </div>
+                    <div className={styles.feedBody}>
+                      <span className={styles.feedTitle}>{item.name || 'Người gửi ẩn danh'}</span>
+                      <div className={styles.feedSub}>
+                        <span>{item.type || 'Góp ý'}</span>
+                        <span>·</span>
+                        <span>{formatDate(item.createdAt)}</span>
+                      </div>
+                    </div>
+                    <span className={`${styles.statusBadge} ${item.status === 'new' ? styles.statusNew : styles.statusProcessing}`}>
+                      {item.status === 'new' ? 'Mới gửi' : 'Đang xử lý'}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 5. Quick Launch Command Grid - chỉ hiện các phím tắt mà user có quyền thao tác */}
       <section className={styles.quickCommandsSection}>
         <div className={styles.quickCommandsHead}>
           <span className={styles.cardCategory}>TRUY CẬP TÁC VỤ NHANH</span>
@@ -1059,56 +1208,83 @@ export default async function AdminDashboard() {
         </div>
 
         <div className={styles.commandsGrid}>
-          <Link href="/admin/collections/clinical-protocols/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="stethoscope" />
-            <span>Thêm Phác đồ điều trị</span>
-            <kbd className={styles.shortcutKey}>⌘P</kbd>
-          </Link>
-          <Link href="/admin/collections/doctors/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="people" />
-            <span>Thêm Bác sĩ mới</span>
-            <kbd className={styles.shortcutKey}>⌘B</kbd>
-          </Link>
-          <Link href="/admin/collections/schedules/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="schedule" />
-            <span>Cập nhật Lịch khám</span>
-            <kbd className={styles.shortcutKey}>⌘L</kbd>
-          </Link>
-          <Link href="/admin/collections/news/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="news" />
-            <span>Đăng bài Tin tức</span>
-            <kbd className={styles.shortcutKey}>⌘N</kbd>
-          </Link>
-          <Link href="/admin/collections/notices/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="notice" />
-            <span>Tạo Thông báo khẩn</span>
-            <kbd className={styles.shortcutKey}>⌘T</kbd>
-          </Link>
-          <Link href="/admin/collections/procurement/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="procurement" />
-            <span>Tạo Gói thầu</span>
-            <kbd className={styles.shortcutKey}>⌘G</kbd>
-          </Link>
-          <Link href="/admin/collections/documents/create" className={styles.commandActionBtn}>
-            <DashboardGlyph name="document" />
-            <span>Đăng tải Văn bản</span>
-            <kbd className={styles.shortcutKey}>⌘D</kbd>
-          </Link>
-          <Link href="/admin/collections/appointments" className={styles.commandActionBtn}>
-            <DashboardGlyph name="schedule" />
-            <span>Duyệt lịch đặt khám</span>
-            <kbd className={styles.shortcutKey}>⌘A</kbd>
-          </Link>
-          <Link href="/admin/collections/feedback" className={styles.commandActionBtn}>
-            <DashboardGlyph name="feedback" />
-            <span>Hộp thư phản ánh ({feedbackNew})</span>
-            <kbd className={styles.shortcutKey}>⌘F</kbd>
-          </Link>
-          <Link href="/admin/globals/homepage" className={styles.commandActionBtn}>
-            <DashboardGlyph name="chart" />
-            <span>Cấu hình Trang chủ</span>
-            <kbd className={styles.shortcutKey}>⌘H</kbd>
-          </Link>
+          {(elevated || can('clinical-protocols', 'create')) && (
+            <Link href="/admin/collections/clinical-protocols/create" className={styles.commandActionBtn}>
+              <DashboardGlyph name="stethoscope" />
+              <span>Thêm Phác đồ điều trị</span>
+              <kbd className={styles.shortcutKey}>⌘P</kbd>
+            </Link>
+          )}
+          {(elevated || can('doctors', 'create')) && (
+            <Link href="/admin/collections/doctors/create" className={styles.commandActionBtn}>
+              <DashboardGlyph name="people" />
+              <span>Thêm Bác sĩ mới</span>
+              <kbd className={styles.shortcutKey}>⌘B</kbd>
+            </Link>
+          )}
+          {(elevated || can('schedules', 'create')) && (
+            <Link href="/admin/collections/schedules/create" className={styles.commandActionBtn}>
+              <DashboardGlyph name="schedule" />
+              <span>Cập nhật Lịch khám</span>
+              <kbd className={styles.shortcutKey}>⌘L</kbd>
+            </Link>
+          )}
+          {(elevated || can('work-schedules', 'create')) && (
+            <Link href="/admin/collections/work-schedules/create" className={styles.commandActionBtn}>
+              <DashboardGlyph name="schedule" />
+              <span>Tạo Lịch công tác tuần</span>
+              <kbd className={styles.shortcutKey}>⌘W</kbd>
+            </Link>
+          )}
+          {(elevated || can('news', 'create')) && (
+            <Link href="/admin/collections/news/create" className={styles.commandActionBtn}>
+              <DashboardGlyph name="news" />
+              <span>Đăng bài Tin tức</span>
+              <kbd className={styles.shortcutKey}>⌘N</kbd>
+            </Link>
+          )}
+          {(elevated || can('notices', 'create')) && (
+            <Link href="/admin/collections/notices/create" className={styles.commandActionBtn}>
+              <DashboardGlyph name="notice" />
+              <span>Tạo Thông báo khẩn</span>
+              <kbd className={styles.shortcutKey}>⌘T</kbd>
+            </Link>
+          )}
+          {(elevated || can('procurement', 'create')) && (
+            <Link href="/admin/collections/procurement/create" className={styles.commandActionBtn}>
+              <DashboardGlyph name="procurement" />
+              <span>Tạo Gói thầu</span>
+              <kbd className={styles.shortcutKey}>⌘G</kbd>
+            </Link>
+          )}
+          {(elevated || can('documents', 'create')) && (
+            <Link href="/admin/collections/documents/create" className={styles.commandActionBtn}>
+              <DashboardGlyph name="document" />
+              <span>Đăng tải Văn bản</span>
+              <kbd className={styles.shortcutKey}>⌘D</kbd>
+            </Link>
+          )}
+          {(elevated || can('appointments')) && (
+            <Link href="/admin/collections/appointments" className={styles.commandActionBtn}>
+              <DashboardGlyph name="schedule" />
+              <span>Duyệt lịch đặt khám</span>
+              <kbd className={styles.shortcutKey}>⌘A</kbd>
+            </Link>
+          )}
+          {(elevated || can('feedback')) && (
+            <Link href="/admin/collections/feedback" className={styles.commandActionBtn}>
+              <DashboardGlyph name="feedback" />
+              <span>Hộp thư phản ánh ({feedbackNew})</span>
+              <kbd className={styles.shortcutKey}>⌘F</kbd>
+            </Link>
+          )}
+          {elevated && (
+            <Link href="/admin/globals/homepage" className={styles.commandActionBtn}>
+              <DashboardGlyph name="chart" />
+              <span>Cấu hình Trang chủ</span>
+              <kbd className={styles.shortcutKey}>⌘H</kbd>
+            </Link>
+          )}
         </div>
       </section>
     </div>
@@ -1117,11 +1293,11 @@ export default async function AdminDashboard() {
   return (
     <AdminDashboardClient
       initialMetricCards={initialMetricCards}
-      initialCharts={elevated ? initialCharts : Object.fromEntries(Object.keys(initialCharts).map((key) => [key, false])) as typeof initialCharts}
-      timelineData={elevated ? timelineData : []}
-      departmentStats={elevated ? departmentStats : []}
-      satisfactionScore={elevated ? satisfactionScore : 0}
-      satisfactionCriteria={elevated ? satisfactionCriteria : []}
+      initialCharts={userCharts}
+      timelineData={timelineData}
+      departmentStats={departmentStats}
+      satisfactionScore={can('surveys') ? satisfactionScore : 0}
+      satisfactionCriteria={can('surveys') ? satisfactionCriteria : []}
       surveyResponses={can('surveys') ? realSurveyScores.length : 0}
       slaResolvedPercent={can('feedback') ? slaResolvedPercent : 0}
       feedbackAvgHours={can('feedback') ? feedbackAvgHours : 0}
@@ -1131,18 +1307,20 @@ export default async function AdminDashboard() {
       effectiveProtocols={can('clinical-protocols') ? effectiveProtocolCount : 0}
       workloadData={can('appointments') ? workloadData : []}
       workloadTimeLabel={can('appointments') ? busiestTimeSlot : 'Không có quyền xem'}
-      contentBreakdown={elevated ? contentBreakdown : []}
-      totalContent={elevated ? totalContent : 0}
+      contentBreakdown={contentBreakdown}
+      totalContent={elevated ? totalContent : allowedContentItems.reduce((sum, item) => sum + item.count, 0)}
       totalFeedback={can('feedback') ? operationalFeedbackTotal : 0}
       feedbackNew={can('feedback') ? operationalFeedbackNew : 0}
       feedbackProcessing={can('feedback') ? operationalFeedbackProcessing : 0}
       feedbackDone={can('feedback') ? operationalFeedbackDone : 0}
       feedbackDonePercent={can('feedback') && operationalFeedbackTotal ? `${Math.round((operationalFeedbackDone / operationalFeedbackTotal) * 100)}%` : '0%'}
       feedbackProcessingPercent={can('feedback') && operationalFeedbackTotal ? `${Math.round((operationalFeedbackProcessing / operationalFeedbackTotal) * 100)}%` : '0%'}
-      visitStatsData={elevated ? visitStatsData : undefined}
+      visitStatsData={(elevated || can('pages') || can('news')) ? visitStatsData : undefined}
+      canCreateNews={elevated || can('news', 'create')}
+      canManageSurveys={elevated || can('surveys')}
       accountSummaryNode={<AdminAccountSummary key="account-summary-node" />}
       commandBarNode={elevated ? commandBarNode : null}
-      bentoContentNode={elevated ? bentoContentNode : null}
+      bentoContentNode={bentoContentNode}
       pendingTriageNode={pendingTriageNode}
     />
   )

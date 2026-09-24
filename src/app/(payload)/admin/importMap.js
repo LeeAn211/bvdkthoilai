@@ -28,6 +28,7 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { default as default_2683d9f76368fa0ddc7d8eddff9f52a3 } from '../../../../src/components/admin/DailyTemplateDownload'
 import { default as default_f83aabc67af93016a8d58661d9f5c808 } from '../../../../src/components/admin/NurseTemplateDownload'
 import { default as default_2c45d41a3f6b5a09cbd80db681fe5217 } from '../../../../src/components/admin/EmergencyTemplateDownload'
+import { default as default_02b4dadea33761cf22ef8d1215a1e6a4 } from '../../../../src/components/admin/WorkScheduleAdminHelper'
 import { default as default_9637cefafeb6600a998c5ef49603565b } from '../../../../src/components/admin/AppointmentsDashboard'
 import { default as default_5c576dfdc8a9a6c3d967695062ab8dcd } from '../../../../src/components/admin/ServicesExcelImport'
 import { default as default_688d79dcd6a2511ec4d98b30dde78fc0 } from '../../../../src/components/admin/FAQExcelImport'
@@ -75,6 +76,7 @@ export const importMap = {
   "/src/components/admin/DailyTemplateDownload#default": default_2683d9f76368fa0ddc7d8eddff9f52a3,
   "/src/components/admin/NurseTemplateDownload#default": default_f83aabc67af93016a8d58661d9f5c808,
   "/src/components/admin/EmergencyTemplateDownload#default": default_2c45d41a3f6b5a09cbd80db681fe5217,
+  "/src/components/admin/WorkScheduleAdminHelper#default": default_02b4dadea33761cf22ef8d1215a1e6a4,
   "/src/components/admin/AppointmentsDashboard#default": default_9637cefafeb6600a998c5ef49603565b,
   "/src/components/admin/ServicesExcelImport#default": default_5c576dfdc8a9a6c3d967695062ab8dcd,
   "/src/components/admin/FAQExcelImport#default": default_688d79dcd6a2511ec4d98b30dde78fc0,

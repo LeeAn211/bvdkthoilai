@@ -33,13 +33,13 @@ const DEFAULT_SERVICE_GROUPS = [
       },
       {
         enabled: true,
-        title: 'Giờ làm việc & Khung giờ khám sớm',
+        title: 'Lịch khám bệnh & Khung giờ khám sớm',
         desc: 'Thời gian phát số từ 06:00, nhóm khoa khám sớm 06:30 sáng và lịch trực các phòng chức năng.',
-        href: '/lich-lam-viec',
+        href: '/lich-kham-benh',
         icon: '⏰',
         badge: 'Từ 06:00 sáng',
         badgeType: 'periodic',
-        buttonText: 'Xem giờ làm việc →',
+        buttonText: 'Xem lịch khám bệnh →',
       },
       {
         enabled: true,

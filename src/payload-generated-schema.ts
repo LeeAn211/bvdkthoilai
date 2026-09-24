@@ -149,6 +149,10 @@ export const enum_notices_cover_position = pgEnum(
   "enum_notices_cover_position",
   ["top", "center", "bottom"],
 );
+export const enum_notices_home_placement = pgEnum(
+  "enum_notices_home_placement",
+  ["notices", "warning", "both"],
+);
 export const enum_notices_workflow_state = pgEnum(
   "enum_notices_workflow_state",
   ["draft", "submitted", "approved", "published", "hidden"],
@@ -173,12 +177,65 @@ export const enum__notices_v_version_cover_position = pgEnum(
   "enum__notices_v_version_cover_position",
   ["top", "center", "bottom"],
 );
+export const enum__notices_v_version_home_placement = pgEnum(
+  "enum__notices_v_version_home_placement",
+  ["notices", "warning", "both"],
+);
 export const enum__notices_v_version_workflow_state = pgEnum(
   "enum__notices_v_version_workflow_state",
   ["draft", "submitted", "approved", "published", "hidden"],
 );
 export const enum__notices_v_version_status = pgEnum(
   "enum__notices_v_version_status",
+  ["draft", "published"],
+);
+export const enum_health_warnings_level = pgEnum("enum_health_warnings_level", [
+  "urgent",
+  "important",
+  "normal",
+]);
+export const enum_health_warnings_layout_template = pgEnum(
+  "enum_health_warnings_layout_template",
+  ["default", "bachmai", "classic"],
+);
+export const enum_health_warnings_cover_fit = pgEnum(
+  "enum_health_warnings_cover_fit",
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
+);
+export const enum_health_warnings_cover_position = pgEnum(
+  "enum_health_warnings_cover_position",
+  ["top", "center", "bottom"],
+);
+export const enum_health_warnings_workflow_state = pgEnum(
+  "enum_health_warnings_workflow_state",
+  ["draft", "submitted", "approved", "published", "hidden"],
+);
+export const enum_health_warnings_status = pgEnum(
+  "enum_health_warnings_status",
+  ["draft", "published"],
+);
+export const enum__health_warnings_v_version_level = pgEnum(
+  "enum__health_warnings_v_version_level",
+  ["urgent", "important", "normal"],
+);
+export const enum__health_warnings_v_version_layout_template = pgEnum(
+  "enum__health_warnings_v_version_layout_template",
+  ["default", "bachmai", "classic"],
+);
+export const enum__health_warnings_v_version_cover_fit = pgEnum(
+  "enum__health_warnings_v_version_cover_fit",
+  ["contain", "cover-top", "cover-center", "cover-bottom", "cover", "fill"],
+);
+export const enum__health_warnings_v_version_cover_position = pgEnum(
+  "enum__health_warnings_v_version_cover_position",
+  ["top", "center", "bottom"],
+);
+export const enum__health_warnings_v_version_workflow_state = pgEnum(
+  "enum__health_warnings_v_version_workflow_state",
+  ["draft", "submitted", "approved", "published", "hidden"],
+);
+export const enum__health_warnings_v_version_status = pgEnum(
+  "enum__health_warnings_v_version_status",
   ["draft", "published"],
 );
 export const enum_procurement_type = pgEnum("enum_procurement_type", [
@@ -285,6 +342,10 @@ export const enum_documents_summary_size = pgEnum(
   "enum_documents_summary_size",
   ["normal", "large", "small"],
 );
+export const enum_documents_home_placement = pgEnum(
+  "enum_documents_home_placement",
+  ["documents", "legal", "both"],
+);
 export const enum__documents_v_version_access_mode = pgEnum(
   "enum__documents_v_version_access_mode",
   ["public", "view_only", "pin", "internal", "locked"],
@@ -308,6 +369,10 @@ export const enum__documents_v_version_summary_color = pgEnum(
 export const enum__documents_v_version_summary_size = pgEnum(
   "enum__documents_v_version_summary_size",
   ["normal", "large", "small"],
+);
+export const enum__documents_v_version_home_placement = pgEnum(
+  "enum__documents_v_version_home_placement",
+  ["documents", "legal", "both"],
 );
 export const enum_clinical_protocols_access_mode = pgEnum(
   "enum_clinical_protocols_access_mode",
@@ -485,6 +550,22 @@ export const enum_schedules_daily_schedule_type = pgEnum(
 export const enum_schedules_schedule_type = pgEnum(
   "enum_schedules_schedule_type",
   ["official", "adjustment"],
+);
+export const enum_work_schedules_display_mode = pgEnum(
+  "enum_work_schedules_display_mode",
+  ["table", "viewer"],
+);
+export const enum_work_schedules_status = pgEnum("enum_work_schedules_status", [
+  "draft",
+  "published",
+]);
+export const enum__work_schedules_v_version_display_mode = pgEnum(
+  "enum__work_schedules_v_version_display_mode",
+  ["table", "viewer"],
+);
+export const enum__work_schedules_v_version_status = pgEnum(
+  "enum__work_schedules_v_version_status",
+  ["draft", "published"],
 );
 export const enum_appointments_status = pgEnum("enum_appointments_status", [
   "new",
@@ -1117,12 +1198,13 @@ export const enum_navigation_items_children_preset = pgEnum(
     "/tin-tuc",
     "/hoat-dong-khoa-hoc",
     "/thong-bao",
+    "/goc-canh-bao",
     "/lich-kham",
     "/bang-gia",
     "/chat-luong-benh-vien",
     "/danh-cho-nguoi-benh",
     "/quy-trinh-kham-benh",
-    "/lich-lam-viec",
+    "/lich-kham-benh",
     "/khao-sat",
     "/gop-y",
     "/gop-y/tra-cuu",
@@ -1163,12 +1245,13 @@ export const enum_navigation_items_preset = pgEnum(
     "/tin-tuc",
     "/hoat-dong-khoa-hoc",
     "/thong-bao",
+    "/goc-canh-bao",
     "/lich-kham",
     "/bang-gia",
     "/chat-luong-benh-vien",
     "/danh-cho-nguoi-benh",
     "/quy-trinh-kham-benh",
-    "/lich-lam-viec",
+    "/lich-kham-benh",
     "/khao-sat",
     "/gop-y",
     "/gop-y/tra-cuu",
@@ -1209,12 +1292,13 @@ export const enum__navigation_v_version_items_children_preset = pgEnum(
     "/tin-tuc",
     "/hoat-dong-khoa-hoc",
     "/thong-bao",
+    "/goc-canh-bao",
     "/lich-kham",
     "/bang-gia",
     "/chat-luong-benh-vien",
     "/danh-cho-nguoi-benh",
     "/quy-trinh-kham-benh",
-    "/lich-lam-viec",
+    "/lich-kham-benh",
     "/khao-sat",
     "/gop-y",
     "/gop-y/tra-cuu",
@@ -1255,12 +1339,13 @@ export const enum__navigation_v_version_items_preset = pgEnum(
     "/tin-tuc",
     "/hoat-dong-khoa-hoc",
     "/thong-bao",
+    "/goc-canh-bao",
     "/lich-kham",
     "/bang-gia",
     "/chat-luong-benh-vien",
     "/danh-cho-nguoi-benh",
     "/quy-trinh-kham-benh",
-    "/lich-lam-viec",
+    "/lich-kham-benh",
     "/khao-sat",
     "/gop-y",
     "/gop-y/tra-cuu",
@@ -1386,6 +1471,15 @@ export const enum_hp_custom_cards_status_type = pgEnum(
   "enum_hp_custom_cards_status_type",
   ["available", "info", "warning", "unavailable"],
 );
+export const enum_hp_linked_tabs_source = pgEnum("enum_hp_linked_tabs_source", [
+  "cantho-syt",
+  "auto-feed",
+  "manual",
+]);
+export const enum_hp_partner_banners_bg_gradient = pgEnum(
+  "enum_hp_partner_banners_bg_gradient",
+  ["cantho", "moh", "chinhphu", "dvc", "medical", "green"],
+);
 export const enum_homepage_sections_type = pgEnum(
   "enum_homepage_sections_type",
   [
@@ -1405,6 +1499,10 @@ export const enum_homepage_sections_type = pgEnum(
     "introduction",
     "documents",
     "content-section",
+    "cantho-health-dept",
+    "partner-banners",
+    "health-warnings",
+    "legal-dissemination",
     "custom",
     "dynamic-module",
   ],
@@ -1420,6 +1518,14 @@ export const enum_homepage_sections_featured_filter_mode = pgEnum(
 export const enum_homepage_sections_featured_card_fit = pgEnum(
   "enum_homepage_sections_featured_card_fit",
   ["cover", "contain"],
+);
+export const enum_homepage_sections_banner_columns = pgEnum(
+  "enum_homepage_sections_banner_columns",
+  ["4", "3", "5", "2"],
+);
+export const enum_homepage_sections_banner_motion_mode = pgEnum(
+  "enum_homepage_sections_banner_motion_mode",
+  ["marquee", "carousel", "grid"],
 );
 export const enum_homepage_sections_image_position = pgEnum(
   "enum_homepage_sections_image_position",
@@ -1519,6 +1625,14 @@ export const enum__hp_custom_cards_v_status_type = pgEnum(
   "enum__hp_custom_cards_v_status_type",
   ["available", "info", "warning", "unavailable"],
 );
+export const enum__hp_linked_tabs_v_source = pgEnum(
+  "enum__hp_linked_tabs_v_source",
+  ["cantho-syt", "auto-feed", "manual"],
+);
+export const enum__hp_partner_banners_v_bg_gradient = pgEnum(
+  "enum__hp_partner_banners_v_bg_gradient",
+  ["cantho", "moh", "chinhphu", "dvc", "medical", "green"],
+);
 export const enum__homepage_v_version_sections_type = pgEnum(
   "enum__homepage_v_version_sections_type",
   [
@@ -1538,6 +1652,10 @@ export const enum__homepage_v_version_sections_type = pgEnum(
     "introduction",
     "documents",
     "content-section",
+    "cantho-health-dept",
+    "partner-banners",
+    "health-warnings",
+    "legal-dissemination",
     "custom",
     "dynamic-module",
   ],
@@ -1553,6 +1671,14 @@ export const enum__homepage_v_version_sections_featured_filter_mode = pgEnum(
 export const enum__homepage_v_version_sections_featured_card_fit = pgEnum(
   "enum__homepage_v_version_sections_featured_card_fit",
   ["cover", "contain"],
+);
+export const enum__homepage_v_version_sections_banner_columns = pgEnum(
+  "enum__homepage_v_version_sections_banner_columns",
+  ["4", "3", "5", "2"],
+);
+export const enum__homepage_v_version_sections_banner_motion_mode = pgEnum(
+  "enum__homepage_v_version_sections_banner_motion_mode",
+  ["marquee", "carousel", "grid"],
 );
 export const enum__homepage_v_version_sections_image_position = pgEnum(
   "enum__homepage_v_version_sections_image_position",
@@ -2625,6 +2751,8 @@ export const notices = pgTable(
     excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
     pinned: boolean("pinned").default(false),
     showOnHome: boolean("show_on_home").default(true),
+    homePlacement:
+      enum_notices_home_placement("home_placement").default("notices"),
     publishedAt: timestamp("published_at", {
       mode: "string",
       withTimezone: true,
@@ -2747,6 +2875,9 @@ export const _notices_v = pgTable(
     ),
     version_pinned: boolean("version_pinned").default(false),
     version_showOnHome: boolean("version_show_on_home").default(true),
+    version_homePlacement: enum__notices_v_version_home_placement(
+      "version_home_placement",
+    ).default("notices"),
     version_publishedAt: timestamp("version_published_at", {
       mode: "string",
       withTimezone: true,
@@ -2824,6 +2955,261 @@ export const _notices_v = pgTable(
     index("_notices_v_updated_at_idx").on(columns.updatedAt),
     index("_notices_v_latest_idx").on(columns.latest),
     index("_notices_v_autosave_idx").on(columns.autosave),
+  ],
+);
+
+export const health_warnings_attachments = pgTable(
+  "health_warnings_attachments",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    label: varchar("label"),
+    file: integer("file_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+  },
+  (columns) => [
+    index("health_warnings_attachments_order_idx").on(columns._order),
+    index("health_warnings_attachments_parent_id_idx").on(columns._parentID),
+    index("health_warnings_attachments_file_idx").on(columns.file),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [health_warnings.id],
+      name: "health_warnings_attachments_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const health_warnings = pgTable(
+  "health_warnings",
+  {
+    id: serial("id").primaryKey(),
+    title: varchar("title"),
+    slug: varchar("slug"),
+    categoryRef: integer("category_ref_id").references(() => categories.id, {
+      onDelete: "set null",
+    }),
+    level: enum_health_warnings_level("level").default("urgent"),
+    excerpt: varchar("excerpt"),
+    cover: integer("cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    content: jsonb("content"),
+    layoutTemplate:
+      enum_health_warnings_layout_template("layout_template").default(
+        "default",
+      ),
+    source: varchar("source").default("Bệnh viện Đa khoa Khu vực Thới Lai"),
+    showSource: boolean("show_source").default(true),
+    coverFit: enum_health_warnings_cover_fit("cover_fit").default("cover"),
+    coverPosition:
+      enum_health_warnings_cover_position("cover_position").default("top"),
+    seoTitle: varchar("seo_title"),
+    canonicalUrl: varchar("canonical_url"),
+    seoDescription: varchar("seo_description"),
+    seoImage: integer("seo_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    noIndex: boolean("no_index").default(false),
+    excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
+    pinned: boolean("pinned").default(false),
+    showOnHome: boolean("show_on_home").default(true),
+    publishedAt: timestamp("published_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    views: numeric("views", { mode: "number" }).default(0),
+    workflowState:
+      enum_health_warnings_workflow_state("workflow_state").default("draft"),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    deletedAt: timestamp("deleted_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    _status: enum_health_warnings_status("_status").default("draft"),
+  },
+  (columns) => [
+    uniqueIndex("health_warnings_slug_idx").on(columns.slug),
+    index("health_warnings_category_ref_idx").on(columns.categoryRef),
+    index("health_warnings_cover_idx").on(columns.cover),
+    index("health_warnings_seo_image_idx").on(columns.seoImage),
+    index("health_warnings_updated_at_idx").on(columns.updatedAt),
+    index("health_warnings_created_at_idx").on(columns.createdAt),
+    index("health_warnings_deleted_at_idx").on(columns.deletedAt),
+    index("health_warnings__status_idx").on(columns._status),
+  ],
+);
+
+export const _health_warnings_v_version_attachments = pgTable(
+  "_health_warnings_v_version_attachments",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    label: varchar("label"),
+    file: integer("file_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_health_warnings_v_version_attachments_order_idx").on(
+      columns._order,
+    ),
+    index("_health_warnings_v_version_attachments_parent_id_idx").on(
+      columns._parentID,
+    ),
+    index("_health_warnings_v_version_attachments_file_idx").on(columns.file),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_health_warnings_v.id],
+      name: "_health_warnings_v_version_attachments_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _health_warnings_v = pgTable(
+  "_health_warnings_v",
+  {
+    id: serial("id").primaryKey(),
+    parent: integer("parent_id").references(() => health_warnings.id, {
+      onDelete: "set null",
+    }),
+    version_title: varchar("version_title"),
+    version_slug: varchar("version_slug"),
+    version_categoryRef: integer("version_category_ref_id").references(
+      () => categories.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_level:
+      enum__health_warnings_v_version_level("version_level").default("urgent"),
+    version_excerpt: varchar("version_excerpt"),
+    version_cover: integer("version_cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    version_content: jsonb("version_content"),
+    version_layoutTemplate: enum__health_warnings_v_version_layout_template(
+      "version_layout_template",
+    ).default("default"),
+    version_source: varchar("version_source").default(
+      "Bệnh viện Đa khoa Khu vực Thới Lai",
+    ),
+    version_showSource: boolean("version_show_source").default(true),
+    version_coverFit:
+      enum__health_warnings_v_version_cover_fit("version_cover_fit").default(
+        "cover",
+      ),
+    version_coverPosition: enum__health_warnings_v_version_cover_position(
+      "version_cover_position",
+    ).default("top"),
+    version_seoTitle: varchar("version_seo_title"),
+    version_canonicalUrl: varchar("version_canonical_url"),
+    version_seoDescription: varchar("version_seo_description"),
+    version_seoImage: integer("version_seo_image_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_noIndex: boolean("version_no_index").default(false),
+    version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
+      false,
+    ),
+    version_pinned: boolean("version_pinned").default(false),
+    version_showOnHome: boolean("version_show_on_home").default(true),
+    version_publishedAt: timestamp("version_published_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_views: numeric("version_views", { mode: "number" }).default(0),
+    version_workflowState: enum__health_warnings_v_version_workflow_state(
+      "version_workflow_state",
+    ).default("draft"),
+    version_updatedAt: timestamp("version_updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_createdAt: timestamp("version_created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_deletedAt: timestamp("version_deleted_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version__status:
+      enum__health_warnings_v_version_status("version__status").default(
+        "draft",
+      ),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    latest: boolean("latest"),
+    autosave: boolean("autosave"),
+  },
+  (columns) => [
+    index("_health_warnings_v_parent_idx").on(columns.parent),
+    index("_health_warnings_v_version_version_slug_idx").on(
+      columns.version_slug,
+    ),
+    index("_health_warnings_v_version_version_category_ref_idx").on(
+      columns.version_categoryRef,
+    ),
+    index("_health_warnings_v_version_version_cover_idx").on(
+      columns.version_cover,
+    ),
+    index("_health_warnings_v_version_version_seo_image_idx").on(
+      columns.version_seoImage,
+    ),
+    index("_health_warnings_v_version_version_updated_at_idx").on(
+      columns.version_updatedAt,
+    ),
+    index("_health_warnings_v_version_version_created_at_idx").on(
+      columns.version_createdAt,
+    ),
+    index("_health_warnings_v_version_version_deleted_at_idx").on(
+      columns.version_deletedAt,
+    ),
+    index("_health_warnings_v_version_version__status_idx").on(
+      columns.version__status,
+    ),
+    index("_health_warnings_v_created_at_idx").on(columns.createdAt),
+    index("_health_warnings_v_updated_at_idx").on(columns.updatedAt),
+    index("_health_warnings_v_latest_idx").on(columns.latest),
+    index("_health_warnings_v_autosave_idx").on(columns.autosave),
   ],
 );
 
@@ -3193,6 +3579,9 @@ export const documents = pgTable(
     }),
     noIndex: boolean("no_index").default(false),
     excludeFromSitemap: boolean("exclude_from_sitemap").default(false),
+    showOnHome: boolean("show_on_home").default(true),
+    homePlacement:
+      enum_documents_home_placement("home_placement").default("documents"),
     updatedAt: timestamp("updated_at", {
       mode: "string",
       withTimezone: true,
@@ -3304,6 +3693,10 @@ export const _documents_v = pgTable(
     version_excludeFromSitemap: boolean("version_exclude_from_sitemap").default(
       false,
     ),
+    version_showOnHome: boolean("version_show_on_home").default(true),
+    version_homePlacement: enum__documents_v_version_home_placement(
+      "version_home_placement",
+    ).default("documents"),
     version_updatedAt: timestamp("version_updated_at", {
       mode: "string",
       withTimezone: true,
@@ -4524,6 +4917,225 @@ export const schedules = pgTable(
     index("schedules_schedule_file_idx").on(columns.scheduleFile),
     index("schedules_updated_at_idx").on(columns.updatedAt),
     index("schedules_created_at_idx").on(columns.createdAt),
+  ],
+);
+
+export const work_schedules_days = pgTable(
+  "work_schedules_days",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    dayLabel: varchar("day_label"),
+    dateFormatted: varchar("date_formatted"),
+    morningContent: varchar("morning_content"),
+    afternoonContent: varchar("afternoon_content"),
+    note: varchar("note"),
+  },
+  (columns) => [
+    index("work_schedules_days_order_idx").on(columns._order),
+    index("work_schedules_days_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [work_schedules.id],
+      name: "work_schedules_days_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const work_schedules = pgTable(
+  "work_schedules",
+  {
+    id: serial("id").primaryKey(),
+    title: varchar("title").default("LỊCH CÔNG TÁC TUẦN"),
+    displayMode:
+      enum_work_schedules_display_mode("display_mode").default("table"),
+    documentNumber: varchar("document_number").default("08/LLV - BVĐKKVTL"),
+    revision: varchar("revision"),
+    active: boolean("active").default(true),
+    weekNumber: numeric("week_number", { mode: "number" }),
+    year: numeric("year", { mode: "number" }).default(2026),
+    startDate: timestamp("start_date", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    endDate: timestamp("end_date", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    attachedFile: integer("attached_file_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    scannedImage: integer("scanned_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    generalNote: varchar("general_note").default(
+      "Tùy tình hình thực tế, Lịch làm việc này có thể thay đổi, Bệnh viện Đa khoa khu vực Thới Lai sẽ có thông báo sau./.",
+    ),
+    signerRole: varchar("signer_role").default("TL. GIÁM ĐỐC"),
+    signerName: varchar("signer_name").default("DSCKI. Dương Văn Bé"),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    deletedAt: timestamp("deleted_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    _status: enum_work_schedules_status("_status").default("draft"),
+  },
+  (columns) => [
+    index("work_schedules_attached_file_idx").on(columns.attachedFile),
+    index("work_schedules_scanned_image_idx").on(columns.scannedImage),
+    index("work_schedules_updated_at_idx").on(columns.updatedAt),
+    index("work_schedules_created_at_idx").on(columns.createdAt),
+    index("work_schedules_deleted_at_idx").on(columns.deletedAt),
+    index("work_schedules__status_idx").on(columns._status),
+  ],
+);
+
+export const _work_schedules_v_version_days = pgTable(
+  "_work_schedules_v_version_days",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    dayLabel: varchar("day_label"),
+    dateFormatted: varchar("date_formatted"),
+    morningContent: varchar("morning_content"),
+    afternoonContent: varchar("afternoon_content"),
+    note: varchar("note"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_work_schedules_v_version_days_order_idx").on(columns._order),
+    index("_work_schedules_v_version_days_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_work_schedules_v.id],
+      name: "_work_schedules_v_version_days_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _work_schedules_v = pgTable(
+  "_work_schedules_v",
+  {
+    id: serial("id").primaryKey(),
+    parent: integer("parent_id").references(() => work_schedules.id, {
+      onDelete: "set null",
+    }),
+    version_title: varchar("version_title").default("LỊCH CÔNG TÁC TUẦN"),
+    version_displayMode: enum__work_schedules_v_version_display_mode(
+      "version_display_mode",
+    ).default("table"),
+    version_documentNumber: varchar("version_document_number").default(
+      "08/LLV - BVĐKKVTL",
+    ),
+    version_revision: varchar("version_revision"),
+    version_active: boolean("version_active").default(true),
+    version_weekNumber: numeric("version_week_number", { mode: "number" }),
+    version_year: numeric("version_year", { mode: "number" }).default(2026),
+    version_startDate: timestamp("version_start_date", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_endDate: timestamp("version_end_date", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_attachedFile: integer("version_attached_file_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_scannedImage: integer("version_scanned_image_id").references(
+      () => media.id,
+      {
+        onDelete: "set null",
+      },
+    ),
+    version_generalNote: varchar("version_general_note").default(
+      "Tùy tình hình thực tế, Lịch làm việc này có thể thay đổi, Bệnh viện Đa khoa khu vực Thới Lai sẽ có thông báo sau./.",
+    ),
+    version_signerRole: varchar("version_signer_role").default("TL. GIÁM ĐỐC"),
+    version_signerName: varchar("version_signer_name").default(
+      "DSCKI. Dương Văn Bé",
+    ),
+    version_updatedAt: timestamp("version_updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_createdAt: timestamp("version_created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version_deletedAt: timestamp("version_deleted_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    }),
+    version__status:
+      enum__work_schedules_v_version_status("version__status").default("draft"),
+    createdAt: timestamp("created_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "string",
+      withTimezone: true,
+      precision: 3,
+    })
+      .defaultNow()
+      .notNull(),
+    latest: boolean("latest"),
+    autosave: boolean("autosave"),
+  },
+  (columns) => [
+    index("_work_schedules_v_parent_idx").on(columns.parent),
+    index("_work_schedules_v_version_version_attached_file_idx").on(
+      columns.version_attachedFile,
+    ),
+    index("_work_schedules_v_version_version_scanned_image_idx").on(
+      columns.version_scannedImage,
+    ),
+    index("_work_schedules_v_version_version_updated_at_idx").on(
+      columns.version_updatedAt,
+    ),
+    index("_work_schedules_v_version_version_created_at_idx").on(
+      columns.version_createdAt,
+    ),
+    index("_work_schedules_v_version_version_deleted_at_idx").on(
+      columns.version_deletedAt,
+    ),
+    index("_work_schedules_v_version_version__status_idx").on(
+      columns.version__status,
+    ),
+    index("_work_schedules_v_created_at_idx").on(columns.createdAt),
+    index("_work_schedules_v_updated_at_idx").on(columns.updatedAt),
+    index("_work_schedules_v_latest_idx").on(columns.latest),
+    index("_work_schedules_v_autosave_idx").on(columns.autosave),
   ],
 );
 
@@ -8270,6 +8882,7 @@ export const payload_locked_documents_rels = pgTable(
     mediaID: integer("media_id"),
     newsID: integer("news_id"),
     noticesID: integer("notices_id"),
+    "health-warningsID": integer("health_warnings_id"),
     procurementID: integer("procurement_id"),
     documentsID: integer("documents_id"),
     "clinical-protocolsID": integer("clinical_protocols_id"),
@@ -8277,6 +8890,7 @@ export const payload_locked_documents_rels = pgTable(
     specialtiesID: integer("specialties_id"),
     doctorsID: integer("doctors_id"),
     schedulesID: integer("schedules_id"),
+    "work-schedulesID": integer("work_schedules_id"),
     appointmentsID: integer("appointments_id"),
     servicesID: integer("services_id"),
     servicePricesID: integer("service_prices_id"),
@@ -8325,6 +8939,9 @@ export const payload_locked_documents_rels = pgTable(
     index("payload_locked_documents_rels_media_id_idx").on(columns.mediaID),
     index("payload_locked_documents_rels_news_id_idx").on(columns.newsID),
     index("payload_locked_documents_rels_notices_id_idx").on(columns.noticesID),
+    index("payload_locked_documents_rels_health_warnings_id_idx").on(
+      columns["health-warningsID"],
+    ),
     index("payload_locked_documents_rels_procurement_id_idx").on(
       columns.procurementID,
     ),
@@ -8343,6 +8960,9 @@ export const payload_locked_documents_rels = pgTable(
     index("payload_locked_documents_rels_doctors_id_idx").on(columns.doctorsID),
     index("payload_locked_documents_rels_schedules_id_idx").on(
       columns.schedulesID,
+    ),
+    index("payload_locked_documents_rels_work_schedules_id_idx").on(
+      columns["work-schedulesID"],
     ),
     index("payload_locked_documents_rels_appointments_id_idx").on(
       columns.appointmentsID,
@@ -8481,6 +9101,11 @@ export const payload_locked_documents_rels = pgTable(
       name: "payload_locked_documents_rels_notices_fk",
     }).onDelete("cascade"),
     foreignKey({
+      columns: [columns["health-warningsID"]],
+      foreignColumns: [health_warnings.id],
+      name: "payload_locked_documents_rels_health_warnings_fk",
+    }).onDelete("cascade"),
+    foreignKey({
       columns: [columns["procurementID"]],
       foreignColumns: [procurement.id],
       name: "payload_locked_documents_rels_procurement_fk",
@@ -8514,6 +9139,11 @@ export const payload_locked_documents_rels = pgTable(
       columns: [columns["schedulesID"]],
       foreignColumns: [schedules.id],
       name: "payload_locked_documents_rels_schedules_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [columns["work-schedulesID"]],
+      foreignColumns: [work_schedules.id],
+      name: "payload_locked_documents_rels_work_schedules_fk",
     }).onDelete("cascade"),
     foreignKey({
       columns: [columns["appointmentsID"]],
@@ -11860,10 +12490,34 @@ export const footer = pgTable("footer", {
     "Cổng thông tin điện tử",
   ),
   visitStats_showStats: boolean("visit_stats_show_stats").default(true),
+  visitStats_kicker: varchar("visit_stats_kicker").default(
+    "HỆ THỐNG GIÁM SÁT TRUY CẬP",
+  ),
+  visitStats_title: varchar("visit_stats_title").default(
+    "Thống kê truy cập Cổng thông tin điện tử",
+  ),
+  visitStats_metaTag: varchar("visit_stats_meta_tag").default(
+    "Hệ thống thời gian thực",
+  ),
+  visitStats_metaOrg: varchar("visit_stats_meta_org").default(
+    "BVĐK KHU VỰC THỚI LAI",
+  ),
   visitStats_showOnline: boolean("visit_stats_show_online").default(true),
   visitStats_showToday: boolean("visit_stats_show_today").default(true),
+  visitStats_onlineLabel: varchar("visit_stats_online_label").default(
+    "Đang trực tuyến",
+  ),
+  visitStats_todayLabel: varchar("visit_stats_today_label").default(
+    "Lượt truy cập ngày",
+  ),
   visitStats_showMonth: boolean("visit_stats_show_month").default(true),
   visitStats_showTotal: boolean("visit_stats_show_total").default(true),
+  visitStats_monthLabel: varchar("visit_stats_month_label").default(
+    "Lượt truy cập tháng",
+  ),
+  visitStats_totalLabel: varchar("visit_stats_total_label").default(
+    "Tổng lượt truy cập",
+  ),
   visitStats_initialOffset: numeric("visit_stats_initial_offset", {
     mode: "number",
   }).default(0),
@@ -12010,18 +12664,42 @@ export const _footer_v = pgTable(
     version_visitStats_showStats: boolean(
       "version_visit_stats_show_stats",
     ).default(true),
+    version_visitStats_kicker: varchar("version_visit_stats_kicker").default(
+      "HỆ THỐNG GIÁM SÁT TRUY CẬP",
+    ),
+    version_visitStats_title: varchar("version_visit_stats_title").default(
+      "Thống kê truy cập Cổng thông tin điện tử",
+    ),
+    version_visitStats_metaTag: varchar("version_visit_stats_meta_tag").default(
+      "Hệ thống thời gian thực",
+    ),
+    version_visitStats_metaOrg: varchar("version_visit_stats_meta_org").default(
+      "BVĐK KHU VỰC THỚI LAI",
+    ),
     version_visitStats_showOnline: boolean(
       "version_visit_stats_show_online",
     ).default(true),
     version_visitStats_showToday: boolean(
       "version_visit_stats_show_today",
     ).default(true),
+    version_visitStats_onlineLabel: varchar(
+      "version_visit_stats_online_label",
+    ).default("Đang trực tuyến"),
+    version_visitStats_todayLabel: varchar(
+      "version_visit_stats_today_label",
+    ).default("Lượt truy cập ngày"),
     version_visitStats_showMonth: boolean(
       "version_visit_stats_show_month",
     ).default(true),
     version_visitStats_showTotal: boolean(
       "version_visit_stats_show_total",
     ).default(true),
+    version_visitStats_monthLabel: varchar(
+      "version_visit_stats_month_label",
+    ).default("Lượt truy cập tháng"),
+    version_visitStats_totalLabel: varchar(
+      "version_visit_stats_total_label",
+    ).default("Tổng lượt truy cập"),
     version_visitStats_initialOffset: numeric(
       "version_visit_stats_initial_offset",
       { mode: "number" },
@@ -13642,6 +14320,90 @@ export const hp_custom_cards = pgTable(
   ],
 );
 
+export const hp_linked_items = pgTable(
+  "hp_linked_items",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    title: varchar("title"),
+    url: varchar("url"),
+    category: varchar("category"),
+    cover: integer("cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    coverUrl: varchar("cover_url"),
+    date: varchar("date"),
+    badge: varchar("badge"),
+    excerpt: varchar("excerpt"),
+  },
+  (columns) => [
+    index("hp_linked_items_order_idx").on(columns._order),
+    index("hp_linked_items_parent_id_idx").on(columns._parentID),
+    index("hp_linked_items_cover_idx").on(columns.cover),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [hp_linked_tabs.id],
+      name: "hp_linked_items_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hp_linked_tabs = pgTable(
+  "hp_linked_tabs",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    label: varchar("label"),
+    source: enum_hp_linked_tabs_source("source").default("cantho-syt"),
+    feedUrl: varchar("feed_url"),
+    badge: varchar("badge"),
+    seeMoreUrl: varchar("see_more_url"),
+    seeMoreText: varchar("see_more_text"),
+  },
+  (columns) => [
+    index("hp_linked_tabs_order_idx").on(columns._order),
+    index("hp_linked_tabs_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [homepage_sections.id],
+      name: "hp_linked_tabs_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const hp_partner_banners = pgTable(
+  "hp_partner_banners",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: varchar("_parent_id").notNull(),
+    id: varchar("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    title: varchar("title"),
+    subTitle: varchar("sub_title"),
+    url: varchar("url"),
+    openNewTab: boolean("open_new_tab").default(true),
+    bannerImage: integer("banner_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    bannerImageUrl: varchar("banner_image_url"),
+    bgGradient:
+      enum_hp_partner_banners_bg_gradient("bg_gradient").default("cantho"),
+  },
+  (columns) => [
+    index("hp_partner_banners_order_idx").on(columns._order),
+    index("hp_partner_banners_parent_id_idx").on(columns._parentID),
+    index("hp_partner_banners_banner_image_idx").on(columns.bannerImage),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [homepage_sections.id],
+      name: "hp_partner_banners_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const homepage_sections = pgTable(
   "homepage_sections",
   {
@@ -13745,6 +14507,15 @@ export const homepage_sections = pgTable(
       "Xem tất cả →",
     ),
     carouselSeeMoreUrl: varchar("carousel_see_more_url"),
+    bannerColumns:
+      enum_homepage_sections_banner_columns("banner_columns").default("4"),
+    bannerMotionMode:
+      enum_homepage_sections_banner_motion_mode("banner_motion_mode").default(
+        "marquee",
+      ),
+    bannerAutoplaySpeed: numeric("banner_autoplay_speed", {
+      mode: "number",
+    }).default(5),
     linkedContentSection: integer("linked_content_section_id").references(
       () => content_sections.id,
       {
@@ -14455,6 +15226,93 @@ export const _hp_custom_cards_v = pgTable(
   ],
 );
 
+export const _hp_linked_items_v = pgTable(
+  "_hp_linked_items_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    title: varchar("title"),
+    url: varchar("url"),
+    category: varchar("category"),
+    cover: integer("cover_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    coverUrl: varchar("cover_url"),
+    date: varchar("date"),
+    badge: varchar("badge"),
+    excerpt: varchar("excerpt"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hp_linked_items_v_order_idx").on(columns._order),
+    index("_hp_linked_items_v_parent_id_idx").on(columns._parentID),
+    index("_hp_linked_items_v_cover_idx").on(columns.cover),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_hp_linked_tabs_v.id],
+      name: "_hp_linked_items_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _hp_linked_tabs_v = pgTable(
+  "_hp_linked_tabs_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    label: varchar("label"),
+    source: enum__hp_linked_tabs_v_source("source").default("cantho-syt"),
+    feedUrl: varchar("feed_url"),
+    badge: varchar("badge"),
+    seeMoreUrl: varchar("see_more_url"),
+    seeMoreText: varchar("see_more_text"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hp_linked_tabs_v_order_idx").on(columns._order),
+    index("_hp_linked_tabs_v_parent_id_idx").on(columns._parentID),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_homepage_v_version_sections.id],
+      name: "_hp_linked_tabs_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const _hp_partner_banners_v = pgTable(
+  "_hp_partner_banners_v",
+  {
+    _order: integer("_order").notNull(),
+    _parentID: integer("_parent_id").notNull(),
+    id: serial("id").primaryKey(),
+    enabled: boolean("enabled").default(true),
+    title: varchar("title"),
+    subTitle: varchar("sub_title"),
+    url: varchar("url"),
+    openNewTab: boolean("open_new_tab").default(true),
+    bannerImage: integer("banner_image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
+    bannerImageUrl: varchar("banner_image_url"),
+    bgGradient:
+      enum__hp_partner_banners_v_bg_gradient("bg_gradient").default("cantho"),
+    _uuid: varchar("_uuid"),
+  },
+  (columns) => [
+    index("_hp_partner_banners_v_order_idx").on(columns._order),
+    index("_hp_partner_banners_v_parent_id_idx").on(columns._parentID),
+    index("_hp_partner_banners_v_banner_image_idx").on(columns.bannerImage),
+    foreignKey({
+      columns: [columns["_parentID"]],
+      foreignColumns: [_homepage_v_version_sections.id],
+      name: "_hp_partner_banners_v_parent_id_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
 export const _homepage_v_version_sections = pgTable(
   "_homepage_v_version_sections",
   {
@@ -14559,6 +15417,17 @@ export const _homepage_v_version_sections = pgTable(
       "Xem tất cả →",
     ),
     carouselSeeMoreUrl: varchar("carousel_see_more_url"),
+    bannerColumns:
+      enum__homepage_v_version_sections_banner_columns(
+        "banner_columns",
+      ).default("4"),
+    bannerMotionMode:
+      enum__homepage_v_version_sections_banner_motion_mode(
+        "banner_motion_mode",
+      ).default("marquee"),
+    bannerAutoplaySpeed: numeric("banner_autoplay_speed", {
+      mode: "number",
+    }).default(5),
     linkedContentSection: integer("linked_content_section_id").references(
       () => content_sections.id,
       {
@@ -18986,6 +19855,87 @@ export const relations__notices_v = relations(_notices_v, ({ one, many }) => ({
     relationName: "version_seoImage",
   }),
 }));
+export const relations_health_warnings_attachments = relations(
+  health_warnings_attachments,
+  ({ one }) => ({
+    _parentID: one(health_warnings, {
+      fields: [health_warnings_attachments._parentID],
+      references: [health_warnings.id],
+      relationName: "attachments",
+    }),
+    file: one(media, {
+      fields: [health_warnings_attachments.file],
+      references: [media.id],
+      relationName: "file",
+    }),
+  }),
+);
+export const relations_health_warnings = relations(
+  health_warnings,
+  ({ one, many }) => ({
+    categoryRef: one(categories, {
+      fields: [health_warnings.categoryRef],
+      references: [categories.id],
+      relationName: "categoryRef",
+    }),
+    cover: one(media, {
+      fields: [health_warnings.cover],
+      references: [media.id],
+      relationName: "cover",
+    }),
+    attachments: many(health_warnings_attachments, {
+      relationName: "attachments",
+    }),
+    seoImage: one(media, {
+      fields: [health_warnings.seoImage],
+      references: [media.id],
+      relationName: "seoImage",
+    }),
+  }),
+);
+export const relations__health_warnings_v_version_attachments = relations(
+  _health_warnings_v_version_attachments,
+  ({ one }) => ({
+    _parentID: one(_health_warnings_v, {
+      fields: [_health_warnings_v_version_attachments._parentID],
+      references: [_health_warnings_v.id],
+      relationName: "version_attachments",
+    }),
+    file: one(media, {
+      fields: [_health_warnings_v_version_attachments.file],
+      references: [media.id],
+      relationName: "file",
+    }),
+  }),
+);
+export const relations__health_warnings_v = relations(
+  _health_warnings_v,
+  ({ one, many }) => ({
+    parent: one(health_warnings, {
+      fields: [_health_warnings_v.parent],
+      references: [health_warnings.id],
+      relationName: "parent",
+    }),
+    version_categoryRef: one(categories, {
+      fields: [_health_warnings_v.version_categoryRef],
+      references: [categories.id],
+      relationName: "version_categoryRef",
+    }),
+    version_cover: one(media, {
+      fields: [_health_warnings_v.version_cover],
+      references: [media.id],
+      relationName: "version_cover",
+    }),
+    version_attachments: many(_health_warnings_v_version_attachments, {
+      relationName: "version_attachments",
+    }),
+    version_seoImage: one(media, {
+      fields: [_health_warnings_v.version_seoImage],
+      references: [media.id],
+      relationName: "version_seoImage",
+    }),
+  }),
+);
 export const relations_procurement_attachments = relations(
   procurement_attachments,
   ({ one }) => ({
@@ -19544,6 +20494,67 @@ export const relations_schedules = relations(schedules, ({ one, many }) => ({
     relationName: "weeklySlots",
   }),
 }));
+export const relations_work_schedules_days = relations(
+  work_schedules_days,
+  ({ one }) => ({
+    _parentID: one(work_schedules, {
+      fields: [work_schedules_days._parentID],
+      references: [work_schedules.id],
+      relationName: "days",
+    }),
+  }),
+);
+export const relations_work_schedules = relations(
+  work_schedules,
+  ({ one, many }) => ({
+    days: many(work_schedules_days, {
+      relationName: "days",
+    }),
+    attachedFile: one(media, {
+      fields: [work_schedules.attachedFile],
+      references: [media.id],
+      relationName: "attachedFile",
+    }),
+    scannedImage: one(media, {
+      fields: [work_schedules.scannedImage],
+      references: [media.id],
+      relationName: "scannedImage",
+    }),
+  }),
+);
+export const relations__work_schedules_v_version_days = relations(
+  _work_schedules_v_version_days,
+  ({ one }) => ({
+    _parentID: one(_work_schedules_v, {
+      fields: [_work_schedules_v_version_days._parentID],
+      references: [_work_schedules_v.id],
+      relationName: "version_days",
+    }),
+  }),
+);
+export const relations__work_schedules_v = relations(
+  _work_schedules_v,
+  ({ one, many }) => ({
+    parent: one(work_schedules, {
+      fields: [_work_schedules_v.parent],
+      references: [work_schedules.id],
+      relationName: "parent",
+    }),
+    version_days: many(_work_schedules_v_version_days, {
+      relationName: "version_days",
+    }),
+    version_attachedFile: one(media, {
+      fields: [_work_schedules_v.version_attachedFile],
+      references: [media.id],
+      relationName: "version_attachedFile",
+    }),
+    version_scannedImage: one(media, {
+      fields: [_work_schedules_v.version_scannedImage],
+      references: [media.id],
+      relationName: "version_scannedImage",
+    }),
+  }),
+);
 export const relations_appointments = relations(appointments, ({ one }) => ({
   specialty: one(specialties, {
     fields: [appointments.specialty],
@@ -20715,6 +21726,11 @@ export const relations_payload_locked_documents_rels = relations(
       references: [notices.id],
       relationName: "notices",
     }),
+    "health-warningsID": one(health_warnings, {
+      fields: [payload_locked_documents_rels["health-warningsID"]],
+      references: [health_warnings.id],
+      relationName: "health-warnings",
+    }),
     procurementID: one(procurement, {
       fields: [payload_locked_documents_rels.procurementID],
       references: [procurement.id],
@@ -20749,6 +21765,11 @@ export const relations_payload_locked_documents_rels = relations(
       fields: [payload_locked_documents_rels.schedulesID],
       references: [schedules.id],
       relationName: "schedules",
+    }),
+    "work-schedulesID": one(work_schedules, {
+      fields: [payload_locked_documents_rels["work-schedulesID"]],
+      references: [work_schedules.id],
+      relationName: "work-schedules",
     }),
     appointmentsID: one(appointments, {
       fields: [payload_locked_documents_rels.appointmentsID],
@@ -22152,6 +23173,49 @@ export const relations_hp_custom_cards = relations(
     }),
   }),
 );
+export const relations_hp_linked_items = relations(
+  hp_linked_items,
+  ({ one }) => ({
+    _parentID: one(hp_linked_tabs, {
+      fields: [hp_linked_items._parentID],
+      references: [hp_linked_tabs.id],
+      relationName: "manualItems",
+    }),
+    cover: one(media, {
+      fields: [hp_linked_items.cover],
+      references: [media.id],
+      relationName: "cover",
+    }),
+  }),
+);
+export const relations_hp_linked_tabs = relations(
+  hp_linked_tabs,
+  ({ one, many }) => ({
+    _parentID: one(homepage_sections, {
+      fields: [hp_linked_tabs._parentID],
+      references: [homepage_sections.id],
+      relationName: "linkedWebsitesTabs",
+    }),
+    manualItems: many(hp_linked_items, {
+      relationName: "manualItems",
+    }),
+  }),
+);
+export const relations_hp_partner_banners = relations(
+  hp_partner_banners,
+  ({ one }) => ({
+    _parentID: one(homepage_sections, {
+      fields: [hp_partner_banners._parentID],
+      references: [homepage_sections.id],
+      relationName: "partnerBanners",
+    }),
+    bannerImage: one(media, {
+      fields: [hp_partner_banners.bannerImage],
+      references: [media.id],
+      relationName: "bannerImage",
+    }),
+  }),
+);
 export const relations_homepage_sections = relations(
   homepage_sections,
   ({ one, many }) => ({
@@ -22194,6 +23258,12 @@ export const relations_homepage_sections = relations(
     }),
     customCarouselCards: many(hp_custom_cards, {
       relationName: "customCarouselCards",
+    }),
+    linkedWebsitesTabs: many(hp_linked_tabs, {
+      relationName: "linkedWebsitesTabs",
+    }),
+    partnerBanners: many(hp_partner_banners, {
+      relationName: "partnerBanners",
     }),
     linkedContentSection: one(content_sections, {
       fields: [homepage_sections.linkedContentSection],
@@ -22547,6 +23617,49 @@ export const relations__hp_custom_cards_v = relations(
     }),
   }),
 );
+export const relations__hp_linked_items_v = relations(
+  _hp_linked_items_v,
+  ({ one }) => ({
+    _parentID: one(_hp_linked_tabs_v, {
+      fields: [_hp_linked_items_v._parentID],
+      references: [_hp_linked_tabs_v.id],
+      relationName: "manualItems",
+    }),
+    cover: one(media, {
+      fields: [_hp_linked_items_v.cover],
+      references: [media.id],
+      relationName: "cover",
+    }),
+  }),
+);
+export const relations__hp_linked_tabs_v = relations(
+  _hp_linked_tabs_v,
+  ({ one, many }) => ({
+    _parentID: one(_homepage_v_version_sections, {
+      fields: [_hp_linked_tabs_v._parentID],
+      references: [_homepage_v_version_sections.id],
+      relationName: "linkedWebsitesTabs",
+    }),
+    manualItems: many(_hp_linked_items_v, {
+      relationName: "manualItems",
+    }),
+  }),
+);
+export const relations__hp_partner_banners_v = relations(
+  _hp_partner_banners_v,
+  ({ one }) => ({
+    _parentID: one(_homepage_v_version_sections, {
+      fields: [_hp_partner_banners_v._parentID],
+      references: [_homepage_v_version_sections.id],
+      relationName: "partnerBanners",
+    }),
+    bannerImage: one(media, {
+      fields: [_hp_partner_banners_v.bannerImage],
+      references: [media.id],
+      relationName: "bannerImage",
+    }),
+  }),
+);
 export const relations__homepage_v_version_sections = relations(
   _homepage_v_version_sections,
   ({ one, many }) => ({
@@ -22589,6 +23702,12 @@ export const relations__homepage_v_version_sections = relations(
     }),
     customCarouselCards: many(_hp_custom_cards_v, {
       relationName: "customCarouselCards",
+    }),
+    linkedWebsitesTabs: many(_hp_linked_tabs_v, {
+      relationName: "linkedWebsitesTabs",
+    }),
+    partnerBanners: many(_hp_partner_banners_v, {
+      relationName: "partnerBanners",
     }),
     linkedContentSection: one(content_sections, {
       fields: [_homepage_v_version_sections.linkedContentSection],
@@ -23956,14 +25075,28 @@ type DatabaseSchema = {
   enum_notices_layout_template: typeof enum_notices_layout_template;
   enum_notices_cover_fit: typeof enum_notices_cover_fit;
   enum_notices_cover_position: typeof enum_notices_cover_position;
+  enum_notices_home_placement: typeof enum_notices_home_placement;
   enum_notices_workflow_state: typeof enum_notices_workflow_state;
   enum_notices_status: typeof enum_notices_status;
   enum__notices_v_version_level: typeof enum__notices_v_version_level;
   enum__notices_v_version_layout_template: typeof enum__notices_v_version_layout_template;
   enum__notices_v_version_cover_fit: typeof enum__notices_v_version_cover_fit;
   enum__notices_v_version_cover_position: typeof enum__notices_v_version_cover_position;
+  enum__notices_v_version_home_placement: typeof enum__notices_v_version_home_placement;
   enum__notices_v_version_workflow_state: typeof enum__notices_v_version_workflow_state;
   enum__notices_v_version_status: typeof enum__notices_v_version_status;
+  enum_health_warnings_level: typeof enum_health_warnings_level;
+  enum_health_warnings_layout_template: typeof enum_health_warnings_layout_template;
+  enum_health_warnings_cover_fit: typeof enum_health_warnings_cover_fit;
+  enum_health_warnings_cover_position: typeof enum_health_warnings_cover_position;
+  enum_health_warnings_workflow_state: typeof enum_health_warnings_workflow_state;
+  enum_health_warnings_status: typeof enum_health_warnings_status;
+  enum__health_warnings_v_version_level: typeof enum__health_warnings_v_version_level;
+  enum__health_warnings_v_version_layout_template: typeof enum__health_warnings_v_version_layout_template;
+  enum__health_warnings_v_version_cover_fit: typeof enum__health_warnings_v_version_cover_fit;
+  enum__health_warnings_v_version_cover_position: typeof enum__health_warnings_v_version_cover_position;
+  enum__health_warnings_v_version_workflow_state: typeof enum__health_warnings_v_version_workflow_state;
+  enum__health_warnings_v_version_status: typeof enum__health_warnings_v_version_status;
   enum_procurement_type: typeof enum_procurement_type;
   enum_procurement_procurement_status: typeof enum_procurement_procurement_status;
   enum_procurement_layout_template: typeof enum_procurement_layout_template;
@@ -23984,12 +25117,14 @@ type DatabaseSchema = {
   enum_documents_title_size: typeof enum_documents_title_size;
   enum_documents_summary_color: typeof enum_documents_summary_color;
   enum_documents_summary_size: typeof enum_documents_summary_size;
+  enum_documents_home_placement: typeof enum_documents_home_placement;
   enum__documents_v_version_access_mode: typeof enum__documents_v_version_access_mode;
   enum__documents_v_version_text_align: typeof enum__documents_v_version_text_align;
   enum__documents_v_version_title_color: typeof enum__documents_v_version_title_color;
   enum__documents_v_version_title_size: typeof enum__documents_v_version_title_size;
   enum__documents_v_version_summary_color: typeof enum__documents_v_version_summary_color;
   enum__documents_v_version_summary_size: typeof enum__documents_v_version_summary_size;
+  enum__documents_v_version_home_placement: typeof enum__documents_v_version_home_placement;
   enum_clinical_protocols_access_mode: typeof enum_clinical_protocols_access_mode;
   enum_clinical_protocols_text_align: typeof enum_clinical_protocols_text_align;
   enum_clinical_protocols_title_color: typeof enum_clinical_protocols_title_color;
@@ -24023,6 +25158,10 @@ type DatabaseSchema = {
   enum_schedules_mode: typeof enum_schedules_mode;
   enum_schedules_daily_schedule_type: typeof enum_schedules_daily_schedule_type;
   enum_schedules_schedule_type: typeof enum_schedules_schedule_type;
+  enum_work_schedules_display_mode: typeof enum_work_schedules_display_mode;
+  enum_work_schedules_status: typeof enum_work_schedules_status;
+  enum__work_schedules_v_version_display_mode: typeof enum__work_schedules_v_version_display_mode;
+  enum__work_schedules_v_version_status: typeof enum__work_schedules_v_version_status;
   enum_appointments_status: typeof enum_appointments_status;
   enum_appointments_source: typeof enum_appointments_source;
   enum_appointments_gender: typeof enum_appointments_gender;
@@ -24173,10 +25312,14 @@ type DatabaseSchema = {
   enum_hp_svc_tabs_source: typeof enum_hp_svc_tabs_source;
   enum_hp_vax_tabs_cfg_source: typeof enum_hp_vax_tabs_cfg_source;
   enum_hp_custom_cards_status_type: typeof enum_hp_custom_cards_status_type;
+  enum_hp_linked_tabs_source: typeof enum_hp_linked_tabs_source;
+  enum_hp_partner_banners_bg_gradient: typeof enum_hp_partner_banners_bg_gradient;
   enum_homepage_sections_type: typeof enum_homepage_sections_type;
   enum_homepage_sections_expert_display_layout: typeof enum_homepage_sections_expert_display_layout;
   enum_homepage_sections_featured_filter_mode: typeof enum_homepage_sections_featured_filter_mode;
   enum_homepage_sections_featured_card_fit: typeof enum_homepage_sections_featured_card_fit;
+  enum_homepage_sections_banner_columns: typeof enum_homepage_sections_banner_columns;
+  enum_homepage_sections_banner_motion_mode: typeof enum_homepage_sections_banner_motion_mode;
   enum_homepage_sections_image_position: typeof enum_homepage_sections_image_position;
   enum_homepage_sections_button_link_mode: typeof enum_homepage_sections_button_link_mode;
   enum_homepage_sections_section_layout: typeof enum_homepage_sections_section_layout;
@@ -24197,10 +25340,14 @@ type DatabaseSchema = {
   enum__hp_svc_tabs_v_source: typeof enum__hp_svc_tabs_v_source;
   enum__hp_vax_tabs_cfg_v_source: typeof enum__hp_vax_tabs_cfg_v_source;
   enum__hp_custom_cards_v_status_type: typeof enum__hp_custom_cards_v_status_type;
+  enum__hp_linked_tabs_v_source: typeof enum__hp_linked_tabs_v_source;
+  enum__hp_partner_banners_v_bg_gradient: typeof enum__hp_partner_banners_v_bg_gradient;
   enum__homepage_v_version_sections_type: typeof enum__homepage_v_version_sections_type;
   enum__homepage_v_version_sections_expert_display_layout: typeof enum__homepage_v_version_sections_expert_display_layout;
   enum__homepage_v_version_sections_featured_filter_mode: typeof enum__homepage_v_version_sections_featured_filter_mode;
   enum__homepage_v_version_sections_featured_card_fit: typeof enum__homepage_v_version_sections_featured_card_fit;
+  enum__homepage_v_version_sections_banner_columns: typeof enum__homepage_v_version_sections_banner_columns;
+  enum__homepage_v_version_sections_banner_motion_mode: typeof enum__homepage_v_version_sections_banner_motion_mode;
   enum__homepage_v_version_sections_image_position: typeof enum__homepage_v_version_sections_image_position;
   enum__homepage_v_version_sections_button_link_mode: typeof enum__homepage_v_version_sections_button_link_mode;
   enum__homepage_v_version_sections_section_layout: typeof enum__homepage_v_version_sections_section_layout;
@@ -24350,6 +25497,10 @@ type DatabaseSchema = {
   notices: typeof notices;
   _notices_v_version_attachments: typeof _notices_v_version_attachments;
   _notices_v: typeof _notices_v;
+  health_warnings_attachments: typeof health_warnings_attachments;
+  health_warnings: typeof health_warnings;
+  _health_warnings_v_version_attachments: typeof _health_warnings_v_version_attachments;
+  _health_warnings_v: typeof _health_warnings_v;
   procurement_attachments: typeof procurement_attachments;
   procurement_change_log: typeof procurement_change_log;
   procurement: typeof procurement;
@@ -24378,6 +25529,10 @@ type DatabaseSchema = {
   schedules_attachment_files: typeof schedules_attachment_files;
   schedules_weekly_slots: typeof schedules_weekly_slots;
   schedules: typeof schedules;
+  work_schedules_days: typeof work_schedules_days;
+  work_schedules: typeof work_schedules;
+  _work_schedules_v_version_days: typeof _work_schedules_v_version_days;
+  _work_schedules_v: typeof _work_schedules_v;
   appointments: typeof appointments;
   services: typeof services;
   service_prices: typeof service_prices;
@@ -24550,6 +25705,9 @@ type DatabaseSchema = {
   hp_vax_manual: typeof hp_vax_manual;
   hp_vax_tabs_cfg: typeof hp_vax_tabs_cfg;
   hp_custom_cards: typeof hp_custom_cards;
+  hp_linked_items: typeof hp_linked_items;
+  hp_linked_tabs: typeof hp_linked_tabs;
+  hp_partner_banners: typeof hp_partner_banners;
   homepage_sections: typeof homepage_sections;
   homepage: typeof homepage;
   _homepage_v_version_banners: typeof _homepage_v_version_banners;
@@ -24572,6 +25730,9 @@ type DatabaseSchema = {
   _hp_vax_manual_v: typeof _hp_vax_manual_v;
   _hp_vax_tabs_cfg_v: typeof _hp_vax_tabs_cfg_v;
   _hp_custom_cards_v: typeof _hp_custom_cards_v;
+  _hp_linked_items_v: typeof _hp_linked_items_v;
+  _hp_linked_tabs_v: typeof _hp_linked_tabs_v;
+  _hp_partner_banners_v: typeof _hp_partner_banners_v;
   _homepage_v_version_sections: typeof _homepage_v_version_sections;
   _homepage_v: typeof _homepage_v;
   organization_chart_deputy_directors: typeof organization_chart_deputy_directors;
@@ -24689,6 +25850,10 @@ type DatabaseSchema = {
   relations_notices: typeof relations_notices;
   relations__notices_v_version_attachments: typeof relations__notices_v_version_attachments;
   relations__notices_v: typeof relations__notices_v;
+  relations_health_warnings_attachments: typeof relations_health_warnings_attachments;
+  relations_health_warnings: typeof relations_health_warnings;
+  relations__health_warnings_v_version_attachments: typeof relations__health_warnings_v_version_attachments;
+  relations__health_warnings_v: typeof relations__health_warnings_v;
   relations_procurement_attachments: typeof relations_procurement_attachments;
   relations_procurement_change_log: typeof relations_procurement_change_log;
   relations_procurement: typeof relations_procurement;
@@ -24717,6 +25882,10 @@ type DatabaseSchema = {
   relations_schedules_attachment_files: typeof relations_schedules_attachment_files;
   relations_schedules_weekly_slots: typeof relations_schedules_weekly_slots;
   relations_schedules: typeof relations_schedules;
+  relations_work_schedules_days: typeof relations_work_schedules_days;
+  relations_work_schedules: typeof relations_work_schedules;
+  relations__work_schedules_v_version_days: typeof relations__work_schedules_v_version_days;
+  relations__work_schedules_v: typeof relations__work_schedules_v;
   relations_appointments: typeof relations_appointments;
   relations_services: typeof relations_services;
   relations_service_prices: typeof relations_service_prices;
@@ -24889,6 +26058,9 @@ type DatabaseSchema = {
   relations_hp_vax_manual: typeof relations_hp_vax_manual;
   relations_hp_vax_tabs_cfg: typeof relations_hp_vax_tabs_cfg;
   relations_hp_custom_cards: typeof relations_hp_custom_cards;
+  relations_hp_linked_items: typeof relations_hp_linked_items;
+  relations_hp_linked_tabs: typeof relations_hp_linked_tabs;
+  relations_hp_partner_banners: typeof relations_hp_partner_banners;
   relations_homepage_sections: typeof relations_homepage_sections;
   relations_homepage: typeof relations_homepage;
   relations__homepage_v_version_banners: typeof relations__homepage_v_version_banners;
@@ -24911,6 +26083,9 @@ type DatabaseSchema = {
   relations__hp_vax_manual_v: typeof relations__hp_vax_manual_v;
   relations__hp_vax_tabs_cfg_v: typeof relations__hp_vax_tabs_cfg_v;
   relations__hp_custom_cards_v: typeof relations__hp_custom_cards_v;
+  relations__hp_linked_items_v: typeof relations__hp_linked_items_v;
+  relations__hp_linked_tabs_v: typeof relations__hp_linked_tabs_v;
+  relations__hp_partner_banners_v: typeof relations__hp_partner_banners_v;
   relations__homepage_v_version_sections: typeof relations__homepage_v_version_sections;
   relations__homepage_v: typeof relations__homepage_v;
   relations_organization_chart_deputy_directors: typeof relations_organization_chart_deputy_directors;

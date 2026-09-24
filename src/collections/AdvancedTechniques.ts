@@ -14,9 +14,9 @@ export const AdvancedTechniques: CollectionConfig = {
   },
   access: {
     read: anyone,
-    create: moduleAccess('pages', 'create'),
-    update: moduleAccess('pages', 'edit'),
-    delete: moduleAccess('pages', 'delete'),
+    create: moduleAccess('advanced-techniques', 'create'),
+    update: moduleAccess('advanced-techniques', 'edit'),
+    delete: moduleAccess('advanced-techniques', 'delete'),
   },
   hooks: {
     beforeDelete: [detachNavigationReference('advanced-techniques')],

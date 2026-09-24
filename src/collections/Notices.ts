@@ -274,7 +274,23 @@ export const Notices: CollectionConfig = {
       defaultValue: true,
       admin: {
         position: 'sidebar',
-        description: 'Bật để hiển thị trong khối Thông báo trên Trang chủ.',
+        description: 'Bật để hiển thị thông báo này trên Trang chủ.',
+      },
+    },
+    {
+      name: 'homePlacement',
+      label: 'Mục hiển thị trên Trang chủ',
+      type: 'select',
+      defaultValue: 'notices',
+      options: [
+        { label: '📢 Mục Thông báo thông thường', value: 'notices' },
+        { label: '⚠️ Mục Cảnh báo (Khẩn cấp / Khuyến cáo y tế)', value: 'warning' },
+        { label: '🌟 Hiển thị ở cả 2 mục (Thông báo & Cảnh báo)', value: 'both' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'Chọn mục hiển thị trên Trang chủ hoặc cho phép hiển thị đồng thời cả 2 mục.',
+        condition: (data) => Boolean(data?.showOnHome !== false),
       },
     },
     {

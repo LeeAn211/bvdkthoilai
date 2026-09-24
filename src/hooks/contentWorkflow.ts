@@ -1,6 +1,7 @@
 const pathPrefix: Record<string, string> = {
   news: '/tin-tuc',
   notices: '/thong-bao',
+  'health-warnings': '/goc-canh-bao',
   procurement: '/dau-thau-mua-sam',
   recruitment: '/tuyen-dung',
   pages: '/trang',

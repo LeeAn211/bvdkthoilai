@@ -76,6 +76,7 @@ const defaultHomepageSections = [
   { type: 'science', eyebrow: 'CHUYÊN MÔN – ĐÀO TẠO', title: 'Hoạt động khoa học', visible: true },
   { type: 'introduction', eyebrow: 'VỀ CHÚNG TÔI', title: 'Đồng hành cùng sức khỏe cộng đồng', visible: true },
   { type: 'documents', eyebrow: 'TÀI LIỆU CÔNG KHAI', title: 'Văn bản mới', description: 'Quyết định, biểu mẫu và tài liệu được cập nhật từ hệ thống quản trị.', visible: true },
+  { type: 'cantho-health-dept', eyebrow: 'CHỈ ĐẠO & TIN TỨC NGÀNH', title: 'Sở Y tế thành phố Cần Thơ', description: 'Cập nhật tin tức hoạt động, văn bản chỉ đạo điều hành từ cơ quan chủ quản ngành Y tế.', visible: true },
 ]
 
 const defaultNewsTabs = [
@@ -238,6 +239,10 @@ export const Homepage: GlobalConfig = {
             { label: 'Giới thiệu bệnh viện', value: 'introduction' },
             { label: 'Văn bản mới', value: 'documents' },
             { label: 'Mục nội dung từ Menu (ví dụ: Chuyển đổi số)', value: 'content-section' },
+            { label: 'Cổng thông tin Liên kết & Chỉ đạo ngành (Sở Y tế & các đơn vị liên kết)', value: 'cantho-health-dept' },
+            { label: 'Liên kết Website & Cổng thông tin (Dạng Mini Banner)', value: 'partner-banners' },
+            { label: 'Cảnh báo y tế & cộng đồng (Dịch bệnh, cảnh báo khẩn...)', value: 'health-warnings' },
+            { label: 'Phổ biến văn bản pháp luật (Luật, Nghị định, Thông tư...)', value: 'legal-dissemination' },
             { label: 'Mục nội dung tùy chỉnh (thêm mới)', value: 'custom' },
             { label: 'Module động từ thư viện', value: 'dynamic-module' },
           ],
@@ -1106,6 +1111,235 @@ export const Homepage: GlobalConfig = {
           ],
         },
 
+        /* ── CẤU HÌNH CỔNG THÔNG TIN LIÊN KẾT ĐA TAB (SỞ Y TẾ & CÁC ĐƠN VỊ LIÊN KẾT) ── */
+        {
+          name: 'linkedWebsitesTabs',
+          dbName: 'hp_linked_tabs',
+          label: 'Danh sách các Tab đơn vị liên kết (Sở Y tế, Bộ Y tế, các đơn vị khác)',
+          type: 'array',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'cantho-health-dept',
+            description: 'Thêm, bớt, chọn nguồn dữ liệu (Lấy tự động từ Sở Y tế hoặc Tự nhập danh sách bài viết) và sắp xếp thứ tự các Tab hiển thị trên Trang chủ.',
+            initCollapsed: false,
+          },
+          defaultValue: [
+            {
+              enabled: true,
+              label: 'Sở Y tế TP. Cần Thơ',
+              source: 'cantho-syt',
+              seeMoreUrl: 'https://soyte.cantho.gov.vn/',
+              seeMoreText: 'Xem tất cả tại soyte.cantho.gov.vn ↗',
+            },
+          ],
+          fields: [
+            { name: 'enabled', label: 'Bật hiển thị tab này', type: 'checkbox', defaultValue: true },
+            {
+              type: 'row',
+              fields: [
+                { name: 'label', label: 'Tên tab / Tên đơn vị', type: 'text', required: true, admin: { width: '50%', placeholder: 'Ví dụ: Sở Y tế Cần Thơ, Bộ Y tế...' } },
+                {
+                  name: 'source',
+                  label: 'Nguồn dữ liệu của tab',
+                  type: 'select',
+                  required: true,
+                  defaultValue: 'cantho-syt',
+                  options: [
+                    { label: '🌐 Lấy tự động từ Cổng thông tin Sở Y tế Cần Thơ (Cập nhật 24/7)', value: 'cantho-syt' },
+                    { label: '⚡ Quét tự động từ Website bất kỳ hoặc nguồn RSS Feed (Bộ Y tế, Báo y tế, Bệnh viện...)', value: 'auto-feed' },
+                    { label: '✍️ Tự nhập danh sách bài viết thủ công', value: 'manual' },
+                  ],
+                  admin: { width: '50%' },
+                },
+              ],
+            },
+            {
+              name: 'feedUrl',
+              label: 'Đường dẫn Website hoặc RSS Feed cần lấy tin tự động',
+              type: 'text',
+              admin: {
+                condition: (_data, siblingData) => siblingData?.source === 'auto-feed',
+                placeholder: 'Ví dụ: https://moh.gov.vn/ hoặc https://suckhoedoisong.vn/rss/thoi-su.rss',
+                description: 'Hệ thống tự động phát hiện RSS Feed hoặc quét HTML để bóc tách tiêu đề, hình ảnh và đường link bài viết gốc.',
+              },
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'badge', label: 'Huy hiệu trên Tab (tùy chọn)', type: 'text', admin: { width: '33%', placeholder: 'Ví dụ: MỚI, CHỈ ĐẠO...' } },
+                { name: 'seeMoreUrl', label: 'Liên kết xem tất cả của đơn vị', type: 'text', admin: { width: '33%', placeholder: 'Ví dụ: https://soyte.cantho.gov.vn/ hoặc https://moh.gov.vn/' } },
+                { name: 'seeMoreText', label: 'Chữ trên nút xem tất cả', type: 'text', admin: { width: '34%', placeholder: 'Để trống sẽ tự động lấy theo tên đơn vị' } },
+              ],
+            },
+            {
+              name: 'manualItems',
+              dbName: 'hp_linked_items',
+              label: 'Danh sách bài viết của đơn vị (khi chọn Tự nhập)',
+              type: 'array',
+              admin: {
+                condition: (_data, siblingData) => siblingData?.source === 'manual',
+                description: 'Nhập các bài viết, thông báo, quyết định từ đơn vị này. Khi người đọc bấm vào thẻ bài viết trên trang chủ sẽ mở liên kết gốc ở tab mới.',
+              },
+              fields: [
+                { name: 'title', label: 'Tiêu đề bài viết', type: 'text', required: true },
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'url', label: 'Đường dẫn bài viết gốc (Link ngoài website)', type: 'text', required: true, admin: { width: '60%', placeholder: 'https://...' } },
+                    { name: 'category', label: 'Chuyên mục / Phân loại', type: 'text', admin: { width: '40%', placeholder: 'Ví dụ: Tin chỉ đạo, Thông báo...' } },
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'cover', label: 'Ảnh đại diện (Tải lên thư viện)', type: 'upload', relationTo: 'media', admin: { width: '50%' } },
+                    { name: 'coverUrl', label: 'Hoặc dán URL ảnh trực tiếp từ website gốc', type: 'text', admin: { width: '50%', placeholder: 'https://...' } },
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'date', label: 'Ngày đăng bài', type: 'text', admin: { width: '50%', placeholder: 'Ví dụ: 23/09/2026' } },
+                    { name: 'badge', label: 'Nhãn nổi bật trên ảnh', type: 'text', admin: { width: '50%', placeholder: 'Ví dụ: VĂN BẢN, CHỈ ĐẠO...' } },
+                  ],
+                },
+                { name: 'excerpt', label: 'Tóm tắt bài viết', type: 'textarea' },
+              ],
+            },
+          ],
+        },
+
+        /* ── CẤU HÌNH LIÊN KẾT WEBSITE & CỔNG THÔNG TIN (DẠNG MINI BANNER) ── */
+        {
+          name: 'partnerBanners',
+          dbName: 'hp_partner_banners',
+          label: 'Danh sách Banner liên kết website (Bộ Y tế, Cổng TP, Chính phủ, Dịch vụ công...)',
+          type: 'array',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'partner-banners',
+            description: 'Thêm các banner liên kết website. Người dân nhấn vào banner sẽ tự động mở trang web của cơ quan/đơn vị đó ở tab mới.',
+            initCollapsed: false,
+          },
+          defaultValue: [
+            {
+              enabled: true,
+              title: 'CỔNG THÔNG TIN ĐIỆN TỬ THÀNH PHỐ CẦN THƠ',
+              subTitle: 'cantho.gov.vn',
+              url: 'https://cantho.gov.vn/',
+              bgGradient: 'cantho',
+              openNewTab: true,
+            },
+            {
+              enabled: true,
+              title: 'BỘ Y TẾ - CỔNG THÔNG TIN ĐIỆN TỬ',
+              subTitle: 'moh.gov.vn',
+              url: 'https://moh.gov.vn/',
+              bgGradient: 'moh',
+              openNewTab: true,
+            },
+            {
+              enabled: true,
+              title: 'CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ',
+              subTitle: 'chinhphu.vn',
+              url: 'https://chinhphu.vn/',
+              bgGradient: 'chinhphu',
+              openNewTab: true,
+            },
+            {
+              enabled: true,
+              title: 'CỔNG DỊCH VỤ CÔNG QUỐC GIA',
+              subTitle: 'dichvucong.gov.vn',
+              url: 'https://dichvucong.gov.vn/',
+              bgGradient: 'dvc',
+              openNewTab: true,
+            },
+          ],
+          fields: [
+            { name: 'enabled', label: 'Bật hiển thị banner này', type: 'checkbox', defaultValue: true },
+            {
+              type: 'row',
+              fields: [
+                { name: 'title', label: 'Tên đơn vị / Tiêu đề banner', type: 'text', required: true, admin: { width: '60%', placeholder: 'Ví dụ: BỘ Y TẾ, CỔNG TP CẦN THƠ...' } },
+                { name: 'subTitle', label: 'Tên miền / Dòng phụ (tùy chọn)', type: 'text', admin: { width: '40%', placeholder: 'Ví dụ: cantho.gov.vn, moh.gov.vn' } },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'url', label: 'Đường dẫn website đích (Link ngoài)', type: 'text', required: true, admin: { width: '70%', placeholder: 'https://...' } },
+                { name: 'openNewTab', label: 'Mở tab mới', type: 'checkbox', defaultValue: true, admin: { width: '30%' } },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                { name: 'bannerImage', label: 'Ảnh banner đồ họa (Nếu có sẵn)', type: 'upload', relationTo: 'media', admin: { width: '50%', description: 'Tải file ảnh banner chữ nhật (khuyên dùng tỷ lệ khoảng 3.5:1 hoặc 4:1)' } },
+                { name: 'bannerImageUrl', label: 'Hoặc dán URL ảnh banner', type: 'text', admin: { width: '50%', placeholder: 'https://...' } },
+              ],
+            },
+            {
+              name: 'bgGradient',
+              label: 'Màu nền banner tự động (khi không dùng ảnh tải lên)',
+              type: 'select',
+              defaultValue: 'cantho',
+              options: [
+                { label: '🌅 Bình minh Đô thị (Xanh ngọc - Vàng cam ĐBSCL)', value: 'cantho' },
+                { label: '🔴 Đỏ tươi Truyền thống (Bộ Y tế / Cơ quan)', value: 'moh' },
+                { label: '🟡 Vàng đồng Trang trọng (Quốc huy / Chính phủ)', value: 'chinhphu' },
+                { label: '🔷 Xanh công nghệ số (Dịch vụ công / Chuyển đổi số)', value: 'dvc' },
+                { label: '🏥 Xanh dương Y tế (Bệnh viện / Khám chữa bệnh)', value: 'medical' },
+                { label: '🌿 Xanh lá Dược học (Y học cổ truyền / Dược liệu)', value: 'green' },
+              ],
+              admin: {
+                description: 'Nếu bạn chưa có sẵn ảnh banner thiết kế, hệ thống sẽ tự động vẽ một banner màu sắc trang trọng theo mẫu chuẩn.',
+              },
+            },
+          ],
+        },
+
+        {
+          name: 'bannerColumns',
+          label: 'Số banner trên 1 hàng (Desktop)',
+          type: 'select',
+          defaultValue: '4',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'partner-banners',
+            description: 'Chọn số cột hiển thị dải banner (thường dùng 4 banner/hàng hoặc 3 banner/hàng).',
+          },
+          options: [
+            { label: '4 Banner / Hàng (Khuyên dùng)', value: '4' },
+            { label: '3 Banner / Hàng (To rõ)', value: '3' },
+            { label: '5 Banner / Hàng (Gọn gàng)', value: '5' },
+            { label: '2 Banner / Hàng (Rất to)', value: '2' },
+          ],
+        },
+        {
+          name: 'bannerMotionMode',
+          label: 'Chế độ chuyển động banner',
+          type: 'select',
+          defaultValue: 'marquee',
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'partner-banners',
+            description: 'Chọn kiểu chuyển động cho dải banner liên kết website.',
+          },
+          options: [
+            { label: '🌊 Chạy trượt ngang liên tục (Marquee Ticker) - Lướt vô tận, rê chuột dừng lại', value: 'marquee' },
+            { label: '🎠 Băng chuyền chuyển trang tự động (Slide Carousel có nút ‹ ›)', value: 'carousel' },
+            { label: '⏹️ Tĩnh (Hiển thị dạng lưới tĩnh, không trượt)', value: 'grid' },
+          ],
+        },
+        {
+          name: 'bannerAutoplaySpeed',
+          label: 'Tốc độ chuyển động (Giây)',
+          type: 'number',
+          min: 1,
+          max: 60,
+          defaultValue: 5,
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'partner-banners' && siblingData?.bannerMotionMode !== 'grid',
+            description: 'Với kiểu Băng chuyền: số giây tự động đổi trang (ví dụ 4s - 5s). Với kiểu Chạy trượt ngang liên tục: tốc độ lướt.',
+          },
+        },
+
         {
           name: 'linkedContentSection',
           label: 'Mục nội dung cần hiển thị',
@@ -1205,7 +1439,7 @@ export const Homepage: GlobalConfig = {
           defaultValue: 'editorial-grid',
           admin: {
             condition: (_data: unknown, siblingData: any) => [
-              'notices', 'procurement', 'documents', 'content-section', 'science',
+              'notices', 'procurement', 'documents', 'content-section', 'science', 'cantho-health-dept',
             ].includes(siblingData?.type),
             description: 'Chọn cách trình bày danh sách bài viết trong section này. Thay đổi ngay lập tức sau khi lưu, không cần code lại.',
           },
@@ -1244,7 +1478,7 @@ export const Homepage: GlobalConfig = {
               admin: {
                 width: '33%',
                 condition: (_data: unknown, siblingData: any) => [
-                  'notices', 'procurement', 'documents', 'content-section',
+                  'notices', 'procurement', 'documents', 'content-section', 'cantho-health-dept',
                 ].includes(siblingData?.type),
                 description: 'Áp dụng cho tất cả mẫu bố cục.',
               },
@@ -1257,7 +1491,7 @@ export const Homepage: GlobalConfig = {
               admin: {
                 width: '33%',
                 condition: (_data: unknown, siblingData: any) => [
-                  'notices', 'procurement', 'documents', 'content-section',
+                  'notices', 'procurement', 'documents', 'content-section', 'cantho-health-dept',
                 ].includes(siblingData?.type),
               },
             },
@@ -1269,7 +1503,7 @@ export const Homepage: GlobalConfig = {
               admin: {
                 width: '33%',
                 condition: (_data: unknown, siblingData: any) => [
-                  'notices', 'procurement', 'documents', 'content-section',
+                  'notices', 'procurement', 'documents', 'content-section', 'cantho-health-dept',
                 ].includes(siblingData?.type),
               },
             },
@@ -1286,7 +1520,7 @@ export const Homepage: GlobalConfig = {
               admin: {
                 width: '33%',
                 condition: (_data: unknown, siblingData: any) => [
-                  'notices', 'procurement', 'documents', 'content-section',
+                  'notices', 'procurement', 'documents', 'content-section', 'cantho-health-dept',
                 ].includes(siblingData?.type),
               },
             },
@@ -1298,7 +1532,7 @@ export const Homepage: GlobalConfig = {
                 width: '66%',
                 placeholder: 'Ví dụ: THÔNG BÁO – để trống sẽ dùng tên chuyên mục',
                 condition: (_data: unknown, siblingData: any) => [
-                  'notices', 'procurement', 'documents', 'content-section',
+                  'notices', 'procurement', 'documents', 'content-section', 'cantho-health-dept',
                 ].includes(siblingData?.type),
                 description: 'Nhãn hiển thị trên thẻ bài nổi bật (chỉ với mẫu Editorial Grid và Card Grid).',
               },
