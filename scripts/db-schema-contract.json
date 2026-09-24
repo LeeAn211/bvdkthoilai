@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260923_072_create_work_schedules",
-  "schemaSha256": "75e64b8895d7b4c333b8bdf05002bcf34e62f5e503c1ac0c125bed20555a9050"
+  "migrationId": "20260924_073_add_work_schedule_preset_to_navigation_enums",
+  "schemaSha256": "9865915da1f164ec4669c7f6a651534542a0cc6e34d77acb44443af291182e26"
 }

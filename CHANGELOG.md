@@ -6,7 +6,9 @@
 - Ẩn hoàn toàn các mục Collections & Globals không thuộc phạm vi được phân quyền trong thanh điều hướng Admin (`payload.config.ts`), ngăn chặn tài khoản nhân viên thấy các danh mục không có quyền truy cập.
 - Tách biệt hiển thị biểu đồ "Phân bổ lịch hẹn khám theo ngày" (`showWeeklyWorkload`) trên Admin Dashboard: chỉ hiển thị cho tài khoản có quyền Lịch hẹn khám (`appointments`), không hiển thị nhầm cho tài khoản chỉ quản lý Lịch khám bệnh / Lịch trực (`schedules`).
 - Khắc phục cảnh báo Next.js Devtools `Monaco initialization` và unhandled rejection event listener trong giao diện Admin.
-- Chuẩn hóa các file DB migrations 067 - 072 đảm bảo tuân thủ nghiêm ngặt quy tắc DB schema validation (100% PASS).
+- Chuẩn hóa các file DB migrations 067 - 072 đảm bảo tuân thủ nghiêm ngặt quy tắc DB schema validation.
+- Tạo migration `20260924_073_add_work_schedule_preset_to_navigation_enums.mjs` bổ sung giá trị `/lich-lam-viec` vào enum preset của Navigation và khóa hợp đồng DB schema snapshot 073 giúp lệnh build/deploy trên máy chủ pass 100%.
+
 
 
 
