@@ -1,36 +1,34 @@
-# CURRENT TASK — Bổ Sung Phạm Vi Bật/Tắt Banner Sidebar Theo Chuyên Mục & Hiển Thị Ảnh Full-Width Khi Ẩn Sidebar
+# CURRENT TASK — Khắc Phục Lỗi Trùng Lặp ID Lịch Công Tác, Nâng Cấp Model Gemini OCR & Chống Spam Log Sở Y Tế
 
 ## Trạng thái: HOÀN THÀNH
 
-## Yêu cầu người dùng
-1. **Banner hành động trên Sidebar**: Cho phép bật/tắt tùy ý áp dụng cho từng chuyên mục khác nhau (ví dụ: tắt ở Tin tức nhưng Thông báo vẫn hiển thị đầy đủ). Có các lựa chọn: Bật tất cả, Tắt tất cả, và Bật/tắt tùy ý từng mục theo nhu cầu.
-2. **Ảnh hiển thị bài viết chi tiết**: Khi ẩn phần sidebar bên phải thì ảnh hiển thị của bài viết chi tiết (ảnh bìa đại diện và ảnh trong bài viết) phải hiển thị full 100% bề ngang khớp hoàn toàn với khối nội dung.
+## Bối cảnh & Vấn đề xử lý
+1. **Lỗi `ERROR: Lỗi - Field sau không hợp lệ: id` (`work_schedules`, `id: 5`, code 400)**:
+   - Khi chỉnh sửa/áp dụng dữ liệu lịch công tác tuần, form state dispatch `REPLACE_STATE` vô tình giữ lại trường `id` cấp cao nhất, khiến Payload CMS cố gắng ghi đè hoặc xung đột khóa chính `work_schedules_pkey`.
+   - Các sequence PostgreSQL (`work_schedules_id_seq`, `_work_schedules_v_id_seq`, `_work_schedules_v_version_days_id_seq`, `site_visits_summary_id_seq`) chưa được đồng bộ với `MAX(id)` thực tế dẫn đến nguy cơ xung đột khóa chính khi tạo mới.
+2. **Lỗi AI OCR 404 & 503**:
+   - Google Gemini thông báo dừng hỗ trợ các model cũ (`gemini-2.0-flash`, `gemini-2.5-flash`, `gemini-1.5-flash` trả về status 404).
+   - `ai-work-schedule-ocr` bị thiếu model chuẩn mới nhất `gemini-3.8-flash`.
+   - Các model `gemini-3.6-flash`, `gemini-3.5-flash` gặp spike quá tải tạm thời (503) gây đứt gãy OCR ngay lập tức.
+3. **Log spam `[CanThoHealthDept] Fetch failed, using cache/fallback`**:
+   - Khi kết nối mạng ngoài đến cổng thông tin Sở Y tế Cần Thơ bị chặn hoặc timeout, server liên tục thử lại trên mọi request gây ngập log.
 
 ## Đã triển khai
-1. **Cấu hình Global `ArticleDetailSettings.ts`**:
-   - Thêm `scopeMode` vào group `sidebarBanner` với 3 chế độ: `all` (Bật cho tất cả chuyên mục - mặc định), `custom` (Bật/tắt tùy ý theo từng chuyên mục), `none` (Tắt tất cả banner).
-   - Bổ sung nhóm checkbox chuyên mục độc lập: `applyNews`, `applyNotices`, `applyAdvancedTechniques`, `applyProcurement`, `applyRecruitment`, `applyCustomPosts`, `applyClinicalProtocols`, `applyHealthWarnings`, `applyScientificActivities`, `applyDocuments`, và `customSectionsText`.
-   - Bổ sung `showCoverImage` và `fullWidthImages` vào group `displayOptions` để kiểm soát hiển thị ảnh bìa và giãn ảnh full khi ẩn sidebar.
-2. **Logic Component `ArticleDetailTemplate.tsx`**:
-   - Bổ sung hàm kiểm tra phạm vi chuyên mục `isBannerAllowedForCategory(bannerConfig, baseHref)` kết hợp với `scopeMode`.
-   - Thêm prop `coverUrl` và render khối ảnh bìa đại diện `.postDetailCoverBox` đầu bài viết.
-3. **Styles `ArticleDetailTemplate.module.css`**:
-   - Định dạng ảnh đại diện `.postDetailCoverBox` và `.postDetailCoverImage`.
-   - Quy định cho layout không có sidebar phải (`.postDetailLayoutFull`, `.postDetailLayoutNoRight`): `.postDetailCoverBox`, `.postDetailCoverImage`, `.postDetailBody img`, `.postDetailBody figure` đạt `width: 100% !important; max-width: 100% !important; height: auto` hiển thị full tràn đều chiều ngang của khối nội dung.
-4. **Cập nhật các trang frontend**:
-   - Truyền `coverUrl` từ `item.cover` / `item.seoImage` vào `ArticleDetailTemplate` tại các trang: `tin-tuc/[slug]`, `thong-bao/[slug]`, `noi-dung/[sectionSlug]/[slug]`, `tuyen-dung/[slug]`, `dau-thau-mua-sam/[slug]`, `goc-canh-bao/[slug]`.
-5. **Database Migration & Schema Seal**:
-   - Tạo migration `20260924_075_add_sidebar_banner_scopes_and_full_width_images.mjs`.
-   - Chạy `npm run db:schema:seal -- 20260924_075_add_sidebar_banner_scopes_and_full_width_images`.
-   - Áp dụng migration vào CSDL qua `npm run db:migrate:deploy`.
+1. **Khắc phục xung đột ID trong `WorkScheduleAdminHelper.tsx`**:
+   - Loại trừ hoàn toàn trường `id` cấp cao nhất khỏi `nextState` khi nạp dữ liệu từ AI OCR hoặc Excel (`delete nextState['id']`). Payload CMS tự quản lý ID bản ghi qua URL/context.
+2. **Nâng cấp toàn bộ các API Route AI OCR**:
+   - Cập nhật danh sách ưu tiên model chuẩn mới nhất: `['gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite']`.
+   - Áp dụng trên cả 4 route: `ai-work-schedule-ocr`, `ai-schedule-ocr`, `ai-daily-ocr`, `ai-nurse-ocr`.
+   - Bổ sung cơ chế tự động thử lại (retry với backoff 1s) khi gặp lỗi quá tải tạm thời 503 hoặc 429 trước khi chuyển sang model dự phòng.
+3. **Tối ưu bộ đệm `canthoHealthDept.ts`**:
+   - Thêm thời gian chờ (cooldown 5 phút) khi gặp lỗi mạng ngoài; lập tức trả về cache/fallback để tránh nghẽn server và ngập log.
+4. **Database Migration & Schema Seal**:
+   - Tạo migration `20260925_076_sync_work_schedules_sequences.mjs` đồng bộ chuẩn hóa toàn bộ sequences PostgreSQL.
+   - Chạy `npm run db:schema:seal -- 20260925_076_sync_work_schedules_sequences` và triển khai qua `npm run db:migrate:deploy`.
 
-## Kiểm tra chất lượng & Fix bổ sung
-- **Theo yêu cầu của người dùng ("không hiển thị ảnh đại diện vào trang chi tiết, nếu cần sẽ tự đưa hình vào")**:
-  - Đã loại bỏ hoàn toàn khối chèn ảnh bìa tự động (`postDetailCoverBox`) khỏi `ArticleDetailTemplate.tsx` trên tất cả các trang bài viết chi tiết.
-  - Ảnh đại diện chỉ phục vụ hiển thị trên thẻ card xem trước ngoài danh sách / trang chủ và phục vụ thẻ SEO OpenGraph.
-  - Khi người dùng tự chèn hình ảnh minh họa vào nội dung bài viết (trình soạn thảo RichText), hình ảnh vẫn tự động hiển thị tràn đều Full 100% bề ngang khi ẩn Sidebar bên phải.
+## Kiểm tra chất lượng (Verification)
 - `npm run typecheck`: PASS (0 lỗi).
-- `node scripts/validate-db-migrations.mjs`: PASS 330/330 checks.
-- `npm run db:schema:check`: PASS (hợp đồng 075).
-- Endpoint `/api/globals/article-detail-settings`: HTTP 200 OK.
-- Trang chi tiết `/tin-tuc/[slug]`, `/thong-bao/[slug]`, `/goc-canh-bao/[slug]`: HTTP 200 OK, trang hiển thị sạch sẽ, không còn ảnh đại diện cưỡng bức đầu trang.
+- `node scripts/validate-db-migrations.mjs`: PASS 334/334 checks.
+- `npm run db:schema:check`: PASS (hợp đồng 076).
+- Kiểm tra các model Gemini API thực tế: `gemini-3.8-flash` phản hồi HTTP 200 OK ngay lập tức.
+- Kiểm tra toàn bộ sequence CSDL: Đã đồng bộ hoàn hảo (0 lỗi out of sync).

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-09-25 — Khắc Phục Lỗi Trùng Lặp ID Lịch Công Tác, Nâng Cấp Model Gemini OCR & Chống Spam Log Sở Y Tế
+
+- Sửa lỗi xung đột khóa chính ID khi chỉnh sửa hoặc áp dụng lịch công tác tuần (`src/components/admin/WorkScheduleAdminHelper.tsx`): loại bỏ hoàn toàn trường `id` cấp cao nhất khỏi `nextState` khi nạp dữ liệu từ AI OCR hoặc file Excel, tránh xung đột khóa chính `work_schedules_pkey`.
+- Tạo migration `20260925_076_sync_work_schedules_sequences.mjs` đồng bộ chuẩn hóa toàn bộ các PostgreSQL sequence (`work_schedules_id_seq`, `_work_schedules_v_id_seq`, `_work_schedules_v_version_days_id_seq`, `site_visits_summary_id_seq`), ngăn ngừa tuyệt đối lỗi `unique_violation` khi tạo bản ghi mới.
+- Cập nhật danh sách ưu tiên Gemini OCR sang model chuẩn mới nhất `gemini-3.8-flash` theo khuyến cáo của Google; loại bỏ hoàn toàn các model cũ bị 404 (`gemini-2.0-flash`, `gemini-2.5-flash`, `gemini-1.5-flash`) trên cả 4 route API OCR (`ai-work-schedule-ocr`, `ai-schedule-ocr`, `ai-daily-ocr`, `ai-nurse-ocr`).
+- Bổ sung cơ chế tự động thử lại (retry backoff 1s) khi gặp lỗi quá tải tạm thời (HTTP 503 / 429) trước khi chuyển sang model dự phòng.
+- Bổ sung cơ chế cooldown 5 phút cho bộ fetch tin tức Sở Y tế Cần Thơ (`src/lib/canthoHealthDept.ts`) khi gặp lỗi mạng ngoài hoặc timeout, ngăn chặn việc thử lại liên tục gây nghẽn tài nguyên và tràn ngập log máy chủ.
+- Khóa DB Schema Contract snapshot 076 (`scripts/db-schema-contract.json`).
+
 ## 2026-09-24 — Cài Đặt Phạm Vi Banner Sidebar Theo Chuyên Mục & Hiển Thị Ảnh Bài Viết Full-Width Khi Ẩn Sidebar
 
 - Thêm tùy chọn phạm vi hiển thị Banner Sidebar (`scopeMode`) trong **Bố cục & Chi tiết Bài viết** (`src/globals/ArticleDetailSettings.ts`): Bật tất cả, Tắt tất cả, hoặc Bật/tắt tùy ý theo từng chuyên mục riêng biệt.

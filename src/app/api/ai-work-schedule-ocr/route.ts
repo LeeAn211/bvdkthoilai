@@ -141,9 +141,7 @@ QUY TẮC BÓC TÁCH:
 `
 
     const CANDIDATE_MODELS = [
-      'gemini-2.5-flash',
-      'gemini-2.0-flash',
-      'gemini-1.5-flash',
+      'gemini-3.8-flash',
       'gemini-3.6-flash',
       'gemini-3.5-flash',
       'gemini-3.1-flash-lite',
@@ -153,39 +151,51 @@ QUY TẮC BÓC TÁCH:
     let lastErrorText = ''
 
     for (const modelName of CANDIDATE_MODELS) {
-      try {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`
-        const res = await fetch(geminiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  { text: prompt },
-                  { inline_data: { mime_type: mimeType, data: base64Image } },
-                ],
+      let attempts = 0
+      const maxAttempts = 2
+      while (attempts < maxAttempts) {
+        attempts++
+        try {
+          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`
+          const res = await fetch(geminiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    { text: prompt },
+                    { inline_data: { mime_type: mimeType, data: base64Image } },
+                  ],
+                },
+              ],
+              generationConfig: {
+                temperature: 0.1,
+                response_mime_type: 'application/json',
               },
-            ],
-            generationConfig: {
-              temperature: 0.1,
-              response_mime_type: 'application/json',
-            },
-          }),
-          signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
-        })
+            }),
+            signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+          })
 
-        if (res.ok) {
-          geminiRes = res
+          if (res.ok) {
+            geminiRes = res
+            break
+          } else {
+            lastErrorText = await res.text()
+            console.warn(`Model ${modelName} thất bại (status ${res.status}):`, lastErrorText.slice(0, 160))
+            if ((res.status === 503 || res.status === 429) && attempts < maxAttempts) {
+              await new Promise((resolve) => setTimeout(resolve, 1000))
+              continue
+            }
+            break
+          }
+        } catch (err) {
+          lastErrorText = err instanceof Error ? err.message : String(err)
+          console.warn(`Model ${modelName} gặp lỗi:`, lastErrorText)
           break
-        } else {
-          lastErrorText = await res.text()
-          console.warn(`Model ${modelName} thất bại (status ${res.status}):`, lastErrorText)
         }
-      } catch (err) {
-        lastErrorText = err instanceof Error ? err.message : String(err)
-        console.warn(`Model ${modelName} gặp lỗi:`, lastErrorText)
       }
+      if (geminiRes) break
     }
 
     if (!geminiRes) {

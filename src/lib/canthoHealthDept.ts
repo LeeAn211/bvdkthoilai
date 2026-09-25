@@ -20,7 +20,9 @@ export type CanThoHealthNewsItem = {
 // Bộ nhớ đệm trong RAM
 let cachedNews: CanThoHealthNewsItem[] = []
 let lastFetchedAt = 0
+let lastFailedAt = 0
 const CACHE_TTL_MS = 15 * 60 * 1000 // 15 phút
+const FAILURE_COOLDOWN_MS = 5 * 60 * 1000 // 5 phút cooldown khi mạng ngoài lỗi
 
 // Danh sách dữ liệu mẫu dự phòng khi mạng quá tải hoặc trang nguồn bảo trì
 const FALLBACK_ITEMS: CanThoHealthNewsItem[] = [
@@ -179,7 +181,12 @@ export async function getCanThoHealthDeptNews(limit = 6): Promise<CanThoHealthNe
     return cachedNews.slice(0, limit)
   }
 
-  // 2. Fetch từ soyte.cantho.gov.vn với timeout 4.5 giây
+  // 2. Nếu vừa lỗi kết nối trong vòng 5 phút, lập tức dùng cache/fallback mà không thử lại
+  if (now - lastFailedAt < FAILURE_COOLDOWN_MS) {
+    return (cachedNews.length > 0 ? cachedNews : FALLBACK_ITEMS).slice(0, limit)
+  }
+
+  // 3. Fetch từ soyte.cantho.gov.vn với timeout 4.5 giây
   try {
     const controller = new AbortController()
     const timer = setTimeout(() => controller.abort(), 4500)
@@ -203,14 +210,16 @@ export async function getCanThoHealthDeptNews(limit = 6): Promise<CanThoHealthNe
       if (parsed.length > 0) {
         cachedNews = parsed
         lastFetchedAt = now
+        lastFailedAt = 0
         return parsed.slice(0, limit)
       }
     }
   } catch (err: unknown) {
-    console.warn('[CanThoHealthDept] Fetch failed, using cache/fallback:', err instanceof Error ? err.message : err)
+    lastFailedAt = now
+    console.warn('[CanThoHealthDept] Fetch failed, using cache/fallback (cooldown 5m):', err instanceof Error ? err.message : err)
   }
 
-  // 3. Nếu fetch lỗi, trả về cache trước đó hoặc danh sách dự phòng
+  // 4. Nếu fetch lỗi, trả về cache trước đó hoặc danh sách dự phòng
   if (cachedNews.length > 0) {
     return cachedNews.slice(0, limit)
   }

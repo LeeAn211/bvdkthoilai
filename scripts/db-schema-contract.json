@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260924_075_add_sidebar_banner_scopes_and_full_width_images",
+  "migrationId": "20260925_076_sync_work_schedules_sequences",
   "schemaSha256": "19dd045f517d2b537634f19510edf3b7898dcb8f113932821e806dd029ef94c8"
 }

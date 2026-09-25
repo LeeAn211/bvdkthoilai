@@ -70,12 +70,13 @@ export default function WorkScheduleAdminHelper() {
     const currentFields: Record<string, any> = typeof getFields === 'function' ? getFields() : fields || {}
     const nextState: Record<string, any> = {}
 
-    // 1. Giữ lại tất cả các trường không thuộc array 'days'
+    // 1. Giữ lại tất cả các trường không thuộc array 'days' và không can thiệp vào 'id'
     for (const [key, val] of Object.entries(currentFields)) {
-      if (!key.startsWith('days.') && key !== 'days') {
+      if (!key.startsWith('days.') && key !== 'days' && key !== 'id') {
         nextState[key] = val
       }
     }
+    delete nextState['id']
 
     // Luôn đảm bảo displayMode là 'table' để tab Bảng chi tiết Lịch tuần được hiển thị
     nextState['displayMode'] = {

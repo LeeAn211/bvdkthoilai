@@ -124,10 +124,10 @@ QUY TẮC CHỌN departmentIcon (chọn giá trị phù hợp nhất):
 `
 
     const CANDIDATE_MODELS = [
+      'gemini-3.8-flash',
       'gemini-3.6-flash',
       'gemini-3.5-flash',
       'gemini-3.1-flash-lite',
-      'gemini-3.8-flash',
     ]
 
     const payloadBody = {
@@ -155,27 +155,39 @@ QUY TẮC CHỌN departmentIcon (chọn giá trị phù hợp nhất):
     let lastErrorText = ''
 
     for (const modelName of CANDIDATE_MODELS) {
-      try {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`
-        const res = await fetch(geminiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payloadBody),
-          cache: 'no-store',
-          signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
-        })
+      let attempts = 0
+      const maxAttempts = 2
+      while (attempts < maxAttempts) {
+        attempts++
+        try {
+          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`
+          const res = await fetch(geminiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payloadBody),
+            cache: 'no-store',
+            signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+          })
 
-        if (res.ok) {
-          geminiRes = res
+          if (res.ok) {
+            geminiRes = res
+            break
+          } else {
+            lastErrorText = await res.text()
+            console.warn(`Model ${modelName} thất bại (${res.status}): ${lastErrorText.slice(0, 150)}`)
+            if ((res.status === 503 || res.status === 429) && attempts < maxAttempts) {
+              await new Promise((resolve) => setTimeout(resolve, 1000))
+              continue
+            }
+            break
+          }
+        } catch (err: any) {
+          lastErrorText = err?.message || String(err)
+          console.warn(`Lỗi khi gọi model ${modelName}:`, err)
           break
-        } else {
-          lastErrorText = await res.text()
-          console.warn(`Model ${modelName} thất bại (${res.status}): ${lastErrorText.slice(0, 150)}`)
         }
-      } catch (err: any) {
-        lastErrorText = err?.message || String(err)
-        console.warn(`Lỗi khi gọi model ${modelName}:`, err)
       }
+      if (geminiRes) break
     }
 
     if (!geminiRes) {
