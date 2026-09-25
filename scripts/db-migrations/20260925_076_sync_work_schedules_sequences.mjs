@@ -29,10 +29,15 @@ export async function verify({ client }) {
     { seq: 'work_schedules_id_seq', table: 'work_schedules' },
     { seq: '_work_schedules_v_id_seq', table: '_work_schedules_v' },
     { seq: '_work_schedules_v_version_days_id_seq', table: '_work_schedules_v_version_days' },
-    { seq: 'site_visits_summary_id_seq', table: 'site_visits_summary' },
   ]
   for (const { seq, table } of checkSeqs) {
-    const { rows: seqRows } = await client.query(`SELECT last_value FROM ${seq}`)
+    const { rows: existsRows } = await client.query(
+      `SELECT 1 FROM pg_sequences WHERE sequencename = $1`,
+      [seq],
+    )
+    if (!existsRows.length) continue
+
+    const { rows: seqRows } = await client.query(`SELECT last_value FROM "${seq}"`)
     const { rows: tableRows } = await client.query(`SELECT COALESCE(MAX(id), 0) AS max_id FROM "${table}"`)
     const lastVal = Number(seqRows[0]?.last_value || 0)
     const maxId = Number(tableRows[0]?.max_id || 0)

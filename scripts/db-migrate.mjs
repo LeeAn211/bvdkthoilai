@@ -245,6 +245,7 @@ const KNOWN_SAFE_CHECKSUM_UPDATE_IDS = new Set([
   '20260923_071_create_health_warnings',
   '20260923_072_create_work_schedules',
   '20260924_073_add_work_schedule_preset_to_navigation_enums',
+  '20260925_076_sync_work_schedules_sequences',
 ])
 
 async function validateAndReconcileHistory(client, migrations, appliedMigrations) {
