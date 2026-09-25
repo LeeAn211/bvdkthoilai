@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-09-25 — Bổ Sung Công Tắc Bật/Tắt Lấy Tin Ngoài & Tối Ưu An Toàn Hệ Thống
+
+- Bổ sung trường checkbox `enableExternalFetch` (mặc định: `false` / TẮT) trong cấu hình mục Cổng thông tin Sở Y tế Cần Thơ & Đơn vị liên kết (`src/globals/Homepage.ts`), cho phép quản trị viên chủ động quyết định khi nào mới cho phép hệ thống kết nối ra mạng ngoài.
+- Bổ sung công tắc `autoFetchEnabled` riêng cho từng Tab liên kết (Sở Y tế, Website tự động, RSS Feed), hỗ trợ kiểm soát kết nối chi tiết tới từng nguồn cấp tin.
+- Loại bỏ hoàn toàn lệnh gọi `getCanThoHealthDeptNews(12)` chạy ngầm trong `Promise.all` ban đầu của trang chủ (`src/app/(frontend)/page.tsx`), chỉ kích hoạt fetch khi quản trị viên đã BẬT công tắc trong CMS.
+- Khi TẮT công tắc: Hệ thống phản hồi tức thì (0ms), tuyệt đối không gửi bất kỳ HTTP request nào ra mạng ngoài, sử dụng an toàn danh sách bài viết fallback hoặc bài viết tự nhập.
+- Bổ sung cơ chế cooldown 5 phút cho `autoLinkedNews.ts` và tùy chọn `skipFetch` cho `canthoHealthDept.ts`.
+- Tạo migration `20260925_077_add_external_fetch_toggles_to_homepage.mjs`, áp dụng thành công và khóa DB Schema Contract snapshot 077 (`scripts/db-schema-contract.json`).
+
 ## 2026-09-25 — Khắc Phục Lỗi Trùng Lặp ID Lịch Công Tác, Nâng Cấp Model Gemini OCR & Chống Spam Log Sở Y Tế
 
 - Sửa lỗi xung đột khóa chính ID khi chỉnh sửa hoặc áp dụng lịch công tác tuần (`src/components/admin/WorkScheduleAdminHelper.tsx`): loại bỏ hoàn toàn trường `id` cấp cao nhất khỏi `nextState` khi nạp dữ liệu từ AI OCR hoặc file Excel, tránh xung đột khóa chính `work_schedules_pkey`.

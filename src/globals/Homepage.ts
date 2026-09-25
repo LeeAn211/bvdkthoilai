@@ -1113,6 +1113,16 @@ export const Homepage: GlobalConfig = {
 
         /* ── CẤU HÌNH CỔNG THÔNG TIN LIÊN KẾT ĐA TAB (SỞ Y TẾ & CÁC ĐƠN VỊ LIÊN KẾT) ── */
         {
+          name: 'enableExternalFetch',
+          label: 'Bật tự động lấy tin từ các đường liên kết bên ngoài (Sở Y tế, Website khác, RSS Feed)',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            condition: (_data, siblingData) => siblingData?.type === 'cantho-health-dept',
+            description: 'BẬT: Hệ thống mới kết nối mạng ra bên ngoài để quét và lấy bài viết mới nhất từ Sở Y tế hoặc các đường link / RSS Feed đã cấu hình. TẮT (Mặc định - Khuyên dùng): Tuyệt đối không kết nối ra bên ngoài để đảm bảo an toàn tuyệt đối và tối ưu tốc độ máy chủ; hệ thống sẽ chỉ dùng dữ liệu dự phòng có sẵn hoặc danh sách bài viết tự nhập.',
+          },
+        },
+        {
           name: 'linkedWebsitesTabs',
           dbName: 'hp_linked_tabs',
           label: 'Danh sách các Tab đơn vị liên kết (Sở Y tế, Bộ Y tế, các đơn vị khác)',
@@ -1125,6 +1135,7 @@ export const Homepage: GlobalConfig = {
           defaultValue: [
             {
               enabled: true,
+              autoFetchEnabled: false,
               label: 'Sở Y tế TP. Cần Thơ',
               source: 'cantho-syt',
               seeMoreUrl: 'https://soyte.cantho.gov.vn/',
@@ -1133,6 +1144,16 @@ export const Homepage: GlobalConfig = {
           ],
           fields: [
             { name: 'enabled', label: 'Bật hiển thị tab này', type: 'checkbox', defaultValue: true },
+            {
+              name: 'autoFetchEnabled',
+              label: 'Bật kết nối lấy tin bên ngoài cho riêng tab này',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: {
+                condition: (_data, siblingData) => siblingData?.source === 'cantho-syt' || siblingData?.source === 'auto-feed',
+                description: 'Chỉ khi bật tùy chọn này VÀ bật kết nối ngoài ở trên thì tab này mới gọi mạng ra ngoài để lấy tin.',
+              },
+            },
             {
               type: 'row',
               fields: [

@@ -24,7 +24,7 @@ import { getCMS, getGlobal, getHomepage } from '@/lib/payload'
 import { mediaFormat, mediaLabel, mediaUrl } from '@/lib/media'
 import { categoryName, getDefaultContentMedia, scientificActivityGroupName } from '@/lib/defaultMedia'
 import { resolveBookingConfig } from '@/lib/booking'
-import { getCanThoHealthDeptNews } from '@/lib/canthoHealthDept'
+import { getCanThoHealthDeptNews, FALLBACK_ITEMS } from '@/lib/canthoHealthDept'
 import { fetchAutoLinkedNews } from '@/lib/autoLinkedNews'
 import type { CSSProperties } from 'react'
 
@@ -148,21 +148,20 @@ export default async function HomePage() {
   let totals = { news: 0, notices: 0, doctors: 0, departments: 0, services: 0 }
 
   try {
-    const [payload, homepage, settings, contentDefaults, quickSettings, bookingSettings, canthoHealthResult] = await Promise.all([
+    const [payload, homepage, settings, contentDefaults, quickSettings, bookingSettings] = await Promise.all([
       getCMS(),
       getHomepage().catch((error: unknown) => { console.error('[HomePage] getHomepage error:', databaseErrorDetails(error)); return {} }),
       getGlobal('site-settings').catch((error: unknown) => { console.error('[HomePage] site-settings error:', databaseErrorDetails(error)); return {} }),
       getDefaultContentMedia().catch(() => ({ news: '/default-content/news.svg', notices: '/default-content/notices.svg', procurement: '/default-content/procurement.svg' })),
       getGlobal('quick-links-settings').catch(() => ({})),
       getGlobal('medpro-settings').catch(() => ({})),
-      getCanThoHealthDeptNews(12).catch(() => []),
     ])
     home = homepage || {}
     siteSettings = settings || {}
     defaultMedia = contentDefaults
     quickLinksSettings = quickSettings || {}
     medproSettings = bookingSettings || {}
-    canthoHealthNews = canthoHealthResult || []
+    canthoHealthNews = []
 
     const [newsResult, noticeResult, procurementResult, documentResult, clinicalProtocolsResult, doctorResult, departmentResult, specialtyResult, serviceResult, scheduleResult, vaccinationScheduleResult, vaccineResult, vaccinePriceResult, contentSectionResult, customPostResult, advancedTechniquesResult, ourExpertsResult, scientificActivitiesResult, scientificActivityGroupsResult, healthWarningsResult] = await Promise.all([
       payload.find({ collection: 'news', where: { _status: { equals: 'published' } }, sort: '-publishedAt', limit: 100, depth: 1 }).catch(() => ({ docs: [], totalDocs: 0 })),
@@ -876,27 +875,69 @@ export default async function HomePage() {
   }
   // ── HẾT HÀM RENDER ──
 
-  // Pre-fetch tin tức cho các tab auto-feed (Cổng thông tin liên kết / cantho-health-dept)
+  // Pre-fetch tin tức cho các tab liên kết ngoài (Cổng thông tin liên kết / cantho-health-dept)
+  // CHỈ KHI quản trị viên BẬT công tắc enableExternalFetch thì mới gọi mạng ra bên ngoài
   const autoFeedNewsMap = new Map<string, any[]>()
   try {
     const healthDeptSection = configuredSections.find((s: any) => s && s.visible !== false && s.type === 'cantho-health-dept')
-    if (healthDeptSection && Array.isArray(healthDeptSection.linkedWebsitesTabs)) {
-      const sLimit = Math.min(20, Math.max(1, Number(healthDeptSection.layoutItemLimit || 5)))
-      const autoFeedTabs = healthDeptSection.linkedWebsitesTabs.filter(
-        (t: any) => t && t.enabled !== false && t.source === 'auto-feed' && t.feedUrl?.trim()
-      )
-      await Promise.all(
-        autoFeedTabs.map(async (t: any) => {
+    if (healthDeptSection) {
+      const isExternalFetchEnabled = healthDeptSection.enableExternalFetch === true
+      const rawTabs = Array.isArray(healthDeptSection.linkedWebsitesTabs) ? healthDeptSection.linkedWebsitesTabs : []
+      const hasCanThoSytTab = rawTabs.length === 0 || rawTabs.some((t: any) => t && t.enabled !== false && t.source === 'cantho-syt')
+
+      if (isExternalFetchEnabled) {
+        const sLimit = Math.min(20, Math.max(1, Number(healthDeptSection.layoutItemLimit || 5)))
+        const tasks: Promise<any>[] = []
+
+        // 1. Quét Cổng Sở Y tế nếu tab Sở Y tế đang bật và cho phép fetch
+        if (hasCanThoSytTab) {
+          const sytTab = rawTabs.find((t: any) => t && t.source === 'cantho-syt')
+          const canFetchSyt = !sytTab || sytTab.autoFetchEnabled === true
+          if (canFetchSyt) {
+            tasks.push(
+              getCanThoHealthDeptNews(12, { skipFetch: false })
+                .then((items) => {
+                  canthoHealthNews = items && items.length > 0 ? items : FALLBACK_ITEMS
+                })
+                .catch(() => {
+                  canthoHealthNews = FALLBACK_ITEMS
+                })
+            )
+          } else {
+            canthoHealthNews = FALLBACK_ITEMS
+          }
+        }
+
+        // 2. Quét các tab auto-feed nếu bật và cho phép fetch
+        const autoFeedTabs = rawTabs.filter(
+          (t: any) => t && t.enabled !== false && t.source === 'auto-feed' && t.autoFetchEnabled === true && t.feedUrl?.trim()
+        )
+        for (const t of autoFeedTabs) {
           const url = t.feedUrl.trim()
           if (!autoFeedNewsMap.has(url)) {
-            const feedItems = await fetchAutoLinkedNews(url, sLimit).catch(() => [])
-            autoFeedNewsMap.set(url, feedItems)
+            tasks.push(
+              fetchAutoLinkedNews(url, sLimit)
+                .then((feedItems) => {
+                  autoFeedNewsMap.set(url, feedItems)
+                })
+                .catch(() => {
+                  autoFeedNewsMap.set(url, [])
+                })
+            )
           }
-        })
-      )
+        }
+
+        await Promise.all(tasks)
+      } else {
+        // External fetch TẮT: Tuyệt đối KHÔNG gọi fetch() ra ngoài! Dùng ngay dữ liệu fallback tĩnh 0ms.
+        canthoHealthNews = FALLBACK_ITEMS
+      }
     }
   } catch (err) {
-    console.error('[HomePage] Error prefetching auto-feed news:', err)
+    console.error('[HomePage] Error prefetching external linked news:', err)
+    if (!canthoHealthNews || canthoHealthNews.length === 0) {
+      canthoHealthNews = FALLBACK_ITEMS
+    }
   }
 
   const quickUpdates = [
@@ -1998,7 +2039,8 @@ export default async function HomePage() {
             const sytLimit = Math.min(20, Math.max(1, Number(item.layoutItemLimit || 5)))
 
             // 1. Danh sách bài viết lấy tự động từ Crawler Cổng Sở Y tế Cần Thơ
-            const autoSytArticles = canthoHealthNews.slice(0, sytLimit).map((art: any) => ({
+            const sytNewsList = canthoHealthNews && canthoHealthNews.length > 0 ? canthoHealthNews : FALLBACK_ITEMS
+            const autoSytArticles = sytNewsList.slice(0, sytLimit).map((art: any) => ({
               id: `syt-${art.id}`,
               href: art.href,
               cover: art.cover || defaultMedia.news,

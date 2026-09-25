@@ -24,8 +24,8 @@ let lastFailedAt = 0
 const CACHE_TTL_MS = 15 * 60 * 1000 // 15 phút
 const FAILURE_COOLDOWN_MS = 5 * 60 * 1000 // 5 phút cooldown khi mạng ngoài lỗi
 
-// Danh sách dữ liệu mẫu dự phòng khi mạng quá tải hoặc trang nguồn bảo trì
-const FALLBACK_ITEMS: CanThoHealthNewsItem[] = [
+// Danh sách dữ liệu mẫu dự phòng khi mạng quá tải, chưa có mạng hoặc khi tắt lấy tin bên ngoài
+export const FALLBACK_ITEMS: CanThoHealthNewsItem[] = [
   {
     id: '353900',
     title: 'Hội nghị Khoa học Thường niên Tập đoàn Y tế Phương Châu - ACP 2026: Kiến tạo mô hình y tế toàn diện trong kỷ nguyên mới',
@@ -170,10 +170,23 @@ function parseSoyTeHtml(html: string): CanThoHealthNewsItem[] {
   return list
 }
 
+export type GetCanThoHealthDeptNewsOptions = {
+  skipFetch?: boolean
+}
+
 /**
  * Lấy danh sách tin tức từ Sở Y tế TP Cần Thơ có bộ đệm và fallback
  */
-export async function getCanThoHealthDeptNews(limit = 6): Promise<CanThoHealthNewsItem[]> {
+export async function getCanThoHealthDeptNews(
+  limit = 6,
+  options?: GetCanThoHealthDeptNewsOptions,
+): Promise<CanThoHealthNewsItem[]> {
+  // Nếu có tùy chọn skipFetch (ví dụ người dùng tắt lấy tin từ bên ngoài), lập tức trả về fallback/cache mà KHÔNG gọi mạng
+  if (options?.skipFetch) {
+    if (cachedNews.length > 0) return cachedNews.slice(0, limit)
+    return FALLBACK_ITEMS.slice(0, limit)
+  }
+
   const now = Date.now()
 
   // 1. Kiểm tra cache RAM hợp lệ

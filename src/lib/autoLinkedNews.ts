@@ -19,7 +19,9 @@ export type AutoFeedArticle = {
 
 // Bộ nhớ đệm cache theo URL
 const feedCache = new Map<string, { items: AutoFeedArticle[]; timestamp: number }>()
+const failedUrls = new Map<string, number>()
 const CACHE_TTL_MS = 15 * 60 * 1000 // 15 phút
+const FAILURE_COOLDOWN_MS = 5 * 60 * 1000 // 5 phút cooldown nếu lỗi mạng/timeout
 
 /**
  * Xóa sạch thẻ HTML và chuẩn hóa chuỗi
@@ -285,7 +287,14 @@ export async function fetchAutoLinkedNews(feedUrl: string, limit = 6): Promise<A
     return cached.items.slice(0, limit)
   }
 
-  // 2. Fetch dữ liệu từ URL nguồn với timeout 5 giây
+  // 2. Kiểm tra failure cooldown (nếu vừa lỗi trong vòng 5 phút, không thử lại)
+  const lastFailedAt = failedUrls.get(cleanUrl) || 0
+  if (now - lastFailedAt < FAILURE_COOLDOWN_MS) {
+    if (cached && cached.items.length > 0) return cached.items.slice(0, limit)
+    return []
+  }
+
+  // 3. Fetch dữ liệu từ URL nguồn với timeout 5 giây
   try {
     const controller = new AbortController()
     const timer = setTimeout(() => controller.abort(), 5000)
@@ -325,11 +334,13 @@ export async function fetchAutoLinkedNews(feedUrl: string, limit = 6): Promise<A
 
       if (parsedItems.length > 0) {
         feedCache.set(cleanUrl, { items: parsedItems, timestamp: now })
+        failedUrls.delete(cleanUrl)
         return parsedItems.slice(0, limit)
       }
     }
   } catch (err: unknown) {
-    console.warn(`[AutoLinkedNews] Failed to fetch from ${cleanUrl}:`, err instanceof Error ? err.message : err)
+    failedUrls.set(cleanUrl, now)
+    console.warn(`[AutoLinkedNews] Failed to fetch from ${cleanUrl} (cooldown 5m):`, err instanceof Error ? err.message : err)
   }
 
   // Nếu fetch thất bại nhưng có cache cũ
