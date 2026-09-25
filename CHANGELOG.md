@@ -7,7 +7,7 @@
 - Loại bỏ hoàn toàn lệnh gọi `getCanThoHealthDeptNews(12)` chạy ngầm trong `Promise.all` ban đầu của trang chủ (`src/app/(frontend)/page.tsx`), chỉ kích hoạt fetch khi quản trị viên đã BẬT công tắc trong CMS.
 - Khi TẮT công tắc: Hệ thống phản hồi tức thì (0ms), tuyệt đối không gửi bất kỳ HTTP request nào ra mạng ngoài, sử dụng an toàn danh sách bài viết fallback hoặc bài viết tự nhập.
 - Bổ sung cơ chế cooldown 5 phút cho `autoLinkedNews.ts` và tùy chọn `skipFetch` cho `canthoHealthDept.ts`.
-- Tạo migration `20260925_077_add_external_fetch_toggles_to_homepage.mjs`, áp dụng thành công và khóa DB Schema Contract snapshot 077 (`scripts/db-schema-contract.json`).
+- Tạo migration `20260925_077_add_external_fetch_toggles_to_homepage.mjs` và `20260925_078_seal_external_fetch_toggles_schema.mjs`, áp dụng thành công và khóa DB Schema Contract snapshot 078 (`scripts/db-schema-contract.json`).
 
 ## 2026-09-25 — Khắc Phục Lỗi Trùng Lặp ID Lịch Công Tác, Nâng Cấp Model Gemini OCR & Chống Spam Log Sở Y Tế
 

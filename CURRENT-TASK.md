@@ -19,11 +19,12 @@
    - Cơ chế cooldown 5 phút khi gặp lỗi mạng ngoài để tránh gửi request dồn dập.
 4. **Database Migration & Schema Seal**:
    - Migration `20260925_077_add_external_fetch_toggles_to_homepage.mjs` bổ sung các cột boolean an toàn cho bảng `homepage_sections`, `_homepage_v_version_sections`, `hp_linked_tabs`, `_hp_linked_tabs_v`.
-   - Khóa hợp đồng DB schema contract snapshot 077 (`scripts/db-schema-contract.json`).
+   - Migration `20260925_078_seal_external_fetch_toggles_schema.mjs` xác nhận và khóa hợp đồng DB schema contract snapshot 078 (`scripts/db-schema-contract.json`).
    - Đã deploy và verify qua `npm run db:migrate:deploy`.
 
 ## Kiểm tra chất lượng (Verification)
+- `npm run prebuild`: PASS 100% (`payload generate:importmap && payload generate:types && payload generate:db-schema && node scripts/validate-db-schema-contract.mjs`).
 - `npm run typecheck`: PASS (0 lỗi).
-- `node scripts/validate-db-migrations.mjs`: PASS 338/338 checks.
-- `npm run db:schema:check`: PASS (hợp đồng 077 hợp lệ).
+- `node scripts/validate-db-migrations.mjs`: PASS 342/342 checks.
+- `npm run db:schema:check`: PASS (hợp đồng 078 hợp lệ).
 - Khi TẮT công tắc: Hệ thống phản hồi ngay lập tức, không gửi request mạng ngoài, không log lỗi.

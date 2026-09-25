@@ -7232,11 +7232,19 @@ export interface Homepage {
             }[]
           | null;
         /**
+         * BẬT: Hệ thống mới kết nối mạng ra bên ngoài để quét và lấy bài viết mới nhất từ Sở Y tế hoặc các đường link / RSS Feed đã cấu hình. TẮT (Mặc định - Khuyên dùng): Tuyệt đối không kết nối ra bên ngoài để đảm bảo an toàn tuyệt đối và tối ưu tốc độ máy chủ; hệ thống sẽ chỉ dùng dữ liệu dự phòng có sẵn hoặc danh sách bài viết tự nhập.
+         */
+        enableExternalFetch?: boolean | null;
+        /**
          * Thêm, bớt, chọn nguồn dữ liệu (Lấy tự động từ Sở Y tế hoặc Tự nhập danh sách bài viết) và sắp xếp thứ tự các Tab hiển thị trên Trang chủ.
          */
         linkedWebsitesTabs?:
           | {
               enabled?: boolean | null;
+              /**
+               * Chỉ khi bật tùy chọn này VÀ bật kết nối ngoài ở trên thì tab này mới gọi mạng ra ngoài để lấy tin.
+               */
+              autoFetchEnabled?: boolean | null;
               label: string;
               source: 'cantho-syt' | 'auto-feed' | 'manual';
               /**
@@ -10609,10 +10617,12 @@ export interface HomepageSelect<T extends boolean = true> {
               actionBtnText?: T;
               id?: T;
             };
+        enableExternalFetch?: T;
         linkedWebsitesTabs?:
           | T
           | {
               enabled?: T;
+              autoFetchEnabled?: T;
               label?: T;
               source?: T;
               feedUrl?: T;

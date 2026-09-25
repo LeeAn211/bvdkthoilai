@@ -14364,6 +14364,7 @@ export const hp_linked_tabs = pgTable(
     _parentID: varchar("_parent_id").notNull(),
     id: varchar("id").primaryKey(),
     enabled: boolean("enabled").default(true),
+    autoFetchEnabled: boolean("auto_fetch_enabled").default(false),
     label: varchar("label"),
     source: enum_hp_linked_tabs_source("source").default("cantho-syt"),
     feedUrl: varchar("feed_url"),
@@ -14515,6 +14516,7 @@ export const homepage_sections = pgTable(
       "Xem tất cả →",
     ),
     carouselSeeMoreUrl: varchar("carousel_see_more_url"),
+    enableExternalFetch: boolean("enable_external_fetch").default(false),
     bannerColumns:
       enum_homepage_sections_banner_columns("banner_columns").default("4"),
     bannerMotionMode:
@@ -15271,6 +15273,7 @@ export const _hp_linked_tabs_v = pgTable(
     _parentID: integer("_parent_id").notNull(),
     id: serial("id").primaryKey(),
     enabled: boolean("enabled").default(true),
+    autoFetchEnabled: boolean("auto_fetch_enabled").default(false),
     label: varchar("label"),
     source: enum__hp_linked_tabs_v_source("source").default("cantho-syt"),
     feedUrl: varchar("feed_url"),
@@ -15425,6 +15428,7 @@ export const _homepage_v_version_sections = pgTable(
       "Xem tất cả →",
     ),
     carouselSeeMoreUrl: varchar("carousel_see_more_url"),
+    enableExternalFetch: boolean("enable_external_fetch").default(false),
     bannerColumns:
       enum__homepage_v_version_sections_banner_columns(
         "banner_columns",

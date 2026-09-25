@@ -1,5 +1,5 @@
 {
   "version": 1,
-  "migrationId": "20260925_077_add_external_fetch_toggles_to_homepage",
-  "schemaSha256": "19dd045f517d2b537634f19510edf3b7898dcb8f113932821e806dd029ef94c8"
+  "migrationId": "20260925_078_seal_external_fetch_toggles_schema",
+  "schemaSha256": "7dc9eaa98f90ff0d29b4f574fb32df941c0959b02a0cf01c63cba8192ab25aba"
 }
